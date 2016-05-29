@@ -1,0 +1,13 @@
+Package: flipFormat
+Type: Package
+Title: Formatting of R outputs
+Version: 0.1.0
+Author: Tim Bock
+Maintainer: Tim Bock  <tim.bock@numbers.net.au>
+Description: Formatting to be used in print statements and other outputs. E.g.,
+    number formatting, formatting of tables.
+License: GPL-3
+LazyData: TRUE
+Suggests: testthat
+Imports: DT, htmltools
+RoxygenNote: 5.0.1
