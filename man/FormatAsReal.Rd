@@ -2,20 +2,19 @@
 % Please edit documentation in R/number.R
 \name{FormatAsReal}
 \alias{FormatAsReal}
-\title{Formats real numbers nicely, as if they are to be presented as an average.}
+\title{Formats real numbers nicely.}
 \usage{
-FormatAsReal(x, digits = 2, format = "fg", ...)
+FormatAsReal(x, digits = 2)
 }
 \arguments{
 \item{x}{The number(s)}
 
 \item{digits}{Number of significant digits}
-
-\item{format}{See \code{\link{formatC}}.}
-
-\item{...}{Additional arguments that are passed to \code{\link{formatC}}.}
 }
 \description{
-Formats real numbers nicely, as if they are to be presented as an average.
+Formats real numbers nicely.
+}
+\details{
+Keeping \code{digits} or more significant digits and and commas if in thousands or more.
 }
 

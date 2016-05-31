@@ -2,24 +2,21 @@
 % Please edit documentation in R/number.R
 \name{FormatAsPercent}
 \alias{FormatAsPercent}
-\title{Converts a proportion to a percent and
-formats it nicely and with a percentage sign.}
+\title{Converts a proportion to a percent}
 \usage{
-FormatAsPercent(x, digits = 2, format = "fg", suffix = "\%", ...)
+FormatAsPercent(x, digits = 2)
 }
 \arguments{
 \item{x}{The number(s)}
 
-\item{digits}{Number of significant digits}
-
-\item{format}{See \code{\link{formatC}}.}
-
-\item{suffix}{The text to appear after a percent. Defaults to \%.}
-
-\item{...}{Additional arguments that are passed to \code{\link{formatC}}.}
+\item{digits}{Number of significant digits.}
 }
 \description{
-Converts a proportion to a percent and
-formats it nicely and with a percentage sign.
+Converts a proportion to a percent
+}
+\details{
+Multiplies by 100, keeping \code{digits} or more significant digits and
+putting a % at the end, and commas if in thousands or more.
+Based on \code{\link{formatC}}.
 }
 
