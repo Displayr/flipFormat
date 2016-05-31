@@ -21,7 +21,8 @@ FormatAsPercent <- function(x, digits = 2)
 #' @export
 FormatAsReal <- function(x, digits = 2)
 {
-    formatC(x, digits = digits, format = "fg", big.mark=',')
+    result <- formatC(x, digits = digits, format = "fg", big.mark=',')
+    sub("^\\s+", "", result) #trimming whitespace
 }
 #' \code{FormatAsPValue}
 #' Formats p relatively nicely, ensuring that values greater than 0.05
