@@ -7,18 +7,20 @@ wgt <- bank$ID
 attr(wgt, "label") <- "ID"
     bank$dep <- (unclass(bank$Overall) - 1) / 6
 attr(bank$dep, "label") <- "Overall satisfaction"
-attr(bank$Fees, "label") <- "Fees paid"
 attr(bank$Online, "label") <- "Online banking"
+bank$Fees <- factor(bank$Fees)
+levels(bank$Fees)[7] <- levels(bank$Fees)[6]
+attr(bank$Fees, "label") <- "Fees paid"
 
-lapply(bank, function(x) attr(x, "label"))
 
-
-test_that("Counts are required for count models",{
+test_that("Labels using attr(, )",{
  #   expect_that(
-    z <- GetLabels(names(bank), bank)
-    expect_equal(z[3], "Fees paid")
-    #Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL)
-
+   #  library(flipRegression)
+   #  suppressWarnings(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL, detail = FALSE))
+   #  suppressWarnings(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL))
+   # #z
+    #z <- GetLabels(rownames(z$summary$coefficients), bank)
+    #expect_equal(z[3], "Fees paid: 2")
 #    expect_that(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL, type= "NBD"), throws_error())
 #    expect_that(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL, type= "Quasi-Poisson"), throws_error())
 })
