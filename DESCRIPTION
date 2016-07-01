@@ -8,6 +8,7 @@ Description: Formatting to be used in print statements and other outputs. E.g.,
     number formatting, formatting of tables.
 License: GPL-3
 LazyData: TRUE
-Suggests: testthat
+Suggests: testthat,
+    flipExampleData
 Imports: DT, htmltools
 RoxygenNote: 5.0.1

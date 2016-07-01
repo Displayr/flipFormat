@@ -4,6 +4,7 @@
 #' default assumptions (e.g., via offsets and link functions).
 #'
 #' @param object The model.
+#' @importFrom  stats coef formula
 #' @export
 Equation <- function(object)
 {
