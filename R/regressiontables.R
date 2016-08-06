@@ -43,11 +43,13 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
 
     # Add tiles to t- and z- statistics.
     .colorScale <- function(x)
-    {
-        temp.x <- abs(x)
-        #color.ranges <- gradient(c(0, min(temp.x), max(abs(x))),"white", "orange")
-        temp.x[temp.x < 1.965] <- 0
-        csscolor(gradient(temp.x, "white", "orange"))
+    { # Creates a color range where 0 is white
+        abs.x <- abs(x)
+        abs.x[abs.x < 1.959964] <- 0
+        min.x <- min(abs.x)
+        lower <- if (min.x == 0) "white" else
+             gradient(c(0, min.x, abs.x),"white", "orange")[2]
+        csscolor(gradient(abs.x, lower, "orange"))
     }
     tFormatter <- formatter(
         "span",
