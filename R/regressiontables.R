@@ -1,4 +1,4 @@
-devtools::install_github("renkun-ken/formattable@v0.2")
+#devtools::install_github("renkun-ken/formattable@v0.2")
 #install.packages("digest")
 #install.packages("rmarkdown")
 #install.packages("htmltools")
@@ -16,10 +16,12 @@ devtools::install_github("renkun-ken/formattable@v0.2")
 #' @param coefficient.table A table of regression coefficients, standard errors, z or t statistics, and p-values.
 #' @param t \code{TRUE} if t-statistics, and \code{FALSE} if z-statistics.
 #' @param footer Text to place in the footer of the table.
+#' @param title The title for the table.
+#' @param subtitle Subtitle for the table.
+#' @references This is based on code written by Kenton Russell.
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
-#' @import formattable
-#' @import htmltools
-#' @importFrom htmltools tags
+#' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable
+#' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @export
 PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subtitle = "")
 {

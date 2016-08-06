@@ -10,5 +10,8 @@ License: GPL-3
 LazyData: TRUE
 Suggests: testthat,
     flipExampleData
-Imports: DT, htmltools
+Imports: DT,
+         formattable,
+         htmltools,
+         rmarkdown
 RoxygenNote: 5.0.1

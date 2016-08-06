@@ -13,8 +13,15 @@ PrettyRegressionTable(coefficient.table, t, footer, title = "",
 \item{t}{\code{TRUE} if t-statistics, and \code{FALSE} if z-statistics.}
 
 \item{footer}{Text to place in the footer of the table.}
+
+\item{title}{The title for the table.}
+
+\item{subtitle}{Subtitle for the table.}
 }
 \description{
 Creates a pretty formattable table.
+}
+\references{
+This is based on code written by Kenton Russell.
 }
 
