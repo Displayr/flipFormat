@@ -45,9 +45,9 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
     .colorScale <- function(x)
     {
         temp.x <- abs(x)
-        color.ranges <- gradient(c(0, min(temp.x), max(abs(x))),"white", "orange")
+        #color.ranges <- gradient(c(0, min(temp.x), max(abs(x))),"white", "orange")
         temp.x[temp.x < 1.965] <- 0
-        csscolor(gradient(temp.x, color.ranges[2], "orange"))
+        csscolor(gradient(temp.x, "white", "orange"))
     }
     tFormatter <- formatter(
         "span",

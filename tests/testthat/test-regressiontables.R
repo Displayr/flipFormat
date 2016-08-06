@@ -11,10 +11,15 @@ test_that("PrettyRegressionTable",{
     and the importance and significance does not
     go away."
 
+    data(weight, package = "flipExampleData")
+    z = summary(lm(Weight ~ Height + Age, data = weight))$coef
+    expect_error(PrettyRegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog"), NA)
+    PrettyRegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog")
 
 
     coef.matrix <- summary(lm(Sepal.Length ~ Species * Sepal.Width, iris))$coef
     rownames(coef.matrix)[1] <- "Big dog"
+    PrettyRegressionTable(coef.matrix, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog")
 
     expect_error(PrettyRegressionTable(coef.matrix, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog"), NA)
 })
