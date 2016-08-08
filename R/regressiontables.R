@@ -1,15 +1,3 @@
-#devtools::install_github("renkun-ken/formattable@v0.2")
-#install.packages("digest")
-#install.packages("rmarkdown")
-#install.packages("htmltools")
-#devtools::install_github("renkun-ken/formattable@v0.2")
-
-#library(formattable)
-#library(htmltools)
-#library(rmarkdown)
-
-
-
 #' PrettyRegressionTable
 #'
 #' Creates a pretty formattable table.
@@ -25,6 +13,7 @@
 #' @export
 PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subtitle = "")
 {
+    robust.se <- colnames(coefficient.table)[2] == "Robust SE"
     # Set the number of decimails
     fixedDigits <- function(x, n = 2) {
         formatC(x, digits = n, format = "f")
@@ -87,13 +76,13 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
         coef.df,
         col.names = c(
             "Estimate",
-            "Standard<br/>Error",
+            (if(robust.se) "Robust<br/>SE" else "Standard<br/>Error"),
             paste0("<span style='font-style:italic;'>", test.statistic, "</span>"),
             "<span style='font-style:italic;'>p</span>"
         ),
         table.attr = paste0(
             'class = "table table-condensed"',
-            'style = "margin:0px 0px 0px 0px; border-bottom: 2px solid; border-top: 2px solid;"',
+            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid;"',
             sep = " "
         ),
         align = rep("r",5),
@@ -105,18 +94,34 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
                 footer
             )
         ),
-        formatters = list(
-            Estimate = estimateFormatter,
-            "Std. Error" = x~digits(x,2),
-            t = tFormatter,
-            p = pFormatter
-        )
+        # formatters = list(
+        #     Estimate = estimateFormatter,
+        #     "Std. Error" = x~digits(x,2),
+        #     t = tFormatter,
+        #     p = pFormatter
+        # )
+        formatters = if(robust.se)
+                list(
+                    Estimate = estimateFormatter,
+                    "Robust SE" = x~digits(x,2),
+                    t = tFormatter,
+                    p = pFormatter
+                )
+            else
+                list(
+                    Estimate = estimateFormatter,
+                    "Std. Error" = x~digits(x,2),
+                    t = tFormatter,
+                    p = pFormatter
+                )
+
     )
 
 
     browsable(
         attachDependencies(
-            tagList(HTML(tbl)),
+            tagList(
+                HTML(tbl)),
             list(
                 html_dependency_jquery(),
                 html_dependency_bootstrap("default")
