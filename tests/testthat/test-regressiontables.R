@@ -16,9 +16,16 @@ test_that("PrettyRegressionTable",{
     expect_error(PrettyRegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog"), NA)
     PrettyRegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog")
 
-    # data(bank, package = "flipExampleData")
-    # library(flipRegression)
-    # z = suppressWarnings(Regression(Overall ~  Fees + Interest + Phone + Branch + Online  +ATM, data = bank, detail = FALSE))
+    ## Linear regression
+    data(bank, package = "flipExampleData")
+    library(flipRegression)
+    suppressWarnings(Regression(Overall ~  Fees + Interest + Phone + Branch + Online  +ATM, data = bank, detail = FALSE))
+
+    # Linear regression with robust se
+    suppressWarnings(Regression(Overall ~  Fees + Interest + Phone + Branch + Online  +ATM, data = bank, robust.se = TRUE, detail = FALSE))
+
+    # Ordered logit (has a z statistic rather than a t)
+    suppressWarnings(Regression(Overall ~  Fees + Interest + Phone + Branch + Online  +ATM, data = bank, type = "Ordered Logit", detail = FALSE))
 
     coef.matrix <- summary(lm(Sepal.Length ~ Species * Sepal.Width, iris))$coef
     rownames(coef.matrix)[1] <- "Big dog"
