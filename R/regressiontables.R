@@ -35,6 +35,7 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
     { # Creates a color range where 0 is white
         abs.x <- abs(x)
         abs.x[abs.x < 1.959964] <- 0
+        abs.x[is.na(x)] <- 0
         min.x <- min(abs.x)
         lower <- if (min.x == 0) "white" else
              gradient(c(0, min.x, abs.x),"white", "orange")[2]
