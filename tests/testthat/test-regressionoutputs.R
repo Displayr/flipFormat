@@ -12,6 +12,9 @@ bank$Fees <- factor(bank$Fees)
 levels(bank$Fees)[7] <- levels(bank$Fees)[6]
 attr(bank$Fees, "label") <- "Fees paid"
 
+#data(colas, package = "flipExampleData")
+#colas$n <- unclass(colas$Q3)
+#Regression(colas$Q2~colas$n, type = "Binary Logit")
 
 test_that("Labels using attr(, )",{
  #   expect_that(
@@ -24,3 +27,12 @@ test_that("Labels using attr(, )",{
 #    expect_that(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL, type= "NBD"), throws_error())
 #    expect_that(Regression(dep ~ Fees + Interest + Phone + Branch + Online + ATM, data = bank, weights = NULL, type= "Quasi-Poisson"), throws_error())
 })
+
+
+#
+# # Small binary logit
+# library(flipRegression)
+# data(colas, package = "flipExampleData")
+# attr(colas$Q2, "label") <- "Gender"
+# attr(colas$Q3, "label") <- "Age of person"
+# Regression(Q3 ~ Q2, data = colas, type = "Binary Logit", detail = FALSE, show.labels = TRUE)

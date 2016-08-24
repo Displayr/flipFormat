@@ -10,7 +10,7 @@ GetLabels <- function(names, data)
     list.of.labels <- lapply(data, function(x) attr(x, "label"))
     labels <- unlist(list.of.labels)
     k <- ncol(data)
-    levels <- sapply(data, levels)
+    levels <- lapply(data, levels)
     nlevels <- sapply(data, nlevels)
     factors <- sapply(data, is.factor)
     variable.names <- names(data)
@@ -27,8 +27,9 @@ GetLabels <- function(names, data)
             label <- list.of.labels[[i]]
             if (factors[i] & !is.null(label))
             {
-                old.labels <- paste0(variable.names[i], levels[[i]][-1])
-                new.labels <- paste0(label, ": ", levels[[i]][-1])
+                levs <- levels[[i]][-1]
+                old.labels <- paste0(variable.names[i], levs)
+                new.labels <- paste0(label, ": ", levs)
                 names[match(old.labels, names)] <- new.labels
             }
 
