@@ -1,4 +1,4 @@
-#' GetLabels
+#' \code{GetLabels}
 #'
 #' Replaces a list of given names, with any underlying labels, if they exist in the data.
 #' @param names The names of the variables \code{data}.

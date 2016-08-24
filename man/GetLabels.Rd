@@ -2,7 +2,7 @@
 % Please edit documentation in R/labels.R
 \name{GetLabels}
 \alias{GetLabels}
-\title{GetLabels}
+\title{\code{GetLabels}}
 \usage{
 GetLabels(names, data)
 }
