@@ -1,4 +1,27 @@
 context("Pretty regression tables")
+data(bank, package = "flipExampleData")
+zformula <- formula("Overall ~ Fees + Interest + Phone + Branch + Online + ATM")
+sb <- bank$ID > 100
+attr(sb, "label") <- "ID greater than 100"
+wgt <- bank$ID
+attr(wgt, "label") <- "ID"
+bank$dep <- (unclass(bank$Overall) - 1) / 6
+attr(bank$dep, "label") <- "Overall satisfaction"
+attr(bank$Fees, "label") <- "Fees paid"
+attr(bank$Online, "label") <- "Online banking"
+bank$fBranch <- factor(bank$Branch)
+attr(bank$fBranch, "label") <- "Branch as a factor"
+attr(bank$Overall, "label") <- "Overall satisfaction"
+test_that("Labels are extracted from variables containinging $",
+          {
+              library(flipRegression)
+              attach(bank)
+              z = data.frame(q = Fees)
+              zz <- rownames(Regression(Overall ~ z$q + Phone, detail = FALSE, show.labels = TRUE)$summary$coef)[2]
+              expect_equal(zz, "Fees paid")
+              detach(bank)
+          })
+
 
 test_that("PrettyRegressionTable",{
 

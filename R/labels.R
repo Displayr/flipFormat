@@ -17,7 +17,7 @@ GetLabels <- function(names, data)
     if (length(labels) > 0)
     {
         # Fixing numeric labels.
-        matches <- match(names(labels), names)
+        matches <- match(names(labels), removeBackTicks(names))
         valid.matches <- !is.na(matches)
         if (sum(valid.matches) > 0)
             names[matches[valid.matches]] <- labels[valid.matches]
@@ -38,3 +38,10 @@ GetLabels <- function(names, data)
     names
 }
 
+# Removes any backticks surrouding a variable, if they are there.
+removeBackTicks <- function(x)
+{
+    have.backticks <- as.integer(substr(x, 1, 1) == "`")
+    lengths <- nchar(x)
+    substr(x, 1 + have.backticks, nchar(x) - have.backticks)
+}

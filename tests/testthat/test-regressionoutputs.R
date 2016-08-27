@@ -1,20 +1,4 @@
 context("Outputs")
-data(bank, package = "flipExampleData")
-zformula <- formula("Overall ~ Fees + Interest + Phone + Branch + Online + ATM")
-sb <- bank$ID > 100
-attr(sb, "label") <- "ID greater than 100"
-wgt <- bank$ID
-attr(wgt, "label") <- "ID"
-    bank$dep <- (unclass(bank$Overall) - 1) / 6
-attr(bank$dep, "label") <- "Overall satisfaction"
-attr(bank$Online, "label") <- "Online banking"
-bank$Fees <- factor(bank$Fees)
-levels(bank$Fees)[7] <- levels(bank$Fees)[6]
-attr(bank$Fees, "label") <- "Fees paid"
-
-#data(colas, package = "flipExampleData")
-#colas$n <- unclass(colas$Q3)
-#Regression(colas$Q2~colas$n, type = "Binary Logit")
 
 test_that("Labels using attr(, )",{
  #   expect_that(

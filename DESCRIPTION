@@ -9,7 +9,8 @@ Description: Formatting to be used in print statements and other outputs. E.g.,
 License: GPL-3
 LazyData: TRUE
 Suggests: testthat,
-    flipExampleData
+    flipExampleData,
+    flipRegression
 Imports: DT,
          formattable,
          htmltools,
