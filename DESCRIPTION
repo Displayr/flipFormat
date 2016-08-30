@@ -8,11 +8,10 @@ Description: Formatting to be used in print statements and other outputs. E.g.,
     number formatting, formatting of tables.
 License: GPL-3
 LazyData: TRUE
+Imports:
+    DT,
+    htmltools
 Suggests: testthat,
     flipExampleData,
     flipRegression
-Imports: DT,
-         formattable,
-         htmltools,
-         rmarkdown
 RoxygenNote: 5.0.1
