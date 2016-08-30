@@ -64,13 +64,13 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
     colnames(coef.df)[3:4] <- c("t","p")
     test.statistic <- if (t) "t" else "z"
     subtitle.format <- if (subtitle == "") NULL
-    else tags$h4(
-        class=".h4",
-        style="color:green; text-align:left;line-height:0.75;",
+    else tags$h5(
+        class=".h5",
+        style="color:green; text-align:left;",
         subtitle)
-    title.format <- if (title == "") NULL else tags$h2(
-        class=".h2",
-        style="color:blue; text-align:center;line-height:0.75;",
+    title.format <- if (title == "") NULL else tags$h3(
+        class=".h3",
+        style="color:blue; text-align:center;",
         title)
 
     tbl <- format_table(
@@ -83,7 +83,7 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
         ),
         table.attr = paste0(
             'class = "table table-condensed"',
-            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid;"',
+            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid;font-size:90%"',
             sep = " "
         ),
         align = rep("r",5),
