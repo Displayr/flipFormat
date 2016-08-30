@@ -91,7 +91,7 @@ PrettyRegressionTable <- function(coefficient.table, t, footer, title = "", subt
             title.format,
             subtitle.format,
             tags$caption(
-                style="caption-side:bottom;font-style:italic;font-size:80%;",
+                style="caption-side:bottom;font-style:italic;font-size:90%;",
                 footer
             )
         ),
