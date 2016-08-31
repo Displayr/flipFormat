@@ -14,6 +14,7 @@
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
 #' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
+#' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "")
 {
     # Putting all the tables into a single data.frame, as required by formattable.
