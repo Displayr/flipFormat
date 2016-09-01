@@ -97,7 +97,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         names(p.values) <- paste0(LETTERS[1:k],"1")
         formatters <- c(formatters, as.list(p.values))
         subtitle.format <- if (subtitle == "") NULL else tags$h4(class=".h4",
-            style="color:green; text-align:left;line-height:0.75;", subtitle)
+            style="color:green; text-align:left;", subtitle)
         title.format <- if (title == "") NULL else tags$h2(class=".h3",style="color:blue; text-align:center;",title)
         tbl <- format_table(means,
                         col.names = column.names,
