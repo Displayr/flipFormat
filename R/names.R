@@ -5,12 +5,11 @@
 #' @return A \code{character}.
 #' @details Strips out everything up to and including the last \$. E.g., replaces
 #' \code{"foo$fog$x"} with \code{"x"}
+#' @examples
+#' RemoveParentName("foo$fog$x")
 #' @export
 RemoveParentName <- function(x)
 {
-    position <- max(gregexpr("\\$", x)[[1]])
-    if (position == -1)
-        return(x)
-    substring(x, position + 1)
+    ReplacingEverythingBefore(x, "\\$")
 }
 
