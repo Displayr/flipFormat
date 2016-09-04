@@ -12,27 +12,38 @@
 
 #' \code{Label}
 #'
-#' Extracts the "label" attribute from an object.
+#' Extracts the "label" attribute from an object. Returns the name if the label does not exist.
 #' @param x The object.
 #' @export
 Label <- function(x)
 {
-    attr(x, "label")
+    result <- attr(x, "label")
+    if(is.null(result))
+        result <- deparse(substitute(x))
+    return(result)
 }
 
 
 #' \code{Labels}
 #'
-#' Replaces a list of given names or coefficient, with any underlying labels, if they exist in the data.
-#' Works for dummy variables as well as normal variables. Trims backticks and whitespace.
-#' @param names The names of the variables or coefficients (e.g., Q2Cola for a factor).
+#' Replaces a list of given names or coefficient, with any underlying labels.
 #' @param data A \code{\link{data.frame}}.
-#' @return A \code{vector} of names.
+#' @param names An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
+#' @return A \code{vector} of labels
+#' @details Returns the names if the labels to not exist.
+#' Where \code{names} is provided, Works for dummy variables as well as normal variables.
+#' Trims backticks and whitespace. Returns names where labels cannot be found.
 #' @export
-Labels <- function(names, data)
+Labels <- function(data, names = NULL)
 {
+    if (is.null(names))
+    {
+        result <- sapply(data, Label)
+        names(result) <- names(data)
+        return(result)
+    }
     #####  Creating a list of all the possible variable and coefficient names that can have labels.
-    # The names of the variables.
+    # The labels
     labels.list <- lapply(data, function(x) attr(x, "label"))
     # Removig the names of elements in the list, because  unlist changes
     # "name" to "name.name" and "`name`" to "'name'.name".

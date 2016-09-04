@@ -49,7 +49,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         #lower <- gradient(c(0, min.x, max.x),"white", "orange")[2]
         csscolor(gradient(x, "white", "orange"))
     }
-    rsquaredFormatter <- formatter(
+    rsquaredFormatter <-formatter(
         "span",
         style = x ~ style(
             display = "block",

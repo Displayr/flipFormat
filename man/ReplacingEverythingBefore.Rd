@@ -5,8 +5,17 @@
 \title{\code{RemoveParentName}}
 \usage{
 ReplacingEverythingBefore(x, marker, include.marker = TRUE)
+
+ReplacingEverythingBefore(x, marker, include.marker = TRUE)
 }
 \arguments{
+\item{x}{A \code{\link{character}} containing text to be modified.}
+
+\item{marker}{A \code{character} containing the things to be searched for. You need to use
+backslashes if not matching for letters (e.g., a \code{"\\$"}. Where there are mutliple instances, the last is found.}
+
+\item{include.marker}{Whether or not the \code{marker} itself is to be replaced.}
+
 \item{x}{A \code{\link{character}} containing text to be modified.}
 
 \item{marker}{A \code{character} containing the things to be searched for. You need to use
@@ -16,11 +25,19 @@ backslashes if not matching for letters (e.g., a \code{"\\$"}. Where there are m
 }
 \value{
 A \code{character}.
+
+A \code{character}.
 }
 \description{
 Strips out everything up to and perhaps including a specific character.
+
+Strips out everything up to and perhaps including a specific character.
 }
 \examples{
+ReplacingEverythingBefore("foo$fog$x", "\\\\$")
+ReplacingEverythingBefore("foo$fog$x", "\\\\$", FALSE)
+ReplacingEverythingBefore("GiraffeDogCat", "Dog", FALSE)
+ReplacingEverythingBefore("GiraffeDogCat", "Dog", TRUE)
 ReplacingEverythingBefore("foo$fog$x", "\\\\$")
 ReplacingEverythingBefore("foo$fog$x", "\\\\$", FALSE)
 ReplacingEverythingBefore("GiraffeDogCat", "Dog", FALSE)
