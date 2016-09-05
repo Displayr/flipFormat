@@ -4,18 +4,22 @@
 \alias{Labels}
 \title{\code{Labels}}
 \usage{
-Labels(names, data)
+Labels(x, names = NULL)
 }
 \arguments{
-\item{names}{The names of the variables or coefficients (e.g., Q2Cola for a factor).}
+\item{x}{A \code{\link{data.frame}}.}
 
-\item{data}{A \code{\link{data.frame}}.}
+\item{names}{An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).}
 }
 \value{
-A \code{vector} of names.
+A \code{vector} of labels
 }
 \description{
-Replaces a list of given names or coefficient, with any underlying labels, if they exist in the data.
-Works for dummy variables as well as normal variables. Trims backticks and whitespace.
+Replaces a list of given names or coefficient, with any underlying labels.
+}
+\details{
+Returns the names if the labels to not exist.
+Where \code{names} is provided, Works for dummy variables as well as normal variables.
+Trims backticks and whitespace. Returns names where labels cannot be found.
 }
 

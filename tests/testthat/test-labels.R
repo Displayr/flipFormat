@@ -1,11 +1,11 @@
 context("labels")
 
 
-test_that("Label",
+test_that("Single case",
           {
               x <- 1
-              Label(x) <- "dog"
-              expect_equal(Label(x), "dog")
+              Labels(x) <- "dog"
+              expect_equal(Labels(x), "dog")
           })
 
 test_that("Labels",
