@@ -16,11 +16,11 @@
 
 #' \code{Labels}
 #'
-#' Replaces a list of given names or coefficient, with any underlying labels.
+#' Replaces a list of given names or coefficient, with any underlying labels. If
 #' @param x A \code{\link{data.frame}}.
 #' @param names An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
 #' @return A \code{vector} of labels
-#' @details Returns the names if the labels to not exist.
+#' @details First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
 #' Where \code{names} is provided, Works for dummy variables as well as normal variables.
 #' Trims backticks and whitespace. Returns names where labels cannot be found.
 #' @export
@@ -30,6 +30,10 @@ Labels <- function(x, names = NULL)
     if(!is.list(x))
     {
         result <- attr(x, "label")
+        if(is.null(result))
+            result <- attr(x, "name")
+        if(is.null(result))
+            result <- attr(x, "question")
         if(is.null(result))
             result <- deparse(substitute(x))
         return(result)

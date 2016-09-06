@@ -8,6 +8,18 @@ test_that("Single case",
               expect_equal(Labels(x), "dog")
           })
 
+test_that("Fall backs",
+          {
+              x <- 1:100
+              expect_equal(Labels(x), "x")
+              attr(x, "question") <- "A"
+              expect_equal(Labels(x), "A")
+              attr(x, "name") <- "B"
+              expect_equal(Labels(x), "B")
+              attr(x, "label") <- "C"
+              expect_equal(Labels(x), "C")
+          })
+
 test_that("Labels",
           {
               data("phone", package = "flipExampleData")
