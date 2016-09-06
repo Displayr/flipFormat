@@ -15,10 +15,10 @@ Labels(x, names = NULL)
 A \code{vector} of labels
 }
 \description{
-Replaces a list of given names or coefficient, with any underlying labels.
+Replaces a list of given names or coefficient, with any underlying labels. If
 }
 \details{
-Returns the names if the labels to not exist.
+First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
 Where \code{names} is provided, Works for dummy variables as well as normal variables.
 Trims backticks and whitespace. Returns names where labels cannot be found.
 }

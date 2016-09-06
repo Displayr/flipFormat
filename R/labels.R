@@ -43,7 +43,8 @@ Labels <- function(x, names = NULL)
     {
         result <- sapply(x, Labels)
         names(result) <- names(x)
-        result[result == "X[[i]]"] <- names(x)[result == "X[[i]]"]
+        no.label <- result == "X[[i]]" | is.na(result)
+        result[no.label] <- names(x)[no.label]
         return(result)
     }
     #####  Creating a list of all the possible variable and coefficient names that can have labels.
