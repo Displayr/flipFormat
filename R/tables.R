@@ -49,7 +49,7 @@ DataTableWithRItemFormat <- function(dd,
     #show.row.names = TRUE
     # Specify the header style information that will be used by datatables to draw the output.
     # For some reason this is handled separately to the style of the cell contents
-    header.style <- "th { font-family: 'Segoe UI'; font-weight: bold; color: white; background-color: #5B9BD5; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white;}"
+    header.style <- "th { font-family: 'Open Sans'; font-weight: bold; color: white; background-color: #5B9BD5; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white;}"
 
     caption.style <- "caption-side: bottom; text-align: center; font-family: 'Open Sans', sans-serif; font-size:10pt; font-weight:normal; color:#505050"
 
@@ -133,7 +133,7 @@ DataTableWithRItemFormat <- function(dd,
     mydt <- formatStyle(mydt,
                             columns = 1:num.col,
                             valueColumns = column.to.color.by,
-                            fontFamily = "Segoe UI",
+                            fontFamily = "Open Sans",
                             fontSize = "13px",
                             paddingRight = "1em",
                             borderRightWidth = "1px",
@@ -170,7 +170,7 @@ DataTableWithRItemFormat <- function(dd,
                             color = "rgb(255, 255, 255)",
                             cursor = "default",
                             emptyCells = "show",
-                            fontFamily = "Segoe UI",
+                            fontFamily = "Open Sans",
                             fontSize = "13px",
                             fontWeight = "bold",
                             lineHeight = "normal",
