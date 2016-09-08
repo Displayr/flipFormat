@@ -4,12 +4,12 @@
 \alias{Labels}
 \title{\code{Labels}}
 \usage{
-Labels(x, names = NULL)
+Labels(x, names.to.lookup = NULL)
 }
 \arguments{
 \item{x}{A \code{\link{data.frame}}.}
 
-\item{names}{An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).}
+\item{names.to.lookup}{An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).}
 }
 \value{
 A \code{vector} of labels
@@ -19,7 +19,7 @@ Replaces a list of given names or coefficient, with any underlying labels. If
 }
 \details{
 First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
-Where \code{names} is provided, Works for dummy variables as well as normal variables.
+Where \code{names.to.lookup} is provided, Works for dummy variables as well as normal variables.
 Trims backticks and whitespace. Returns names where labels cannot be found.
 }
 

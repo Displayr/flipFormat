@@ -61,3 +61,15 @@ test_that("Labels",
     Labels(z) <- c("A", "B")
     expect_equal(as.character(Labels(z)), c("A","B", "c"))
 })
+
+
+test_that("Numeric dependent ~ numeric, factor, numeric factor",
+          {
+              data(colas, package= "flipExampleData")
+              library(flipRegression)
+              colas$num <- colas$q1a
+              colas$q1b <- as.numeric(unclass(colas$q1a))
+              colas$q1c <- as.numeric(unclass(colas$q1c))
+              z <-suppressWarnings(Regression(num ~ q1b + q3 + q1c + d3, data = colas, detail = FALSE, show.labels = TRUE))
+              expect_equal( rownames(z$summary$coefficients)[11], "Gender: Female")
+          })

@@ -18,13 +18,13 @@
 #'
 #' Replaces a list of given names or coefficient, with any underlying labels. If
 #' @param x A \code{\link{data.frame}}.
-#' @param names An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
+#' @param names.to.lookup An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
 #' @return A \code{vector} of labels
 #' @details First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
-#' Where \code{names} is provided, Works for dummy variables as well as normal variables.
+#' Where \code{names.to.lookup} is provided, Works for dummy variables as well as normal variables.
 #' Trims backticks and whitespace. Returns names where labels cannot be found.
 #' @export
-Labels <- function(x, names = NULL)
+Labels <- function(x, names.to.lookup = NULL)
 {
     # Single variable case.
     if(!is.list(x))
@@ -39,7 +39,7 @@ Labels <- function(x, names = NULL)
         return(result)
     }
     # Data frame case.
-    if (is.null(names))
+    if (is.null(names.to.lookup))
     {
         result <- sapply(x, Labels)
         names(result) <- names(x)
@@ -78,7 +78,7 @@ Labels <- function(x, names = NULL)
     {
         nm <- possible.factor.names[i]
         label <- possible.factor.labels[i]
-        levs <- possible.factor.levels[[i]]
+        levs <- possible.factor.levels[[nm]]
         # Backticks sometimes appearing around variable names.
         name.factors <- c(name.factors, c(paste0(nm, levs), paste0("`", nm, "`",  levs)))
         label.factors <- c(label.factors, rep(paste0(label, ": ", levs), 2))
@@ -87,11 +87,11 @@ Labels <- function(x, names = NULL)
     possible.labels <- c(possible.labels, possible.labels, label.factors)
     possible.names <- c(possible.names, paste0("`", possible.names, "`"), name.factors)
     # Substituting.
-    matches <- match(names, possible.names)
-    names[!is.na(matches)] <- possible.labels[matches[!is.na(matches)]]
-    names <- removeBackTicks(names)
-    names <- TrimWhitespace(names)
-    names
+    matches <- match(names.to.lookup, possible.names)
+    names.to.lookup[!is.na(matches)] <- possible.labels[matches[!is.na(matches)]]
+    names.to.lookup <- removeBackTicks(names.to.lookup)
+    names.to.lookup <- TrimWhitespace(names.to.lookup)
+    names.to.lookup
 }
 
 # Removes any backticks surrouding a variable, if they are there.
@@ -100,20 +100,4 @@ removeBackTicks <- function(x)
     have.backticks <- as.integer(substr(x, 1, 1) == "`")
     lengths <- nchar(x)
     substr(x, 1 + have.backticks, nchar(x) - have.backticks)
-}
-
-#' \code{VariableLabels}
-#' Replaces a list of given names, with any underlying labels, if they exist in the data.
-#' @param data A \code{\link{data.frame}}.
-#' @return A \code{vector} of labels or names.
-#' @export
-VariableLabels <- function(data)
-{
- xxx
-
-       list.of.labels <- sapply(data, function(x) attr(x, "label"))
-    variable.names <- names(data)
-    missing <- is.null(list.of.labels)
-    list.of.labels[missing] <- variable.names[missing]
-    list.of.labels
 }
