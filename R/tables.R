@@ -49,9 +49,9 @@ DataTableWithRItemFormat <- function(dd,
     #show.row.names = TRUE
     # Specify the header style information that will be used by datatables to draw the output.
     # For some reason this is handled separately to the style of the cell contents
-    header.style <- "th { font-family: 'Open Sans'; font-weight: bold; color: white; background-color: #5B9BD5; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white;}"
+    header.style <- "th { font-family: 'Arial'; font-weight: bold; color: white; background-color: #5B9BD5; border-right-width: 1px; border-right-style: solid; border-right-color: white; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: white;}"
 
-    caption.style <- "caption-side: bottom; text-align: center; font-family: 'Open Sans', sans-serif; font-size:10pt; font-weight:normal; color:#505050"
+    caption.style <- "caption-side: bottom; text-align: center; font-family: 'Arial', sans-serif; font-size:10pt; font-weight:normal; color:#505050"
 
     num.col <- ncol(dd)
     dd$oddoreven <- 1:nrow(dd) %% 2 # Extra dummy column to help us format the table. Will be made invisible later
@@ -133,7 +133,7 @@ DataTableWithRItemFormat <- function(dd,
     mydt <- formatStyle(mydt,
                             columns = 1:num.col,
                             valueColumns = column.to.color.by,
-                            fontFamily = "Open Sans",
+                            fontFamily = "Arial",
                             fontSize = "13px",
                             paddingRight = "1em",
                             borderRightWidth = "1px",
@@ -170,7 +170,7 @@ DataTableWithRItemFormat <- function(dd,
                             color = "rgb(255, 255, 255)",
                             cursor = "default",
                             emptyCells = "show",
-                            fontFamily = "Open Sans",
+                            fontFamily = "Arial",
                             fontSize = "13px",
                             fontWeight = "bold",
                             lineHeight = "normal",
