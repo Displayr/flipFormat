@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{TrimLeadingWhitepsace}
 \alias{TrimLeadingWhitepsace}
-\title{\code{TrimLeadingWhitepsace}}
+\title{\code{RemoveParentName}}
 \usage{
 TrimLeadingWhitepsace(x)
 }
@@ -13,6 +13,9 @@ TrimLeadingWhitepsace(x)
 A \code{character}.
 }
 \description{
+\code{TrimLeadingWhitepsace}
+}
+\details{
 Removes whitespace (e.g.,spaces, tab characters) from the beginning of a string.
 }
 
