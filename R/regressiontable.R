@@ -133,7 +133,7 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
     # start by setting up a dummy formattable
-    ftw <- as.htmlwidget(formattable(data.frame()))
+    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = htmlwidgets::sizingPolicy(browser.padding = 0))
     # and replace the html with our formatted html from above
     ftw$x$html <- HTML(tbl)
     ftw
