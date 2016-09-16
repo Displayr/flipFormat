@@ -14,6 +14,7 @@
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
 #' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
+#' @importFrom htmlwidgets sizingPolicy
 #' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "")
 {
@@ -96,9 +97,9 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         p.values <- rep(FALSE, k)
         names(p.values) <- paste0(LETTERS[1:k],"1")
         formatters <- c(formatters, as.list(p.values))
-        subtitle.format <- if (subtitle == "") NULL else tags$h4(class=".h4",
-            style="color:green; text-align:left;", subtitle)
-        title.format <- if (title == "") NULL else tags$h2(class=".h3",style="color:blue; text-align:center;",title)
+        subtitle.format <- if (subtitle == "") NULL else tags$h5(class=".h5",
+            style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:2px; margin-bottom:0"), subtitle)
+        title.format <- if (title == "") NULL else tags$h3(class=".h3",style=paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),title)
         tbl <- format_table(means,
                         col.names = column.names,
                         table.attr = paste('class = "table table-condensed"',
@@ -126,7 +127,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
     # start by setting up a dummy formattable
-    ftw <- as.htmlwidget(formattable(data.frame()))
+    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
     # and replace the html with our formatted html from above
     ftw$x$html <- HTML(tbl)
     ftw
