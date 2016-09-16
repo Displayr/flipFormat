@@ -103,7 +103,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         tbl <- format_table(means,
                         col.names = column.names,
                         table.attr = paste('class = "table table-condensed"',
-                                            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid;"'),
+                                            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"'),
                         align = rep("r",5),
                         caption = tagList(title.format,
                                           subtitle.format,
