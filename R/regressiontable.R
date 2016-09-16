@@ -9,6 +9,7 @@
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
 #' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
+#' @importFrom htmlwidgets sizingPolicy
 #' @export
 RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle = "")
 {
@@ -65,11 +66,11 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
     subtitle.format <- if (subtitle == "") NULL
     else tags$h5(
         class=".h5",
-        style="color:green; text-align:left;",
+        style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:2px; margin-bottom:0"),
         subtitle)
     title.format <- if (title == "") NULL else tags$h3(
         class=".h3",
-        style="color:blue; text-align:center;",
+        style=paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),
         title)
 
     tbl <- format_table(
@@ -133,9 +134,19 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
     # start by setting up a dummy formattable
-    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = htmlwidgets::sizingPolicy(browser.padding = 0))
+    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
     # and replace the html with our formatted html from above
     ftw$x$html <- HTML(tbl)
     ftw
 
+}
+
+titleColour <- function()
+{
+    "#3E7DCC"
+}
+
+subtitleColour <- function()
+{
+    "#A6A6A6"
 }

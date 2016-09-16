@@ -12,7 +12,8 @@ Imports:
     DT,
     htmltools,
     formattable,
-    rmarkdown
+    rmarkdown,
+    htmlwidgets
 Suggests:
     testthat,
     flipAnalysisOfVariance,
