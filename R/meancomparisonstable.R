@@ -98,8 +98,9 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         names(p.values) <- paste0(LETTERS[1:k],"1")
         formatters <- c(formatters, as.list(p.values))
         subtitle.format <- if (subtitle == "") NULL else tags$h5(class=".h5",
-            style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:2px; margin-bottom:0"), subtitle)
-        title.format <- if (title == "") NULL else tags$h3(class=".h3",style=paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),title)
+            style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"), subtitle)
+        title.format <- if (title == "") NULL else tags$h3(class=".h3",
+            style=paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),title)
         tbl <- format_table(means,
                         col.names = column.names,
                         table.attr = paste('class = "table table-condensed"',

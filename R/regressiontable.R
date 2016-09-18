@@ -78,7 +78,7 @@ RegressionTable <- function(coefficient.table,
     subtitle.format <- if (subtitle == "") NULL
     else tags$h5(
         class=".h5",
-        style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:2px; margin-bottom:0"),
+        style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
         subtitle)
     title.format <- if (title == "") NULL else tags$h3(
         class=".h3",
