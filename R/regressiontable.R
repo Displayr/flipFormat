@@ -1,18 +1,31 @@
 #'
 #' Creates a pretty formattable table.
 #' @param coefficient.table A table of regression coefficients, standard errors, z or t statistics, and p-values.
-#' @param t \code{TRUE} if t-statistics, and \code{FALSE} if z-statistics.
 #' @param footer Text to place in the footer of the table.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
+#' @param estimate.name The name of the Estimate column. Defaults to "Estimate".
+#' @param se.name The name of the standard error column. Defaults to "Standard<br/>Error".
+#' @param statistic.name The name of the test-statistic column. Defaults to "<span style='font-style:italic;'>t</span>"".
+#' @param p.name The name of the p-value column. Defalts to "Estimate".
 #' @references This is based on code written by Kenton Russell.
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
 #' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
 #' @export
-RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle = "")
+RegressionTable <- function(coefficient.table,
+                            footer,
+                            title = "",
+                            subtitle = "",
+                            estimate.name = "Estimate",
+                            se.name = "Standard<br/>Error",
+                            statistic.name = "<span style='font-style:italic;'>t</span>",
+                            p.name = "<span style='font-style:italic;'>p</span>")
 {
+    col.names <- c(estimate.name, se.name, statistic.name, p.name)
+    # Standardizing column names to simplify formattable calls
+    colnames(coefficient.table) <- c("Estimate", "SE", "p", "t")
     robust.se <- colnames(coefficient.table)[2] == "Robust SE"
     # Set the number of decimails
     fixedDigits <- function(x, n = 2) {
@@ -62,7 +75,6 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
 
     coef.df <- data.frame(coefficient.table, check.names=FALSE)
     colnames(coef.df)[3:4] <- c("t","p")
-    test.statistic <- if (t) "t" else "z"
     subtitle.format <- if (subtitle == "") NULL
     else tags$h5(
         class=".h5",
@@ -75,12 +87,7 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
 
     tbl <- format_table(
         coef.df,
-        col.names = c(
-            "Estimate",
-            (if(robust.se) "Robust<br/>SE" else "Standard<br/>Error"),
-            paste0("<span style='font-style:italic;'>", test.statistic, "</span>"),
-            "<span style='font-style:italic;'>p</span>"
-        ),
+        col.names = col.names,
         table.attr = paste0(
             'class = "table table-condensed"',
             'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"',
@@ -95,23 +102,9 @@ RegressionTable <- function(coefficient.table, t, footer, title = "", subtitle =
                 footer
             )
         ),
-        # formatters = list(
-        #     Estimate = estimateFormatter,
-        #     "Std. Error" = x~digits(x,2),
-        #     t = tFormatter,
-        #     p = pFormatter
-        # )
-        formatters = if(robust.se)
-                list(
+        formatters = list(
                     Estimate = estimateFormatter,
-                    "Robust SE" = x~digits(x,2),
-                    t = tFormatter,
-                    p = pFormatter
-                )
-            else
-                list(
-                    Estimate = estimateFormatter,
-                    "Std. Error" = x~digits(x,2),
+                    SE = x ~ digits(x, 2),
                     t = tFormatter,
                     p = pFormatter
                 )
