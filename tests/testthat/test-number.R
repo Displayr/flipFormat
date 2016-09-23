@@ -18,5 +18,6 @@ test_that("Numbers", {
     expect_equal(FormatAsReal(3.41546654), "3.4")
     expect_equal(FormatAsReal(3415.46654), "3,415")
     expect_equal(FormatAsReal(3415466.54), "3,415,467")
+    expect_equal(FormatAsReal(NA), "NA")
 })
 

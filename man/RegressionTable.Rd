@@ -4,18 +4,27 @@
 \alias{RegressionTable}
 \title{Creates a pretty formattable table.}
 \usage{
-RegressionTable(coefficient.table, t, footer, title = "", subtitle = "")
+RegressionTable(coefficient.table, footer, title = "", subtitle = "",
+  estimate.name = "Estimate", se.name = "Standard<br/>Error",
+  statistic.name = "<span style='font-style:italic;'>t</span>",
+  p.name = "<span style='font-style:italic;'>p</span>")
 }
 \arguments{
 \item{coefficient.table}{A table of regression coefficients, standard errors, z or t statistics, and p-values.}
-
-\item{t}{\code{TRUE} if t-statistics, and \code{FALSE} if z-statistics.}
 
 \item{footer}{Text to place in the footer of the table.}
 
 \item{title}{The title for the table.}
 
 \item{subtitle}{Subtitle for the table.}
+
+\item{estimate.name}{The name of the Estimate column. Defaults to "Estimate".}
+
+\item{se.name}{The name of the standard error column. Defaults to "Standard<br/>Error".}
+
+\item{statistic.name}{The name of the test-statistic column. Defaults to "<span style='font-style:italic;'>t</span>"".}
+
+\item{p.name}{The name of the p-value column. Defalts to "Estimate".}
 }
 \description{
 Creates a pretty formattable table.

@@ -9,6 +9,8 @@
 #' @export
 FormatAsPercent <- function(x, digits = 2)
 {
+    if(is.na(x))
+        return("NA")
     result <- paste0(formatC(100 * x, digits = digits, format = "fg",  big.mark=','), "%")
     sub("^\\s+", "", result) #trimming whitespace
 }
@@ -21,6 +23,8 @@ FormatAsPercent <- function(x, digits = 2)
 #' @export
 FormatAsReal <- function(x, digits = 2)
 {
+    if(is.na(x))
+        return("NA")
     result <- formatC(x, digits = digits, format = "fg", big.mark=',')
     sub("^\\s+", "", result) #trimming whitespace
 }
@@ -35,6 +39,8 @@ FormatAsReal <- function(x, digits = 2)
 #' @export
 FormatAsPValue <- function(p, p.cutoff = 0.05)
 {
+    if(is.na(p))
+        return("NA")
     n.digits <- 2
     if (p < 0)
         return("0")
