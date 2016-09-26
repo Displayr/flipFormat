@@ -15,7 +15,7 @@ test_that("RegressionTable",{
     data(weight, package = "flipExampleData")
     z = summary(lm(Weight ~ Height + Age, data = weight))$coef
     expect_error(RegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog"), NA)
-    RegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog")
+    RegressionTable(z, TRUE, footer = ft,  title = "My awesome regression", subtitle = "Big brown dog", p.cutoff = 0.8)
 
     ## Linear regression
     suppressWarnings(Regression(Overall ~  Fees + Interest + Phone + Branch + Online  +ATM, data = bank, detail = FALSE))

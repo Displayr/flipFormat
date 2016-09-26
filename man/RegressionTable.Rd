@@ -7,7 +7,7 @@
 RegressionTable(coefficient.table, footer, title = "", subtitle = "",
   estimate.name = "Estimate", se.name = "Standard<br/>Error",
   statistic.name = "<span style='font-style:italic;'>t</span>",
-  p.name = "<span style='font-style:italic;'>p</span>")
+  p.name = "<span style='font-style:italic;'>p</span>", p.cutoff = 0.05)
 }
 \arguments{
 \item{coefficient.table}{A table of regression coefficients, standard errors, z or t statistics, and p-values.}
@@ -25,6 +25,8 @@ RegressionTable(coefficient.table, footer, title = "", subtitle = "",
 \item{statistic.name}{The name of the test-statistic column. Defaults to "<span style='font-style:italic;'>t</span>"".}
 
 \item{p.name}{The name of the p-value column. Defalts to "Estimate".}
+
+\item{p.cutoff}{The alpha level used when formatting the p-value column.}
 }
 \description{
 Creates a pretty formattable table.

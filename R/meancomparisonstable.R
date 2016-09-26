@@ -10,13 +10,14 @@
 #' @param footer Text to place in the footer of the table.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
+#' @param p.cutoff The alpha level used when formatting the p-value column.
 #' @references This is based on code written by Kenton Russell.
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
 #' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
 #' @export
-MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "")
+MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "", p.cutoff = 0.05)
 {
     # Putting all the tables into a single data.frame, as required by formattable.
     ps[zs < 0] <- -ps[zs < 0]
@@ -31,7 +32,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     # FOrmat the p-values.
     pFormatter <- formatter(
         "span",
-        style = p ~ ifelse(p <= 0.05, style(font.weight = "bold"), NA),
+        style = p ~ ifelse(p <= p.cutoff, style(font.weight = "bold"), NA),
         p ~ {
             p.formatted <- fixedDigits(p, 3)
             p.formatted <- gsub(x = p.formatted, pattern="^(-?)0", replacement="\\1")

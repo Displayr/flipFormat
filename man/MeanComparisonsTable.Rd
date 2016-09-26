@@ -5,7 +5,7 @@
 \title{MeanComparisonsTable}
 \usage{
 MeanComparisonsTable(means, zs, ps, r.squared, overall.p, column.names, footer,
-  title = "", subtitle = "")
+  title = "", subtitle = "", p.cutoff = 0.05)
 }
 \arguments{
 \item{means}{The means to be shown on the table.}
@@ -25,6 +25,8 @@ MeanComparisonsTable(means, zs, ps, r.squared, overall.p, column.names, footer,
 \item{title}{The title for the table.}
 
 \item{subtitle}{Subtitle for the table.}
+
+\item{p.cutoff}{The alpha level used when formatting the p-value column.}
 }
 \description{
 Creates a pretty formattable table.
