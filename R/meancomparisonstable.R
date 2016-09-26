@@ -22,8 +22,6 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     ps[zs < 0] <- -ps[zs < 0]
     means <- as.data.frame(cbind(means, ps, rsquared = r.squared, pvalue = overall.p))
     column.names <- c(column.names, "R-Squared", "<i>p</i>")
-
-
     k <- length(column.names) #Number of being compared.
 
     # Set the number of decimails
@@ -121,9 +119,6 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
                 )
         )
     )
-
-
-
 
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.

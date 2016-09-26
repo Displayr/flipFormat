@@ -9,8 +9,11 @@
 #' @export
 FormatAsPercent <- function(x, digits = 2)
 {
-    if(is.na(x))
-        return("NA")
+    if(any(is.na(x))){
+        if (length(x) == 1)
+            return("NA")
+        return(sapply(x, FormatAsPercent))
+    }
     result <- paste0(formatC(100 * x, digits = digits, format = "fg",  big.mark=','), "%")
     sub("^\\s+", "", result) #trimming whitespace
 }
@@ -23,8 +26,11 @@ FormatAsPercent <- function(x, digits = 2)
 #' @export
 FormatAsReal <- function(x, digits = 2)
 {
-    if(is.na(x))
-        return("NA")
+    if(any(is.na(x))){
+        if (length(x) == 1)
+            return("NA")
+        return(sapply(x, FormatAsReal))
+    }
     result <- formatC(x, digits = digits, format = "fg", big.mark=',')
     sub("^\\s+", "", result) #trimming whitespace
 }
@@ -39,14 +45,17 @@ FormatAsReal <- function(x, digits = 2)
 #' @export
 FormatAsPValue <- function(p, p.cutoff = 0.05)
 {
-    if(is.na(p))
-        return("NA")
+    if(any(is.na(p))){
+        if (length(p) == 1)
+            return("NA")
+        return(sapply(p, FormatAsPValue, p.cutoff))
+    }
     n.digits <- 2
     if (p < 0)
         return("0")
     p.formatted <- formatC(p, digits = n.digits, format = "f")
     # Making sure values greater than 0.05 are not shown as 0.05 due to rounding.
-    while(as.numeric(p.formatted) == p.cutoff)
+    while(as.numeric(p.formatted) == p.cutoff & n.digits < 12)
     {
         n.digits <- n.digits + 1
         p.formatted <- formatC(p, digits = n.digits, format = "f")
