@@ -13,7 +13,7 @@
 #' @param p.cutoff The alpha level used when formatting the p-value column.
 #' @references This is based on code written by Kenton Russell.
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
-#' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile
+#' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile percent
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
 #' @export
