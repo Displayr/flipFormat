@@ -13,6 +13,19 @@ bank$fBranch <- factor(bank$Branch)
 attr(bank$fBranch, "label") <- "Branch as a factor"
 attr(bank$Overall, "label") <- "Overall satisfaction"
 
+OriginalName(ID[, 1])
+OriginalName(bank$fBranch)
+
+
+test_that("data frame",
+    {
+
+        npk2 <- within(npk, foo <- rnorm(24))
+        npk2.aov <- manova(cbind(yield, foo) ~ block, npk2)
+        dog <- npk2$yield
+        attr(dog, "question") <- "Soloman"
+        expect_equal(as.character(Labels(data.frame(dog, npk2$foo))), c("Soloman", "npk2.foo"))
+})
 
 test_that("Single case",
           {
@@ -21,16 +34,41 @@ test_that("Single case",
               expect_equal(Labels(x), "dog")
           })
 
+test_that("Various properties of a label",
+          {
+              x <- 1
+              attr(x, "name") <- "The Name"
+              attr(x, "label") <- "The Label"
+              attr(x, "question") <- "The Question"
+              expect_equal(Labels(x), "The Question: The Label")
+              x <- 1
+              attr(x, "name") <- "The Name"
+              attr(x, "label") <- "The Label"
+              expect_equal(Labels(x), "The Label")
+              x <- 1
+              attr(x, "name") <- "The Name"
+              expect_equal(Labels(x), "The Name")
+              x <- 1
+              attr(x, "name") <- "The Name"
+              attr(x, "question") <- "The Question"
+              expect_equal(Labels(x), "The Question")
+              x <- 1
+              attr(x, "label") <- "The Label"
+              expect_equal(Labels(x), "The Label")
+              x <- 1
+              attr(x, "question") <- "The Question"
+              expect_equal(Labels(x), "The Question")
+          })
+
 test_that("Fall backs",
 {
     x <- 1:100
-    expect_equal(Labels(x), "x")
     attr(x, "question") <- "A"
     expect_equal(Labels(x), "A")
     attr(x, "name") <- "B"
-    expect_equal(Labels(x), "B")
+    expect_equal(Labels(x), "A")
     attr(x, "label") <- "C"
-    expect_equal(Labels(x), "C")
+    expect_equal(Labels(x), "A: C")
 })
 
 test_that("Labels",
@@ -68,7 +106,7 @@ test_that("Labels",
     cola$Q3[1:100] <- NA
     cola$Q3 <- unclass(cola$Q3)
     library(flipRegression)
-    Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE)
+    suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
     # Some variables have labels and others do not.
     z <- data.frame(a = 1:10, b = 1:10, c = 1:10)
     Labels(z) <- c("A", "B")

@@ -30,19 +30,32 @@ Labels <- function(x, names.to.lookup = NULL)
     if(!is.list(x))
     {
         result <- attr(x, "label")
+        question <- attr(x, "question")
+        if (!is.null(question))
+        {
+            if(is.null(result))
+                result <- question
+            else
+                if (question != result)
+                    result <- paste0(question, ": ", result)
+        }
         if(is.null(result))
             result <- attr(x, "name")
         if(is.null(result))
-            result <- attr(x, "question")
-        if(is.null(result))
-            result <- deparse(substitute(x))
+            result <- OriginalName(x)
         return(result)
     }
     # Data frame case.
     if (is.null(names.to.lookup))
     {
+        nms <- names(x)
+        for (i in 1:length(x))
+        {
+            if (is.null(attr(x[[i]], "name")))
+                attr(x[[i]], "name") <- nms[i]
+        }
         result <- sapply(x, Labels)
-        names(result) <- names(x)
+        names(result) <- nms
         no.label <- result == "X[[i]]" | is.na(result)
         result[no.label] <- names(x)[no.label]
         return(result)
@@ -100,4 +113,28 @@ removeBackTicks <- function(x)
     have.backticks <- as.integer(substr(x, 1, 1) == "`")
     lengths <- nchar(x)
     substr(x, 1 + have.backticks, nchar(x) - have.backticks)
+}
+
+
+#' \code{OriginalName}
+#'
+#' Finds the original name of an argument.
+#' @param x An object of some kind.
+#' @return A \code{character} of the name.
+#' @details This function will not generate the correct answer if the actual call is nested within another function.
+#' @references Adapted from http://stackoverflow.com/a/26558733/1547926.
+#' @export
+OriginalName <- function(x)
+{
+    my.call <- quote(substitute(x))
+    original.name <- eval(my.call)
+    for(i in rev(head(sys.frames(), -1L)))
+    {
+        my.call[[2]] <- original.name
+        original.name <- eval(my.call, i)
+    }
+    original.name <- paste(original.name)
+    if (length(original.name) > 2)
+        return(paste0(c(original.name[2:1], original.name[-1:-2]), collapse = ""))
+    return(paste(original.name, collapse = ""))
 }
