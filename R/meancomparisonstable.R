@@ -58,7 +58,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     {
         l <- LETTERS[i]
         txt <- sprintf("~ style(color = ifelse(abs(%s1) <= 0.05 & %s1 < 0, \"red\",ifelse(abs(%s1) <= 0.05, \"blue\", NA)),
-                       display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
+                       display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\", `font-weight` = \"bold\",
                        `background-color` = .colorScale(%s2))", l, l, l, l)
         formatters[[l]] <- formatter("span", style = eval(parse(text = txt)),
                                      eval(parse(text = sprintf("%s~ fixedDigits(%s, 2)", l, l))))
