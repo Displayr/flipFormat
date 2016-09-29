@@ -54,7 +54,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     }
     rsquaredFormatter <- formatter(.tag = "span", style = function(x) style(
         display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-        `background-color` = "#BBBBBB", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
+        `background-color` = "#CCCCCC", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
 
     formatters <- list()
     for (i in 1:k)
