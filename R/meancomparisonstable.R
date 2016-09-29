@@ -47,11 +47,14 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
 
     .colorScale <- function(x, min = -5, max = 5)
     {
-        csscolor(gradient(c(min, max, x), "white", "#00C8C8"))[-2:-1]
+        result <- character(length(x))
+        result[x >= 0] <- csscolor(gradient(c(0, max, x[x >= 0]), "white", "#00C8C8"))[-2:-1]
+        result[x < 0] <- csscolor(gradient(c(min, 0, x[x < 0]), "#FA614B", "white"))[-2:-1]
+        result
     }
     rsquaredFormatter <- formatter(.tag = "span", style = function(x) style(
         display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-        `background-color` = "pink", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
+        `background-color` = "#BBBBBB", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
 
     formatters <- list()
     for (i in 1:k)
