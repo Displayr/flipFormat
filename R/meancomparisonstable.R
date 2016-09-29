@@ -48,8 +48,8 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     .colorScale <- function(x, min = -5, max = 5)
     {
         result <- character(length(x))
-        result[x >= 0] <- csscolor(gradient(c(0, max, x[x >= 0]), "white", "#4A94EF"))[-2:-1]
-        result[x < 0] <- csscolor(gradient(c(min, 0, x[x < 0]), "#FA614B", "white"))[-2:-1]
+        result[x >= 0] <- csscolor(gradient(c(0, max, x[x >= 0]), "white", "#80B4F4"))[-2:-1]
+        result[x < 0] <- csscolor(gradient(c(min, 0, x[x < 0]), "#FB9080", "white"))[-2:-1]
         result
     }
     rsquaredFormatter <- formatter(.tag = "span", style = function(x) style(
