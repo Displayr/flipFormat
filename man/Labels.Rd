@@ -4,12 +4,15 @@
 \alias{Labels}
 \title{\code{Labels}}
 \usage{
-Labels(x, names.to.lookup = NULL)
+Labels(x, names.to.lookup = NULL, show.name = FALSE)
 }
 \arguments{
 \item{x}{A \code{\link{data.frame}}.}
 
 \item{names.to.lookup}{An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).}
+
+\item{show.name}{If \code{TRUE}, the name will prefix the extended label (where they are distinct). Ignored if
+\code{names.to.lookup} is provided.}
 }
 \value{
 A \code{vector} of labels

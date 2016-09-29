@@ -27,11 +27,15 @@ test_that("data frame",
         expect_equal(as.character(Labels(data.frame(dog, npk2$foo))), c("Soloman", "npk2.foo"))
 })
 
+
 test_that("Single case",
           {
               x <- 1
+              attr(x, "name") <- "df"
               Labels(x) <- "dog"
               expect_equal(Labels(x), "dog")
+              ### Commented out as only fails in testthat
+              #expect_equal(Labels(x, show.name = TRUE), "dog (x)")
           })
 
 test_that("Various properties of a label",

@@ -15,7 +15,10 @@ A \code{character} of the name.
 \description{
 Finds the original name of an argument.
 }
+\details{
+This function will not generate the correct answer if the actual call is nested within another function.
+}
 \references{
-From http://stackoverflow.com/a/26558733/1547926.
+Adapted from http://stackoverflow.com/a/26558733/1547926.
 }
 

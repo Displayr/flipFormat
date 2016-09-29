@@ -23,9 +23,9 @@ test_that("Numbers", {
 
 test_that("PValue", {
 
-    expect_equal(FormatAsPValue(0.0), "0.000000000000")
+    expect_equal(FormatAsPValue(0.0), "< 0.000000000001")
     expect_equal(FormatAsPValue(0.0000001), "0.0000001")
-    expect_equal(FormatAsPValue(0.0000000000001), "0.000000000000")
+    expect_equal(FormatAsPValue(0.0000000000001), "< 0.000000000001")
     expect_equal(FormatAsPValue(0.04999), "0.04999")
     expect_equal(FormatAsPValue(0.050000), "0.050000000000")
     expect_equal(FormatAsPValue(0.05000000001), "0.05000000001")

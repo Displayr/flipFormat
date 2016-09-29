@@ -19,31 +19,41 @@
 #' Replaces a list of given names or coefficient, with any underlying labels. If
 #' @param x A \code{\link{data.frame}}.
 #' @param names.to.lookup An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
+#' @param show.name If \code{TRUE}, the name will prefix the extended label (where they are distinct). Ignored if
+#' \code{names.to.lookup} is provided.
 #' @return A \code{vector} of labels
 #' @details First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
 #' Where \code{names.to.lookup} is provided, Works for dummy variables as well as normal variables.
 #' Trims backticks and whitespace. Returns names where labels cannot be found.
 #' @export
-Labels <- function(x, names.to.lookup = NULL)
+Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {
     # Single variable case.
     if(!is.list(x))
     {
-        result <- attr(x, "label")
+        label <- attr(x, "label")
         question <- attr(x, "question")
-        if (!is.null(question))
+        if (is.null(label) | show.name)
         {
-            if(is.null(result))
-                result <- question
-            else
-                if (question != result)
-                    result <- paste0(question, ": ", result)
+            name <- attr(x, "name")
+            if (is.null(name))
+                name <- OriginalName(x)
         }
-        if(is.null(result))
-            result <- attr(x, "name")
-        if(is.null(result))
-            result <- OriginalName(x)
-        return(result)
+        if (is.null(label))
+            label <- question
+        else
+        {
+            if (!is.null(question) && question != label)
+                label <- paste0(question, ": ", label)
+        }
+        if (!show.name & !is.null(label))
+            return(label)
+        name <- attr(x, "name")
+        if (is.null(name))
+            name <- OriginalName(x)
+        if (!show.name | is.null(label))
+            return(name)
+        return(paste0(label, " (", name, ")"))
     }
     # Data frame case.
     if (is.null(names.to.lookup))
@@ -54,7 +64,7 @@ Labels <- function(x, names.to.lookup = NULL)
             if (is.null(attr(x[[i]], "name")))
                 attr(x[[i]], "name") <- nms[i]
         }
-        result <- sapply(x, Labels)
+        result <- sapply(x, function(s) Labels(s, show.name = show.name))
         names(result) <- nms
         no.label <- result == "X[[i]]" | is.na(result)
         result[no.label] <- names(x)[no.label]
@@ -73,12 +83,6 @@ Labels <- function(x, names.to.lookup = NULL)
     possible.labels <- unlist(labels.list)
     possible.names <- names(possible.labels)
    # # Fixing up the names, which hav been written as name.name by unlist.
-   #  lengths <- sapply(possible.names, function(x) floor(nchar(x)))
-   #  true.lengths <- sapply(possible.names, function(x) floor(nchar(x)/2))
-   #  has.backtick <- substring(possible.names, 1, 1) == "`"
-   #  true.lengths <- ifelse(has.backtick, true.lengths + 1, true.lengths)
-   #  possible.names <- substring(possible.names, 1, true.lengths)
-   #  # Factor coefficient names (e.g., Q2Male, Q2Female)).
     x.possible <- x[, possible.names]
     factors <- sapply(x.possible, is.factor)
     possible.factor.levels <- lapply(x.possible, levels)
@@ -123,6 +127,7 @@ removeBackTicks <- function(x)
 #' @return A \code{character} of the name.
 #' @details This function will not generate the correct answer if the actual call is nested within another function.
 #' @references Adapted from http://stackoverflow.com/a/26558733/1547926.
+#' @importFrom utils head
 #' @export
 OriginalName <- function(x)
 {
