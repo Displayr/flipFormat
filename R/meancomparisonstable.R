@@ -29,45 +29,15 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     column.names <- c(column.names, "R-Squared", "<i>p</i>")
     k <- length(column.names) #Number of being compared.
 
-    # Set the number of decimals
-    fixedDigits <- function(x, n = 2) {
-        formatC(x, digits = n, format = "f")
-    }
-    # FOrmat the p-values.
-    pFormatter <- formatter(
-        "span",
-        style = p ~ ifelse(p <= p.cutoff, style(font.weight = "bold"), NA),
-        p ~ {
-            p.formatted <- fixedDigits(p, 3)
-            p.formatted <- gsub(x = p.formatted, pattern="^(-?)0", replacement="\\1")
-            p.formatted[p < 0.001] <- "< .001"
-            p.formatted
-        }
-    )
-
-    .colorScale <- function(x, min = -5, max = 5)
-    {
-        result <- character(length(x))
-        result[x >= 0] <- csscolor(gradient(c(0, max, x[x >= 0]), "white", "#80B4F4"))[-2:-1]
-        result[x < 0] <- csscolor(gradient(c(min, 0, x[x < 0]), "#FB9080", "white"))[-2:-1]
-        result
-    }
-    rsquaredFormatter <- formatter(.tag = "span", style = function(x) style(
-        display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-        `background-color` = "#CCCCCC", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
 
     formatters <- list()
     for (i in 1:k)
     {
         l <- LETTERS[i]
-        txt <- sprintf("~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
-                       `font-weight` = ifelse(abs(%s1) <= 0.05, \"bold\", NA),
-                       `background-color` = .colorScale(%s2))", l, l, l, l, l)
-        formatters[[l]] <- formatter("span", style = eval(parse(text = txt)),
-                                     eval(parse(text = sprintf("%s~ fixedDigits(%s, 2)", l, l))))
+        formatters[[l]] <- heatMapZ(l)
     }
     formatters[["rsquared"]] <- rsquaredFormatter
-    formatters[["pvalue"]] <- pFormatter
+    formatters[["pvalue"]] <- pFormatter(p, p.cutoff)
 
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
     p.values <- rep(FALSE, k)

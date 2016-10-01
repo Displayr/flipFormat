@@ -29,10 +29,6 @@ RegressionTable <- function(coefficient.table,
     # Standardizing column names to simplify formattable calls
     colnames(coefficient.table) <- c("Estimate", "SE", "p", "t")
     robust.se <- colnames(coefficient.table)[2] == "Robust SE"
-    # Set the number of decimails
-    fixedDigits <- function(x, n = 2) {
-        formatC(x, digits = n, format = "f")
-    }
     # Format the p-values.
     pFormatter <- formatter(
         "span",
