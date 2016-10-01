@@ -37,7 +37,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
         formatters[[l]] <- heatMapZ(l)
     }
     formatters[["rsquared"]] <- rsquaredFormatter
-    formatters[["pvalue"]] <- pFormatter(p, p.cutoff)
+    formatters[["pvalue"]] <- pFormatter(pvalue, p.cutoff)
 
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
     p.values <- rep(FALSE, k)
