@@ -12,10 +12,7 @@ attr(bank$Online, "label") <- "Online banking"
 bank$fBranch <- factor(bank$Branch)
 attr(bank$fBranch, "label") <- "Branch as a factor"
 attr(bank$Overall, "label") <- "Overall satisfaction"
-
-OriginalName(ID[, 1])
-OriginalName(bank$fBranch)
-
+library(flipRegression)
 
 test_that("data frame",
     {
@@ -109,7 +106,6 @@ test_that("Labels",
     cola <- cola[1:150,]
     cola$Q3[1:100] <- NA
     cola$Q3 <- unclass(cola$Q3)
-    library(flipRegression)
     suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
     # Some variables have labels and others do not.
     z <- data.frame(a = 1:10, b = 1:10, c = 1:10)

@@ -14,6 +14,7 @@
 }
 
 
+
 #' \code{Labels}
 #'
 #' Replaces a list of given names or coefficient, with any underlying labels. If
@@ -28,14 +29,16 @@
 #' @export
 Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {
-    # Single variable case.
-    if(!is.list(x))
+    .createLabel <- function(name, label, question, x, show.name)
     {
-        label <- attr(x, "label")
-        question <- attr(x, "question")
+        if (is.list(name))
+        {
+            for (i in seq_along(name))
+                name[[i]] <- .createLabel(name[[i]], label[[i]], question[[i]], x[[i]], show.name)
+            return(name)
+        }
         if (is.null(label) | show.name)
         {
-            name <- attr(x, "name")
             if (is.null(name))
                 name <- OriginalName(x)
         }
@@ -48,12 +51,19 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
         }
         if (!show.name & !is.null(label))
             return(label)
-        name <- attr(x, "name")
         if (is.null(name))
             name <- OriginalName(x)
         if (!show.name | is.null(label))
             return(name)
-        return(paste0(label, " (", name, ")"))
+        paste0(label, " (", name, ")")
+    }
+    # Single variable case.
+    if(!is.list(x))
+    {
+        name <- attr(x, "name")
+        label <- attr(x, "label")
+        question <- attr(x, "question")
+        return(.createLabel(name, label, question, x, show.name))
     }
     # Data frame case.
     if (is.null(names.to.lookup))
@@ -73,6 +83,10 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     #####  Creating a list of all the possible variable and coefficient names that can have labels.
     # The labels
     labels.list <- lapply(x, function(x) attr(x, "label"))
+    possible.names <- names(labels.list)
+    questions.list <- lapply(x, function(x) attr(x, "question"))
+    name.list <- as.list(names(x))
+    labels.list <- .createLabel(name.list,labels.list,  questions.list, x, show.name)
     # Removig the names of elements in the list, because  unlist changes
     # "name" to "name.name" and "`name`" to "'name'.name".
     for (i in seq_along(labels.list))
@@ -81,7 +95,6 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
             names(labels.list[[i]]) <- NULL
     }
     possible.labels <- unlist(labels.list)
-    possible.names <- names(possible.labels)
    # # Fixing up the names, which hav been written as name.name by unlist.
     x.possible <- x[, possible.names]
     factors <- sapply(x.possible, is.factor)
@@ -117,29 +130,4 @@ removeBackTicks <- function(x)
     have.backticks <- as.integer(substr(x, 1, 1) == "`")
     lengths <- nchar(x)
     substr(x, 1 + have.backticks, nchar(x) - have.backticks)
-}
-
-
-#' \code{OriginalName}
-#'
-#' Finds the original name of an argument.
-#' @param x An object of some kind.
-#' @return A \code{character} of the name.
-#' @details This function will not generate the correct answer if the actual call is nested within another function.
-#' @references Adapted from http://stackoverflow.com/a/26558733/1547926.
-#' @importFrom utils head
-#' @export
-OriginalName <- function(x)
-{
-    my.call <- quote(substitute(x))
-    original.name <- eval(my.call)
-    for(i in rev(head(sys.frames(), -1L)))
-    {
-        my.call[[2]] <- original.name
-        original.name <- eval(my.call, i)
-    }
-    original.name <- paste(original.name)
-    if (length(original.name) > 2)
-        return(paste0(c(original.name[2:1], original.name[-1:-2]), collapse = ""))
-    return(paste(original.name, collapse = ""))
 }
