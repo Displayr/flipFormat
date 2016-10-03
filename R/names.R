@@ -52,8 +52,11 @@ OriginalName <- function(x)
     original.name <- eval(my.call)
     for(i in rev(head(sys.frames(), -1L)))
     {
+        prev <- original.name
         my.call[[2]] <- original.name
         original.name <- eval(my.call, i)
+        if (length(original.name) == length(x) & length(prev) == 1)
+            return(prev)
     }
     original.name <- paste(original.name)
     if (length(original.name) > 2)
