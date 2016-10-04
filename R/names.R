@@ -7,11 +7,15 @@ Names <- function(x)
 {
     if (is.list(x))
     {
-        name.attribute <-  as.numeric(as.character(sapply(x, function(y) attr(y, "name"))))
         nms <- names(x)
-        nna.name.attribute <- !is.na(name.attribute)
-        nms[nna.name.attribute] <- name.attribute[nna.name.attribute]
-        return(Names)
+        for (i in seq_along(x))
+        {
+            name.attribute <- attr(x[[i]], "name")
+            if (!is.null(name.attribute))
+                nms[i] <- name.attribute
+
+        }
+        return(nms)
     }
     name.attribute <- attr(x, "name")
     if (!is.null(name.attribute))
