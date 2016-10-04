@@ -1,19 +1,21 @@
-# Set the number of decimals
-fixedDigits <- function(x, n = 2) {
-    formatC(x, digits = n, format = "f")
+
+# Format r-squareds
+#' @importFrom formattable formatter percent
+createRSquaredFormatter <- function(decimals = 2)
+{
+    formatter(.tag = "span", style = x ~ style(
+        display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
+        `background-color` = "#DDDDDD", width = percent(x / max(x))), x ~ FormatWithDecimals(x, decimals))
 }
-# Formats r-squareds
-rsquaredFormatter <- formatter(.tag = "span", style = function(x) style(
-    display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-    `background-color` = "#DDDDDD", width = percent(x / max(x))), ~ fixedDigits(rsquared, 2))
 
 # Format p-values.
-pFormatter <- function(p, p.cutoff)
+#' @importFrom formattable formatter
+createPFormatter <- function(p.cutoff = 0.05)
 {
     formatter("span",
     style = p ~ ifelse(p <= p.cutoff, style(font.weight = "bold"), NA),
     p ~ {
-            p.formatted <- fixedDigits(p, 3)
+            p.formatted <- FormatWithDecimals(p, 3)
             p.formatted <- gsub(x = p.formatted, pattern="^(-?)0", replacement="\\1")
             p.formatted[p < 0.001] <- "< .001"
             p.formatted
@@ -21,21 +23,88 @@ pFormatter <- function(p, p.cutoff)
     )
 }
 
-# Z Heat Map-like color scale
-.zcolorScale <- function(x, min = -5, max = 5)
+# Format regression coefficients
+#' @importFrom formattable formatter
+createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, decimals = 2)
 {
-    result <- character(length(x))
-    result[x >= 0] <- csscolor(gradient(c(0, max, x[x >= 0]), "white", "#80B4F4"))[-2:-1]
-    result[x < 0] <- csscolor(gradient(c(min, 0, x[x < 0]), "#FB9080", "white"))[-2:-1]
-    result
+    txt <- sprintf("~ ifelse(%s <= p.cutoff & %s < 0, \"color:red\",
+                   ifelse(%s <= p.cutoff & %s > 0, \"color:blue\", NA))",
+                   p.name, statistic.name, p.name, statistic.name)
+    formatter("span", style = eval(parse(text = txt)), x ~ FormatWithDecimals(x, decimals))
 }
 
-# Shades means according to their z-scores
-heatMapZ <- function(x)
+#' @importFrom formattable formatter style
+createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
 {
     txt <- sprintf("~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
-                   `font-weight` = ifelse(abs(%s1) <= 0.05, \"bold\", NA),
-                   `background-color` = .zcolorScale(%s2))", x, x, x, x, x)
-    formatter("span", style = eval(parse(text = txt)),
-              eval(parse(text = sprintf("%s~ fixedDigits(%s, 2)", x, x))))
+                   `font-weight` = ifelse(%s <= p.cutoff, \"bold\", NA),
+                   `background-color` = heatmapColourScale(%s, max.abs))", p.name, statistic.name)
+    formatter("span", style = eval(parse(text = txt)), x ~ FormatWithDecimals(x, decimals))
+}
+
+#' @importFrom htmltools tags
+titleFormat <- function(title)
+{
+    if (title == "")
+        NULL
+    else
+        tags$h3(class = ".h3",
+                style = paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),
+                title)
+}
+
+#' @importFrom htmltools tags
+subTitleFormat <- function(subtitle)
+{
+    if (subtitle == "")
+        NULL
+    else tags$h5(class = ".h5",
+                 style = paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
+                 subtitle)
+}
+
+#' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
+#' @importFrom formattable format_table as.htmlwidget formattable
+#' @importFrom htmltools tags tagList browsable attachDependencies HTML
+#' @importFrom htmlwidgets sizingPolicy
+createTable <- function(x, col.names, formatters, title, subtitle, footer)
+{
+    tbl <- format_table(
+        x,
+        col.names = col.names,
+        formatters = formatters,
+        table.attr = paste0(
+            'class = "table table-condensed"',
+            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"',
+            sep = " "
+        ),
+        align = rep("r", length(col.names) + 1),
+        caption = tagList(
+            titleFormat(title),
+            subTitleFormat(subtitle),
+            tags$caption(
+                style="caption-side:bottom;font-style:italic; font-size:90%;",
+                footer
+            )
+        )
+    )
+
+    browsable(
+        attachDependencies(
+            tagList(
+                HTML(tbl)),
+            list(
+                html_dependency_jquery(),
+                html_dependency_bootstrap("default")
+            )
+        )
+    )
+
+    # this is a really ugly way to return a htmlwidget
+    #  I will have to spend some time thinking through this.
+    # start by setting up a dummy formattable
+    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
+    # and replace the html with our formatted html from above
+    ftw$x$html <- HTML(tbl)
+    ftw
 }

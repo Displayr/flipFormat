@@ -12,69 +12,27 @@
 #' @param subtitle Subtitle for the table.
 #' @param p.cutoff The alpha level used when formatting the p-value column.
 #' @references This is based on code written by Kenton Russell.
-#' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
-#' @importFrom formattable format_table formatter digits style gradient csscolor as.htmlwidget formattable color_tile percent
-#' @importFrom htmltools tags tagList browsable attachDependencies HTML
-#' @importFrom htmlwidgets sizingPolicy
 #' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "", p.cutoff = 0.05)
 {
+    colnames(zs) <- paste0(LETTERS[1:ncol(zs)], 2)
     # Putting all the tables into a single data.frame, as required by formattable.
-    ps[zs < 0] <- -ps[zs < 0]
-    winsorized.zs <- zs
-    winsorized.zs[zs < -5] <- -5
-    winsorized.zs[zs > 5] <- 5
-    colnames(winsorized.zs) <- paste0(LETTERS[1:ncol(zs)], 2)
-    means <- as.data.frame(cbind(means, ps, rsquared = r.squared, pvalue = overall.p, winsorized.zs))
-    column.names <- c(column.names, "R-Squared", "<i>p</i>")
+    means <- as.data.frame(cbind(means, ps, rsquared = r.squared, pvalue = overall.p, zs))
     k <- length(column.names) #Number of being compared.
-
-
+    column.names <- c(column.names, "R-Squared", "<i>p</i>")
     formatters <- list()
     for (i in 1:k)
     {
         l <- LETTERS[i]
-        formatters[[l]] <- heatMapZ(l)
+        formatters[[l]] <- createHeatmapFormatter(paste0(l, 2), paste0(l, 1), p.cutoff)
     }
-    formatters[["rsquared"]] <- rsquaredFormatter
-    formatters[["pvalue"]] <- pFormatter(pvalue, p.cutoff)
-
+    formatters[["rsquared"]] <- createRSquaredFormatter()
+    formatters[["pvalue"]] <- createPFormatter(p.cutoff)
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
     p.values <- rep(FALSE, k)
     names(p.values) <- paste0(LETTERS[1:k], "1")
     z.stats <- rep(FALSE, k)
     names(z.stats) <- paste0(LETTERS[1:k], "2")
     formatters <- c(formatters, as.list(p.values), as.list(z.stats))
-    subtitle.format <- if (subtitle == "") NULL else tags$h5(class=".h5",
-        style=paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"), subtitle)
-    title.format <- if (title == "") NULL else tags$h3(class=".h3",
-        style=paste0("color:", titleColour(), "; text-align:left; margin-top:0px; margin-bottom:0"),title)
-    tbl <- format_table(means,
-                    col.names = column.names,
-                    table.attr = paste('class = "table table-condensed"',
-                                        'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"'),
-                    align = rep("r",5),
-                    caption = tagList(title.format,
-                                      subtitle.format,
-                                      tags$caption(style="caption-side:bottom;font-style:italic;font-size:90%;",
-                                    footer)),
-                    formatters = formatters)
-    browsable(
-        attachDependencies(
-            tagList(
-                HTML(tbl)),
-            list(
-                html_dependency_jquery(),
-                html_dependency_bootstrap("default")
-            )
-        )
-    )
-
-    # this is a really ugly way to return a htmlwidget
-    #  I will have to spend some time thinking through this.
-    # start by setting up a dummy formattable
-    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
-    # and replace the html with our formatted html from above
-    ftw$x$html <- HTML(tbl)
-    ftw
+    createTable(means, column.names, formatters, title, subtitle, footer)
 }
