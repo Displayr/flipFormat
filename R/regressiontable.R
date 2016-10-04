@@ -1,5 +1,6 @@
+#' RegressionTable
 #'
-#' Creates a pretty formattable table.
+#' Creates a pretty formattable table for regression output.
 #' @param coefficient.table A table of regression coefficients, standard errors, z or t statistics, and p-values.
 #' @param footer Text to place in the footer of the table.
 #' @param title The title for the table.

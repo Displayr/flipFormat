@@ -2,7 +2,7 @@
 % Please edit documentation in R/regressiontable.R
 \name{RegressionTable}
 \alias{RegressionTable}
-\title{Creates a pretty formattable table.}
+\title{RegressionTable}
 \usage{
 RegressionTable(coefficient.table, footer, title = "", subtitle = "",
   estimate.name = "Estimate", se.name = "Standard<br/>Error",
@@ -29,7 +29,7 @@ RegressionTable(coefficient.table, footer, title = "", subtitle = "",
 \item{p.cutoff}{The alpha level used when formatting the p-value column.}
 }
 \description{
-Creates a pretty formattable table.
+Creates a pretty formattable table for regression output.
 }
 \references{
 This is based on code written by Kenton Russell.

@@ -1,6 +1,6 @@
 #' MeanComparisonsTable
 #'
-#' Creates a pretty formattable table.
+#' Creates a pretty formattable table for mean comparisons.
 #' @param means The means to be shown on the table.
 #' @param zs Z-Statistics. Only used to determine the color of the fonts.
 #' @param ps P-Values associated with each mean. Used to determine whether or not to color the cells.
