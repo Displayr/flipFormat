@@ -64,7 +64,7 @@ test_that("Various properties of a label",
               attr(x, "label") <- "Q1. The label"
               attr(x, "question") <- "Q1"
               expect_equal(Labels(x), "Q1. The label")
-              expect_equal(Labels(x, show.name = TRUE), "Q1. The label (Q1)")
+              expect_equal(Labels(x, show.name = TRUE), "Q1. The label (q1)")
 
           })
 
