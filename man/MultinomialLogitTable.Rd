@@ -4,15 +4,16 @@
 \alias{MultinomialLogitTable}
 \title{MultinomialLogitTable}
 \usage{
-MultinomialLogitTable(coefficients, standard.errors, title = "",
+MultinomialLogitTable(coefficients, z.statistics, p.values, title = "",
   subtitle = "", footer = "", p.cutoff = 0.05)
 }
 \arguments{
 \item{coefficients}{A matrix of coefficients from the regression.
 Its row and column names are used in the output table.}
 
-\item{standard.errors}{A matrix of standard errors of the coefficients.
-Used to determine coefficient significance.}
+\item{z.statistics}{A matrix of z statistics of the coefficients.}
+
+\item{p.values}{A matrix of p values of the coefficients.}
 
 \item{title}{The title for the table.}
 
