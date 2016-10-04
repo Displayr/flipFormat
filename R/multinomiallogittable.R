@@ -10,7 +10,6 @@
 #' @param footer Text to place in the footer of the table.
 #' @param p.cutoff The alpha level used when determining significance.
 #' @references This is based on code written by Kenton Russell.
-#' @importFrom stats pnorm
 #' @export
 MultinomialLogitTable <- function(coefficients,
                                   z.statistics,
