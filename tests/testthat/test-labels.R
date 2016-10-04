@@ -59,6 +59,13 @@ test_that("Various properties of a label",
               x <- 1
               attr(x, "question") <- "The Question"
               expect_equal(Labels(x), "The Question")
+              x <- 1
+              attr(x, "name") <- "q1"
+              attr(x, "label") <- "Q1. The label"
+              attr(x, "question") <- "Q1"
+              expect_equal(Labels(x), "Q1. The label")
+              expect_equal(Labels(x, show.name = TRUE), "Q1. The label (Q1)")
+
           })
 
 test_that("Fall backs",

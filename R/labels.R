@@ -46,7 +46,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
             label <- question
         else
         {
-            if (!is.null(question) && question != label)
+            if (!is.null(question) && !grepl(question, label))
                 label <- paste0(question, ": ", label)
         }
         if (!show.name & !is.null(label))
