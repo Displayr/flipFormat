@@ -5,7 +5,7 @@ createRSquaredFormatter <- function(decimals = 2)
 {
     formatter(.tag = "span", style = x ~ style(
         display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-        `background-color` = rSquaredColour(), width = percent(x / max(x))), x ~ FormatWithDecimals(x, decimals))
+        `background-color` = rSquaredColour(), width = percent(x / max(x, na.rm = TRUE))), x ~ FormatWithDecimals(x, decimals))
 }
 
 # Format p-values.
