@@ -18,7 +18,7 @@ negativeSignificanceColour <- function()
     "#FB9080" # light coral
 }
 
-rSquaredColour <- function()
+barColour <- function()
 {
     "#DDDDDD" # light gray
 }

@@ -1,11 +1,15 @@
-
-# Format r-squareds
+# Format bars used to visually display information such as R-squared
 #' @importFrom formattable formatter percent
-createRSquaredFormatter <- function(decimals = 2)
+createBarFormatter <- function(decimals = 2)
 {
     formatter(.tag = "span", style = x ~ style(
-        display = "inline-block", direction = "rtl", `border-radius` = "4px", `padding-right` = "0px",
-        `background-color` = rSquaredColour(), width = percent(x / max(x, na.rm = TRUE))), x ~ FormatWithDecimals(x, decimals))
+        display = ifelse(x > 0, "inline-block", NA),
+        direction = ifelse(x > 0, "rtl", NA),
+        `border-radius` = ifelse(x > 0, "4px", NA),
+        `padding-right` = ifelse(x > 0, "0px", NA),
+        `background-color` = ifelse(x > 0, barColour(), NA),
+        width = percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))),
+        x ~ FormatWithDecimals(x, decimals))
 }
 
 # Format p-values.
