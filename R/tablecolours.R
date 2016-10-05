@@ -5,7 +5,7 @@ titleColour <- function()
 
 subtitleColour <- function()
 {
-    "#A6A6A6" # gray
+    "#888888" # gray
 }
 
 positiveSignificanceColour <- function()
