@@ -22,8 +22,6 @@ RandomForestTable <- function(importance,
     {
         k <- ncol(importance) - 1
         column.labels <- colnames(importance)
-        column.labels[k] <- "Mean importance"
-        column.labels[k + 1] <- "Mean decrease in Gini"
         colnames(importance) <- c(paste0("importance", 1:k), "gini")
         colnames(z.statistics) <- paste0("z", 1:k)
         colnames(p.values) <- paste0("p", 1:k)
@@ -38,7 +36,7 @@ RandomForestTable <- function(importance,
     }
     else # Regression
     {
-        column.labels <- c("Importance", "Mean decrease in MSE")
+        column.labels <- colnames(importance)
         colnames(importance) <- c("importance", "mse")
         coef.df <- data.frame(importance, z = z.statistics, p = p.values, check.names = FALSE)
         formatters <- list(importance = createHeatmapFormatter("z", "p", p.cutoff),
