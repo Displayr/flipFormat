@@ -114,6 +114,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer)
         )
     )
 
+    # Replace the placeholder with the left-to-right mark
     tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
 
     # this is a really ugly way to return a htmlwidget
