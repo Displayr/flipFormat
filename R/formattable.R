@@ -9,7 +9,17 @@ createBarFormatter <- function(decimals = 2)
         `padding-right` = ifelse(x > 0, "0px", NA),
         `background-color` = ifelse(x > 0, barColour(), NA),
         width = percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))),
-        x ~ FormatWithDecimals(x, decimals))
+        # We need to insert a left-to-right mark so that the minus sign
+        # in negative values is not reversed due to the rtl direction.
+        x ~ paste0(leftToRightMarkPlaceholder(), FormatWithDecimals(x, decimals)))
+}
+
+# We use this placeholder to identify where to insert &lrm;
+# into the table html. We cannot insert it directly as format_table
+# will escape the ampersand.
+leftToRightMarkPlaceholder <- function()
+{
+    "Replace me with the left-to-right mark"
 }
 
 # Format p-values.
@@ -104,11 +114,13 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer)
         )
     )
 
+    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
+
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
     # start by setting up a dummy formattable
     ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
     # and replace the html with our formatted html from above
-    ftw$x$html <- HTML(tbl)
+    ftw$x$html <- tbl.html
     ftw
 }
