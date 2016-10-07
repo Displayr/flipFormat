@@ -15,6 +15,8 @@ RandomForestTable(importance, z.statistics, p.values,
 
 \item{p.values}{A vector or matrix of p values of the importance values.}
 
+\item{sort.by.importance}{Sort the last column in descending order.}
+
 \item{title}{The title for the table.}
 
 \item{subtitle}{Subtitle for the table.}

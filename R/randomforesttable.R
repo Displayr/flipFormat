@@ -4,6 +4,7 @@
 #' @param importance A matrix of importance values from the regression.
 #' @param z.statistics A vector or matrix of z statistics of the importance values.
 #' @param p.values A vector or matrix of p values of the importance values.
+#' @param sort.by.importance Sort the last column in descending order.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
 #' @param footer Text to place in the footer of the table.
