@@ -4,15 +4,13 @@
 \alias{PCALoadingsTable}
 \title{PCALoadingsTable}
 \usage{
-PCALoadingsTable(loadings.matrix, variance.explained, sum.of.squared.loadings,
-  eigenvalues, min.display.value, title = "", subtitle = "", footer = "")
+PCALoadingsTable(loadings.matrix, variance.explained, eigenvalues,
+  min.display.value, title = "", subtitle = "", footer = "")
 }
 \arguments{
 \item{loadings.matrix}{A matrix of the PCA loadings/structure.}
 
 \item{variance.explained}{A vector of the variance explained of the components.}
-
-\item{sum.of.squared.loadings}{A vector of the sum of squared loadings of the components.}
 
 \item{eigenvalues}{A vector of the eigenvalues corresponding to the components.}
 
