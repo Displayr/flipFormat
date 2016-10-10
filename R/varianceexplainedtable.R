@@ -13,6 +13,7 @@
 VarianceExplainedTable <- function(eigenvalues, variance.proportions, cumulative.proportions,
                                    title = "", subtitle = "", footer = "")
 {
+    names(eigenvalues) <- paste("Component", 1:length(eigenvalues))
     table.df <- data.frame(ev = eigenvalues, v = 100 * variance.proportions,
                            cv = 100 * cumulative.proportions, check.names = FALSE)
     column.labels <- c("Eigenvalue", "% of Variance", "Cumulative %")
