@@ -33,5 +33,10 @@ loadings <- structure(c(0.273822297037884, 0.549763211142948, 0.569592524162743,
 variance.explained <- c(0.177613979888284, 0.0940391993551916)
 eigenvalues <- c(4.44034949720709, 2.35097998387979)
 
-expect_error(PCALoadingsTable(loadings, variance.explained, eigenvalues, 0.2, title = "Principal Component Loadings",
+expect_error(PCALoadingsTable(loadings, variance.explained, NULL, eigenvalues, 0.2, title = "Principal Component Loadings",
     footer = "Loadings; Input: Correlation matrix; Missing data setting: Use partial data (pairwise correlations); Sample size: 4 to 618; Rotation: None"), NA)
+
+sum.of.squared.loadings <- c(4.078, 2.664)
+
+expect_error(PCALoadingsTable(loadings, NULL, sum.of.squared.loadings, eigenvalues, 0.2, title = "Principal Component Structure",
+                              footer = "Structure matrix; Input: Correlation matrix; Missing data setting: Use partial data (pairwise correlations); Sample size: 4 to 618; Rotation: None"), NA)
