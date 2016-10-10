@@ -1,17 +1,29 @@
-# Format bars used to visually display information such as R-squared
+# Format bars used to visually display information such as R-squared.
 #' @importFrom formattable formatter percent
-createBarFormatter <- function(decimals = 2)
+createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.display.value = NA)
 {
+    .get.bar.widths <- if (bar.shows.magnitude)
+            function(x) percent(abs(x) / max(abs(x), na.rm = TRUE))
+        else
+            function(x) percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))
+
+    .format.values <- function(x, min.display.value)
+    {
+        result <- FormatWithDecimals(x, decimals)
+        result[abs(x) < min.display.value] <- ""
+        result
+    }
+
     formatter(.tag = "span", style = x ~ style(
-        display = ifelse(x > 0, "inline-block", NA),
-        direction = ifelse(x > 0, "rtl", NA),
-        `border-radius` = ifelse(x > 0, "4px", NA),
-        `padding-right` = ifelse(x > 0, "0px", NA),
-        `background-color` = ifelse(x > 0, barColour(), NA),
-        width = percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))),
+        display = "inline-block",
+        direction = "rtl",
+        `border-radius` = "4px",
+        `padding-right` = "0px",
+        `background-color` = barColour(),
+        width = .get.bar.widths(x)),
         # We need to insert a left-to-right mark so that the minus sign
         # in negative values is not reversed due to the rtl direction.
-        x ~ paste0(leftToRightMarkPlaceholder(), FormatWithDecimals(x, decimals)))
+        x ~ paste0(leftToRightMarkPlaceholder(), .format.values(x, min.display.value)))
 }
 
 # We use this placeholder to identify where to insert &lrm;
@@ -20,6 +32,26 @@ createBarFormatter <- function(decimals = 2)
 leftToRightMarkPlaceholder <- function()
 {
     "Replace me with the left-to-right mark"
+}
+
+# We use this placeholder to identify where to insert <br>.
+lineBreakPlaceholder <- function()
+{
+    "Replace me with a line break"
+}
+
+# We use this placeholder to identify where to begin a subheading
+# with gray italic text.
+beginSubheadingPlaceholder <- function()
+{
+    "Replace me with tags to begin a subheading"
+}
+
+# We use this placeholder to identify where to end a subheading
+# with gray italic text.
+endSubheadingPlaceholder <- function()
+{
+    "Replace me with tags to end a subheading"
 }
 
 # Format p-values.
@@ -81,7 +113,7 @@ subTitleFormat <- function(subtitle)
 #' @importFrom formattable format_table as.htmlwidget formattable
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
-createTable <- function(x, col.names, formatters, title, subtitle, footer)
+createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE)
 {
     tbl <- format_table(
         x,
@@ -114,8 +146,16 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer)
         )
     )
 
-    # Replace the placeholder with the left-to-right mark
-    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
+    # Replace the placeholders
+    tbl.html <- HTML(tbl)
+    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", tbl.html)
+    tbl.html <- gsub(lineBreakPlaceholder(), "<br>", tbl.html)
+    tbl.html <- gsub(beginSubheadingPlaceholder(), paste0("<span style=\"font-weight:normal;color:",
+                                           subtitleColour(), "\"><i>"), tbl.html)
+    tbl.html <- gsub(endSubheadingPlaceholder(), "</i></span>", tbl.html)
+
+    if (no.wrap.column.headers)
+        tbl.html <- gsub("<th style=\"text-align:right;\">", "<th style=\"text-align:right;white-space:nowrap;\">", tbl.html)
 
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
