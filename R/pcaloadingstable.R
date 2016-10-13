@@ -11,7 +11,8 @@
 #' @references This is based on code written by Kenton Russell.
 #' @export
 PCALoadingsTable <- function(loadings.matrix, variance.explained, eigenvalues,
-                             min.display.value, title = "", subtitle = "", footer = "")
+                             min.display.value, title = "", subtitle = "", footer = "",
+                             eigenvalue.label  = "Eigenvalue")
 {
     k <- ncol(loadings.matrix)
     column.labels <- character(k)
@@ -22,7 +23,7 @@ PCALoadingsTable <- function(loadings.matrix, variance.explained, eigenvalues,
         else
             ""
         column.labels[i] <- paste0(colnames(loadings.matrix)[i], parentheses.text,
-                                   lineBreakPlaceholder(), beginSubheadingPlaceholder(), "Eigenvalue: ",
+                                   lineBreakPlaceholder(), beginSubheadingPlaceholder(), eigenvalue.label, ": ",
                                    FormatWithDecimals(eigenvalues[i], 2), endSubheadingPlaceholder())
     }
     colnames(loadings.matrix) <- paste0("component", 1:k)
