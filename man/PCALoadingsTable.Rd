@@ -22,6 +22,8 @@ PCALoadingsTable(loadings.matrix, variance.explained, eigenvalues,
 \item{subtitle}{Subtitle for the table.}
 
 \item{footer}{Text to place in the footer of the table.}
+
+\item{eigenvalue.label}{The label to display next to the eigenvalues.}
 }
 \description{
 Creates a pretty formattable table for PCA loadings.

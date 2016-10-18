@@ -8,6 +8,7 @@
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
 #' @param footer Text to place in the footer of the table.
+#' @param eigenvalue.label The label to display next to the eigenvalues.
 #' @references This is based on code written by Kenton Russell.
 #' @export
 PCALoadingsTable <- function(loadings.matrix, variance.explained, eigenvalues,

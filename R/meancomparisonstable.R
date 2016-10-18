@@ -15,24 +15,20 @@
 #' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "", p.cutoff = 0.05)
 {
-    colnames(zs) <- paste0(LETTERS[1:ncol(zs)], 2)
+    k <- length(column.names) #Number of means being compared.
+    colnames(means) <- paste0("means", 1:k)
+    colnames(zs) <- paste0("z", 1:k)
+    colnames(ps) <- paste0("p", 1:k)
     # Putting all the tables into a single data.frame, as required by formattable.
     means <- as.data.frame(cbind(means, ps, rsquared = r.squared, pvalue = overall.p, zs))
-    k <- length(column.names) #Number of being compared.
     column.names <- c(column.names, "R-Squared", "<i>p</i>")
     formatters <- list()
     for (i in 1:k)
-    {
-        l <- LETTERS[i]
-        formatters[[l]] <- createHeatmapFormatter(paste0(l, 2), paste0(l, 1), p.cutoff)
-    }
+        formatters[[paste0("means", i)]] <- createHeatmapFormatter(paste0("z", i), paste0("p", i), p.cutoff)
     formatters[["rsquared"]] <- createBarFormatter()
     formatters[["pvalue"]] <- createPFormatter(p.cutoff)
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
-    p.values <- rep(FALSE, k)
-    names(p.values) <- paste0(LETTERS[1:k], "1")
-    z.stats <- rep(FALSE, k)
-    names(z.stats) <- paste0(LETTERS[1:k], "2")
-    formatters <- c(formatters, as.list(p.values), as.list(z.stats))
+    columns.to.exclude <- as.list(structure(rep(FALSE, 2 * k), names = c(colnames(zs), colnames(ps))))
+    formatters <- c(formatters, columns.to.exclude)
     createTable(means, column.names, formatters, title, subtitle, footer)
 }
