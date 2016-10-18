@@ -34,26 +34,6 @@ leftToRightMarkPlaceholder <- function()
     "Replace me with the left-to-right mark"
 }
 
-# We use this placeholder to identify where to insert <br>.
-lineBreakPlaceholder <- function()
-{
-    "Replace me with a line break"
-}
-
-# We use this placeholder to identify where to begin a subheading
-# with gray italic text.
-beginSubheadingPlaceholder <- function()
-{
-    "Replace me with tags to begin a subheading"
-}
-
-# We use this placeholder to identify where to end a subheading
-# with gray italic text.
-endSubheadingPlaceholder <- function()
-{
-    "Replace me with tags to end a subheading"
-}
-
 # Format p-values.
 #' @importFrom formattable formatter
 createPFormatter <- function(p.cutoff = 0.05)
@@ -147,12 +127,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     )
 
     # Replace the placeholders
-    tbl.html <- HTML(tbl)
-    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", tbl.html)
-    tbl.html <- gsub(lineBreakPlaceholder(), "<br>", tbl.html)
-    tbl.html <- gsub(beginSubheadingPlaceholder(), paste0("<span style=\"font-weight:normal;color:",
-                                           subtitleColour(), "\"><i>"), tbl.html)
-    tbl.html <- gsub(endSubheadingPlaceholder(), "</i></span>", tbl.html)
+    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
 
     if (no.wrap.column.headers)
         tbl.html <- gsub("<th style=\"text-align:right;\">", "<th style=\"text-align:right;white-space:nowrap;\">", tbl.html)

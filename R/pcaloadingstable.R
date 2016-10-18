@@ -23,9 +23,9 @@ PCALoadingsTable <- function(loadings.matrix, variance.explained, eigenvalues,
             paste0(" (", FormatAsPercent(variance.explained[i], 3), ")")
         else
             ""
-        column.labels[i] <- paste0(colnames(loadings.matrix)[i], parentheses.text,
-                                   lineBreakPlaceholder(), beginSubheadingPlaceholder(), eigenvalue.label, ": ",
-                                   FormatWithDecimals(eigenvalues[i], 2), endSubheadingPlaceholder())
+        column.labels[i] <- paste0(colnames(loadings.matrix)[i], parentheses.text, "<br>",
+                                   paste0("<span style=\"font-weight:normal;color:", subtitleColour(), "\"><i>"),
+                                   eigenvalue.label, ": ", FormatWithDecimals(eigenvalues[i], 2), "</i></span>")
     }
     colnames(loadings.matrix) <- paste0("component", 1:k)
     table.df <- data.frame(loadings.matrix, check.names = FALSE)
