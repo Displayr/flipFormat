@@ -62,3 +62,87 @@ TrimTrailingWhitespace <- function (x) sub("\\s+$", "", x)
 #' @return A \code{character}.
 #' @export
 TrimWhitespace <- function (x) gsub("^\\s+|\\s+$", "", x)
+
+#' \code{extractCommonPrefix}
+#' @param labels A vector of labels from which we plan to extract a common prefix.
+#' @export
+extractCommonPrefix <- function(labels)
+{
+    separators <- c(" ", ":", ",", ";", "-")
+    last.prefix.index <- NA # this will be last index of the prefix
+    n.labels <- length(labels)
+    if (n.labels > 1)
+    {
+        inside.word <- FALSE
+        min.length <- min(nchar(labels))
+        for (i in 1:min.length)
+        {
+            if (characterMatches(labels, i))
+            {
+                ch <- substr(labels[1], i, i)
+                if (ch %in% separators)
+                {
+                    if (inside.word && i < min.length && hasTextFromIndexOnwards(labels, i + 1, separators))
+                        last.prefix.index <- i - 1
+                    inside.word <- FALSE
+                }
+                else
+                    inside.word <- TRUE
+            }
+            else
+                break
+        }
+    }
+
+    if (!is.na(last.prefix.index))
+    {
+        shortened.labels <- substr(labels, last.prefix.index + 1, 1000)
+        shortened.labels <- gsub(paste0("^[", paste0(separators, collapse = "") , "]+"), "", shortened.labels)
+        list(common.prefix = substr(labels[1], 1, last.prefix.index),
+             shortened.labels = shortened.labels)
+    }
+    else
+        list(common.prefix = NA, shortened.labels = labels)
+}
+
+# Check that character at an index is the same for all labels.
+characterMatches <- function(labels, index)
+{
+    ch <- substr(labels[1], index, index)
+    is.matching <- TRUE
+    for (j in 2:length(labels))
+        if (ch != substr(labels[j], index, index))
+        {
+            is.matching <- FALSE
+            break
+        }
+    is.matching
+}
+
+# Check that a string x only consists of characters chars.
+consistsOf <- function(x, chars)
+{
+    result <- TRUE
+    for (i in 1:nchar(x))
+        if (!(substr(x, i, i) %in% chars))
+        {
+            result <- FALSE
+            break
+        }
+    result
+}
+
+# Check that there are word characters from an index onwards
+hasTextFromIndexOnwards <- function(labels, index, non.word.chars)
+{
+    result <- TRUE
+    for (i in 1:length(labels))
+    {
+        if (consistsOf(substr(labels[i], index, nchar(labels[i])), non.word.chars))
+        {
+            result <- FALSE
+            break;
+        }
+    }
+    result
+}

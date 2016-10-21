@@ -19,3 +19,12 @@ test_that("Trim white space",
         expect_equal(TrimWhitespace("        Big dog         "), "Big dog")
     })
 
+
+lbls <- c("Q5.  Brand associations: feminine - Coke",
+          "Q5.  Brand associations: feminine - Diet Coke",
+          "Q5.  Brand associations: feminine - Coke Zero")
+test_that("Extract prefix",
+    {
+        expect_equal(extractCommonPrefix(lbls)$common.prefix, "Q5.  Brand associations: feminine")
+        expect_equal(extractCommonPrefix(lbls)$shortened.labels, c("Coke", "Diet Coke", "Coke Zero"))
+    })
