@@ -63,10 +63,10 @@ TrimTrailingWhitespace <- function (x) sub("\\s+$", "", x)
 #' @export
 TrimWhitespace <- function (x) gsub("^\\s+|\\s+$", "", x)
 
-#' \code{extractCommonPrefix}
+#' \code{ExtractCommonPrefix}
 #' @param labels A vector of labels from which we plan to extract a common prefix.
 #' @export
-extractCommonPrefix <- function(labels)
+ExtractCommonPrefix <- function(labels)
 {
     separators <- c(" ", ":", ",", ";", "-")
     last.prefix.index <- NA # this will be last index of the prefix
