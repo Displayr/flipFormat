@@ -2,6 +2,7 @@
 
 export("Labels<-")
 export(AddSignificanceHighlightingToDataTable)
+export(AnovaTable)
 export(DataTableWithRItemFormat)
 export(Equation)
 export(ExtractCommonPrefix)
