@@ -15,6 +15,11 @@
 #' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "", p.cutoff = 0.05)
 {
+    if (!is.numeric(p.cutoff))
+    {
+        p.cutoff <- 0.05
+        warning("Invalid 'p.cutoff'; 0.05 has been used instead.")
+    }
     k <- length(column.names) #Number of means being compared.
     colnames(means) <- paste0("means", 1:k)
     colnames(zs) <- paste0("z", 1:k)
