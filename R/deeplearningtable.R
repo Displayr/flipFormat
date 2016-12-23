@@ -17,7 +17,7 @@ DeepLearningTable <- function(values,
     table.df <- data.frame(vv = values, check.names = FALSE)
     colnames(table.df) <- sprintf("V%d", 1:ncol(table.df))
     if (order.values)
-        table.df <- table.df[order(table.df$vv, decreasing=T),,drop=FALSE]
+        table.df <- table.df[order(table.df[,1], decreasing=T),,drop=FALSE]
     formatters <- list()
     formatters[["V1"]] <- createBarFormatter()
     createTable(table.df, column.labels, formatters, title, subtitle, footer)
