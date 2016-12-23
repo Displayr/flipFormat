@@ -19,6 +19,6 @@ DeepLearningTable <- function(values,
     if (order.values)
         table.df <- table.df[order(table.df[,1], decreasing=T),,drop=FALSE]
     formatters <- list()
-    formatters[["V1"]] <- createBarFormatter()
+    formatters[["V1"]] <- createBarFormatter(bar.shows.magnitude = TRUE)
     createTable(table.df, column.labels, formatters, title, subtitle, footer)
 }
