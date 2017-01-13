@@ -64,7 +64,10 @@ TrimTrailingWhitespace <- function (x) sub("\\s+$", "", x)
 TrimWhitespace <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 #' \code{ExtractCommonPrefix}
+#'
+#' Returns the common prefix of a vector of labels.
 #' @param labels A vector of labels from which we plan to extract a common prefix.
+#' @return A \code{character}.
 #' @export
 ExtractCommonPrefix <- function(labels)
 {
