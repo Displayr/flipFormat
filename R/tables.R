@@ -21,6 +21,11 @@ globalVariables(c("style", "thead", "th", "tr"))
 #' @param allow.paging A boolean value to specify whether pagination is turned on.
 #' @param show.info A boolean value to specify whether or not extra info is shown below
 #' the table, including pagination info like "Showing 5 of 10 items".
+#' @param escape.html Either a boolean value or a vector of integers which determines how
+#' to escape html characters in the table. If TRUE, then all columns are escaped, and so
+#' no html code will be executed. If FALSE, then no columns will be escaped. A vector
+#' of positive integers allows you to specify the columns to be escaped. A vector of
+#' negative integers allows you to specify which columns not to escape.
 #'
 #' @examples
 #' my.df <- data.frame(First = c(1,2,3), Second = c("a", "b", "c"))
@@ -37,7 +42,8 @@ DataTableWithRItemFormat <- function(dd,
                                      length.menu = c(10,15,20),
                                      page.length = min(15, nrow(dd)),
                                      allow.paging = TRUE,
-                                     show.info = TRUE)
+                                     show.info = TRUE,
+                                     escape.html = TRUE)
 {
     if (nrow(dd) == 0 || ncol(dd) == 0)
     {
@@ -45,6 +51,7 @@ DataTableWithRItemFormat <- function(dd,
         print.default(dd)
         return
     }
+
 
     #show.row.names = TRUE
     # Specify the header style information that will be used by datatables to draw the output.
@@ -120,13 +127,14 @@ DataTableWithRItemFormat <- function(dd,
                        )
 
     mydt <- datatable(dd,
-                          rownames = TRUE,
-                          class = 'hover', # Built-in class with least amount of existing formatting. Have to choose a class.
-                          container = my.container,
-                          options = my.options,
-                          caption = tags$caption(style = caption.style, caption),
-                          width = '100%',
-                          fillContainer = getOption('DT.fillContainer', FALSE))
+                      rownames = TRUE,
+                      class = 'hover', # Built-in class with least amount of existing formatting. Have to choose a class.
+                      container = my.container,
+                      options = my.options,
+                      caption = tags$caption(style = caption.style, caption),
+                      width = '100%',
+                      fillContainer = getOption('DT.fillContainer', FALSE),
+                      escape = escape.html)
 
 
     # Format cells in main table

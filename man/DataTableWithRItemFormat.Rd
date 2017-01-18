@@ -6,7 +6,8 @@
 \usage{
 DataTableWithRItemFormat(dd, caption = NULL, header.alignments = NULL,
   allow.length.change = TRUE, length.menu = c(10, 15, 20),
-  page.length = min(15, nrow(dd)), allow.paging = TRUE, show.info = TRUE)
+  page.length = min(15, nrow(dd)), allow.paging = TRUE, show.info = TRUE,
+  escape.html = TRUE)
 }
 \arguments{
 \item{dd}{The \code{data frame} that you want to show as a widget.}
@@ -31,6 +32,12 @@ of table heights.}
 
 \item{show.info}{A boolean value to specify whether or not extra info is shown below
 the table, including pagination info like "Showing 5 of 10 items".}
+
+\item{escape.html}{Either a boolean value or a vector of integers which determines how
+to escape html characters in the table. If TRUE, then all columns are escaped, and so
+no html code will be executed. If FALSE, then no columns will be escaped. A vector
+of positive integers allows you to specify the columns to be escaped. A vector of
+negative integers allows you to specify which columns not to escape.}
 }
 \description{
 Create an HTML widget DataTable which looks like Q's blue table style.
