@@ -19,4 +19,10 @@ Suggests:
     flipAnalysisOfVariance,
     flipExampleData,
     flipRegression
+Remotes:
+    rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
+    renkun-ken/formattable,
+    NumbersInternational/flipExampleData,
+    NumbersInternational/flipAnalysisOfVariance,
+    NumbersInternational/flipRegression
 RoxygenNote: 5.0.1
