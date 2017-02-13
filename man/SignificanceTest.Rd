@@ -4,11 +4,13 @@
 \alias{SignificanceTest}
 \title{\code{SignificanceTest}}
 \usage{
-SignificanceTest(obj, var1, var2, filter, weight, show.labels = TRUE,
-  decimal.places = NULL)
+SignificanceTest(obj, test.name, var1, var2 = NULL, filter, weight,
+  p.value.method = "", show.labels = TRUE, decimal.places = NULL)
 }
 \arguments{
 \item{obj}{Significance testing output object, e.g. object of class htest.}
+
+\item{test.name}{Name of the test.}
 
 \item{var1}{Variable 1 used in test.}
 
@@ -17,6 +19,8 @@ SignificanceTest(obj, var1, var2, filter, weight, show.labels = TRUE,
 \item{filter}{Filter variable.}
 
 \item{weight}{Weight variable.}
+
+\item{p.value.method}{Specifies how the p-value is computed.}
 
 \item{show.labels}{Whether to show variable labels instead of names.}
 
