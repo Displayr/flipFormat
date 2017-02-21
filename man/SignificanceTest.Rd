@@ -2,10 +2,11 @@
 % Please edit documentation in R/significancetest.R
 \name{SignificanceTest}
 \alias{SignificanceTest}
-\title{\code{SignificanceTest}}
+\title{{SignificanceTest}}
 \usage{
 SignificanceTest(obj, test.name, var1, var2 = NULL, filter, weight,
-  p.value.method = "", show.labels = TRUE, decimal.places = NULL)
+  p.value.method = "", show.labels = TRUE, decimal.places = NULL,
+  missing = "Exclude cases with missing data")
 }
 \arguments{
 \item{obj}{Significance testing output object, e.g. object of class htest.}
@@ -25,8 +26,29 @@ SignificanceTest(obj, test.name, var1, var2 = NULL, filter, weight,
 \item{show.labels}{Whether to show variable labels instead of names.}
 
 \item{decimal.places}{The number of decimal places to show.}
+
+\item{missing}{How missing data is to be treated in the analysis.
+Options are: \code{"Error if missing data"}, \code{"Exclude cases with missing data"} and
+\code{"Imputation (replace missing values with estimates)"}.}
 }
 \description{
 Standardize information to be shown in significance test results.
+}
+\details{
+This function was created for the following Standard R pages:
+\itemize{
+\item{Missing Data - Little's MCAR Test}
+\item{Regression - Diagnostic - Heteroscedasticity}
+\item{Regression - Diagnostic - Normality (Shapiro-Wilk)}
+\item{Regression - Diagnostic - Serial Correlation (Durbin-Watson)}
+\item{Test - Bartlett Test of Sphericity}
+\item{Test - Chi-Square Test of Independence}
+\item{Test - Correlation}
+\item{Test - Nonparametric - Kruskal-Wallis Rank Sum Test}
+\item{Test - Nonparametric - Paired Samples Wilcoxon Test}
+\item{Test - Nonparametric - Single-Sample Wilcoxon Test}
+\item{Test - Nonparametric - Two-Sample Wilcoxon Rank Sum Test}
+\item{Test - Variance - F-Test to Compare Two Variances}
+}
 }
 

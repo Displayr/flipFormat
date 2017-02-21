@@ -1,4 +1,4 @@
-#' \code{SignificanceTest}
+#' @title{SignificanceTest}
 #'
 #' @description Standardize information to be shown in significance test results.
 #' @param obj Significance testing output object, e.g. object of class htest.
@@ -10,9 +10,28 @@
 #' @param p.value.method Specifies how the p-value is computed.
 #' @param show.labels Whether to show variable labels instead of names.
 #' @param decimal.places The number of decimal places to show.
+#' @param missing How missing data is to be treated in the analysis.
+#'  Options are: \code{"Error if missing data"}, \code{"Exclude cases with missing data"} and
+#'  \code{"Imputation (replace missing values with estimates)"}.
+#' @details This function was created for the following Standard R pages:
+#' \itemize{
+#' \item{Missing Data - Little's MCAR Test}
+#' \item{Regression - Diagnostic - Heteroscedasticity}
+#' \item{Regression - Diagnostic - Normality (Shapiro-Wilk)}
+#' \item{Regression - Diagnostic - Serial Correlation (Durbin-Watson)}
+#' \item{Test - Bartlett Test of Sphericity}
+#' \item{Test - Chi-Square Test of Independence}
+#' \item{Test - Correlation}
+#' \item{Test - Nonparametric - Kruskal-Wallis Rank Sum Test}
+#' \item{Test - Nonparametric - Paired Samples Wilcoxon Test}
+#' \item{Test - Nonparametric - Single-Sample Wilcoxon Test}
+#' \item{Test - Nonparametric - Two-Sample Wilcoxon Rank Sum Test}
+#' \item{Test - Variance - F-Test to Compare Two Variances}
+#' }
 #' @export
-SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, p.value.method = "", show.labels = TRUE,
-                             decimal.places = NULL)
+SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, p.value.method = "",
+                             show.labels = TRUE, decimal.places = NULL,
+                             missing = "Exclude cases with missing data")
 {
     result <- list()
     result$test.name <- test.name
@@ -20,9 +39,13 @@ SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, 
     result$additional.footer <- ""
     if (class(obj) == "htest")
     {
+        result$estimate <- unname(obj$estimate)
+        result$estimate.name <- names(obj$estimate)
+        result$confidence.interval <- obj$conf.int
         result$statistic <- unname(obj$statistic)
         result$statistic.name <- names(obj$statistic)
         result$degrees.of.freedom <- unname(obj$parameter)
+        result$degrees.of.freedom.name <- names(obj$parameter)
         result$p.value <- obj$p.value
         result$additional.footer <- pValueMethodText(p.value.method)
     }
@@ -32,6 +55,13 @@ SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, 
         result$statistic.name <- names(obj$statistic)
         result$degrees.of.freedom <- unname(obj$df)
         result$p.value <- unname(obj$p.value)
+    }
+    else if (test.name == "Little's MCAR Test")
+    {
+        result$statistic <- obj$chi.square
+        result$statistic.name <- "Chi-square"
+        result$degress.of.freedom <- obj$df
+        result$p.value <- obj$p.value
     }
     else
         stop(paste("Test not identified:", test.name))
@@ -55,7 +85,7 @@ SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, 
 
     result$sample.description <- SampleDescription(length(var1), sum(filter), n.estimation, Labels(filter),
                                                    weighted = !is.null(weight), weight.label = weight.label,
-                                                   missing = "Exclude cases with missing data")
+                                                   missing = missing)
 
     result$p.cutoff <- 0.05
 
@@ -92,22 +122,26 @@ nullHypothesis <- function(obj, test.name)
             stop(paste("Alternative not recogised:", obj$alternative))
     }
     else if (test.name == "F-Test to Compare Two Variances")
-        "variances are equal"
+        "ratio of variances is equal to 1"
     else if (test.name == "Bartlett Test of Sphericity")
-        "variances are equal"
+        "true variances are equal"
     else if (test.name == "Chi-Square Test of Independence")
         "variables are independent"
-    else if (test.name == "Correlation")
+    else if (test.name %in% c("Pearson's product-moment correlation",
+                              "Spearman's rank correlation rho",
+                              "Kendall's rank correlation tau"))
     {
         if (obj$alternative == "two.sided")
-            paste0("correlation is equal to ", obj$null.value)
+            paste0("true correlation is equal to ", obj$null.value)
         else if (obj$alternative == "less")
-            paste0("correlation is greater than or equal to ", obj$null.value)
+            paste0("true correlation is greater than or equal to ", obj$null.value)
         else if (obj$alternative == "greater")
-            paste0("correlation is less than or equal to ", obj$null.value)
+            paste0("true correlation is less than or equal to ", obj$null.value)
         else
             stop(paste("Alternative not recogised:", obj$alternative))
     }
+    else
+        stop(paste("Test name not recognised:", test.name))
 }
 
 pValueMethodText <- function(p.value.method)
@@ -156,37 +190,78 @@ significanceTestTable <- function(obj)
     if (obj$additional.footer != "")
         footer <- paste(footer, obj$additional.footer)
 
-    if (is.null(obj$degrees.of.freedom))
+    dat.list <- list()
+    col.names <- c()
+    formatters <- list()
+
+    # Estimate
+    if (!is.null(obj$estimate))
     {
-        dat <- data.frame(statistic = obj$statistic,
-                          p = obj$p.value)
-
-        col.names <- c(obj$statistic.name, "p-value")
-
-        formatters <- if (is.null(obj$decimal.places))
-            list(statistic = x ~ FormatWithDecimals(x, 1),
-                 p = x ~ FormatAsPValue(x))
+        dat.list$estimate <- obj$estimate
+        col.names <- c(col.names, obj$estimate.name)
+        formatters$estimate <- if (is.null(obj$decimal.places))
+            x ~ FormatWithDecimals(x, 2)
         else
-            list(statistic = x ~ FormatWithDecimals(x, obj$decimal.places),
-                 p = x ~ FormatWithDecimals(x, obj$decimal.places))
+            x ~ FormatWithDecimals(x, obj$decimal.places)
     }
+
+    # Statistic
+    dat.list$statistic <- obj$statistic
+    col.names <- c(col.names, obj$statistic.name)
+    formatters$statistic <- if (is.null(obj$decimal.places))
+        x ~ FormatWithDecimals(x, 2)
     else
+        x ~ FormatWithDecimals(x, obj$decimal.places)
+
+    # Degrees of freedom
+    if (!is.null(obj$degrees.of.freedom))
     {
-        dat <- data.frame(statistic = obj$statistic,
-                          df = obj$degrees.of.freedom,
-                          p = obj$p.value)
-
-        col.names <- c(obj$statistic.name, "Degrees of freedom", "p-value")
-
-        formatters <- if (is.null(obj$decimal.places))
-            list(statistic = x ~ FormatWithDecimals(x, 1),
-                 df = x ~ FormatWithDecimals(x, 1),
-                 p = x ~ FormatAsPValue(x))
+        if (length(obj$degrees.of.freedom) > 1)
+        {
+            for (i in 1:length(obj$degrees.of.freedom))
+            {
+                dat.list[paste0("df", i)] <- obj$degrees.of.freedom[i]
+                col.names <- c(col.names, obj$degrees.of.freedom.name[i])
+                formatters[paste0("df", i)] <- if (is.null(obj$decimal.places))
+                    x ~ FormatWithDecimals(x, 0)
+                else
+                    x ~ FormatWithDecimals(x, obj$decimal.places)
+            }
+        }
         else
-            list(statistic = x ~ FormatWithDecimals(x, obj$decimal.places),
-                 df = x ~ FormatWithDecimals(x, obj$decimal.places),
-                 p = x ~ FormatWithDecimals(x, obj$decimal.places))
+        {
+            dat.list$df <- obj$degrees.of.freedom
+            col.names <- c(col.names, "Degrees of freedom")
+            formatters$df <- if (is.null(obj$decimal.places))
+                x ~ FormatWithDecimals(x, 0)
+            else
+                x ~ FormatWithDecimals(x, obj$decimal.places)
+        }
     }
 
-    createTable(dat, col.names, formatters, title, subtitle, footer)
+    # p-value
+    dat.list$p.value <- obj$p.value
+    col.names <- c(col.names, "p-value")
+    formatters$p.value <- if (is.null(obj$decimal.places))
+        x ~ FormatAsPValue(x)
+    else
+        x ~ FormatWithDecimals(x, obj$decimal.places)
+
+    # Confidence interval
+    if (!is.null(obj$confidence.interval))
+    {
+        dat.list$lower.bound <- obj$confidence.interval[1]
+        dat.list$upper.bound <- obj$confidence.interval[2]
+        col.names <- c(col.names, "Lower 95% conf. int.", "Upper 95% conf. int.")
+        formatters$lower.bound <- if (is.null(obj$decimal.places))
+            x ~ FormatWithDecimals(x, 2)
+        else
+            x ~ FormatWithDecimals(x, obj$decimal.places)
+        formatters$upper.bound <- if (is.null(obj$decimal.places))
+            x ~ FormatWithDecimals(x, 2)
+        else
+            x ~ FormatWithDecimals(x, obj$decimal.places)
+    }
+
+    createTable(data.frame(dat.list), col.names, formatters, title, subtitle, footer)
 }
