@@ -4,18 +4,17 @@
 \alias{SignificanceTest}
 \title{{SignificanceTest}}
 \usage{
-SignificanceTest(obj, test.name, var1, var2 = NULL, filter, weight,
-  p.value.method = "", show.labels = TRUE, decimal.places = NULL,
-  missing = "Exclude cases with missing data")
+SignificanceTest(obj, test.name, vars, filter, weight, p.value.method = "",
+  show.labels = TRUE, decimal.places = NULL,
+  missing = "Exclude cases with missing data", reg.name = NULL,
+  reg.sample.description = NULL)
 }
 \arguments{
 \item{obj}{Significance testing output object, e.g. object of class htest.}
 
 \item{test.name}{Name of the test.}
 
-\item{var1}{Variable 1 used in test.}
-
-\item{var2}{Variable 2 used in test.}
+\item{vars}{Variables used in test.}
 
 \item{filter}{Filter variable.}
 
@@ -30,6 +29,10 @@ SignificanceTest(obj, test.name, var1, var2 = NULL, filter, weight,
 \item{missing}{How missing data is to be treated in the analysis.
 Options are: \code{"Error if missing data"}, \code{"Exclude cases with missing data"} and
 \code{"Imputation (replace missing values with estimates)"}.}
+
+\item{reg.name}{The name of the regression object on which the test is run.}
+
+\item{reg.sample.description}{The sample description of the regression object on which the test is run.}
 }
 \description{
 Standardize information to be shown in significance test results.

@@ -39,6 +39,7 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
         description <- paste(description, switch(missing,
                                                  "Error if missing data" = "",
                                                  "Exclude cases with missing data" = "cases containing missing values have been excluded;",
+                                                 "Exclude cases with all missing data" = "cases containing all missing values have been excluded;",
                                                  "Imputation (replace missing values with estimates)" =
                                                      paste0("missing values of ", variable.description, "variables have been imputed using ", imputation.label, ";"),
                                                  "Multiple imputation" =

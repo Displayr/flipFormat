@@ -3,8 +3,7 @@
 #' @description Standardize information to be shown in significance test results.
 #' @param obj Significance testing output object, e.g. object of class htest.
 #' @param test.name Name of the test.
-#' @param var1 Variable 1 used in test.
-#' @param var2 Variable 2 used in test.
+#' @param vars Variables used in test.
 #' @param filter Filter variable.
 #' @param weight Weight variable.
 #' @param p.value.method Specifies how the p-value is computed.
@@ -13,6 +12,8 @@
 #' @param missing How missing data is to be treated in the analysis.
 #'  Options are: \code{"Error if missing data"}, \code{"Exclude cases with missing data"} and
 #'  \code{"Imputation (replace missing values with estimates)"}.
+#' @param reg.name The name of the regression object on which the test is run.
+#' @param reg.sample.description The sample description of the regression object on which the test is run.
 #' @details This function was created for the following Standard R pages:
 #' \itemize{
 #' \item{Missing Data - Little's MCAR Test}
@@ -29,9 +30,10 @@
 #' \item{Test - Variance - F-Test to Compare Two Variances}
 #' }
 #' @export
-SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, p.value.method = "",
+SignificanceTest <- function(obj, test.name, vars, filter, weight, p.value.method = "",
                              show.labels = TRUE, decimal.places = NULL,
-                             missing = "Exclude cases with missing data")
+                             missing = "Exclude cases with missing data",
+                             reg.name = NULL, reg.sample.description = NULL)
 {
     result <- list()
     result$test.name <- test.name
@@ -48,6 +50,16 @@ SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, 
         result$degrees.of.freedom.name <- names(obj$parameter)
         result$p.value <- obj$p.value
         result$additional.footer <- pValueMethodText(p.value.method)
+        if (is.null(reg.sample.description))
+        {
+            result$variable.text <- variableText(vars, show.labels)
+            result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing)
+        }
+        else
+        {
+            result$variable.text <- paste("Regression:", reg.name)
+            result$sample.description <- reg.sample.description
+        }
     }
     else if (test.name %in% c("Bartlett Test of Sphericity", "Chi-Square Test of Independence"))
     {
@@ -55,37 +67,29 @@ SignificanceTest <- function(obj, test.name, var1, var2 = NULL, filter, weight, 
         result$statistic.name <- names(obj$statistic)
         result$degrees.of.freedom <- unname(obj$df)
         result$p.value <- unname(obj$p.value)
+        result$variable.text <- variableText(vars, show.labels)
+        result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing)
     }
     else if (test.name == "Little's MCAR Test")
     {
         result$statistic <- obj$chi.square
         result$statistic.name <- "Chi-square"
-        result$degress.of.freedom <- obj$df
+        result$degrees.of.freedom <- obj$df
         result$p.value <- obj$p.value
+        result$variable.text <- variableText(vars, show.labels, multiple = TRUE)
+        result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing, multiple = TRUE)
+    }
+    else if (test.name == "Residual Heteroscedasticity")
+    {
+        result$statistic <- obj$ChiSquare
+        result$statistic.name <- "Chi-square"
+        result$degrees.of.freedom <- obj$Df
+        result$p.value <- obj$p
+        result$variable.text <- paste("Regression:", reg.name)
+        result$sample.description <- reg.sample.description
     }
     else
         stop(paste("Test not identified:", test.name))
-
-    result$show.labels <- show.labels
-
-    result$var1.name <- attr(var1, "name")
-    result$var2.name <- if (is.null(var2)) "" else attr(var2, "name")
-    result$var1.label <- Labels(var1)
-    result$var2.label <- if (is.null(var2)) "" else Labels(var2)
-
-    if ((!is.null(var2) && length(var1) != length(var2)) ||
-        length(var1) != length(filter) ||
-        (!is.null(weight) && length(var1) != length(weight)))
-        stop("Input variables are of different length.")
-    weight.label <- if (is.null(weight)) "" else Labels(weight)
-    n.estimation <- if (is.null(var2))
-        sum(!is.na(var1) & filter)
-    else
-        sum(!is.na(var1) & !is.na(var2) & filter)
-
-    result$sample.description <- SampleDescription(length(var1), sum(filter), n.estimation, Labels(filter),
-                                                   weighted = !is.null(weight), weight.label = weight.label,
-                                                   missing = missing)
 
     result$p.cutoff <- 0.05
 
@@ -140,6 +144,14 @@ nullHypothesis <- function(obj, test.name)
         else
             stop(paste("Alternative not recogised:", obj$alternative))
     }
+    else if (test.name == "Little's MCAR Test")
+        "missing data is Missing Completely At Random (MCAR)"
+    else if (test.name == "Test of Residual Heteroscedasticity (Breusch-Pagan)")
+        "residuals are homoscedastic"
+    else if (test.name == "Test of Residual Normality (Shapiro-Wilk)")
+        "residuals are normally distributed"
+    else if (test.name == "Test of Residual Serial Correlation (Durbin-Watson)")
+        "residuals are not serially correlated"
     else
         stop(paste("Test name not recognised:", test.name))
 }
@@ -156,27 +168,82 @@ pValueMethodText <- function(p.value.method)
         ""
 }
 
+variableText <- function(vars, show.labels, multiple = FALSE)
+{
+    if (multiple)
+    {
+        if (show.labels)
+            paste(Labels(vars), collapse = ", ")
+        else
+            paste(sapply(vars, function(x) {attr(x, "name")}), collapse = ", ")
+    }
+    else if (length(vars) == 1)
+    {
+        if (show.labels)
+            Labels(vars[[1]])
+        else
+            attr(vars[[1]], "name")
+    }
+    else if (length(vars) == 2)
+    {
+        if (show.labels)
+            paste(Labels(vars[[1]]), "by", Labels(vars[[2]]))
+        else
+            paste(attr(vars[[1]], "name"), "by", attr(vars[[2]], "name"))
+    }
+}
+
+sampleDescriptionFromVariables <- function(vars, filter, weight, missing, multiple = FALSE)
+{
+    var.lengths <- sapply(vars, length)
+    if (min(var.lengths) != max(var.lengths) || var.lengths[1] != length(filter) ||
+        (!is.null(weight) && var.lengths[1] != length(weight)))
+        stop("Input variables are of different lengths.")
+
+    weight.label <- if (is.null(weight)) "" else Labels(weight)
+
+    if (multiple)
+    {
+        dat <- data.frame(vars)
+        n.estimation <- if (missing == "Exclude cases with all missing data")
+            sum(apply(is.na(dat), 1, sum) < ncol(dat) & filter)
+        else
+            stop(paste("Missing data case not handled:", missing))
+        SampleDescription(length(vars[[1]]), sum(filter), n.estimation, Labels(filter),
+                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+    }
+    else if (length(vars) == 1)
+    {
+        v <- vars[[1]]
+        n.estimation <- if (missing == "Exclude cases with missing data")
+            sum(!is.na(v) & filter)
+        else
+            stop(paste("Missing data case not handled:", missing))
+        SampleDescription(length(v), sum(filter), n.estimation, Labels(filter),
+                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+    }
+    else if (length(vars) == 2)
+    {
+        v1 <- vars[[1]]
+        v2 <- vars[[2]]
+        n.estimation <- if (missing == "Exclude cases with missing data")
+            sum(!is.na(v1) & !is.na(v2) & filter)
+        else
+            stop(paste("Missing data case not handled:", missing))
+        SampleDescription(length(v1), sum(filter), n.estimation, Labels(filter),
+                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+    }
+}
+
 significanceTestTable <- function(obj)
 {
-    title <- if (obj$show.labels)
-    {
-        if (obj$var2.label == "")
-            paste0(obj$test.name, ": ", obj$var1.label)
-        else
-            paste0(obj$test.name, ": ", obj$var1.label, " by ", obj$var2.label)
-    }
-    else
-    {
-        if (obj$var2.name == "")
-            paste0(obj$test.name, ": ", obj$var1.name)
-        else
-            paste0(obj$test.name, ": ", obj$var1.name, " by ", obj$var2.name)
-    }
+    # title <- paste0(obj$test.name, ": ", obj$variable.text)
+    title <- obj$test.name
 
     p.value.text <- if (is.null(obj$decimal.places))
     {
         formatted.p.value <- FormatAsPValue(obj$p.value)
-        if (grepl(formatted.p.value, "<"))
+        if (grepl("<", formatted.p.value))
             paste0(" ", formatted.p.value)
         else
             paste0(" = ", formatted.p.value)
@@ -185,7 +252,7 @@ significanceTestTable <- function(obj)
         FormatWithDecimals(obj$p.value, obj$decimal.places)
 
     significance <- if (obj$p.value > obj$p.cutoff) "Not significant" else "Significant"
-    subtitle <- paste0(significance, ": p-value", p.value.text)
+    subtitle <- paste0(obj$variable.text, " ", significance, ": p-value", p.value.text)
     footer <- paste0(obj$sample.description, " null hypothesis: ", obj$null.hypothesis, ";")
     if (obj$additional.footer != "")
         footer <- paste(footer, obj$additional.footer)
