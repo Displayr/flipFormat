@@ -130,7 +130,7 @@ nullHypothesis <- function(obj, test.name)
         "mean ranks of the outcome are the same between groups"
     else if (test.name %in% c("Paired Samples Wilcoxon Test",
                               "Single-Sample Wilcoxon Test",
-                              "Wilcoxon rank sum test"))
+                              "Two-Sample Wilcoxon Rank Sum Test"))
     {
         if (obj$alternative == "two.sided")
             paste0("true location shift is equal to ", obj$null.value)
