@@ -72,7 +72,7 @@ BaseDescription <- function(description.of.n, n.total, n.subset, n.estimation, s
     base <- if(n.estimation < n.subset) paste0(" of a total sample size of ", n.subset) else ""
     if (n.subset < n.total)
         base <- paste0(base, " (", as.character(subset.label), ")")
-    weight.text <- if (weighted)
+    weight.text <- if (!is.null(weighted) && weighted)
     {
         if (resample)
             paste0(" data has been weighted via resampling (", weight.label, ");")
