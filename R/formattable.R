@@ -120,7 +120,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
         align = rep("r", length(col.names) + 1),
         caption = tagList(
             titleFormat(title),
-            titleFormat(secondary.title),
+            secondaryTitleFormat(secondary.title),
             subTitleFormat(subtitle),
             tags$caption(
                 style="caption-side:bottom;font-style:italic; font-size:90%;",
