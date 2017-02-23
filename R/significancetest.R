@@ -71,10 +71,11 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
         result$statistic.name <- names(obj$statistic)
         result$degrees.of.freedom <- unname(obj$df)
         result$p.value <- unname(obj$p.value)
-        result$variable.text <- variableText(vars, show.labels)
+        result$variable.text <- variableText(vars, show.labels, multiple = TRUE)
         result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing,
                                                                     n.estimation = obj$n.estimation,
-                                                                    imputation.label = obj$imputation.label)
+                                                                    imputation.label = obj$imputation.label,
+                                                                    multiple = TRUE)
     }
     else if (test.name %in% c("Chi-Square Test of Independence"))
     {
