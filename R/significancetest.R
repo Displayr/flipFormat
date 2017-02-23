@@ -39,6 +39,7 @@ SignificanceTest <- function(obj, test.name, vars, filter, weight, p.value.metho
     result$test.name <- test.name
     result$null.hypothesis <- nullHypothesis(obj, test.name)
     result$additional.footer <- ""
+    if (length(filter) == 1 && filter) # no filter applied
         filter <- rep(TRUE, length(vars[[1]]))
 
     if (class(obj) == "htest")
