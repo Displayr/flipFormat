@@ -30,7 +30,7 @@
 #' \item{Test - Variance - F-Test to Compare Two Variances}
 #' }
 #' @export
-SignificanceTest <- function(obj, test.name, vars, filter, weight, p.value.method = "",
+SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL, p.value.method = "",
                              show.labels = TRUE, decimal.places = NULL,
                              missing = "Exclude cases with missing data",
                              reg.name = NULL, reg.sample.description = NULL)
@@ -39,7 +39,7 @@ SignificanceTest <- function(obj, test.name, vars, filter, weight, p.value.metho
     result$test.name <- test.name
     result$null.hypothesis <- nullHypothesis(obj, test.name)
     result$additional.footer <- ""
-    if (length(filter) == 1 && filter) # no filter applied
+    if (is.null(filter) || (length(filter) == 1 && filter)) # no filter applied
         filter <- rep(TRUE, length(vars[[1]]))
 
     if (class(obj) == "htest")

@@ -4,8 +4,8 @@
 \alias{SignificanceTest}
 \title{{SignificanceTest}}
 \usage{
-SignificanceTest(obj, test.name, vars, filter, weight, p.value.method = "",
-  show.labels = TRUE, decimal.places = NULL,
+SignificanceTest(obj, test.name, vars, filter = NULL, weight = NULL,
+  p.value.method = "", show.labels = TRUE, decimal.places = NULL,
   missing = "Exclude cases with missing data", reg.name = NULL,
   reg.sample.description = NULL)
 }
