@@ -7,7 +7,7 @@
 SignificanceTest(obj, test.name, vars, filter = NULL, weight = NULL,
   p.value.method = "", show.labels = TRUE, decimal.places = NULL,
   missing = "Exclude cases with missing data", reg.name = NULL,
-  reg.sample.description = NULL)
+  reg.sample.description = NULL, resample = FALSE)
 }
 \arguments{
 \item{obj}{Significance testing output object, e.g. object of class htest.}
@@ -33,6 +33,8 @@ Options are: \code{"Error if missing data"}, \code{"Exclude cases with missing d
 \item{reg.name}{The name of the regression object on which the test is run.}
 
 \item{reg.sample.description}{The sample description of the regression object on which the test is run.}
+
+\item{resample}{Whether resampling is used whenever weights are applied.}
 }
 \description{
 Standardize information to be shown in significance test results.

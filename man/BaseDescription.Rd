@@ -5,7 +5,7 @@
 \title{\code{BaseDescription}}
 \usage{
 BaseDescription(description.of.n, n.total, n.subset, n.estimation, subset.label,
-  weighted = TRUE, weight.label = "")
+  weighted = TRUE, weight.label = "", resample = FALSE)
 }
 \arguments{
 \item{description.of.n}{A description of the sample (e.g., "People").}
@@ -23,6 +23,8 @@ than or equal to \code{subset}).}
 \item{weighted}{Whether sample has been weighted.}
 
 \item{weight.label}{The label of the weight.}
+
+\item{resample}{Whether resampling is used whenever weights are applied.}
 }
 \description{
 Describes the sample, for use as footers in multivariate

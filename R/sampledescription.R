@@ -18,9 +18,11 @@
 #' @param variable.description A \code{char} specifying the type of
 #' variables being imputed. Used in the description of the imputation
 #' that typically appears in a footer.
-#'
+#' @param resample Whether resampling is used whenever weights are applied.
 #' @export
-SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, weighted = TRUE, weight.label = "", missing, imputation.label = NULL, m, variable.description = "")
+SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, weighted = TRUE,
+                              weight.label = "", missing, imputation.label = NULL, m,
+                              variable.description = "", resample = FALSE)
 {
     # Warning if there is less than 50% data.
     missing.data.proportion <- 1 - n.estimation / n.subset
@@ -32,7 +34,7 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
     missing.data <- n.estimation < n.subset
     imputation <-  missing == "Imputation (replace missing values with estimates)" | missing == "Multiple imputation"
     description <- BaseDescription(paste0("n = ", n.estimation," cases used in estimation"),
-                                   n.total, n.subset, n.estimation, subset.label, weighted, weight.label)
+                                   n.total, n.subset, n.estimation, subset.label, weighted, weight.label, resample)
     if (variable.description != "")
         variable.description <- paste0(variable.description, " ")
     if (missing.data | imputation)
@@ -62,19 +64,23 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
 #' @param subset.label E.g., "Males living in New York".
 #' @param weighted Whether sample has been weighted.
 #' @param weight.label The label of the weight.
-#'
+#' @param resample Whether resampling is used whenever weights are applied.
 #' @export
-BaseDescription <- function(description.of.n,
-                            n.total, n.subset, n.estimation, subset.label, weighted = TRUE, weight.label = "")
+BaseDescription <- function(description.of.n, n.total, n.subset, n.estimation, subset.label,
+                            weighted = TRUE, weight.label = "", resample = FALSE)
 {
     base <- if(n.estimation < n.subset) paste0(" of a total sample size of ", n.subset) else ""
     if (n.subset < n.total)
         base <- paste0(base, " (", as.character(subset.label), ")")
-    base <- paste0(base, ";")
-    paste0(description.of.n,
-           base,
-           ifelse(weighted,
-                  paste0(" data has been weighted (", weight.label, ");"),
-                  ""))
+    weight.text <- if (weighted)
+    {
+        if (resample)
+            paste0(" data has been weighted via resampling (", weight.label, ");")
+        else
+            paste0(" data has been weighted (", weight.label, ");")
+    }
+    else
+        ""
+    paste0(description.of.n, base, ";", weight.text)
 }
 

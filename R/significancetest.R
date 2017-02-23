@@ -14,6 +14,7 @@
 #'  \code{"Imputation (replace missing values with estimates)"}.
 #' @param reg.name The name of the regression object on which the test is run.
 #' @param reg.sample.description The sample description of the regression object on which the test is run.
+#' @param resample Whether resampling is used whenever weights are applied.
 #' @details This function was created for the following Standard R pages:
 #' \itemize{
 #' \item{Missing Data - Little's MCAR Test}
@@ -33,7 +34,7 @@
 SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL, p.value.method = "",
                              show.labels = TRUE, decimal.places = NULL,
                              missing = "Exclude cases with missing data",
-                             reg.name = NULL, reg.sample.description = NULL)
+                             reg.name = NULL, reg.sample.description = NULL, resample = FALSE)
 {
     result <- list()
     result$test.name <- test.name
@@ -56,7 +57,7 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
         if (is.null(reg.sample.description))
         {
             result$variable.text <- variableText(vars, show.labels)
-            result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing)
+            result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing, resample)
         }
         else
         {
@@ -176,7 +177,14 @@ variableText <- function(vars, show.labels, multiple = FALSE)
     if (multiple)
     {
         if (show.labels)
-            paste(Labels(vars), collapse = ", ")
+        {
+            var.labels <- Labels(vars)
+            extract <- ExtractCommonPrefix(var.labels)
+            if (is.na(extract$common.prefix))
+                paste(var.labels, collapse = ", ")
+            else
+                paste0(extract$common.prefix, ": ", paste(extract$shortened.labels, collapse = ", "))
+        }
         else
             paste(sapply(vars, function(x) {attr(x, "name")}), collapse = ", ")
     }
@@ -196,7 +204,7 @@ variableText <- function(vars, show.labels, multiple = FALSE)
     }
 }
 
-sampleDescriptionFromVariables <- function(vars, filter, weight, missing, multiple = FALSE)
+sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE)
 {
     var.lengths <- sapply(vars, length)
     if (min(var.lengths) != max(var.lengths) || var.lengths[1] != length(filter) ||
@@ -213,7 +221,8 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, multip
         else
             stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(vars[[1]]), sum(filter), n.estimation, Labels(filter),
-                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+                          weighted = !is.null(weight), weight.label = weight.label,
+                          missing = missing, resample = resample)
     }
     else if (length(vars) == 1)
     {
@@ -223,7 +232,8 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, multip
         else
             stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(v), sum(filter), n.estimation, Labels(filter),
-                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+                          weighted = !is.null(weight), weight.label = weight.label,
+                          missing = missing, resample = resample)
     }
     else if (length(vars) == 2)
     {
@@ -234,7 +244,8 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, multip
         else
             stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(v1), sum(filter), n.estimation, Labels(filter),
-                          weighted = !is.null(weight), weight.label = weight.label, missing = missing)
+                          weighted = !is.null(weight), weight.label = weight.label,
+                          missing = missing, resample = resample)
     }
 }
 

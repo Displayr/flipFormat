@@ -6,7 +6,7 @@
 \usage{
 SampleDescription(n.total, n.subset, n.estimation, subset.label,
   weighted = TRUE, weight.label = "", missing, imputation.label = NULL, m,
-  variable.description = "")
+  variable.description = "", resample = FALSE)
 }
 \arguments{
 \item{n.total}{Total number of observations in the database.}
@@ -34,6 +34,8 @@ data"}, ,and \code{"Imputation (replace missing values with estimates)"}.}
 \item{variable.description}{A \code{char} specifying the type of
 variables being imputed. Used in the description of the imputation
 that typically appears in a footer.}
+
+\item{resample}{Whether resampling is used whenever weights are applied.}
 }
 \description{
 Describes the sample, for use as footers in multivariate
