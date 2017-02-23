@@ -39,6 +39,8 @@ SignificanceTest <- function(obj, test.name, vars, filter, weight, p.value.metho
     result$test.name <- test.name
     result$null.hypothesis <- nullHypothesis(obj, test.name)
     result$additional.footer <- ""
+        filter <- rep(TRUE, length(vars[[1]]))
+
     if (class(obj) == "htest")
     {
         result$estimate <- unname(obj$estimate)
