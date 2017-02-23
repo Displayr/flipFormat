@@ -67,10 +67,10 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
     }
     else if (test.name %in% c("Bartlett Test of Sphericity"))
     {
-        result$statistic <- unname(obj$statistic)
-        result$statistic.name <- names(obj$statistic)
-        result$degrees.of.freedom <- unname(obj$df)
-        result$p.value <- unname(obj$p.value)
+        result$statistic <- obj$chisq
+        result$statistic.name <- "Chi-square"
+        result$degrees.of.freedom <- obj$df
+        result$p.value <- obj$p.value
         result$variable.text <- variableText(vars, show.labels, multiple = TRUE)
         result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing,
                                                                     n.estimation = obj$n.estimation,
@@ -79,10 +79,10 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
     }
     else if (test.name %in% c("Chi-Square Test of Independence"))
     {
-        result$statistic <- unname(obj$statistic)
-        result$statistic.name <- names(obj$statistic)
-        result$degrees.of.freedom <- unname(obj$df)
-        result$p.value <- unname(obj$p.value)
+        result$statistic <- obj$statistic
+        result$statistic.name <- "Chi-square"
+        result$degrees.of.freedom <- obj$df
+        result$p.value <- obj$p.value
         result$variable.text <- variableText(vars, show.labels)
         result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing)
     }
@@ -282,7 +282,8 @@ significanceTestTable <- function(obj)
         FormatWithDecimals(obj$p.value, obj$decimal.places)
 
     significance <- if (obj$p.value > obj$p.cutoff) "Not significant" else "Significant"
-    subtitle <- paste0(obj$variable.text, " ", significance, ": p-value", p.value.text)
+    secondary.title <- paste0(significance, ": p-value", p.value.text)
+    subtitle <- obj$variable.text
     footer <- paste0(obj$sample.description, " null hypothesis: ", obj$null.hypothesis, ";")
     if (obj$additional.footer != "")
         footer <- paste(footer, obj$additional.footer)
@@ -360,5 +361,6 @@ significanceTestTable <- function(obj)
             x ~ FormatWithDecimals(x, obj$decimal.places)
     }
 
-    createTable(data.frame(dat.list), col.names, formatters, title, subtitle, footer)
+    createTable(data.frame(dat.list), col.names, formatters, title, subtitle, footer,
+                secondary.title = secondary.title)
 }

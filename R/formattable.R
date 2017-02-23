@@ -80,11 +80,23 @@ titleFormat <- function(title)
 }
 
 #' @importFrom htmltools tags
+secondaryTitleFormat <- function(secondary.title)
+{
+    if (secondary.title == "")
+        NULL
+    else
+        tags$h4(class = ".h4",
+                 style = paste0("color:", titleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
+                 secondary.title)
+}
+
+#' @importFrom htmltools tags
 subTitleFormat <- function(subtitle)
 {
     if (subtitle == "")
         NULL
-    else tags$h5(class = ".h5",
+    else
+        tags$h5(class = ".h5",
                  style = paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
                  subtitle)
 }
@@ -93,7 +105,8 @@ subTitleFormat <- function(subtitle)
 #' @importFrom formattable format_table as.htmlwidget formattable
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
-createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE)
+createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE,
+                        secondary.title = "")
 {
     tbl <- format_table(
         x,
@@ -107,6 +120,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
         align = rep("r", length(col.names) + 1),
         caption = tagList(
             titleFormat(title),
+            titleFormat(secondary.title),
             subTitleFormat(subtitle),
             tags$caption(
                 style="caption-side:bottom;font-style:italic; font-size:90%;",
