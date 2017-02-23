@@ -65,7 +65,18 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
             result$sample.description <- reg.sample.description
         }
     }
-    else if (test.name %in% c("Bartlett Test of Sphericity", "Chi-Square Test of Independence"))
+    else if (test.name %in% c("Bartlett Test of Sphericity"))
+    {
+        result$statistic <- unname(obj$statistic)
+        result$statistic.name <- names(obj$statistic)
+        result$degrees.of.freedom <- unname(obj$df)
+        result$p.value <- unname(obj$p.value)
+        result$variable.text <- variableText(vars, show.labels)
+        result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing,
+                                                                    n.estimation = obj$n.estimation,
+                                                                    imputation.label = obj$imputation.label)
+    }
+    else if (test.name %in% c("Chi-Square Test of Independence"))
     {
         result$statistic <- unname(obj$statistic)
         result$statistic.name <- names(obj$statistic)
@@ -204,7 +215,8 @@ variableText <- function(vars, show.labels, multiple = FALSE)
     }
 }
 
-sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE)
+sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE,
+                                           imputation.label = NULL, n.estimation = NULL)
 {
     var.lengths <- sapply(vars, length)
     if (min(var.lengths) != max(var.lengths) || var.lengths[1] != length(filter) ||
@@ -216,36 +228,39 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resamp
     if (multiple)
     {
         dat <- data.frame(vars)
-        n.estimation <- if (missing == "Exclude cases with all missing data")
-            sum(apply(is.na(dat), 1, sum) < ncol(dat) & filter)
-        else
-            stop(paste("Missing data case not handled:", missing))
+        if (is.null(n.estimation))
+            n.estimation <- if (missing == "Exclude cases with all missing data")
+                sum(apply(is.na(dat), 1, sum) < ncol(dat) & filter)
+            else
+                stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(vars[[1]]), sum(filter), n.estimation, Labels(filter),
                           weighted = !is.null(weight), weight.label = weight.label,
-                          missing = missing, resample = resample)
+                          missing = missing, resample = resample, imputation.label = imputation.label)
     }
     else if (length(vars) == 1)
     {
         v <- vars[[1]]
-        n.estimation <- if (missing == "Exclude cases with missing data")
-            sum(!is.na(v) & filter)
-        else
-            stop(paste("Missing data case not handled:", missing))
+        if (is.null(n.estimation))
+            n.estimation <- if (missing == "Exclude cases with missing data")
+                sum(!is.na(v) & filter)
+            else
+                stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(v), sum(filter), n.estimation, Labels(filter),
                           weighted = !is.null(weight), weight.label = weight.label,
-                          missing = missing, resample = resample)
+                          missing = missing, resample = resample, imputation.label = imputation.label)
     }
     else if (length(vars) == 2)
     {
         v1 <- vars[[1]]
         v2 <- vars[[2]]
-        n.estimation <- if (missing == "Exclude cases with missing data")
-            sum(!is.na(v1) & !is.na(v2) & filter)
-        else
-            stop(paste("Missing data case not handled:", missing))
+        if (is.null(n.estimation))
+            n.estimation <- if (missing == "Exclude cases with missing data")
+                sum(!is.na(v1) & !is.na(v2) & filter)
+            else
+                stop(paste("Missing data case not handled:", missing))
         SampleDescription(length(v1), sum(filter), n.estimation, Labels(filter),
                           weighted = !is.null(weight), weight.label = weight.label,
-                          missing = missing, resample = resample)
+                          missing = missing, resample = resample, imputation.label = imputation.label)
     }
 }
 
