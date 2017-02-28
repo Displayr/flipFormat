@@ -1,4 +1,4 @@
-#' @title{SignificanceTest}
+#' @title SignificanceTest
 #'
 #' @description Standardize information to be shown in significance test results.
 #' @param obj Significance testing output object, e.g. object of class htest.
@@ -115,7 +115,7 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
     return(result)
 }
 
-#' \code{print.SignificanceTest}
+#' @title print.SignificanceTest
 #' @param x A \link{SignificanceTest} object
 #' @param ... Additional parameters to \code{\link{print.SignificanceTest}}
 #' @export

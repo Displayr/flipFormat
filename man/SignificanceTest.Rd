@@ -2,7 +2,7 @@
 % Please edit documentation in R/significancetest.R
 \name{SignificanceTest}
 \alias{SignificanceTest}
-\title{{SignificanceTest}}
+\title{SignificanceTest}
 \usage{
 SignificanceTest(obj, test.name, vars, filter = NULL, weight = NULL,
   p.value.method = "", show.labels = TRUE, decimal.places = NULL,

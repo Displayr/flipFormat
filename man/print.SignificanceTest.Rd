@@ -2,7 +2,7 @@
 % Please edit documentation in R/significancetest.R
 \name{print.SignificanceTest}
 \alias{print.SignificanceTest}
-\title{\code{print.SignificanceTest}}
+\title{print.SignificanceTest}
 \usage{
 \method{print}{SignificanceTest}(x, ...)
 }
@@ -10,8 +10,5 @@
 \item{x}{A \link{SignificanceTest} object}
 
 \item{...}{Additional parameters to \code{\link{print.SignificanceTest}}}
-}
-\description{
-\code{print.SignificanceTest}
 }
 
