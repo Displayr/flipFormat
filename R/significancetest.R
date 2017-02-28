@@ -116,6 +116,7 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
 }
 
 #' @title print.SignificanceTest
+#' @description print method for SignificanceTest objects.
 #' @param x A \link{SignificanceTest} object
 #' @param ... Additional parameters to \code{\link{print.SignificanceTest}}
 #' @export

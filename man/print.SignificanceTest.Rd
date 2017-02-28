@@ -11,4 +11,7 @@
 
 \item{...}{Additional parameters to \code{\link{print.SignificanceTest}}}
 }
+\description{
+print method for SignificanceTest objects.
+}
 
