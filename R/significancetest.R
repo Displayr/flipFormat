@@ -268,7 +268,6 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resamp
 
 significanceTestTable <- function(obj)
 {
-    # title <- paste0(obj$test.name, ": ", obj$variable.text)
     title <- obj$test.name
 
     p.value.text <- if (is.null(obj$decimal.places))
@@ -280,7 +279,7 @@ significanceTestTable <- function(obj)
             paste0(" = ", formatted.p.value)
     }
     else
-        FormatWithDecimals(obj$p.value, obj$decimal.places)
+        paste(" = ", FormatWithDecimals(obj$p.value, obj$decimal.places))
 
     significance <- if (obj$p.value > obj$p.cutoff) "Not significant" else "Significant"
     secondary.title <- paste0(significance, ": p-value", p.value.text)
