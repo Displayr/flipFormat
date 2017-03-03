@@ -31,7 +31,7 @@
 #' \item{Test - Variance - F-Test to Compare Two Variances}
 #' }
 #' @export
-SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL, p.value.method = "",
+SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight = NULL, p.value.method = "",
                              show.labels = TRUE, decimal.places = NULL,
                              missing = "Exclude cases with missing data",
                              reg.name = NULL, reg.sample.description = NULL, resample = FALSE)
@@ -40,8 +40,6 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
     result$test.name <- test.name
     result$null.hypothesis <- nullHypothesis(obj, test.name)
     result$additional.footer <- ""
-    if (is.null(filter) || (length(filter) == 1 && filter)) # no filter applied
-        filter <- rep(TRUE, length(vars[[1]]))
 
     if (class(obj) == "htest")
     {
@@ -220,6 +218,9 @@ variableText <- function(vars, show.labels, multiple = FALSE)
 sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE,
                                            imputation.label = NULL, n.estimation = NULL)
 {
+    if (is.null(filter) || (length(filter) == 1 && filter)) # no filter applied
+        filter <- rep(TRUE, length(vars[[1]]))
+
     var.lengths <- sapply(vars, length)
     if (min(var.lengths) != max(var.lengths) || var.lengths[1] != length(filter) ||
         (!is.null(weight) && var.lengths[1] != length(weight)))

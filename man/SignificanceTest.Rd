@@ -4,10 +4,10 @@
 \alias{SignificanceTest}
 \title{SignificanceTest}
 \usage{
-SignificanceTest(obj, test.name, vars, filter = NULL, weight = NULL,
-  p.value.method = "", show.labels = TRUE, decimal.places = NULL,
-  missing = "Exclude cases with missing data", reg.name = NULL,
-  reg.sample.description = NULL, resample = FALSE)
+SignificanceTest(obj, test.name, vars = NULL, filter = NULL,
+  weight = NULL, p.value.method = "", show.labels = TRUE,
+  decimal.places = NULL, missing = "Exclude cases with missing data",
+  reg.name = NULL, reg.sample.description = NULL, resample = FALSE)
 }
 \arguments{
 \item{obj}{Significance testing output object, e.g. object of class htest.}
