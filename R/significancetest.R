@@ -95,7 +95,7 @@ SignificanceTest <- function(obj, test.name, vars, filter = NULL, weight = NULL,
         result$variable.text <- variableText(vars, show.labels, multiple = TRUE)
         result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing, multiple = TRUE)
     }
-    else if (test.name == "Residual Heteroscedasticity")
+    else if (test.name == "Test of Residual Heteroscedasticity (Breusch-Pagan)")
     {
         result$statistic <- obj$ChiSquare
         result$statistic.name <- "Chi-square"
