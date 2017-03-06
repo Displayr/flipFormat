@@ -270,20 +270,23 @@ sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resamp
 significanceTestTable <- function(obj)
 {
     title <- obj$test.name
-
-    p.value.text <- if (is.null(obj$decimal.places))
-    {
-        formatted.p.value <- FormatAsPValue(obj$p.value)
-        if (grepl("<", formatted.p.value))
-            paste0(" ", formatted.p.value)
-        else
-            paste0(" = ", formatted.p.value)
-    }
+    secondary.title <- if (is.na(obj$p.value))
+        "p-value: NA"
     else
-        paste(" = ", FormatWithDecimals(obj$p.value, obj$decimal.places))
-
-    significance <- if (obj$p.value > obj$p.cutoff) "Not significant" else "Significant"
-    secondary.title <- paste0(significance, ": p-value", p.value.text)
+    {
+        significance <- if (obj$p.value > obj$p.cutoff) "Not significant" else "Significant"
+        p.value.text <- if (is.null(obj$decimal.places))
+        {
+            formatted.p.value <- FormatAsPValue(obj$p.value)
+            if (grepl("<", formatted.p.value))
+                paste0(" ", formatted.p.value)
+            else
+                paste0(" = ", formatted.p.value)
+        }
+        else
+            paste(" = ", FormatWithDecimals(obj$p.value, obj$decimal.places))
+        paste0(significance, ": p-value", p.value.text)
+    }
     subtitle <- obj$variable.text
     footer <- paste0(obj$sample.description, " null hypothesis: ", obj$null.hypothesis, ";")
     if (obj$additional.footer != "")
