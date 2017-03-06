@@ -319,20 +319,24 @@ significanceTestTable <- function(obj)
         {
             for (i in 1:length(obj$degrees.of.freedom))
             {
-                dat.list[paste0("df", i)] <- obj$degrees.of.freedom[i]
+                dof <- obj$degrees.of.freedom[i]
+                dat.list[paste0("df", i)] <- dof
+                default.decimal.places <- if (floor(dof) == dof) 0 else 2
                 col.names <- c(col.names, obj$degrees.of.freedom.name[i])
                 formatters[paste0("df", i)] <- if (is.null(obj$decimal.places))
-                    x ~ FormatWithDecimals(x, 0)
+                    x ~ FormatWithDecimals(x, default.decimal.places)
                 else
                     x ~ FormatWithDecimals(x, obj$decimal.places)
             }
         }
         else
         {
-            dat.list$df <- obj$degrees.of.freedom
+            dof <- obj$degrees.of.freedom
+            dat.list$df <- dof
+            default.decimal.places <- if (floor(dof) == dof) 0 else 2
             col.names <- c(col.names, "Degrees of freedom")
             formatters$df <- if (is.null(obj$decimal.places))
-                x ~ FormatWithDecimals(x, 0)
+                x ~ FormatWithDecimals(x, default.decimal.places)
             else
                 x ~ FormatWithDecimals(x, obj$decimal.places)
         }
