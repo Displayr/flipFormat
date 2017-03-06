@@ -315,21 +315,7 @@ significanceTestTable <- function(obj)
     # Degrees of freedom
     if (!is.null(obj$degrees.of.freedom))
     {
-        if (length(obj$degrees.of.freedom) > 1)
-        {
-            for (i in 1:length(obj$degrees.of.freedom))
-            {
-                dof <- obj$degrees.of.freedom[i]
-                dat.list[paste0("df", i)] <- dof
-                default.decimal.places <- if (floor(dof) == dof) 0 else 2
-                col.names <- c(col.names, obj$degrees.of.freedom.name[i])
-                formatters[paste0("df", i)] <- if (is.null(obj$decimal.places))
-                    x ~ FormatWithDecimals(x, default.decimal.places)
-                else
-                    x ~ FormatWithDecimals(x, obj$decimal.places)
-            }
-        }
-        else
+        if (length(obj$degrees.of.freedom) == 1)
         {
             dof <- obj$degrees.of.freedom
             dat.list$df <- dof
@@ -340,6 +326,30 @@ significanceTestTable <- function(obj)
             else
                 x ~ FormatWithDecimals(x, obj$decimal.places)
         }
+        else if (length(obj$degrees.of.freedom) == 2)
+        {
+            # This should be refactored when it is figured out how to
+            # assign a formatter with an arbitrary name without a warning.
+            dof <- obj$degrees.of.freedom[1]
+            dat.list$df1 <- dof
+            default.decimal.places <- if (floor(dof) == dof) 0 else 2
+            col.names <- c(col.names, obj$degrees.of.freedom.name[1])
+            formatters$df1 <- if (is.null(obj$decimal.places))
+                x ~ FormatWithDecimals(x, default.decimal.places)
+            else
+                x ~ FormatWithDecimals(x, obj$decimal.places)
+
+            dof <- obj$degrees.of.freedom[2]
+            dat.list$df2 <- dof
+            default.decimal.places <- if (floor(dof) == dof) 0 else 2
+            col.names <- c(col.names, obj$degrees.of.freedom.name[2])
+            formatters$df2 <- if (is.null(obj$decimal.places))
+                x ~ FormatWithDecimals(x, default.decimal.places)
+            else
+                x ~ FormatWithDecimals(x, obj$decimal.places)
+        }
+        else
+            stop("Degrees of freedom not handled!")
     }
 
     # p-value
