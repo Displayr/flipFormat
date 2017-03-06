@@ -355,7 +355,7 @@ significanceTestTable <- function(obj)
     {
         dat.list$lower.bound <- obj$confidence.interval[1]
         dat.list$upper.bound <- obj$confidence.interval[2]
-        col.names <- c(col.names, "Lower 95% conf. int.", "Upper 95% conf. int.")
+        col.names <- c(col.names, "Lower 95%<br>conf. int.", "Upper 95%<br>conf. int.")
         formatters$lower.bound <- if (is.null(obj$decimal.places))
             x ~ FormatWithDecimals(x, 2)
         else
