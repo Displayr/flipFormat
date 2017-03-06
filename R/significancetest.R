@@ -134,9 +134,9 @@ nullHypothesis <- function(obj, test.name)
         if (obj$alternative == "two.sided")
             paste0("true location shift is equal to ", obj$null.value)
         else if (obj$alternative == "less")
-            paste0("true location shift is greater than or equal to ", obj$null.value)
+            paste0("true location shift is greater than ", obj$null.value)
         else if (obj$alternative == "greater")
-            paste0("true location shift is less than or equal to ", obj$null.value)
+            paste0("true location shift is less than ", obj$null.value)
         else
             stop(paste("Alternative not recogised:", obj$alternative))
     }
@@ -153,9 +153,9 @@ nullHypothesis <- function(obj, test.name)
         if (obj$alternative == "two.sided")
             paste0("true correlation is equal to ", obj$null.value)
         else if (obj$alternative == "less")
-            paste0("true correlation is greater than or equal to ", obj$null.value)
+            paste0("true correlation is greater than ", obj$null.value)
         else if (obj$alternative == "greater")
-            paste0("true correlation is less than or equal to ", obj$null.value)
+            paste0("true correlation is less than ", obj$null.value)
         else
             stop(paste("Alternative not recogised:", obj$alternative))
     }
