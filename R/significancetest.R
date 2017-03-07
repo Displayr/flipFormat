@@ -15,6 +15,7 @@
 #' @param reg.name The name of the regression object on which the test is run.
 #' @param reg.sample.description The sample description of the regression object on which the test is run.
 #' @param resample Whether resampling is used whenever weights are applied.
+#' @param group.levels The levels of the categorical group variable.
 #' @details This function was created for the following Standard R pages:
 #' \itemize{
 #' \item{Missing Data - Little's MCAR Test}
@@ -34,7 +35,8 @@
 SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight = NULL, p.value.method = "",
                              show.labels = TRUE, decimal.places = NULL,
                              missing = "Exclude cases with missing data",
-                             reg.name = NULL, reg.sample.description = NULL, resample = FALSE)
+                             reg.name = NULL, reg.sample.description = NULL, resample = FALSE,
+                             group.levels = NULL)
 {
     result <- list()
     result$test.name <- test.name
@@ -54,7 +56,7 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
         result$additional.footer <- pValueMethodText(p.value.method)
         if (is.null(reg.sample.description))
         {
-            result$variable.text <- variableText(vars, show.labels)
+            result$variable.text <- variableText(vars, show.labels, group.levels = group.levels)
             result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing, resample)
         }
         else
@@ -183,7 +185,7 @@ pValueMethodText <- function(p.value.method)
         ""
 }
 
-variableText <- function(vars, show.labels, multiple = FALSE)
+variableText <- function(vars, show.labels, multiple = FALSE, group.levels = NULL)
 {
     if (multiple)
     {
@@ -208,10 +210,11 @@ variableText <- function(vars, show.labels, multiple = FALSE)
     }
     else if (length(vars) == 2)
     {
+        lvls <- if (!is.null(group.levels)) paste0("(", paste(group.levels, collapse = ", "), ")") else ""
         if (show.labels)
-            paste(Labels(vars[[1]]), "by", Labels(vars[[2]]))
+            c(Labels(vars[[1]]), paste("by", Labels(vars[[2]]), lvls))
         else
-            paste(attr(vars[[1]], "name"), "by", attr(vars[[2]], "name"))
+            c(attr(vars[[1]], "name"), paste("by", attr(vars[[2]], "name"), lvls))
     }
     else
         stop("Variable length not handled.")
@@ -227,9 +230,9 @@ variableTextWithCategories <- function(vars, show.labels, filter)
         levels1 <- paste0("(", paste(levels(factor(vars[[1]][filter])), collapse = ", "), ")")
         levels2 <- paste0("(", paste(levels(factor(vars[[2]][filter])), collapse = ", "), ")")
         if (show.labels)
-            c(paste(Labels(vars[[1]]), levels1), "by", paste(Labels(vars[[2]]), levels2))
+            c(paste(Labels(vars[[1]]), levels1), paste("by", Labels(vars[[2]]), levels2))
         else
-            c(paste(attr(vars[[1]], "name"), levels1), "by", paste(attr(vars[[2]], "name"), levels2))
+            c(paste(attr(vars[[1]], "name"), levels1), paste("by", attr(vars[[2]], "name"), levels2))
     }
     else
         stop("Variable length not handled.")
