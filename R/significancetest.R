@@ -210,7 +210,7 @@ variableText <- function(vars, show.labels, multiple = FALSE, group.levels = NUL
     }
     else if (length(vars) == 2)
     {
-        lvls <- if (!is.null(group.levels)) paste0("(", paste(group.levels, collapse = ", "), ")") else ""
+        lvls <- if (!is.null(group.levels)) levelsText(group.levels) else ""
         if (show.labels)
             c(Labels(vars[[1]]), paste("by", Labels(vars[[2]]), lvls))
         else
@@ -227,15 +227,23 @@ variableTextWithCategories <- function(vars, show.labels, filter)
 
     if (length(vars) == 2)
     {
-        levels1 <- paste0("(", paste(levels(factor(vars[[1]][filter])), collapse = ", "), ")")
-        levels2 <- paste0("(", paste(levels(factor(vars[[2]][filter])), collapse = ", "), ")")
+        levels1 <- levelsText(levels(factor(vars[[1]][filter])))
+        levels2 <- levelsText(levels(factor(vars[[2]][filter])))
         if (show.labels)
             c(paste(Labels(vars[[1]]), levels1), paste("by", Labels(vars[[2]]), levels2))
         else
-            paste(attr(vars[[1]], "name"), levels1, "by", attr(vars[[2]], "name"), levels2)
+            c(paste(attr(vars[[1]], "name"), levels1), paste("by", attr(vars[[2]], "name"), levels2))
     }
     else
         stop("Variable length not handled.")
+}
+
+levelsText <- function(lvls)
+{
+    t <- paste(lvls, collapse = ", ")
+    if (nchar(t) > 300)
+        t <- paste0(substr(t, 1, 300), "...")
+    paste0("(", t, ")")
 }
 
 sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE,
