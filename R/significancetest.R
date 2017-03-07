@@ -81,7 +81,7 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
         result$statistic.name <- "Chi-square"
         result$degrees.of.freedom <- obj$df
         result$p.value <- obj$p.value
-        result$variable.text <- variableText(vars, show.labels)
+        result$variable.text <- variableTextWithCategories(vars, show.labels, filter)
         result$sample.description <- sampleDescriptionFromVariables(vars, filter, weight, missing)
     }
     else if (test.name == "Little's MCAR Test")
@@ -213,6 +213,26 @@ variableText <- function(vars, show.labels, multiple = FALSE)
         else
             paste(attr(vars[[1]], "name"), "by", attr(vars[[2]], "name"))
     }
+    else
+        stop("Variable length not handled.")
+}
+
+variableTextWithCategories <- function(vars, show.labels, filter)
+{
+    if (is.null(filter) || (length(filter) == 1 && filter)) # no filter applied
+        filter <- rep(TRUE, length(vars[[1]]))
+
+    if (length(vars) == 2)
+    {
+        levels1 <- paste0("(", paste(levels(factor(vars[[1]][filter])), collapse = ", "), ")")
+        levels2 <- paste0("(", paste(levels(factor(vars[[2]][filter])), collapse = ", "), ")")
+        if (show.labels)
+            c(paste(Labels(vars[[1]]), levels1), "by", paste(Labels(vars[[2]]), levels2))
+        else
+            c(paste(attr(vars[[1]], "name"), levels1), "by", paste(attr(vars[[2]], "name"), levels2))
+    }
+    else
+        stop("Variable length not handled.")
 }
 
 sampleDescriptionFromVariables <- function(vars, filter, weight, missing, resample = FALSE, multiple = FALSE,

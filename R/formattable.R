@@ -97,8 +97,8 @@ subTitleFormat <- function(subtitle)
         NULL
     else
         tags$h5(class = ".h5",
-                 style = paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
-                 subtitle)
+                style = paste0("color:", subtitleColour(), "; text-align:left; margin-top:5px; margin-bottom:0"),
+                subtitle)
 }
 
 #' @importFrom rmarkdown html_dependency_jquery html_dependency_bootstrap
@@ -108,6 +108,12 @@ subTitleFormat <- function(subtitle)
 createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE,
                         secondary.title = "")
 {
+    tag.list <- list(titleFormat(title), secondaryTitleFormat(secondary.title))
+    for (s in subtitle)
+        tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
+    tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
+                                                     footer)
+
     tbl <- format_table(
         x,
         col.names = col.names,
@@ -118,15 +124,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
             sep = " "
         ),
         align = rep("r", length(col.names) + 1),
-        caption = tagList(
-            titleFormat(title),
-            secondaryTitleFormat(secondary.title),
-            subTitleFormat(subtitle),
-            tags$caption(
-                style="caption-side:bottom;font-style:italic; font-size:90%;",
-                footer
-            )
-        )
+        caption = tagList(tag.list)
     )
 
     browsable(
