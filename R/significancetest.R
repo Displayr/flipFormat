@@ -214,7 +214,7 @@ variableText <- function(vars, show.labels, multiple = FALSE, group.levels = NUL
         if (show.labels)
             c(Labels(vars[[1]]), paste("by", Labels(vars[[2]]), lvls))
         else
-            c(attr(vars[[1]], "name"), paste("by", attr(vars[[2]], "name"), lvls))
+            paste(attr(vars[[1]], "name"), "by", attr(vars[[2]], "name"), lvls)
     }
     else
         stop("Variable length not handled.")
@@ -232,7 +232,7 @@ variableTextWithCategories <- function(vars, show.labels, filter)
         if (show.labels)
             c(paste(Labels(vars[[1]]), levels1), paste("by", Labels(vars[[2]]), levels2))
         else
-            c(paste(attr(vars[[1]], "name"), levels1), paste("by", attr(vars[[2]], "name"), levels2))
+            paste(attr(vars[[1]], "name"), levels1, "by", attr(vars[[2]], "name"), levels2)
     }
     else
         stop("Variable length not handled.")
