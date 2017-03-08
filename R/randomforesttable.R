@@ -22,7 +22,7 @@ RandomForestTable <- function(importance,
 {
     numeric.outcome <- ncol(importance) == 2
 
-    if (sort.by.importance)
+    if (sort.by.importance && ncol(importance) != 1)
     {
         ind <- sort(importance[, ncol(importance)], decreasing = TRUE, index.return = TRUE)$ix
         importance <- importance[ind, ]
