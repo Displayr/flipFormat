@@ -51,12 +51,12 @@ createPFormatter <- function(p.cutoff = 0.05)
 
 # Format regression coefficients
 #' @importFrom formattable formatter
-createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, decimals = 2)
+createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, decimals = 2, suffix = "")
 {
     txt <- sprintf("~ ifelse(%s <= p.cutoff & %s < 0, \"color:red\",
                    ifelse(%s <= p.cutoff & %s > 0, \"color:blue\", NA))",
                    p.name, statistic.name, p.name, statistic.name)
-    formatter("span", style = eval(parse(text = txt)), x ~ FormatWithDecimals(x, decimals))
+    formatter("span", style = eval(parse(text = txt)), x ~ paste0(FormatWithDecimals(x, decimals), suffix))
 }
 
 #' @importFrom formattable formatter style

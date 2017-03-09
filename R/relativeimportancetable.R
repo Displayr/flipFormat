@@ -1,11 +1,8 @@
 #' @title RelativeImportanceTable
 #'
 #' @description Creates a pretty formattable table for relative importance output.
-#' @param relative.importance The relative importance scores.
-#' @param raw.importance The raw importance scores.
-#' @param standard.errors Standard errors of the raw importance scores.
-#' @param t.statistics t-statistics for the raw importance scores.
-#' @param p.values p-values for the raw importance scores.
+#' @param relative.importance The relative importance object.
+#' @param row.labels The row labels corresponding to the predictor variable names/labels.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
 #' @param footer Text to place in the footer of the table.
@@ -13,19 +10,20 @@
 #' @references This is based on code written by Kenton Russell.
 #' @export
 RelativeImportanceTable <- function(relative.importance,
-                                    raw.importance,
-                                    standard.errors,
-                                    t.statistics,
-                                    p.values,
+                                    row.labels,
                                     title = "",
                                     subtitle = "",
                                     footer = "",
                                     p.cutoff = 0.05)
 {
-    coef.df <- data.frame(raw.importance, standard.errors, t.statistics, p.values, check.names = FALSE)
-    colnames(coef.df) <- c("relative.importance", "raw.importance", "std.err", "t", "p")
+    ria <- relative.importance
+    coef.df <- data.frame(ria$importance, ria$raw.importance, ria$standard.errors,
+                          ria$t.statistics, ria$p.values, check.names = FALSE)
+    names(coef.df) <- c("importance", "raw.importance", "std.err", "t", "p")
+    row.names(coef.df) <- row.labels
+
     formatters <- list(
-        relative.importance = createEstimateFormatter("t", "p", p.cutoff),
+        importance = createEstimateFormatter("t", "p", p.cutoff, suffix = "%"),
         raw.importance = x ~ FormatWithDecimals(x, 3),
         std.err = x ~ FormatWithDecimals(x, 2),
         t = createHeatmapFormatter("t", "p", p.cutoff),

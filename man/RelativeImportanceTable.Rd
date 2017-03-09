@@ -4,20 +4,13 @@
 \alias{RelativeImportanceTable}
 \title{RelativeImportanceTable}
 \usage{
-RelativeImportanceTable(relative.importance, raw.importance, standard.errors,
-  t.statistics, p.values, title = "", subtitle = "", footer = "",
-  p.cutoff = 0.05)
+RelativeImportanceTable(relative.importance, row.labels, title = "",
+  subtitle = "", footer = "", p.cutoff = 0.05)
 }
 \arguments{
-\item{relative.importance}{The relative importance scores.}
+\item{relative.importance}{The relative importance object.}
 
-\item{raw.importance}{The raw importance scores.}
-
-\item{standard.errors}{Standard errors of the raw importance scores.}
-
-\item{t.statistics}{t-statistics for the raw importance scores.}
-
-\item{p.values}{p-values for the raw importance scores.}
+\item{row.labels}{The row labels corresponding to the predictor variable names/labels.}
 
 \item{title}{The title for the table.}
 
