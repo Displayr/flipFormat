@@ -25,7 +25,7 @@ RelativeImportanceTable <- function(relative.importance,
     formatters <- list(
         importance = createEstimateFormatter("t", "p", p.cutoff, suffix = "%"),
         raw.importance = x ~ FormatWithDecimals(x, 3),
-        std.err = x ~ FormatWithDecimals(x, 2),
+        std.err = x ~ FormatWithDecimals(x, 3),
         t = createHeatmapFormatter("t", "p", p.cutoff),
         p = createPFormatter(p.cutoff)
     )
