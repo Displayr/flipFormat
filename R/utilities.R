@@ -113,7 +113,7 @@ ExtractCommonPrefix <- function(labels)
 #'
 #' Takes a vector of labels, removes any common prefix,  capitalizes the first letter, removes whitespace from the end.
 #' @param labels A vector of labels from which we plan to extract a common prefix.
-#' @return A \code{character}.
+#' @return A vector of \code{character}s.
 #' @export
 TidyLabels <- function(labels)
 {

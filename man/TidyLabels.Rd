@@ -10,7 +10,7 @@ TidyLabels(labels)
 \item{labels}{A vector of labels from which we plan to extract a common prefix.}
 }
 \value{
-A \code{character}.
+A vector of \code{character}s.
 }
 \description{
 Takes a vector of labels, removes any common prefix,  capitalizes the first letter, removes whitespace from the end.
