@@ -41,4 +41,3 @@ that typically appears in a footer.}
 Describes the sample, for use as footers in multivariate
   analyses.
 }
-

@@ -27,4 +27,3 @@ Creates a pretty formattable table for variance explained.
 \references{
 This is based on code written by Kenton Russell.
 }
-

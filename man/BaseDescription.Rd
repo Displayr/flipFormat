@@ -30,4 +30,3 @@ than or equal to \code{subset}).}
 Describes the sample, for use as footers in multivariate
   analyses.
 }
-

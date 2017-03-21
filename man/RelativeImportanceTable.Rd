@@ -26,4 +26,3 @@ Creates a pretty formattable table for relative importance output.
 \references{
 This is based on code written by Kenton Russell.
 }
-

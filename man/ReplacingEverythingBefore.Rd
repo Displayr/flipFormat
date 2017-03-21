@@ -26,4 +26,3 @@ ReplacingEverythingBefore("foo$fog$x", "\\\\$", FALSE)
 ReplacingEverythingBefore("GiraffeDogCat", "Dog", FALSE)
 ReplacingEverythingBefore("GiraffeDogCat", "Dog", TRUE)
 }
-

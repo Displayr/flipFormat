@@ -21,4 +21,3 @@ This function will not generate the correct answer if the actual call is nested 
 \references{
 Adapted from http://stackoverflow.com/a/26558733/1547926.
 }
-

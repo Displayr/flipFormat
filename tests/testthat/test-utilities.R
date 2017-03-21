@@ -35,3 +35,11 @@ test_that("Extract prefix",
     })
 
 
+test_that("TidyLabels",
+    {
+        z = "Q5.  Brand associations: feminine"
+        expect_equal(TidyLabels(z), z)
+        z = c(z, "Q5.  Brand associations: masculine")
+        expect_equal(TidyLabels(z), c("Feminine", "Masculine"))
+    })
+

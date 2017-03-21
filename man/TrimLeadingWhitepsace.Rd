@@ -18,4 +18,3 @@ A \code{character}.
 \details{
 Removes whitespace (e.g.,spaces, tab characters) from the beginning of a string.
 }
-

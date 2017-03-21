@@ -14,4 +14,3 @@ FormatWithDecimals(x, decimal.places = 2)
 \description{
 Formats real numbers with a specified number of decimal places.
 }
-

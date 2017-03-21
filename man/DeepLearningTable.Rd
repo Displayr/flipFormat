@@ -26,4 +26,3 @@ Creates a pretty formattable table for variable importance of a deep learning ne
 \references{
 This is based on code written by Kenton Russell.
 }
-

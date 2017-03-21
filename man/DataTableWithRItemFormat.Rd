@@ -48,4 +48,3 @@ my.df <- data.frame(First = c(1,2,3), Second = c("a", "b", "c"))
 my.dt <- DataTableWithRItemFormat(my.df, caption = "A nice table")
 my.dt
 }
-

@@ -15,4 +15,3 @@ A \code{character}.
 \description{
 Removes whitespace (e.g.,spaces, tab characters) from the beginning or end of a string.
 }
-

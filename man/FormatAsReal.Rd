@@ -17,4 +17,3 @@ Formats real numbers nicely.
 \details{
 Keeping \code{digits} or more significant digits and and commas if in thousands or more.
 }
-

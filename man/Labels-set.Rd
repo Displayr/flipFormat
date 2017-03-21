@@ -14,4 +14,3 @@ Labels(x) <- value
 \description{
 Assign a "label" attribute to an object.
 }
-

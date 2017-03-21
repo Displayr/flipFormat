@@ -22,4 +22,3 @@ Strips out everything up to and including the last \$. E.g., replaces
 \examples{
 RemoveParentName("foo$fog$x")
 }
-

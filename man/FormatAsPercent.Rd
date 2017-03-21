@@ -19,4 +19,3 @@ Multiplies by 100, keeping \code{digits} or more significant digits and
 putting a % at the end, and commas if in thousands or more.
 Based on \code{\link{formatC}}.
 }
-

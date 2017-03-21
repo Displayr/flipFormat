@@ -12,4 +12,3 @@ Names(x)
 \description{
 Similar to \link{name}, except returns \code{attr(x, "name")} or \link{OriginalName} with a vector, if they exist.
 }
-

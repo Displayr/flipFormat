@@ -38,4 +38,3 @@ my.dt <- AddSignificanceHighlightingToDataTable(my.dt,
     red.value = 1.01, blue.value = 2.99)
 
 }
-

@@ -16,4 +16,3 @@ Formats a model as an equation (string), for
 description purposes. It shows the linear expectation of the mean, and assumes you have not manipulated
 default assumptions (e.g., via offsets and link functions).
 }
-

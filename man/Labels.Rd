@@ -25,4 +25,3 @@ First tries to find the "label" attribute, then "name", then "question", and las
 Where \code{names.to.lookup} is provided, Works for dummy variables as well as normal variables.
 Trims backticks and whitespace. Returns names where labels cannot be found.
 }
-

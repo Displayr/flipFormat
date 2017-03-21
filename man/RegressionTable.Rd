@@ -34,4 +34,3 @@ Creates a pretty formattable table for regression output.
 \references{
 This is based on code written by Kenton Russell.
 }
-

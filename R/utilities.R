@@ -108,6 +108,28 @@ ExtractCommonPrefix <- function(labels)
         list(common.prefix = NA, shortened.labels = labels)
 }
 
+
+#' \code{TidyLabels}
+#'
+#' Takes a vector of labels, removes any common prefix,  capitalizes the first letter, removes whitespace from the end.
+#' @param labels A vector of labels from which we plan to extract a common prefix.
+#' @return A \code{character}.
+#' @export
+TidyLabels <- function(labels)
+{
+    if (length(labels) == 1)
+        return(labels)
+    # Removing any common prefix
+    labels <- ExtractCommonPrefix(labels)$shortened.labels
+    # Removing whitepace from the end
+    labels <- TrimTrailingWhitespace(labels)
+    # Capitalizing the first label
+    first.letter <- toupper(substr(labels, 1, 1))
+    ifelse(nchar(labels) > 1, paste0(first.letter, substr(labels, 2, nchar(labels))), first.letter)
+}
+
+
+
 # Check that character at an index is the same for all labels.
 characterMatches <- function(labels, index)
 {
@@ -149,3 +171,5 @@ hasTextFromIndexOnwards <- function(labels, index, non.word.chars)
     }
     result
 }
+
+

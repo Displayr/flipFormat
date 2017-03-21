@@ -29,4 +29,3 @@ Creates a pretty formattable table for multinomial logit output.
 \references{
 This is based on code written by Kenton Russell.
 }
-

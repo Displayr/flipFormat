@@ -31,4 +31,3 @@ Creates a pretty formattable table for random forest.
 \references{
 This is based on code written by Kenton Russell.
 }
-

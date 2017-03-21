@@ -22,4 +22,3 @@ Formats p relatively nicely, ensuring that values greater than 0.05
 are not rounded to 0.05, and numbers greater than 0 are not rounded to 0,
 unless is really close to 0.
 }
-

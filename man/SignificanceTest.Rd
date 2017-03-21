@@ -59,4 +59,3 @@ This function was created for the following Standard R pages:
 \item{Test - Variance - F-Test to Compare Two Variances}
 }
 }
-

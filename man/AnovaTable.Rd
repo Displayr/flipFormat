@@ -23,4 +23,3 @@ Creates a pretty formattable table for ANOVA/ANCOVA of a regression.
 \references{
 This is based on code written by Kenton Russell.
 }
-
