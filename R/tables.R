@@ -133,7 +133,8 @@ DataTableWithRItemFormat <- function(dd,
                       options = my.options,
                       caption = tags$caption(style = caption.style, caption),
                       width = '100%',
-                      fillContainer = getOption('DT.fillContainer', FALSE),
+                      height = '100%',
+                      fillContainer = FALSE,
                       escape = escape.html)
 
 
