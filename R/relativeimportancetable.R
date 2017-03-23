@@ -18,7 +18,7 @@ RelativeImportanceTable <- function(relative.importance,
 {
     ria <- relative.importance
     coef.df <- data.frame(ria$importance, ria$raw.importance, ria$standard.errors,
-                          ria$t.statistics, ria$p.values, check.names = FALSE)
+                          ria$statistics, ria$p.values, check.names = FALSE)
     names(coef.df) <- c("importance", "raw.importance", "std.err", "t", "p")
     row.names(coef.df) <- row.labels
 
@@ -30,7 +30,7 @@ RelativeImportanceTable <- function(relative.importance,
         p = createPFormatter(p.cutoff)
     )
     column.names <- c("Relative importance", "Raw score", "Standard<br>Error",
-                      "<span style='font-style:italic;'>t</span>",
+                      paste0("<span style='font-style:italic;'>", ria$statistic.name, "</span>"),
                       "<span style='font-style:italic;'>p</span>")
     createTable(coef.df, column.names, formatters, title, subtitle, footer)
 }
