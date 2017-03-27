@@ -23,10 +23,10 @@ RelativeImportanceTable <- function(relative.importance,
     row.names(coef.df) <- row.labels
 
     formatters <- list(
-        importance = createEstimateFormatter("t", "p", p.cutoff, suffix = "%"),
+        importance = createBarFormatter(bar.shows.magnitude = TRUE),
         raw.importance = x ~ FormatWithDecimals(x, 3),
         std.err = x ~ FormatWithDecimals(x, 3),
-        t = createHeatmapFormatter("t", "p", p.cutoff),
+        t = x ~ FormatWithDecimals(x, 2),
         p = createPFormatter(p.cutoff)
     )
     column.names <- c("Relative importance", "Raw score", "Standard<br>Error",
