@@ -71,9 +71,9 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
     {
         n.digits <- n.digits + 1
         p.formatted <- formatC(p, digits = n.digits, format = "f")
-        if (n.digits == 12)
-            p.formatted <- "< 0.0000000000001"
     }
+    if (n.digits == 12)
+        p.formatted <- "< 0.0000000000001"
     p.formatted
 }
 
