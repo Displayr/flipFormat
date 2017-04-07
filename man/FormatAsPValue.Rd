@@ -14,7 +14,7 @@ FormatAsPValue(p, p.cutoff = 0.05, max.decimals = 12)
 
 \item{p.cutoff}{Ensures that values are not rounded to this value.}
 
-\item{max.decimals}{When p is smaller than this value, it is returned as < this vale (e.g., "< 0.001").}
+\item{max.decimals}{When p is smaller than this value, it is returned as < this value (e.g., "< 0.001").}
 }
 \description{
 \code{FormatAsPValue}

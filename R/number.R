@@ -41,7 +41,7 @@ FormatAsReal <- function(x, digits = 2)
 #'
 #' @param p The number(s)
 #' @param p.cutoff Ensures that values are not rounded to this value.
-#' @param max.decimals When p is smaller than this value, it is returned as < this vale (e.g., "< 0.001").
+#' @param max.decimals When p is smaller than this value, it is returned as < this value (e.g., "< 0.001").
 
 #' @export
 FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
@@ -66,14 +66,14 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
         n.digits <- n.digits + 1
         p.formatted <- formatC(p, digits = n.digits, format = "f")
     }
-    # Making sure values greater than 0.05 are not shown as 0.05 due to rounding.
-    while(as.numeric(p.formatted) == 0 & n.digits < 12)
+    while(n.digits <= 12 && as.numeric(p.formatted) == 0)
     {
         n.digits <- n.digits + 1
-        p.formatted <- formatC(p, digits = n.digits, format = "f")
+        p.formatted <- if (n.digits > max.decimals)
+            "< 0.000000000001"
+        else
+            formatC(p, digits = n.digits, format = "f")
     }
-    if (n.digits == 12)
-        p.formatted <- "< 0.0000000000001"
     p.formatted
 }
 
