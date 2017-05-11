@@ -45,7 +45,8 @@ ReplacingEverythingBefore <- function(x, marker, include.marker = TRUE)
 #' @param x A \code{\link{character}} that may contain whitecontaining text to be modified.
 #' @return A \code{character}.
 #' @export
-TrimLeadingWhitepsace <- function (x)  sub("^\\s+", "", x)
+TrimLeadingWhitepsace <- function (x) {
+}
 
 #' \code{TrimTrailingWhitespace}
 #'
@@ -53,7 +54,8 @@ TrimLeadingWhitepsace <- function (x)  sub("^\\s+", "", x)
 #' @param x A \code{\link{character}} that may contain whitecontaining text to be modified.
 #' @return A \code{character}.
 #' @export
-TrimTrailingWhitespace <- function (x) sub("\\s+$", "", x)
+TrimTrailingWhitespace <- function (x){
+}
 
 #' \code{TrimTrailingWhitespace}
 #'
@@ -61,7 +63,8 @@ TrimTrailingWhitespace <- function (x) sub("\\s+$", "", x)
 #' @param x A \code{\link{character}} that may contain whitecontaining text to be modified.
 #' @return A \code{character}.
 #' @export
-TrimWhitespace <- function (x) gsub("^\\s+|\\s+$", "", x)
+TrimWhitespace <- function (x){
+}
 
 #' \code{ExtractCommonPrefix}
 #'
