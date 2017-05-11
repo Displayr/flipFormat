@@ -14,10 +14,16 @@ test_that("ReplacingEverythingBefore",
 
 test_that("Trim white space",
     {
+
         expect_equal(TrimLeadingWhitepsace("        Big dog         "), "Big dog         ")
         expect_equal(TrimTrailingWhitespace("        Big dog         "), "        Big dog")
         expect_equal(TrimWhitespace("        Big dog         "), "Big dog")
     })
+
+
+
+
+
 
 
 lbls <- c("Q5.  Brand associations: feminine - Coke",

@@ -46,9 +46,13 @@ ReplacingEverythingBefore <- function(x, marker, include.marker = TRUE)
 #' @return A \code{character}.
 #' @export
 TrimLeadingWhitepsace <- function (x) {
-    result <- if (length(x) > 1) sapply(x, TrimLeadingWhitepsace) else sub("^\\s+", "", x)
+    if (is.list(x))
+        x <- unlist(x)
+    if (length(x) > 1)
+        return(as.vector(unlist(sapply(x, TrimLeadingWhitepsace))))
+    result <- gsub("^\\s+", "", x)
     if (is.null(names(x)))
-        names(result) <- NULL
+         names(result) <- NULL
     result
 }
 
@@ -58,12 +62,17 @@ TrimLeadingWhitepsace <- function (x) {
 #' @param x A \code{\link{character}} that may contain whitecontaining text to be modified.
 #' @return A \code{character}.
 #' @export
-TrimTrailingWhitespace <- function (x){
-    result <- if (length(x) > 1) sapply(x, TrimTrailingWhitespace) else sub("\\s+$", "", x)
+TrimTrailingWhitespace <- function (x) {
+    if (is.list(x))
+        x <- unlist(x)
+    if (length(x) > 1)
+        return(as.vector(unlist(sapply(x, TrimTrailingWhitespace))))
+    result <- gsub("\\s+$", "", x)
     if (is.null(names(x)))
-        names(result) <- NULL
+         names(result) <- NULL
     result
 }
+
 
 #' \code{TrimTrailingWhitespace}
 #'
@@ -72,9 +81,13 @@ TrimTrailingWhitespace <- function (x){
 #' @return A \code{character}.
 #' @export
 TrimWhitespace <- function (x){
-    result <- if (length(x) > 1) sapply(x, TrimWhitespace) else gsub("^\\s+|\\s+$", "", x)
+    if (is.list(x))
+        x <- unlist(x)
+    if (length(x) > 1)
+        return(as.vector(unlist(sapply(x, TrimWhitespace))))
+    result <- gsub("^\\s+|\\s+$", "", x)
     if (is.null(names(x)))
-        names(result) <- NULL
+         names(result) <- NULL
     result
 }
 
