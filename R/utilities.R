@@ -46,6 +46,10 @@ ReplacingEverythingBefore <- function(x, marker, include.marker = TRUE)
 #' @return A \code{character}.
 #' @export
 TrimLeadingWhitepsace <- function (x) {
+    result <- if (length(x) > 1) sapply(x, TrimLeadingWhitepsace) else sub("^\\s+", "", x)
+    if (is.null(names(x)))
+        names(result) <- NULL
+    result
 }
 
 #' \code{TrimTrailingWhitespace}
@@ -55,6 +59,10 @@ TrimLeadingWhitepsace <- function (x) {
 #' @return A \code{character}.
 #' @export
 TrimTrailingWhitespace <- function (x){
+    result <- if (length(x) > 1) sapply(x, TrimTrailingWhitespace) else sub("\\s+$", "", x)
+    if (is.null(names(x)))
+        names(result) <- NULL
+    result
 }
 
 #' \code{TrimTrailingWhitespace}
@@ -64,6 +72,10 @@ TrimTrailingWhitespace <- function (x){
 #' @return A \code{character}.
 #' @export
 TrimWhitespace <- function (x){
+    result <- if (length(x) > 1) sapply(x, TrimWhitespace) else gsub("^\\s+|\\s+$", "", x)
+    if (is.null(names(x)))
+        names(result) <- NULL
+    result
 }
 
 #' \code{ExtractCommonPrefix}
