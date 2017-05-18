@@ -1,11 +1,22 @@
 # Format bars used to visually display information such as R-squared.
 #' @importFrom formattable formatter percent
-createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.display.value = NA)
+createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.display.value = NA,
+                               max.display.value = NA)
 {
-    .get.bar.widths <- if (bar.shows.magnitude)
+    if (is.na(max.display.value))
+    {
+        .get.bar.widths <- if (bar.shows.magnitude)
             function(x) percent(abs(x) / max(abs(x), na.rm = TRUE))
         else
             function(x) percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))
+    }
+    else
+    {
+        .get.bar.widths <- if (bar.shows.magnitude)
+            function(x) percent(abs(x) / max.display.value)
+        else
+            function(x) percent(pmax(x, 0) / max.display.value)
+    }
 
     .format.values <- function(x, min.display.value)
     {
