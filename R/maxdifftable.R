@@ -14,14 +14,15 @@ MaxDiffTable <- function(stats.table,
 {
     colnames(stats.table) <- c("mean", "median", "lower.quartile", "upper.quartile", "min", "max")
     stats.table <- data.frame(stats.table, check.names = FALSE)
+    max.display.value <- 100 * max(stats.table)
     formatters <- list(
-        mean = createBarFormatter(decimals = 1),
-        median = x ~ FormatWithDecimals(x, 1),
-        lower.quartile = x ~ FormatWithDecimals(x, 1),
-        upper.quartile = x ~ FormatWithDecimals(x, 1),
-        min = x ~ FormatWithDecimals(x, 1),
-        max = x ~ FormatWithDecimals(x, 1))
-    column.labels <- c("Mean (%)", "Median (%)", "Lower<br>quartile (%)", "Upper<br>quartile (%)", "Min (%)", "Max (%)")
+        mean = createBarFormatter(decimals = 1, max.display.value = max.display.value),
+        median = createBarFormatter(decimals = 1, max.display.value = max.display.value),
+        lower.quartile = createBarFormatter(decimals = 1, max.display.value = max.display.value),
+        upper.quartile = createBarFormatter(decimals = 1, max.display.value = max.display.value),
+        min = createBarFormatter(decimals = 1, max.display.value = max.display.value),
+        max = createBarFormatter(decimals = 1, max.display.value = max.display.value))
+    column.labels <- c("Mean (%)", "Median (%)", "Lower<br>quartile (%)", "Upper<br>quartile (%)", "Minimum (%)", "Maximum (%)")
     createTable(100 * stats.table, column.labels, formatters, title, subtitle, footer)
 }
 
