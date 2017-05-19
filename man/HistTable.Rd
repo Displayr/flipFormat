@@ -4,7 +4,9 @@
 \alias{HistTable}
 \title{HistTable}
 \usage{
-HistTable(data.values, title = "", subtitle = "", footer = "", ...)
+HistTable(data.values, title = "", subtitle = "", footer = "",
+  bin.min = 0, bin.max = 100, bin.size = 5, hist.width = 100,
+  hist.height = 20, ...)
 }
 \arguments{
 \item{data.values}{A dataframe, with each column containing the values to create a histogram.}
@@ -15,7 +17,17 @@ HistTable(data.values, title = "", subtitle = "", footer = "", ...)
 
 \item{footer}{The footer of the table.}
 
+\item{bin.min}{Any value in \code{data.values} smaller then this will be truncated to \code{bin.min}.}
+
+\item{bin.size}{Size of the bins used in the histogram. The breakpoints are given by \code{seq(bin.min, bin.max, bin.size)}.}
+
+\item{hist.width}{Width of the histogram cell in any valid CSS size unit}
+
+\item{hist.height}{Height of the histogram cell}
+
 \item{...}{Additional columns to add to the table.}
+
+\item{bin.min}{Any value in \code{data.values} larger then this will be truncated to \code{bin.max}.}
 }
 \description{
 Creates a pretty formattable table showing histograms
