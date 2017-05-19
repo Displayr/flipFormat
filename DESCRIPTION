@@ -10,10 +10,11 @@ License: GPL-3
 LazyData: TRUE
 Imports:
     DT,
-    htmltools,
     formattable,
+    htmltools,
+    htmlwidgets,
     rmarkdown,
-    htmlwidgets
+    sparkline
 Suggests:
     testthat,
     flipAnalysisOfVariance,
