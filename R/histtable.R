@@ -11,8 +11,8 @@
 #' @importFrom htmlwidgets getDependency
 #' @importFrom sparkline sparkline
 #' @examples
-#' dat <- data.frame(A=rpois(500,5), B=rpois(500,50), C=rpois(500,100))
-#' print(HistTable(dat, Mean=c(5,50,100)))
+#' dat <- data.frame(A=rpois(500,5), B=rpois(500,50), C=rpois(500,20))
+#' print(HistTable(dat, 'Mean Probability'=c(5,50,100)))
 #' @export
 
 HistTable <- function(data.values,
@@ -25,11 +25,15 @@ HistTable <- function(data.values,
     if (!is.data.frame(data.values))
         data.values <- as.data.frame(data.values)
 
-    histString <- function(xx) {as.character(as.tags(sparkline(hist(xx,plot=F)$counts/length(xx)*100,
-                                            type="bar", zeroColor="lightgray", chartRangeMin=0, chartRangeMax=100)))}
+    histString <- function(xx) {
+        xx[xx > 100] <- 100
+        xx[xx < 0] <- 0
+        counts <- hist(xx, plot=F, breaks=seq(0,100,5))$counts/length(xx)*100
+        as.character(as.tags(sparkline(counts, type="bar", zeroColor="lightgray")))}
+
     df <- data.frame(..., # extra stats to report
-                     Distribution=unlist(lapply(data.values, histString)),
-                     stringsAsFactors = FALSE)
+                     'Distribution'=unlist(lapply(data.values, histString)),
+                     stringsAsFactors = FALSE, check.names = FALSE)
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer)
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))

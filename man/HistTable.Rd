@@ -21,6 +21,6 @@ HistTable(data.values, title = "", subtitle = "", footer = "", ...)
 Creates a pretty formattable table showing histograms
 }
 \examples{
-dat <- data.frame(A=rpois(500,5), B=rpois(500,50), C=rpois(500,100))
-print(HistTable(dat, Mean=c(5,50,100)))
+dat <- data.frame(A=rpois(500,5), B=rpois(500,50), C=rpois(500,20))
+print(HistTable(dat, 'Mean Probability'=c(5,50,100)))
 }
