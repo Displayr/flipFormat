@@ -27,7 +27,7 @@ HistTable <- function(data.values,
                       bin.min = 0,
                       bin.max = 100,
                       bin.size = 5,
-                      hist.width = 60,
+                      hist.width = 100,
                       hist.height = 20,
                       ...)
 {
