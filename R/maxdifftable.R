@@ -43,16 +43,30 @@ MaxDiffTableClasses <- function(probabilities,
                          footer = "")
 {
     k <- ncol(probabilities)
-    n.classes <- k - 1
-    colnames(probabilities) <- c(paste0("class", 1:n.classes), "total")
-    prob.df <- data.frame(probabilities, check.names = FALSE)
-    formatters <- list()
-    for (i in 1:n.classes)
-        formatters[[paste0("class", i)]] <- createBarFormatter(decimals = 1,
-                                                               bar.shows.magnitude = TRUE,
-                                                               max.display.value = 100 * max(prob.df))
-    formatters[["total"]] <- createBarFormatter(decimals = 1,
-                                                bar.shows.magnitude = TRUE,
-                                                max.display.value = 100 * max(prob.df))
-    createTable(100 * prob.df, column.labels, formatters, title, subtitle, footer)
+    if (k == 1)
+    {
+        colnames(probabilities) <- paste0("class", 1:k)
+        prob.df <- data.frame(probabilities, check.names = FALSE)
+        formatters <- list()
+        for (i in 1:k)
+            formatters[[paste0("class", i)]] <- createBarFormatter(decimals = 1,
+                                                                   bar.shows.magnitude = TRUE,
+                                                                   max.display.value = 100 * max(prob.df))
+        createTable(100 * prob.df, column.labels, formatters, title, subtitle, footer)
+    }
+    else
+    {
+        n.classes <- k - 1
+        colnames(probabilities) <- c(paste0("class", 1:n.classes), "total")
+        prob.df <- data.frame(probabilities, check.names = FALSE)
+        formatters <- list()
+        for (i in 1:n.classes)
+            formatters[[paste0("class", i)]] <- createBarFormatter(decimals = 1,
+                                                                   bar.shows.magnitude = TRUE,
+                                                                   max.display.value = 100 * max(prob.df))
+        formatters[["total"]] <- createBarFormatter(decimals = 1,
+                                                    bar.shows.magnitude = TRUE,
+                                                    max.display.value = 100 * max(prob.df))
+        createTable(100 * prob.df, column.labels, formatters, title, subtitle, footer)
+    }
 }
