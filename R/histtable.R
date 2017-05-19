@@ -7,7 +7,7 @@
 #' @param footer The footer of the table.
 #' @param bin.size Size of the bins used in the histogram. The breakpoints are given by \code{seq(bin.min, bin.max, bin.size)}.
 #' @param bin.min Any value in \code{data.values} smaller then this will be truncated to \code{bin.min}.
-#' @param bin.min Any value in \code{data.values} larger then this will be truncated to \code{bin.max}.
+#' @param bin.max Any value in \code{data.values} larger then this will be truncated to \code{bin.max}.
 #' @param hist.width Width of the histogram cell in any valid CSS size unit
 #' @param hist.height Height of the histogram cell
 #' @param ... Additional columns to add to the table.
@@ -24,9 +24,9 @@ HistTable <- function(data.values,
                       title = "",
                       subtitle = "",
                       footer = "",
+                      bin.size = 5,
                       bin.min = 0,
                       bin.max = 100,
-                      bin.size = 5,
                       hist.width = 100,
                       hist.height = 20,
                       ...)
