@@ -41,8 +41,8 @@ HistTable <- function(data.values,
         counts <- round(hist(xx, plot=F, breaks=seq(bin.min,bin.max,bin.size))$counts/length(xx)*100, 1)
         as.character(as.tags(sparkline(counts, type="bar", zeroColor="lightgray", width=hist.width, height=hist.height)))}
 
-    df <- data.frame(..., # extra stats to report
-                     'Distribution'=unlist(lapply(data.values, histString)),
+    df <- data.frame('Distribution'=unlist(lapply(data.values, histString)),
+                     ..., # extra stats to report
                      stringsAsFactors = FALSE, check.names = FALSE)
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer)
