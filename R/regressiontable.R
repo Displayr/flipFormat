@@ -37,38 +37,46 @@ RegressionTable <- function(coefficient.table,
 #'
 #' Creates pretty table showing regression coefficients with a crosstab interaction.
 #' @param coef Matrix containing estimates of the coefficient.
-#' @param coef.sign Matrix of \code{-1,0,1}s indicating whether an interaction term makes a
-#'      coefficient significantly smaller (-1) or bigger (+1) than without the interaction.
+#' @param coef.tstat Matrix containing t-statistics of each coefficient. Used to determine color of cell.
+#' @param coef.pval Matrix containing p-value of each coefficient. Used to determine bolding.
 #' @param group.size Vector containing the size of each group (i.e. interaction term).
 #' @param footer Text to place in the footer of the table.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.
-#' @param sign.color Vector of three colors, which controls how coefficient values which are significant will be displayed.
 #' @param decimals Number of decimals reported for the regression coefficients.
+#' @param p.cutoff The alpha level for determining the significance of the coefficients.
 #' @importFrom formattable area
 #' @export
 CrosstabInteractionTable <- function(coef,
-                            coef.sign,
+                            coef.tstat,
+                            coef.pval,
                             group.size,
                             footer = "",
                             title = "",
                             subtitle = "",
-                            sign.color = c("red", "black", "blue"),
-                            decimals = 2)
+                            decimals = 2,
+                            p.cutoff = 0.05)
 {
-    coef.df <- data.frame(coef, check.names = FALSE)
-    coef.df <- rbind(coef.df, n = group.size)
+    if (!is.numeric(p.cutoff))
+    {
+        p.cutoff <- 0.05
+        warning("Invalid 'p.cutoff'; 0.05 has been used instead.")
+    }
+    k <-  ncol(coef) - 1
+    coef.names <- colnames(coef)
+    colnames(coef.tstat) <- sprintf("t%d", 1:k)
+    colnames(coef.pval) <- sprintf("p%d", 1:k)
+    coef.df <- data.frame(cbind(coef, coef.tstat, coef.pval), check.names = FALSE)
+    coef.df <- rbind(coef.df, n = c(group.size, rep(0, 2*k)))
+    columns.to.exclude <- as.list(structure(rep(FALSE, 2*k), names=c(colnames(coef.tstat), colnames(coef.pval))))
 
     formatters <- list()
-    for (i in 1:(ncol(coef.df)-1))
-    {
-        i.name <- colnames(coef)[i]
-        i.col <- c(sign.color[coef.sign[,i]+2], "black")
-        formatters[[i.name]] <- formatter("span", style=style(color=i.col), x ~ FormatWithDecimals(x, decimals))
-    }
+    for (i in 1:k)
+        formatters[[coef.names[i]]] <- createHeatmapFormatter(sprintf("t%d",i), sprintf("p%d", i), p.cutoff)
     formatters[["NET"]] <- formatter("span", x~FormatWithDecimals(x, decimals))
     formatters[[ncol(coef.df)+1]] <- area(row=nrow(coef.df))~formatter("span", x~FormatWithDecimals(x,0))
+    formatters <- c(formatters, columns.to.exclude)
 
-    createTable(coef.df, col.names=colnames(coef.df), formatters, title=title, subtitle=subtitle, footer=footer)
+    createTable(coef.df, col.names=coef.names, formatters, title=title, subtitle=subtitle, footer=footer)
 }
 
