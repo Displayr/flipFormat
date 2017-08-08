@@ -6,6 +6,8 @@ context("utilities")
 test_that("ConvertCommaSeparatedStringToVector",
     {
         expect_equal(ConvertCommaSeparatedStringToVector("a, a "), c("a","a"))
+        expect_equal(ConvertCommaSeparatedStringToVector("a; a ", split = ";"), c("a","a"))
+        expect_equal(ConvertCommaSeparatedStringToVector("a; a ;   a ", split = c(";")), c("a","a", "a"))
     })
 
 

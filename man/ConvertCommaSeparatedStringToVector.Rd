@@ -4,10 +4,12 @@
 \alias{ConvertCommaSeparatedStringToVector}
 \title{\code{ConvertCommaSeparatedStringToVector}}
 \usage{
-ConvertCommaSeparatedStringToVector(string)
+ConvertCommaSeparatedStringToVector(string, split = ",")
 }
 \arguments{
 \item{string}{A \code{\link{character}} to be converted.}
+
+\item{split}{A \code{\link{character}} vector containing regular expressions to be used in splitting. Where multiple entries are in the vector they are recycled along the vector of \code{string} (i.e., they are not all used as delimiters).}
 }
 \value{
 A \code{vector} of \code{character}s.

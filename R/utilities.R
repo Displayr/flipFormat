@@ -2,11 +2,12 @@
 #'
 #' Converts a string containing commas into a vector, trimming whistepaces along the way.
 #' @param string A \code{\link{character}} to be converted.
+#' @param split A \code{\link{character}} vector containing regular expressions to be used in splitting. Where multiple entries are in the vector they are recycled along the vector of \code{string} (i.e., they are not all used as delimiters).
 #' @return A \code{vector} of \code{character}s.
 #' @export
-ConvertCommaSeparatedStringToVector <- function(string)
+ConvertCommaSeparatedStringToVector <- function(string, split = ",")
 {
-    comma.delimited <- unlist(strsplit(string, ","))
+    comma.delimited <- unlist(strsplit(string, split))
     return(TrimWhitespace(comma.delimited))
 }
 
