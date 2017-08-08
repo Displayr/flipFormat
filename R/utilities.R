@@ -1,3 +1,16 @@
+#' \code{ConvertCommaSeparatedStringToVector}
+#'
+#' Converts a string containing commas into a vector, trimming whistepaces along the way.
+#' @param string A \code{\link{character}} to be converted.
+#' @return A \code{vector} of \code{character}s.
+#' @export
+ConvertCommaSeparatedStringToVector <- function(string)
+{
+    comma.delimited <- unlist(strsplit(string, ","))
+    return(TrimWhitespace(comma.delimited))
+}
+
+
 #' \code{RemoveParentName}
 #'
 #' Strips out everything up to and perhaps including a specific character.
@@ -74,7 +87,7 @@ TrimTrailingWhitespace <- function (x) {
 }
 
 
-#' \code{TrimTrailingWhitespace}
+#' \code{TrimWhitespace}
 #'
 #' Removes whitespace (e.g.,spaces, tab characters) from the beginning or end of a string.
 #' @param x A \code{\link{character}} that may contain whitecontaining text to be modified.
@@ -199,5 +212,6 @@ hasTextFromIndexOnwards <- function(labels, index, non.word.chars)
     }
     result
 }
+
 
 

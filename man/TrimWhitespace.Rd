@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{TrimWhitespace}
 \alias{TrimWhitespace}
-\title{\code{TrimTrailingWhitespace}}
+\title{\code{TrimWhitespace}}
 \usage{
 TrimWhitespace(x)
 }

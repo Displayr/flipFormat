@@ -2,6 +2,13 @@ context("utilities")
 
 #' \code{"foo$fog$x"} with \code{"x"}
 
+
+test_that("ConvertCommaSeparatedStringToVector",
+    {
+        expect_equal(ConvertCommaSeparatedStringToVector("a, a "), c("a","a"))
+    })
+
+
 test_that("ReplacingEverythingBefore",
     {
         expect_equal(ReplacingEverythingBefore("foo$fog$x", "\\$"), "x")

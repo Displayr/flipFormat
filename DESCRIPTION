@@ -14,7 +14,8 @@ Imports:
     htmltools,
     htmlwidgets,
     rmarkdown,
-    sparkline
+    sparkline,
+    grDevices
 Suggests:
     testthat,
     flipAnalysisOfVariance,
