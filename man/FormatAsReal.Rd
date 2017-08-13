@@ -4,16 +4,27 @@
 \alias{FormatAsReal}
 \title{Formats real numbers nicely.}
 \usage{
-FormatAsReal(x, digits = 2)
+FormatAsReal(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE,
+  comma.for.thousands = TRUE, pad = FALSE)
 }
 \arguments{
 \item{x}{The number(s)}
 
-\item{digits}{Number of significant digits}
+\item{digits}{Number of significant digits.}
+
+\item{decimals}{Number of decimal places to show. If null, this is ignored.}
+
+\item{remove.leading.0}{Removes the initial 0 from numbers that are less than 1.}
+
+\item{comma.for.thousands}{If TRUE, uses a comma when there are thousands.}
+
+\item{pad}{If a vector is supplied and \link{decimal.places} is specified, adds spaces to the beginning of numbers so they become decimal aligned.}
 }
 \description{
 Formats real numbers nicely.
 }
 \details{
-Keeping \code{digits} or more significant digits and and commas if in thousands or more.
+Multiplies by 100, keeping \code{digits} or more significant digits and
+, and commas if in thousands or more.
+Based on \code{\link{formatC}}.
 }

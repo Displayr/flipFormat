@@ -11,11 +11,12 @@ LazyData: TRUE
 Imports:
     DT,
     formattable,
+    grDevices,
     htmltools,
     htmlwidgets,
     rmarkdown,
     sparkline,
-    grDevices
+    stringr
 Suggests:
     testthat,
     flipAnalysisOfVariance,
