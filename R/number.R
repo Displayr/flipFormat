@@ -133,8 +133,8 @@ specifyDecimal <- function(x, decimals = 2, comma.for.thousands = TRUE)
 #' @param x The number(s).
 removeLeading0 <- function(x)
 {
-    if (substring(x, 1, 1) == "0")
-        x <- substring(x, 2)
+    first.is.0 <- substring(x, 1, 1) == "0"
+    x[first.is.0] <- substring(x[first.is.0], 2)
     return(x)
 }
 

@@ -47,6 +47,7 @@ test_that("Vector number formats", {
     expect_equal(FormatWithDecimals(c(0.00034, NA, 0.039999, 0.049999, 0.05001)), c("0.00", "NA", "0.04", "0.05", "0.05"))
     expect_equal(FormatAsPercent(c(3.5, NA, 0.351546654, 0.0035), decimals = 2), c("350.00%","NA", "35.15%", "0.35%"))
     expect_equal(FormatAsPercent(c(3.5, NA, 0.351546654, 0.0035), decimals = 2, remove.leading.0 = TRUE), c("350.00%","NA", "35.15%", ".35%"))
+    expect_equal(FormatAsPercent(c(3.5, 0.351546654, 0.0035), decimals = 2, remove.leading.0 = TRUE), c("350.00%","35.15%", ".35%"))
 })
 
 test_that("Decimal places", {
