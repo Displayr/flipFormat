@@ -26,7 +26,7 @@ RegressionTable <- function(coefficient.table,
     coef.df <- data.frame(coefficient.table, check.names = FALSE)
     formatters <- list(
         Estimate = createEstimateFormatter("t", "p", p.cutoff),
-        SE = x ~ FormatWithDecimals(x, 2),
+        SE = x ~ FormatAsReal(x, decimals = 2),
         t = createHeatmapFormatter("t", "p", p.cutoff),
         p = createPFormatter(p.cutoff)
     )
@@ -73,8 +73,8 @@ CrosstabInteractionTable <- function(coef,
     formatters <- list()
     for (i in 1:k)
         formatters[[coef.names[i]]] <- createHeatmapFormatter(sprintf("t%d",i), sprintf("p%d", i), p.cutoff)
-    formatters[["NET"]] <- formatter("span", x~FormatWithDecimals(x, decimals))
-    formatters[[ncol(coef.df)+1]] <- area(row=nrow(coef.df))~formatter("span", x~FormatWithDecimals(x,0))
+    formatters[["NET"]] <- formatter("span", x~FormatAsReal(x, decimals = decimals))
+    formatters[[ncol(coef.df)+1]] <- area(row=nrow(coef.df))~formatter("span", x~FormatAsReal(x, decimals = 0))
     formatters <- c(formatters, columns.to.exclude)
 
     createTable(coef.df, col.names=coef.names, formatters, title=title, subtitle=subtitle, footer=footer)

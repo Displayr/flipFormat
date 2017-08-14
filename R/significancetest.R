@@ -315,7 +315,7 @@ significanceTestTable <- function(obj)
                 paste0(" = ", formatted.p.value)
         }
         else
-            paste(" = ", FormatWithDecimals(obj$p.value, obj$decimal.places))
+            paste(" = ", FormatAsReal(obj$p.value, decimals = obj$decimal.places))
         paste0(significance, ": p-value", p.value.text)
     }
     subtitle <- obj$variable.text
@@ -333,18 +333,18 @@ significanceTestTable <- function(obj)
         dat.list$estimate <- obj$estimate
         col.names <- c(col.names, obj$estimate.name)
         formatters$estimate <- if (is.null(obj$decimal.places))
-            x ~ FormatWithDecimals(x, 2)
+            x ~ FormatAsReal(x, decimals = 2)
         else
-            x ~ FormatWithDecimals(x, obj$decimal.places)
+            x ~ FormatAsReal(x, decimals = obj$decimal.places)
     }
 
     # Statistic
     dat.list$statistic <- obj$statistic
     col.names <- c(col.names, obj$statistic.name)
     formatters$statistic <- if (is.null(obj$decimal.places))
-        x ~ FormatWithDecimals(x, 2)
+        x ~ FormatAsReal(x, decimals = 2)
     else
-        x ~ FormatWithDecimals(x, obj$decimal.places)
+        x ~ FormatAsReal(x, decimals = obj$decimal.places)
 
     # Degrees of freedom
     if (!is.null(obj$degrees.of.freedom))
@@ -356,9 +356,9 @@ significanceTestTable <- function(obj)
             default.decimal.places <- if (floor(dof) == dof) 0 else 2
             col.names <- c(col.names, "Degrees of freedom")
             formatters$df <- if (is.null(obj$decimal.places))
-                x ~ FormatWithDecimals(x, default.decimal.places)
+                x ~ FormatAsReal(x, decimals = default.decimal.places)
             else
-                x ~ FormatWithDecimals(x, obj$decimal.places)
+                x ~ FormatAsReal(x, decimals = obj$decimal.places)
         }
         else if (length(obj$degrees.of.freedom) == 2)
         {
@@ -369,18 +369,18 @@ significanceTestTable <- function(obj)
             default.decimal.places <- if (floor(dof) == dof) 0 else 2
             col.names <- c(col.names, obj$degrees.of.freedom.name[1])
             formatters$df1 <- if (is.null(obj$decimal.places))
-                x ~ FormatWithDecimals(x, default.decimal.places)
+                x ~ FormatAsReal(x, decimals = default.decimal.places)
             else
-                x ~ FormatWithDecimals(x, obj$decimal.places)
+                x ~ FormatAsReal(x, decimals = obj$decimal.places)
 
             dof <- obj$degrees.of.freedom[2]
             dat.list$df2 <- dof
             default.decimal.places <- if (floor(dof) == dof) 0 else 2
             col.names <- c(col.names, obj$degrees.of.freedom.name[2])
             formatters$df2 <- if (is.null(obj$decimal.places))
-                x ~ FormatWithDecimals(x, default.decimal.places)
+                x ~ FormatAsReal(x, decimals = default.decimal.places)
             else
-                x ~ FormatWithDecimals(x, obj$decimal.places)
+                x ~ FormatAsReal(x, decimals = obj$decimal.places)
         }
         else
             stop("Degrees of freedom not handled!")
@@ -392,7 +392,7 @@ significanceTestTable <- function(obj)
     formatters$p.value <- if (is.null(obj$decimal.places))
         x ~ FormatAsPValue(x)
     else
-        x ~ FormatWithDecimals(x, obj$decimal.places)
+        x ~ FormatAsReal(x, decimals = obj$decimal.places)
 
     # Confidence interval
     if (!is.null(obj$confidence.interval))
@@ -401,13 +401,13 @@ significanceTestTable <- function(obj)
         dat.list$upper.bound <- obj$confidence.interval[2]
         col.names <- c(col.names, "Lower 95%<br>conf. int.", "Upper 95%<br>conf. int.")
         formatters$lower.bound <- if (is.null(obj$decimal.places))
-            x ~ FormatWithDecimals(x, 2)
+            x ~ FormatAsReal(x, decimals = 2)
         else
-            x ~ FormatWithDecimals(x, obj$decimal.places)
+            x ~ FormatAsReal(x, decimals = obj$decimal.places)
         formatters$upper.bound <- if (is.null(obj$decimal.places))
-            x ~ FormatWithDecimals(x, 2)
+            x ~ FormatAsReal(x, decimals = 2)
         else
-            x ~ FormatWithDecimals(x, obj$decimal.places)
+            x ~ FormatAsReal(x, decimals = obj$decimal.places)
     }
 
     createTable(data.frame(dat.list), col.names, formatters, title, subtitle, footer,

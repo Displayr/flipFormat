@@ -20,7 +20,7 @@ createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.di
 
     .format.values <- function(x, min.display.value)
     {
-        result <- FormatWithDecimals(x, decimals)
+        result <- FormatAsReal(x, decimals = decimals)
         result[abs(x) < min.display.value] <- ""
         result
     }
@@ -52,7 +52,7 @@ createPFormatter <- function(p.cutoff = 0.05)
     formatter("span",
     style = p ~ ifelse(p <= p.cutoff, style(font.weight = "bold"), NA),
     p ~ {
-            p.formatted <- FormatWithDecimals(p, 3)
+            p.formatted <- FormatAsReal(p, decimals = 3)
             p.formatted <- gsub(x = p.formatted, pattern="^(-?)0", replacement="\\1")
             p.formatted[p < 0.001] <- "< .001"
             p.formatted
@@ -67,7 +67,7 @@ createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, dec
     txt <- sprintf("~ ifelse(%s <= p.cutoff & %s < 0, \"color:red\",
                    ifelse(%s <= p.cutoff & %s > 0, \"color:blue\", NA))",
                    p.name, statistic.name, p.name, statistic.name)
-    formatter("span", style = eval(parse(text = txt)), x ~ paste0(FormatWithDecimals(x, decimals), suffix))
+    formatter("span", style = eval(parse(text = txt)), x ~ paste0(FormatAsReal(x, decimals = decimals), suffix))
 }
 
 #' @importFrom formattable formatter style
@@ -76,7 +76,7 @@ createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.
     txt <- sprintf("~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
                    `font-weight` = ifelse(%s <= p.cutoff, \"bold\", NA),
                    `background-color` = heatmapColourScale(%s, max.abs))", p.name, statistic.name)
-    formatter("span", style = eval(parse(text = txt)), x ~ FormatWithDecimals(x, decimals))
+    formatter("span", style = eval(parse(text = txt)), x ~ FormatAsReal(x, decimals = decimals))
 }
 
 #' @importFrom htmltools tags

@@ -26,7 +26,7 @@ AnovaTable <- function(anova,
     {   # F-tests
         colnames(anova) <- c("ss", "df", "F", "p")
         formatters <- list(ss = createBarFormatter(),
-             df = x ~ FormatWithDecimals(x, 0),
+             df = x ~ FormatAsReal(x, decimals = 0),
              F = createEstimateFormatter("ss", "p", p.cutoff),
              p = createPFormatter(p.cutoff))
         return(createTable(anova, column.names, formatters, title, subtitle, footer))
@@ -34,7 +34,7 @@ AnovaTable <- function(anova,
     # Chi-square tests
     colnames(anova) <- c("chi", "df", "p")
     formatters <- list(chi = createBarFormatter(),
-                        df = x ~ FormatWithDecimals(x, 0),
+                        df = x ~ FormatAsReal(x, decimals = 0),
                         p = createPFormatter(p.cutoff))
     createTable(anova, column.names, formatters, title, subtitle, footer)
 }

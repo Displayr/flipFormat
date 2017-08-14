@@ -102,18 +102,6 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
     p.formatted
 }
 
-#' Formats real numbers with a specified number of decimal places.
-#' @param x The number(s).
-#' @param decimal.places Number of decimal places to show.
-#' @export
-FormatWithDecimals <- function(x, decimal.places = 2)
-{
-    trimws(format(c(round(x, decimal.places), 0.123456789),
-                  digits = decimal.places,
-                  scientific = FALSE,
-                  big.mark = ",")[1:length(x)])
-}
-
 #' specifyDecimal
 #' @param x The number(s).
 #' @param decimals Number of decimal places to show.

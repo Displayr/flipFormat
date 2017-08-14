@@ -24,9 +24,9 @@ RelativeImportanceTable <- function(relative.importance,
 
     formatters <- list(
         importance = createBarFormatter(bar.shows.magnitude = TRUE),
-        raw.importance = x ~ FormatWithDecimals(x, 3),
-        std.err = x ~ FormatWithDecimals(x, 3),
-        t = x ~ FormatWithDecimals(x, 2),
+        raw.importance = x ~ FormatAsReal(x, decimals = 3),
+        std.err = x ~ FormatAsReal(x, decimals = 3),
+        t = x ~ FormatAsReal(x, decimals = 2),
         p = createPFormatter(p.cutoff)
     )
     column.names <- c("Relative importance", "Raw score", "Standard<br>Error",
