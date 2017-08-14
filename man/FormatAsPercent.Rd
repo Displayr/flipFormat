@@ -18,7 +18,7 @@ FormatAsPercent(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE,
 
 \item{comma.for.thousands}{If TRUE, uses a comma when there are thousands.}
 
-\item{pad}{If a vector is supplied and \link{decimal.places} is specified, adds spaces to the beginning of numbers so they become decimal aligned.}
+\item{pad}{If a vector is supplied and \code{decimals} is specified, adds spaces to the beginning of numbers so they become decimal aligned.}
 }
 \description{
 Converts a proportion to a percent

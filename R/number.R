@@ -5,7 +5,7 @@
 #' @param decimals Number of decimal places to show. If null, this is ignored.
 #' @param remove.leading.0 Removes the initial 0 from numbers that are less than 1.
 #' @param comma.for.thousands If TRUE, uses a comma when there are thousands.
-#' @param pad If a vector is supplied and \link{decimal.places} is specified, adds spaces to the beginning of numbers so they become decimal aligned.
+#' @param pad If a vector is supplied and \code{decimals} is specified, adds spaces to the beginning of numbers so they become decimal aligned.
 #' @details Multiplies by 100, keeping \code{digits} or more significant digits and
 #' putting a % at the end, and commas if in thousands or more.
 #' @export
@@ -26,7 +26,7 @@ FormatAsPercent <- function(x, digits = 2, decimals = NULL, remove.leading.0 = F
 #' @param decimals Number of decimal places to show. If null, this is ignored.
 #' @param remove.leading.0 Removes the initial 0 from numbers that are less than 1.
 #' @param comma.for.thousands If TRUE, uses a comma when there are thousands.
-#' @param pad If a vector is supplied and \link{decimal.places} is specified, adds spaces to the beginning of numbers so they become decimal aligned.
+#' @param pad If a vector is supplied and \code{decimals} is specified, adds spaces to the beginning of numbers so they become decimal aligned.
 #' @details Multiplies by 100, keeping \code{digits} or more significant digits and
 #' , and commas if in thousands or more.
 #' Based on \code{\link{formatC}}.
