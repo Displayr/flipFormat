@@ -24,6 +24,7 @@ test_that("Numbers", {
     expect_equal(FormatAsReal(3415.46654), "3,415")
     expect_equal(FormatAsReal(3415466.54), "3,415,467")
     expect_equal(FormatAsReal(NA), "NA")
+    expect_equal(FormatAsReal(NaN), "NaN")
 })
 
 test_that("PValue", {
@@ -40,12 +41,12 @@ test_that("PValue", {
 
 test_that("Vector number formats", {
     expect_equal(FormatAsPercent(c(0.00034, 0.000341546654)), c("0.034%", "0.034%"))
-    expect_equal(FormatAsPercent(c(0.00034, NA, 0.000341546654)), c("0.034%", "NA", "0.034%"))
-    expect_equal(FormatAsReal(c(0.00034, NA, 0.000341546654)), c("0.00034", "NA", "0.00034"))
-    expect_equal(FormatAsPValue(c(0.00034, NA, 0.039999, 0.049999, 0.05001)), c("0.0003", "NA", "0.04", "0.049999", "0.05001"))
-    expect_equal(FormatAsReal(c(0.00034, NA, 0.039999, 0.049999, 0.05001), decimals = 2), c("0.00", "NA", "0.04", "0.05", "0.05"))
-    expect_equal(FormatAsPercent(c(3.5, NA, 0.351546654, 0.0035), decimals = 2), c("350.00%","NA", "35.15%", "0.35%"))
-    expect_equal(FormatAsPercent(c(3.5, NA, 0.351546654, 0.0035), decimals = 2, remove.leading.0 = TRUE), c("350.00%","NA", "35.15%", ".35%"))
+    expect_equal(FormatAsPercent(c(0.00034, NA, NaN, 0.000341546654)), c("0.034%", "NA", "NaN", "0.034%"))
+    expect_equal(FormatAsReal(c(0.00034, NA, NaN, 0.000341546654)), c("0.00034", "NA", "NaN", "0.00034"))
+    expect_equal(FormatAsPValue(c(0.00034, NA, NaN, 0.039999, 0.049999, 0.05001)), c("0.0003", "NA", "NaN", "0.04", "0.049999", "0.05001"))
+    expect_equal(FormatAsReal(c(0.00034, NA, NaN, 0.039999, 0.049999, 0.05001), decimals = 2), c("0.00", "NA", "NaN", "0.04", "0.05", "0.05"))
+    expect_equal(FormatAsPercent(c(3.5, NA, NaN, 0.351546654, 0.0035), decimals = 2), c("350.00%","NA", "NaN", "35.15%", "0.35%"))
+    expect_equal(FormatAsPercent(c(3.5, NA, NaN, 0.351546654, 0.0035), decimals = 2, remove.leading.0 = TRUE), c("350.00%","NA", "NaN", "35.15%", ".35%"))
     expect_equal(FormatAsPercent(c(3.5, 0.351546654, 0.0035), decimals = 2, remove.leading.0 = TRUE), c("350.00%","35.15%", ".35%"))
 })
 

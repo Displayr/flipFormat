@@ -12,7 +12,7 @@
 FormatAsPercent <- function(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE)
 {
     x <- FormatAsReal(x * 100, digits, decimals, remove.leading.0, comma.for.thousands, pad = FALSE)
-    x.not.na <- x != "NA"
+    x.not.na <- x != "NA" & x != "NaN"
     x[x.not.na] <- paste0(x[x.not.na], "%")
     if (pad)
         x <- padVector(x)
@@ -36,7 +36,7 @@ FormatAsReal <- function(x, digits = 2, decimals = NULL, remove.leading.0 = FALS
     # Vectoring in situations with missing values
     if(any(is.na(x))){
         if (length(x) == 1)
-            return("NA")
+            if (is.nan(x)) return("NaN") else return("NA")
         x <- sapply(x, FormatAsReal, digits = digits, decimals = decimals, remove.leading.0 = remove.leading.0, comma.for.thousands = comma.for.thousands)
         if (pad)
             x <- padVector(x)
@@ -73,7 +73,7 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
 {
     if(any(is.na(p))){
         if (length(p) == 1)
-            return("NA")
+            if (is.nan(p)) return("NaN") else return("NA")
         return(sapply(p, FormatAsPValue, p.cutoff))
     }
     n.digits <- 2
