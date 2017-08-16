@@ -61,10 +61,18 @@ test_that("Decimal places", {
 
 
 test_that("Padding", {
-    vc <- c(3.5, NA, 0.351546654, 0.0035)
+    vc <- c(3515466.54, 3.5, NA, 0.351546654, 0.0035)
     fm <- FormatAsPercent(vc, decimals = 2, remove.leading.0 = TRUE, pad = TRUE)
     expect_true(all(nchar(fm) == nchar(fm[1])))
     fm <- FormatAsReal(vc, decimals = 2, remove.leading.0 = TRUE, pad = TRUE)
+    expect_true(all(nchar(fm) == nchar(fm[1])))
+    fm <- FormatAsPercent(vc, decimals = 2, comma.for.thousands = FALSE, pad = TRUE)
+    expect_true(all(nchar(fm) == nchar(fm[1])))
+    fm <- FormatAsReal(vc, decimals = 2, comma.for.thousands = FALSE , pad = TRUE)
+    expect_true(all(nchar(fm) == nchar(fm[1])))
+    fm <- FormatAsPercent(vc, decimals = 2, pad = TRUE)
+    expect_true(all(nchar(fm) == nchar(fm[1])))
+    fm <- FormatAsReal(vc, decimals = 2, pad = TRUE)
     expect_true(all(nchar(fm) == nchar(fm[1])))
 })
 
