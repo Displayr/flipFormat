@@ -61,8 +61,11 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     if(!is.list(x))
     {
         name <- attr(x, "name")
-        label <- attr(x, "label")
         question <- attr(x, "question")
+        label <- attr(x, "label")
+        qtype <- attr(x, "questiontype")
+        if (!is.null(qtype) && qtype %in% c("PickOne", "Number", "Text", "Date"))
+            label <- question
         return(.createLabel(name, label, question, x, show.name))
     }
     # Data frame case.

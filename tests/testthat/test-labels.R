@@ -14,9 +14,27 @@ attr(bank$fBranch, "label") <- "Branch as a factor"
 attr(bank$Overall, "label") <- "Overall satisfaction"
 library(flipRegression)
 
+test_that("DS-1467",
+    {
+        state = factor(rep(c("NSW","VC"), 2))
+        attr(state, "label") = "State"
+        attr(state, "question") = "State1"
+        expect_equal(Labels(state), "State1: State")
+        attr(state, "questiontype") = "PickAny"
+        expect_equal(Labels(state), "State1: State")
+        attr(state, "questiontype") = "Date"
+        expect_equal(Labels(state), "State1")
+        attr(state, "questiontype") = "Number"
+        expect_equal(Labels(state), "State1")
+        attr(state, "questiontype") = "PickOne"
+        expect_equal(Labels(state), "State1")
+        attr(state, "questiontype") = "Text"
+        expect_equal(Labels(state), "State1")
+})
+
+
 test_that("data frame",
     {
-
         npk2 <- within(npk, foo <- rnorm(24))
         npk2.aov <- manova(cbind(yield, foo) ~ block, npk2)
         dog <- npk2$yield
