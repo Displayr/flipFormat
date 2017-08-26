@@ -19,7 +19,7 @@
 #'
 #' Replaces a list of given names or coefficient, with any underlying labels. If
 #' @param x A \code{\link{data.frame}}.
-#' @param names.to.lookup An optional list of The names of the variables or coefficients (e.g., Q2Cola for a factor).
+#' @param names.to.lookup An optional list of the names of the variables or coefficients (e.g., Q2Cola for a factor).
 #' @param show.name If \code{TRUE}, the name will prefix the extended label (where they are distinct). Ignored if
 #' \code{names.to.lookup} is provided.
 #' @return A \code{vector} of labels
@@ -29,6 +29,12 @@
 #' @export
 Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {
+    .changeLabelForSingleVariableQuesetions <- function(qtype, question, label)
+    {
+        if (!is.null(qtype) && qtype %in% c("PickOne", "Number", "Text", "Date"))
+            question else label
+
+    }
     .createLabel <- function(name, label, question, x, show.name)
     {
         if (is.list(name))
@@ -64,8 +70,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
         question <- attr(x, "question")
         label <- attr(x, "label")
         qtype <- attr(x, "questiontype")
-        if (!is.null(qtype) && qtype %in% c("PickOne", "Number", "Text", "Date"))
-            label <- question
+        label <- .changeLabelForSingleVariableQuesetions(qtype, question, label)
         return(.createLabel(name, label, question, x, show.name))
     }
     # Data frame case.
@@ -88,7 +93,10 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     labels.list <- lapply(x, function(x) attr(x, "label"))
     possible.names <- names(labels.list)
     questions.list <- lapply(x, function(x) attr(x, "question"))
+    qtypes.list <- lapply(x, function(x) attr(x, "question"))
     name.list <- as.list(names(x))
+    for (l in seq_along(labels_list))
+        labels.list[[l]] <- .changeLabelForSingleVariableQuesetions(qtypes.list[[i]], questions.list[[i]], labels.list[[i]])
     labels.list <- .createLabel(name.list,labels.list,  questions.list, x, show.name)
     # Removig the names of elements in the list, because  unlist changes
     # "name" to "name.name" and "`name`" to "'name'.name".

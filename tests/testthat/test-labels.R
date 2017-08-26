@@ -22,6 +22,8 @@ test_that("DS-1467",
         expect_equal(Labels(state), "State1: State")
         attr(state, "questiontype") = "PickAny"
         expect_equal(Labels(state), "State1: State")
+        z = data.frame(state, state)
+        expect_equal(as.character(z), rep("State1: State", 2))
         attr(state, "questiontype") = "Date"
         expect_equal(Labels(state), "State1")
         attr(state, "questiontype") = "Number"
@@ -30,6 +32,8 @@ test_that("DS-1467",
         expect_equal(Labels(state), "State1")
         attr(state, "questiontype") = "Text"
         expect_equal(Labels(state), "State1")
+        z = data.frame(state, state)
+        expect_equal(as.character(Labels(z)), rep("State1", 2))
 })
 
 
@@ -132,6 +136,18 @@ test_that("Labels",
     cola$Q3[1:100] <- NA
     cola$Q3 <- unclass(cola$Q3)
     suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
+    # DS-1467
+    attr(bank$Fees, "question") <- "Fees paid1"
+    suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
+    attr(bank$Fees, "questiontype") <- "PickAny"
+    suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
+    attr(bank$Fees, "questiontype") <- "PickOne"
+    suppressWarnings(Regression(Overall ~ Fees, data = bank, type = "Ordered Logit", missing = "Multiple imputation", detail = FALSE, show.labels = TRUE))
+
+
+
+
+
     # Some variables have labels and others do not.
     z <- data.frame(a = 1:10, b = 1:10, c = 1:10)
     Labels(z) <- c("A", "B")
