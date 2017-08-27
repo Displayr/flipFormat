@@ -93,11 +93,15 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     labels.list <- lapply(x, function(x) attr(x, "label"))
     possible.names <- names(labels.list)
     questions.list <- lapply(x, function(x) attr(x, "question"))
-    qtypes.list <- lapply(x, function(x) attr(x, "question"))
+    qtypes.list <- lapply(x, function(x) attr(x, "questiontype"))
     name.list <- as.list(names(x))
+    for (l in seq_along(labels.list))
+    {
+        new.label <- .changeLabelForSingleVariableQuesetions(qtypes.list[[l]], questions.list[[l]], labels.list[[l]])
+        if (!is.null(new.label))
+            labels.list[[l]] <- new.label
+    }
     labels.list <- .createLabel(name.list,labels.list,  questions.list, x, show.name)
-    for (l in seq_along(labels_list))
-        labels.list[[l]] <- .changeLabelForSingleVariableQuesetions(qtypes.list[[i]], questions.list[[i]], labels.list[[i]])
     # Removig the names of elements in the list, because  unlist changes
     # "name" to "name.name" and "`name`" to "'name'.name".
     for (i in seq_along(labels.list))

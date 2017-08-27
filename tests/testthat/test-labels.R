@@ -34,6 +34,30 @@ test_that("DS-1467",
         expect_equal(Labels(state), "State1")
         z = data.frame(state, state)
         expect_equal(as.character(Labels(z)), rep("State1", 2))
+
+
+        bank$overall_dog = bank$Overall
+        bank$zx = bank$Fees
+        attr(bank$zx, "label") = "Label"
+        attr(bank$zx, "question") = "Question"
+        z = Regression(overall_dog ~ zx, data = bank, show.labels = TRUE)
+        expect_equal(rownames(z$summary$coefficients)[[2]], "Question: Label")
+        attr(bank$zx, "questiontype") = "PickAny"
+        z = Regression(overall_dog ~ zx, data = bank, show.labels = TRUE)
+        expect_equal(rownames(z$summary$coefficients)[[2]], "Question: Label")
+        attr(bank$zx, "questiontype") = "PickOne"
+        z = Regression(overall_dog ~ zx, data = bank, show.labels = TRUE)
+        expect_equal(rownames(z$summary$coefficients)[[2]], "Question")
+
+#         test_that("",
+#                   {
+# #                      attach(bank)
+#
+#                       Regression(overall_dog ~ Fees, data = bank, show.labels = TRUE)
+#
+#
+#
+#                   })
 })
 
 
