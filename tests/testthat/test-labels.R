@@ -23,7 +23,7 @@ test_that("DS-1467",
         attr(state, "questiontype") = "PickAny"
         expect_equal(Labels(state), "State1: State")
         z = data.frame(state, state)
-        expect_equal(as.character(z), rep("State1: State", 2))
+        expect_equal(as.character(Labels(z)), rep("State1: State", 2))
         attr(state, "questiontype") = "Date"
         expect_equal(Labels(state), "State1")
         attr(state, "questiontype") = "Number"
