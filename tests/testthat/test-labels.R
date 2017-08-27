@@ -14,7 +14,7 @@ attr(bank$fBranch, "label") <- "Branch as a factor"
 attr(bank$Overall, "label") <- "Overall satisfaction"
 library(flipRegression)
 
-test_that("DS-1467",
+test_that("DS-1467 and 1468",
     {
         state = factor(rep(c("NSW","VC"), 2))
         attr(state, "label") = "State"
@@ -35,7 +35,6 @@ test_that("DS-1467",
         z = data.frame(state, state)
         expect_equal(as.character(Labels(z)), rep("State1", 2))
 
-
         bank$overall_dog = bank$Overall
         bank$zx = bank$Fees
         attr(bank$zx, "label") = "Label"
@@ -48,16 +47,8 @@ test_that("DS-1467",
         attr(bank$zx, "questiontype") = "PickOne"
         z = Regression(overall_dog ~ zx, data = bank, show.labels = TRUE)
         expect_equal(rownames(z$summary$coefficients)[[2]], "Question")
-
-#         test_that("",
-#                   {
-# #                      attach(bank)
-#
-#                       Regression(overall_dog ~ Fees, data = bank, show.labels = TRUE)
-#
-#
-#
-#                   })
+        #DS-1468
+        Regression(overall_dog ~ Fees, data = bank, show.labels = TRUE)
 })
 
 
