@@ -31,7 +31,9 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {
     .changeLabelForSingleVariableQuesetions <- function(qtype, question, label)
     {
-        if (!is.null(qtype) && qtype %in% c("PickOne", "Number", "Text", "Date"))
+        if (is.null(question) || question == "" || is.null(qtype))
+            return(label)
+        if (qtype %in% c("PickOne", "Number", "Text", "Date"))
             question else label
 
     }
