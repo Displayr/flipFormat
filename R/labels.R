@@ -31,7 +31,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {
     .changeLabelForSingleVariableQuesetions <- function(qtype, question, label)
     {
-        if (is.null(question) || question == "" || is.null(qtype))
+        if (is.null(question) || is.null(qtype) || question == "" )
             return(label)
         if (qtype %in% c("PickOne", "Number", "Text", "Date"))
             question else label
@@ -69,7 +69,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     if(!is.list(x))
     {
         name <- attr(x, "name")
-        question <- attr(x, "question")
+        question <- attr(x, "question", exact = TRUE)
         label <- attr(x, "label")
         qtype <- attr(x, "questiontype")
         label <- .changeLabelForSingleVariableQuesetions(qtype, question, label)
@@ -94,7 +94,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
     # The labels
     labels.list <- lapply(x, function(x) attr(x, "label"))
     possible.names <- names(labels.list)
-    questions.list <- lapply(x, function(x) attr(x, "question"))
+    questions.list <- lapply(x, function(x) attr(x, "question", exact = TRUE))
     qtypes.list <- lapply(x, function(x) attr(x, "questiontype"))
     name.list <- as.list(names(x))
     for (l in seq_along(labels.list))
