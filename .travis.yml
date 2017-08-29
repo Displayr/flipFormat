@@ -16,6 +16,7 @@ before_install:
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev
 
 r_packages:
+  - commonmark
   - roxygen2
   - covr
 
