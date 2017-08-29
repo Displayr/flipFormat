@@ -1,12 +1,15 @@
 language: r
 r:
   - release
+
 dist: trusty  # ubuntu 14.04 has additional libraries available
 sudo: required
+
 cache: false
-before_cache:
-  - sudo rm -rf $HOME/R/Library/flip*
-  - sudo rm -rf $HOME/R/Library/rhtml*
+# before_cache:
+#   - sudo rm -rf $HOME/R/Library/flip*
+#   - sudo rm -rf $HOME/R/Library/rhtml*
+
 warnings_are_errors: false
 
 # install debian libraries to match R-servers
@@ -45,4 +48,4 @@ notifications:
 # committing a new change to .travis.yml in each repository
 after_success: 
   - Rscript -e "travisCI::NotifyWarnings(); travisCI::TriggerDownstreamBuilds()"
-  - Rscript -e "devtools::install_github('Displayr/flipFormat'); covr::coveralls(type = 'all')"
+  - Rscript -e "covr::coveralls(type = 'all')"
