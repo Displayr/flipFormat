@@ -109,7 +109,12 @@ TrimWhitespace <- function (x){
 #'
 #' Returns the common prefix of a vector of labels.
 #' @param labels A vector of labels from which we plan to extract a common prefix.
-#' @return A \code{character}.
+#' @return A list with components
+#' \itemize{
+#' \item \code{common.prefix} - The common prefix shared among the labels,
+#' or \code{NA} if none exists
+#' \item \code{shortened.labels} - vector of labels with the common prefix removed.
+#' }
 #' @export
 ExtractCommonPrefix <- function(labels)
 {

@@ -37,6 +37,9 @@ that typically appears in a footer.}
 
 \item{resample}{Whether resampling is used whenever weights are applied.}
 }
+\value{
+character description of sample
+}
 \description{
 Describes the sample, for use as footers in multivariate
   analyses.

@@ -10,7 +10,12 @@ ExtractCommonPrefix(labels)
 \item{labels}{A vector of labels from which we plan to extract a common prefix.}
 }
 \value{
-A \code{character}.
+A list with components
+\itemize{
+\item \code{common.prefix} - The common prefix shared among the labels,
+or \code{NA} if none exists
+\item \code{shortened.labels} - vector of labels with the common prefix removed.
+}
 }
 \description{
 Returns the common prefix of a vector of labels.

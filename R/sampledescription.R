@@ -19,6 +19,7 @@
 #' variables being imputed. Used in the description of the imputation
 #' that typically appears in a footer.
 #' @param resample Whether resampling is used whenever weights are applied.
+#' @return character description of sample
 #' @export
 SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, weighted = TRUE,
                               weight.label = "", missing, imputation.label = NULL, m,
