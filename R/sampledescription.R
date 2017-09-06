@@ -26,7 +26,9 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
                               variable.description = "", resample = FALSE)
 {
     # Warning if there is less than 50% data.
-    missing.data.proportion <- 1 - n.estimation / n.subset
+    missing.data.proportion <- if (n.subset)
+                                   1 - n.estimation / n.subset
+                               else 1
     if (missing.data.proportion > 0.50)
         warning(paste(FormatAsPercent(missing.data.proportion), "of the data is missing and has been excluded from the analysis.",
                       "Consider either filters to ensure that the data that is missing is in-line with your expectations,",
