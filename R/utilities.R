@@ -155,6 +155,27 @@ ExtractCommonPrefix <- function(labels)
         list(common.prefix = NA, shortened.labels = labels)
 }
 
+#' Extract shortened labels with common prefix removed
+#'
+#' Returns the common prefix of a vector of labels.
+#' @param data data containing labels; see \code{\link{Labels}}
+#' @param tidy logical; if \code{TRUE} the returned labels are also trimmed of whitespace
+#' and have first letter capitalized
+#' @return A list with components
+#' \itemize{
+#' \item \code{common.prefix} - The common prefix shared among the labels,
+#' or \code{NA} if none exists
+#' \item \code{shortened.labels} - vector of labels with the common prefix removed.
+#' }
+#' @seealso \code{\link{ExtractCommonPrefix}}, \code{\link{Labels}}, \code{\link{TidyLabels}}
+#' @export
+ExtractCommonPrefixFromLabels <- function(data, tidy = TRUE){
+    out <- ExtractCommonPrefix(Labels(data))
+    if (tidy)
+        out$shortened.labels <- TidyLabels(out$shortened.labels)
+    out
+}
+
 
 #' \code{TidyLabels}
 #'
