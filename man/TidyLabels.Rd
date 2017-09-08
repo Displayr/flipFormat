@@ -15,3 +15,6 @@ A vector of \code{character}s.
 \description{
 Takes a vector of labels, removes any common prefix,  capitalizes the first letter, removes whitespace from the end.
 }
+\seealso{
+\code{\link{ExtractCommonPrefix}}
+}
