@@ -11,7 +11,6 @@ LazyData: TRUE
 Imports:
     DT,
     formattable,
-    grDevices,
     htmltools,
     htmlwidgets,
     rmarkdown,
