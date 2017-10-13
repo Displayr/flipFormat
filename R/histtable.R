@@ -73,7 +73,7 @@ HistTable <- function(data.values,
     df <- data.frame("temp" = unlist(lapply(data.values, histString)),
                      ..., # extra stats to report
                      stringsAsFactors = FALSE, check.names = FALSE)
-    names(df) <- histogram.column.name
+    names(df)[1] <- histogram.column.name
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer)
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))
