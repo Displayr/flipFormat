@@ -117,13 +117,15 @@ subTitleFormat <- function(subtitle)
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
 createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE,
-                        secondary.title = "")
+                        secondary.title = "", col.names.alignment = NULL)
 {
     tag.list <- list(titleFormat(title), secondaryTitleFormat(secondary.title))
     for (s in subtitle)
         tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
     tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
                                                      footer)
+    if (is.null(col.names.alignment))
+        col.names.alignment <- rep("r", length(col.names))
 
     tbl <- format_table(
         x,
@@ -134,7 +136,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
             'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"',
             sep = " "
         ),
-        align = rep("r", length(col.names) + 1),
+        align = col.names.alignment,
         caption = tagList(tag.list)
     )
 

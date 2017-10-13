@@ -75,7 +75,8 @@ HistTable <- function(data.values,
                      stringsAsFactors = FALSE, check.names = FALSE)
     names(df)[1] <- histogram.column.name
 
-    ft <- createTable(df, colnames(df), list(), title, subtitle, footer)
+    ft <- createTable(df, colnames(df), list(), title, subtitle, footer,
+                      col.names.alignment = c("c", rep("r", length(df) - 1)))
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))
     ft
 }
