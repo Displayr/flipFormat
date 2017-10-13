@@ -10,6 +10,8 @@
 #' @param bin.max Any value in \code{data.values} larger then this will be truncated to \code{bin.max}.
 #' @param hist.width Width of the histogram cell in any valid CSS size unit
 #' @param hist.height Height of the histogram cell
+#' @param show.tooltips Whether to display tooltips of the bar heights
+#' @param color.negative Whether to show negative bars in coral.
 #' @param ... Additional columns to add to the table.
 #' @importFrom graphics hist
 #' @importFrom htmltools as.tags
@@ -29,17 +31,42 @@ HistTable <- function(data.values,
                       bin.max = 100,
                       hist.width = 100,
                       hist.height = 20,
+                      show.tooltips = TRUE,
+                      color.negative = FALSE,
                       ...)
 {
     # Input needs to be a data.frame, because we use lapply
     if (!is.data.frame(data.values))
         data.values <- as.data.frame(data.values)
 
-    histString <- function(xx) {
+    histString <- function(xx)
+    {
         xx[xx > bin.max] <- bin.max
         xx[xx < bin.min] <- bin.min
-        counts <- round(hist(xx, plot=F, breaks=seq(bin.min,bin.max,bin.size))$counts/length(xx)*100, 1)
-        as.character(as.tags(sparkline(counts, type="bar", zeroColor="lightgray", width=hist.width, height=hist.height)))}
+        breaks <- seq(bin.min, bin.max, bin.size)
+        counts <- round(hist(xx, plot = F, breaks = breaks)$counts / length(xx) * 100, 1)
+
+        if (color.negative)
+        {
+            positive.breaks <- breaks >= 0
+            positive.counts <- rep(0, length(counts))
+            positive.counts[positive.breaks] <- counts[positive.breaks]
+            negative.counts <- rep(0, length(counts))
+            negative.counts[!positive.breaks] <- counts[!positive.breaks]
+            values <- cbind(positive.counts, negative.counts)
+            as.character(as.tags(sparkline(values, type = "bar", zeroColor = "lightgray",
+                                           width = hist.width, height = hist.height,
+                                           stackedBarColor = c(positiveColour(), negativeColour()),
+                                           disableInteraction = !show.tooltips)))
+        }
+        else
+        {
+            as.character(as.tags(sparkline(counts, type = "bar", zeroColor = "lightgray",
+                                           width = hist.width, height = hist.height,
+                                           barColor = positiveColour(),
+                                           disableInteraction = !show.tooltips)))
+        }
+    }
 
     df <- data.frame('Distribution'=unlist(lapply(data.values, histString)),
                      ..., # extra stats to report

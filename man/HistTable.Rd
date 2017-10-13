@@ -6,7 +6,7 @@
 \usage{
 HistTable(data.values, title = "", subtitle = "", footer = "",
   bin.size = 5, bin.min = 0, bin.max = 100, hist.width = 100,
-  hist.height = 20, ...)
+  hist.height = 20, show.tooltips = TRUE, color.negative = FALSE, ...)
 }
 \arguments{
 \item{data.values}{A dataframe, with each column containing the values to create a histogram.}
@@ -26,6 +26,10 @@ HistTable(data.values, title = "", subtitle = "", footer = "",
 \item{hist.width}{Width of the histogram cell in any valid CSS size unit}
 
 \item{hist.height}{Height of the histogram cell}
+
+\item{show.tooltips}{Whether to display tooltips of the bar heights}
+
+\item{color.negative}{Whether to show negative bars in coral.}
 
 \item{...}{Additional columns to add to the table.}
 }

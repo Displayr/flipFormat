@@ -23,6 +23,16 @@ barColour <- function()
     "#DDDDDD" # light gray
 }
 
+positiveColour <- function()
+{
+    "#4894F2" # blue
+}
+
+negativeColour <- function()
+{
+    "#F95F4A" # coral
+}
+
 # Heatmap-like color scale
 #' @importFrom formattable gradient csscolor
 heatmapColourScale <- function(x, max.abs)
