@@ -12,6 +12,7 @@
 #' @param hist.height Height of the histogram cell
 #' @param show.tooltips Whether to display tooltips of the bar heights
 #' @param color.negative Whether to show negative bars in coral.
+#' @param histogram.column.name Name for the histogram column.
 #' @param ... Additional columns to add to the table.
 #' @importFrom graphics hist
 #' @importFrom htmltools as.tags
