@@ -33,6 +33,7 @@ HistTable <- function(data.values,
                       hist.height = 20,
                       show.tooltips = TRUE,
                       color.negative = FALSE,
+                      histogram.column.name = "Distribution",
                       ...)
 {
     # Input needs to be a data.frame, because we use lapply
@@ -68,9 +69,10 @@ HistTable <- function(data.values,
         }
     }
 
-    df <- data.frame('Distribution'=unlist(lapply(data.values, histString)),
+    df <- data.frame("temp" = unlist(lapply(data.values, histString)),
                      ..., # extra stats to report
                      stringsAsFactors = FALSE, check.names = FALSE)
+    names(df) <- histogram.column.name
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer)
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))
