@@ -124,7 +124,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
         tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
     tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
                                                      footer)
-    if (is.null(col.names.alignment))
+    if (is.null(col.names.alignment) && length(col.names) != 0)
         col.names.alignment <- rep("r", length(col.names))
 
     tbl <- format_table(
