@@ -45,7 +45,7 @@ HistTable <- function(data.values,
     {
         xx[xx > bin.max] <- bin.max
         xx[xx < bin.min] <- bin.min
-        breaks <- seq(bin.min, bin.max, bin.size)
+        breaks <- round(seq(bin.min, bin.max, bin.size), 6)
         counts <- round(hist(xx, plot = F, breaks = breaks, right = FALSE)$counts / length(xx) * 100, 1)
 
         if (color.negative)
