@@ -26,6 +26,7 @@
 #' @details First tries to find the "label" attribute, then "name", then "question", and lastly looks to the variable's name.
 #' Where \code{names.to.lookup} is provided, Works for dummy variables as well as normal variables.
 #' Trims backticks and whitespace. Returns names where labels cannot be found.
+#' @importFrom flipU TrimWhitespace
 #' @export
 Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
 {

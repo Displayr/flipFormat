@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{ExtractCommonPrefix}
 \alias{ExtractCommonPrefix}
-\title{\code{ExtractCommonPrefix}}
+\title{\code{RemoveParentName}}
 \usage{
 ExtractCommonPrefix(labels)
 }
@@ -18,5 +18,8 @@ or \code{NA} if none exists
 }
 }
 \description{
+\code{ExtractCommonPrefix}
+}
+\details{
 Returns the common prefix of a vector of labels.
 }
