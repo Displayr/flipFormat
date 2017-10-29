@@ -20,10 +20,11 @@ Imports:
 Suggests:
     testthat,
     flipAnalysisOfVariance,
-    flipExampleData,
-    flipRegression
+    flipExampleData
 Remotes:
-    flipU(>= 1.0.2),
+    Displayr/flipAnalysisOfVariance,
+    Displayr/flipExampleData,
+    Displayr/flipU(>= 1.0.2),
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
-    renkun-ken/formattable,
+    renkun-ken/formattable
 RoxygenNote: 6.0.1
