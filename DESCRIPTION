@@ -9,8 +9,8 @@ Description: Formatting to be used in print statements and other outputs. E.g.,
 License: GPL-3
 LazyData: TRUE
 Imports:
-    flipU(>= 1.0.2),
     DT,
+    flipU(>= 1.0.2),
     formattable,
     htmltools,
     htmlwidgets,
@@ -23,6 +23,7 @@ Suggests:
     flipExampleData,
     flipRegression
 Remotes:
+    flipU(>= 1.0.2),
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
     renkun-ken/formattable,
 RoxygenNote: 6.0.1
