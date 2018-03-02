@@ -6,7 +6,8 @@
 \usage{
 SampleDescription(n.total, n.subset, n.estimation, subset.label,
   weighted = TRUE, weight.label = "", missing, imputation.label = NULL, m,
-  variable.description = "", resample = FALSE)
+  variable.description = "", resample = FALSE,
+  effective.sample.size = NULL)
 }
 \arguments{
 \item{n.total}{Total number of observations in the database.}
@@ -36,6 +37,8 @@ variables being imputed. Used in the description of the imputation
 that typically appears in a footer.}
 
 \item{resample}{Whether resampling is used whenever weights are applied.}
+
+\item{effective.sample.size}{The effective sample size when weights are applied.}
 }
 \value{
 character description of sample

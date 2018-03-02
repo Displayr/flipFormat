@@ -5,7 +5,8 @@
 \title{\code{BaseDescription}}
 \usage{
 BaseDescription(description.of.n, n.total, n.subset, n.estimation, subset.label,
-  weighted = TRUE, weight.label = "", resample = FALSE)
+  weighted = TRUE, weight.label = "", resample = FALSE,
+  effective.sample.size = NULL)
 }
 \arguments{
 \item{description.of.n}{A description of the sample (e.g., "People").}
@@ -25,6 +26,8 @@ than or equal to \code{subset}).}
 \item{weight.label}{The label of the weight.}
 
 \item{resample}{Whether resampling is used whenever weights are applied.}
+
+\item{effective.sample.size}{The effective sample size when weights are applied.}
 }
 \description{
 Describes the sample, for use as footers in multivariate
