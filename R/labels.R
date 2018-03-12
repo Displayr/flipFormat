@@ -46,11 +46,6 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
                 name[[i]] <- .createLabel(name[[i]], label[[i]], question[[i]], x[[i]], show.name)
             return(name)
         }
-        if (is.null(label) | show.name)
-        {
-            if (is.null(name))
-                name <- NULL
-        }
         if (is.null(label))
             label <- question
         else
