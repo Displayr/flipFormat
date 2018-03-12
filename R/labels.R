@@ -49,7 +49,7 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
         if (is.null(label) | show.name)
         {
             if (is.null(name))
-                name <- OriginalName(x)
+                name <- NULL
         }
         if (is.null(label))
             label <- question
@@ -60,8 +60,6 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
         }
         if (!show.name & !is.null(label))
             return(label)
-        if (is.null(name))
-            name <- OriginalName(x)
         if (!show.name | is.null(label))
             return(name)
         paste0(label, " (", name, ")")
