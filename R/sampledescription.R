@@ -79,7 +79,7 @@ BaseDescription <- function(description.of.n, n.total, n.subset, n.estimation, s
                             effective.sample.size = NULL)
 {
     base <- if(n.estimation < n.subset) paste0(" of a total sample size of ", n.subset) else ""
-    if (n.subset < n.total && nchar(as.character(subset.label)) > 0)
+    if (n.subset < n.total && sum(nchar(as.character(subset.label)), na.rm = TRUE) > 0)
         base <- paste0(base, " (", as.character(subset.label), ")")
     weight.text <- if (!is.null(weighted) && weighted)
     {
