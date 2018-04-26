@@ -119,9 +119,12 @@ subTitleFormat <- function(subtitle)
 createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE,
                         secondary.title = "", col.names.alignment = NULL)
 {
-    tag.list <- list(titleFormat(title), secondaryTitleFormat(secondary.title))
+    tag.list <- list(titleFormat(title))
+    if (nzchar(secondary.title))
+        tag.list[[2]] <- secondaryTitleFormat(secondary.title)
     for (s in subtitle)
         tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
+
     tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
                                                      footer)
     if (is.null(col.names.alignment) && length(col.names) != 0)
@@ -142,8 +145,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
 
     browsable(
         attachDependencies(
-            tagList(
-                HTML(tbl)),
+            tagList(HTML(tbl)),
             list(
                 html_dependency_jquery(),
                 html_dependency_bootstrap("default")
@@ -153,6 +155,12 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
 
     # Replace the placeholders
     tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
+
+    ## DS-1445 Remove duplicate caption tag
+    ## for (el in rev(tag.list))
+    ##     tbl <- sub(">", paste0(">", el), tbl)
+    tbl.html <- sub("<caption><h3", "<h3", tbl.html)
+    tbl.html <- sub("</caption></caption>", "</caption>", tbl.html)
 
     if (no.wrap.column.headers)
         tbl.html <- gsub("<th style=\"text-align:right;\">", "<th style=\"text-align:right;white-space:nowrap;\">", tbl.html)
