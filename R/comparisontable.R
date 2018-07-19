@@ -13,18 +13,19 @@ ComparisonTable <- function(values,
                           footer = "")
 {
     column.labels <- colnames(values)
-    table.df <- data.frame(vv = values, check.names = FALSE)
+    table.df <- data.frame(values, check.names = FALSE)
 
     if (order.values)
         table.df <- table.df[order(table.df[, 1], decreasing = TRUE), , drop = FALSE]
 
-    colnames(table.df) <- sprintf("V%d", 1:ncol(table.df))
     formatters <- list()
 
-    #formatters[[""]] <- createBarFormatter(decimals = 1)
-
-    for (i in 1:ncol(table.df))
-        formatters[[paste0("V", i)]] <- createBarFormatter(bar.shows.magnitude = TRUE)
+    formatters[["In-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
+    formatters[["Out-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
+    formatters[["BIC"]] <- createBarFormatter(decimals = 0)
+    formatters[["Log-likelihood"]] <- createBarFormatter(decimals = 0)
+    formatters[["Time taken (s)"]] <- createBarFormatter(decimals = 0)
+    # do not need to fomat Classes
 
     createTable(table.df, column.labels, formatters, title, subtitle, footer)
 }
