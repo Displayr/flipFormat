@@ -12,5 +12,9 @@ ExtractChartData <- function(x)
 #' @export
 ExtractChartData.default <- function(x)
 {
-    return(x)
+    # Outputs from CChart with append.data = TRUE can return data
+    if (!is.null(attr(x, "ChartData")))
+       return(attr(x, "ChartData"))
+    else
+        return(x)
 }
