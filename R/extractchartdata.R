@@ -8,3 +8,9 @@ ExtractChartData <- function(x)
 {
     UseMethod("ExtractChartData")
 }
+
+#' @export
+ExtractChartData.default <- function(x)
+{
+    return(x)
+}
