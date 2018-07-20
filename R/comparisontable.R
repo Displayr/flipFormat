@@ -21,7 +21,8 @@ ComparisonTable <- function(values,
     formatters <- list()
 
     formatters[["In-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
-    formatters[["Out-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
+    if (!all(is.na(values$`Out-sample accuracy`)))
+        formatters[["Out-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
     formatters[["BIC"]] <- createBarFormatter(decimals = 0)
     formatters[["Log-likelihood"]] <- createBarFormatter(decimals = 0)
     formatters[["Time taken (s)"]] <- createBarFormatter(decimals = 0)
