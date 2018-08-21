@@ -5,9 +5,9 @@
 \title{\code{SampleDescription}}
 \usage{
 SampleDescription(n.total, n.subset, n.estimation, subset.label,
-  weighted = TRUE, weight.label = "", missing, imputation.label = NULL, m,
-  variable.description = "", resample = FALSE,
-  effective.sample.size = NULL)
+  weighted = TRUE, weight.label = "", missing,
+  imputation.label = NULL, m, variable.description = "",
+  resample = FALSE, effective.sample.size = NULL)
 }
 \arguments{
 \item{n.total}{Total number of observations in the database.}

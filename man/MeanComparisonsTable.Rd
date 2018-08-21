@@ -4,8 +4,8 @@
 \alias{MeanComparisonsTable}
 \title{MeanComparisonsTable}
 \usage{
-MeanComparisonsTable(means, zs, ps, r.squared, overall.p, column.names, footer,
-  title = "", subtitle = "", p.cutoff = 0.05)
+MeanComparisonsTable(means, zs, ps, r.squared, overall.p, column.names,
+  footer, title = "", subtitle = "", p.cutoff = 0.05)
 }
 \arguments{
 \item{means}{The means to be shown on the table.}

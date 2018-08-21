@@ -18,15 +18,23 @@ ComparisonTable <- function(values,
     if (order.values)
         table.df <- table.df[order(table.df[, 1], decreasing = TRUE), , drop = FALSE]
 
+    # Data used to lookup formatting according to column label
+    columns <- c("In-sample accuracy", "Out-sample accuracy", "In-sample RMSE", "Out-sample RMSE",
+                 "In-sample R^2", "Out-sample R^2", "BIC", "Log-likelihood", "Time taken (s)")
+    decimals <- c(2, 2, 2, 2, 4, 4, 0, 0, 2)
+    percents <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
+
     formatters <- list()
 
-    formatters[["In-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
-    if ("Out-sample accuracy" %in% column.labels)
-        formatters[["Out-sample accuracy"]] <- createBarFormatter(decimals = 2, show.as.percent = TRUE)
-    formatters[["BIC"]] <- createBarFormatter(decimals = 0)
-    formatters[["Log-likelihood"]] <- createBarFormatter(decimals = 0)
-    formatters[["Time taken (s)"]] <- createBarFormatter(decimals = 0)
-    # do not need to format Classes
+    for (label in column.labels)
+    {
+        i <- match(label, columns, nomatch = 0)
+        if (i > 0) {
+            print(decimals[i])
+            formatters[[label]] <- createBarFormatter(decimals = decimals[i],
+                                                   show.as.percent = percents[i])
+        }
+    }
 
     createTable(table.df, column.labels, formatters, title, subtitle, footer)
 }

@@ -4,8 +4,8 @@
 \alias{BaseDescription}
 \title{\code{BaseDescription}}
 \usage{
-BaseDescription(description.of.n, n.total, n.subset, n.estimation, subset.label,
-  weighted = TRUE, weight.label = "", resample = FALSE,
+BaseDescription(description.of.n, n.total, n.subset, n.estimation,
+  subset.label, weighted = TRUE, weight.label = "", resample = FALSE,
   effective.sample.size = NULL)
 }
 \arguments{

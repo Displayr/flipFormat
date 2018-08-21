@@ -4,8 +4,8 @@
 \alias{AddSignificanceHighlightingToDataTable}
 \title{\code{AddSignificanceHighlightingToDataTable}}
 \usage{
-AddSignificanceHighlightingToDataTable(dt, columns.to.color, column.to.check,
-  red.value, blue.value)
+AddSignificanceHighlightingToDataTable(dt, columns.to.color,
+  column.to.check, red.value, blue.value)
 }
 \arguments{
 \item{dt}{An HTML widget DataTable created e.g. by

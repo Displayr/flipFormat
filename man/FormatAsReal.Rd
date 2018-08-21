@@ -4,8 +4,8 @@
 \alias{FormatAsReal}
 \title{Formats real numbers nicely.}
 \usage{
-FormatAsReal(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE,
-  comma.for.thousands = TRUE, pad = FALSE)
+FormatAsReal(x, digits = 2, decimals = NULL,
+  remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE)
 }
 \arguments{
 \item{x}{The number(s)}
