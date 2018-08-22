@@ -19,6 +19,7 @@ createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.di
     }
 
     format.fn <- if (show.as.percent) FormatAsPercent else FormatAsReal
+    decimals <- decimals # force evaluation of promise before passing to .format.values
     .format.values <- function(x, min.display.value)
     {
         result <- format.fn(x, decimals = decimals)

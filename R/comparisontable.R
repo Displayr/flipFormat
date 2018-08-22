@@ -21,7 +21,7 @@ ComparisonTable <- function(values,
     # Data used to lookup formatting according to column label
     columns <- c("In-sample accuracy", "Out-sample accuracy", "In-sample RMSE", "Out-sample RMSE",
                  "In-sample R^2", "Out-sample R^2", "BIC", "Log-likelihood", "Time taken (s)")
-    decimals <- c(2, 2, 2, 2, 4, 4, 0, 0, 2)
+    decimal.places <- c(2, 2, 2, 2, 4, 4, 0, 0, 0)
     percents <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 
     formatters <- list()
@@ -30,8 +30,7 @@ ComparisonTable <- function(values,
     {
         i <- match(label, columns, nomatch = 0)
         if (i > 0) {
-            print(decimals[i])
-            formatters[[label]] <- createBarFormatter(decimals = decimals[i],
+            formatters[[label]] <- createBarFormatter(decimals = decimal.places[i],
                                                    show.as.percent = percents[i])
         }
     }
