@@ -44,7 +44,7 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
                                    resample, effective.sample.size)
     if (variable.description != "")
         variable.description <- paste0(variable.description, " ")
-    if (missing.data | imputation)
+    if (missing.data)
         description <- paste(description, switch(missing,
                                                  "Error if missing data" = "",
                                                  "Exclude cases with missing data" = "cases containing missing values have been excluded;",
