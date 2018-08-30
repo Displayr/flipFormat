@@ -12,7 +12,7 @@ test_that("Effective sample size", {
     expect_equal(SampleDescription(n.total = 302, n.subset = 200,
          n.estimation = 100, "lab",
          weighted = TRUE,
-         weight, weight.label = "wgt",
+         weight.label = "wgt",
          missing = "Exclude cases with missing data",
          effective.sample.size = 127.07),
          paste0("n = 100 cases used in estimation of a total sample size of 200 (lab); ",
