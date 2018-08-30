@@ -19,10 +19,11 @@ ComparisonTable <- function(values,
         table.df <- table.df[order(table.df[, 1], decreasing = TRUE), , drop = FALSE]
 
     # Data used to lookup formatting according to column label
-    columns <- c("Training accuracy", "Evaluation accuracy", "Training RMSE", "Evaluation RMSE",
+    columns <- c("In-sample accuracy", "Out-sample accuracy", "Training accuracy",
+                 "Evaluation accuracy", "Training RMSE", "Evaluation RMSE",
                  "Training R^2", "Evaluation R^2", "BIC", "Log-likelihood", "Time taken (s)")
-    decimal.places <- c(2, 2, 2, 2, 4, 4, 0, 0, 0)
-    percents <- c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
+    decimal.places <- c(2, 2, 2, 2, 2, 2, 4, 4, 0, 0, 0)
+    percents <- c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 
     formatters <- list()
 
