@@ -38,7 +38,7 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
     # Creating description.
     missing.data <- n.estimation < n.subset
     imputation <-  missing == "Imputation (replace missing values with estimates)" | missing == "Multiple imputation"
-    description <- BaseDescription(paste0("n = ", n.estimation, " cases used in estimation"),
+    description <- BaseDescription(paste0("n = ", FormatAsReal(n.estimation), " cases used in estimation"),
                                    n.total, n.subset, n.estimation,
                                    subset.label, weighted, weight.label,
                                    resample, effective.sample.size)
@@ -78,7 +78,7 @@ BaseDescription <- function(description.of.n, n.total, n.subset, n.estimation, s
                             weighted = TRUE, weight.label = "", resample = FALSE,
                             effective.sample.size = NULL)
 {
-    base <- if(n.estimation < n.subset) paste0(" of a total sample size of ", n.subset) else ""
+    base <- if(n.estimation < n.subset) paste0(" of a total sample size of ", FormatAsReal(n.subset)) else ""
     if (n.subset < n.total && sum(nchar(as.character(subset.label)), na.rm = TRUE) > 0)
         base <- paste0(base, " (", as.character(subset.label), ")")
     weight.text <- if (!is.null(weighted) && weighted)
