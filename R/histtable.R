@@ -41,6 +41,11 @@ HistTable <- function(data.values,
     if (!is.data.frame(data.values))
         data.values <- as.data.frame(data.values)
 
+    # Need to add space to names if they are numeric otherwise they won't
+    # display for some reason
+    if (suppressWarnings(!any(is.na(as.numeric(colnames(data.values))))))
+        colnames(data.values) <- paste0(colnames(data.values), " ")
+
     histString <- function(xx)
     {
         xx[xx > bin.max] <- bin.max
