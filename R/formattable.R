@@ -1,7 +1,7 @@
 # Format bars used to visually display information such as R-squared.
 #' @importFrom formattable formatter percent
 createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.display.value = NA,
-                               max.display.value = NA, show.as.percent = FALSE)
+                               max.display.value = NA, show.as.percent = FALSE, shaded = FALSE)
 {
     if (is.na(max.display.value))
     {
@@ -32,7 +32,7 @@ createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.di
         direction = "rtl",
         `border-radius` = "4px",
         `padding-right` = "0px",
-        `background-color` = barColour(),
+        `background-color` = if (shaded) csscolor(gradient(as.numeric(x), "white", positiveSignificanceColour())) else barColour(),
         width = .get.bar.widths(x)),
         # We need to insert a left-to-right mark so that the minus sign
         # in negative values is not reversed due to the rtl direction.
@@ -62,6 +62,18 @@ createPFormatter <- function(p.cutoff = 0.05)
     )
 }
 
+
+#' @importFrom formattable formatter style
+createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
+{
+    decimals <- decimals # force evaluation of promise before passing to .format.values
+
+    txt <- sprintf("~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
+                   `font-weight` = ifelse(%s <= p.cutoff, \"bold\", NA),
+                   `background-color` = heatmapColourScale(%s, max.abs))", p.name, statistic.name)
+    formatter("span", style = eval(parse(text = txt)), x ~ FormatAsReal(x, decimals = decimals))
+}
+
 # Format regression coefficients
 #' @importFrom formattable formatter
 createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, decimals = 2, suffix = "")
@@ -70,15 +82,6 @@ createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, dec
                    ifelse(%s <= p.cutoff & %s > 0, \"color:blue\", NA))",
                    p.name, statistic.name, p.name, statistic.name)
     formatter("span", style = eval(parse(text = txt)), x ~ paste0(FormatAsReal(x, decimals = decimals), suffix))
-}
-
-#' @importFrom formattable formatter style
-createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
-{
-    txt <- sprintf("~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
-                   `font-weight` = ifelse(%s <= p.cutoff, \"bold\", NA),
-                   `background-color` = heatmapColourScale(%s, max.abs))", p.name, statistic.name)
-    formatter("span", style = eval(parse(text = txt)), x ~ FormatAsReal(x, decimals = decimals))
 }
 
 #' @importFrom htmltools tags

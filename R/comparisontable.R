@@ -14,6 +14,8 @@ ComparisonTable <- function(values,
 {
     column.labels <- colnames(values)
     table.df <- data.frame(values, check.names = FALSE)
+    #table.df <- data.frame(values, check.names = TRUE)
+    #column.labels <- colnames(table.df)
 
     if (order.values)
         table.df <- table.df[order(table.df[, 1], decreasing = TRUE), , drop = FALSE]
@@ -22,6 +24,9 @@ ComparisonTable <- function(values,
     columns <- c("In-sample accuracy", "Out-sample accuracy", "Training accuracy",
                  "Evaluation accuracy", "Training RMSE", "Evaluation RMSE",
                  "Training R^2", "Evaluation R^2", "BIC", "Log-likelihood", "Time taken (s)")
+    #columns <- c("In.sample.accuracy", "Out.sample.accuracy", "Training accuracy",
+    #             "Evaluation accuracy", "Training RMSE", "Evaluation RMSE",
+    #             "Training R^2", "Evaluation R^2", "BIC", "Log.likelihood", "Time taken..s.")
     decimal.places <- c(2, 2, 2, 2, 2, 2, 4, 4, 0, 0, 0)
     percents <- c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
 
@@ -31,8 +36,10 @@ ComparisonTable <- function(values,
     {
         i <- match(label, columns, nomatch = 0)
         if (i > 0) {
+
             formatters[[label]] <- createBarFormatter(decimals = decimal.places[i],
-                                                   show.as.percent = percents[i])
+                                                   show.as.percent = percents[i],
+                                                   shaded = TRUE)
         }
     }
 
