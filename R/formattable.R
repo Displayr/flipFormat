@@ -1,7 +1,8 @@
 # Format bars used to visually display information such as R-squared.
 #' @importFrom formattable formatter percent
 createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.display.value = NA,
-                               max.display.value = NA, show.as.percent = FALSE, shaded = FALSE)
+                               max.display.value = NA, show.as.percent = FALSE,
+                               shaded = FALSE, reverse = FALSE)
 {
     if (is.na(max.display.value))
     {
@@ -27,14 +28,24 @@ createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.di
         result
     }
 
+    if (!reverse)
+    {
+        start.color = positiveSignificanceLighter()
+        end.color = positiveSignificanceColour()
+    }
+    else
+    {
+        start.color = positiveSignificanceColour()
+        end.color = positiveSignificanceLighter()
+    }
     formatter(.tag = "span", style = x ~ style(
         display = "inline-block",
         direction = "rtl",
         `border-radius` = "4px",
         `padding-right` = "0px",
         `background-color` = if (shaded) csscolor(gradient(as.numeric(x),
-                                                           positiveSignificanceLighter(),
-                                                           positiveSignificanceColour())) else barColour(),
+                                                           start.color,
+                                                           end.color)) else barColour(),
         width = .get.bar.widths(x)),
         # We need to insert a left-to-right mark so that the minus sign
         # in negative values is not reversed due to the rtl direction.
