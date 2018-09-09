@@ -13,6 +13,11 @@ positiveSignificanceColour <- function()
     "#80B4F4" # light blue
 }
 
+positiveSignificanceLighter <- function()
+{
+    "#E8F1FD" # lighter blue
+}
+
 negativeSignificanceColour <- function()
 {
     "#FB9080" # light coral
