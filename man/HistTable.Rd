@@ -4,13 +4,20 @@
 \alias{HistTable}
 \title{HistTable}
 \usage{
-HistTable(data.values, title = "", subtitle = "", footer = "",
+HistTable(data.values, class.memberships = NULL, class.sizes = NULL,
+  class.colors = NULL, title = "", subtitle = "", footer = "",
   bin.size = 5, bin.min = 0, bin.max = 100, hist.width = 100,
   hist.height = 20, show.tooltips = TRUE, color.negative = FALSE,
   histogram.column.name = "Distribution", ...)
 }
 \arguments{
 \item{data.values}{A dataframe, with each column containing the values to create a histogram.}
+
+\item{class.memberships}{Class memberships for each respondent.}
+
+\item{class.sizes}{Sizes of each class as proportions.}
+
+\item{class.colors}{Colors for each class.}
 
 \item{title}{The title of the table.}
 
