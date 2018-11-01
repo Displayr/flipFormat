@@ -3,6 +3,7 @@
 #' Creates a pretty formattable table showing histograms
 #' @param data.values A dataframe, with each column containing the values to create a histogram.
 #' @param class.memberships Class memberships for each respondent.
+#' @param class.sizes Sizes of each class as proportions.
 #' @param class.colors Colors for each class.
 #' @param title The title of the table.
 #' @param subtitle The subtitle of the table.
@@ -55,8 +56,10 @@ HistTable <- function(data.values,
 
     histString <- function(xx)
     {
-        xx[xx > bin.max] <- bin.max
-        xx[xx < bin.min] <- bin.min
+        # Points outside the min and max are placed in the left and right bins
+        xx[xx >= bin.max] <- bin.max - 0.5 * bin.size
+        xx[xx <= bin.min] <- bin.min + 0.5 * bin.size
+
         breaks <- round(seq(bin.min, bin.max, bin.size), 6)
         counts <- round(hist(xx, plot = F, breaks = breaks,
                              right = FALSE)$counts / length(xx) * 100, 1)
