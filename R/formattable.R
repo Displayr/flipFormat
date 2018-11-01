@@ -77,6 +77,11 @@ replaceCirclePlaceholder <- function(html)
     gsub("Right placeholder for colored circle", "'>&#11044;</font>", html)
 }
 
+nonBreakingSpacePlaceholder <- function()
+{
+    paste0("Placeholder for non-breaking space")
+}
+
 # Format p-values.
 #' @importFrom formattable formatter
 createPFormatter <- function(p.cutoff = 0.05)
@@ -192,6 +197,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     tbl.html <- HTML(tbl)
     tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", tbl.html)
     tbl.html <- gsub(emSpacePlaceholder(), "&emsp;", tbl.html)
+    tbl.html <- gsub(nonBreakingSpacePlaceholder(), "&#160;" , tbl.html)
     tbl.html <- replaceCirclePlaceholder(tbl.html)
 
     ## DS-1445 Remove duplicate caption tag

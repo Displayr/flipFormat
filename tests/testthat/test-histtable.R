@@ -21,6 +21,8 @@ dat <- data.frame(A=rnorm(500,0), B=rnorm(500,0), C=rnorm(500,0))
 class.memberships <- sample(1:6, 500, replace = TRUE)
 expect_error(HistTable(dat,
                        class.memberships = class.memberships,
+                       class.sizes = c(0.207165110577296, 0.15009896031433, 0.142735929108374,
+                                       0.207165110577296, 0.15009896031433, 0.142735929108374),
                        class.colors = c("#ff0000", "#00ff00", "#0000ff",
                                         "#ffff00", "#ff00ff", "#00ffff"),
                        title = "Histograms",

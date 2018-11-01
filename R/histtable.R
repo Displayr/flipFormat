@@ -27,6 +27,7 @@
 
 HistTable <- function(data.values,
                       class.memberships = NULL,
+                      class.sizes = NULL,
                       class.colors = NULL,
                       title = "",
                       subtitle = "",
@@ -108,8 +109,14 @@ HistTable <- function(data.values,
         n.classes <- max(class.memberships)
         class.color.text <- character(n.classes)
         for (i in 1:n.classes)
-            class.color.text[i] <- paste0("Class ", i, " ", circlePlaceholder(class.colors[i]))
-        subtitle <- c(subtitle, paste(class.color.text, collapse = emSpacePlaceholder()))
+            class.color.text[i] <- paste0(circlePlaceholder(class.colors[i]),
+                                          nonBreakingSpacePlaceholder(),
+                                          "Class",
+                                          nonBreakingSpacePlaceholder(),
+                                          i, nonBreakingSpacePlaceholder(),
+                                          "(", FormatAsPercent(class.sizes[i], decimals = 0), ")")
+        subtitle <- c(subtitle, paste(class.color.text,
+                                      collapse = emSpacePlaceholder()))
     }
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer,
