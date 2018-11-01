@@ -2,6 +2,8 @@
 #'
 #' Creates a pretty formattable table showing histograms
 #' @param data.values A dataframe, with each column containing the values to create a histogram.
+#' @param class.memberships Class memberships for each respondent.
+#' @param class.colors Colors for each class.
 #' @param title The title of the table.
 #' @param subtitle The subtitle of the table.
 #' @param footer The footer of the table.
@@ -24,6 +26,8 @@
 #' @export
 
 HistTable <- function(data.values,
+                      class.memberships = NULL,
+                      class.colors = NULL,
                       title = "",
                       subtitle = "",
                       footer = "",
@@ -46,15 +50,34 @@ HistTable <- function(data.values,
     if (suppressWarnings(!any(is.na(as.numeric(colnames(data.values))))))
         colnames(data.values) <- paste0(colnames(data.values), " ")
 
+    color.classes <- !is.null(class.memberships)
+
     histString <- function(xx)
     {
         xx[xx > bin.max] <- bin.max
         xx[xx < bin.min] <- bin.min
         breaks <- round(seq(bin.min, bin.max, bin.size), 6)
-        counts <- round(hist(xx, plot = F, breaks = breaks, right = FALSE)$counts / length(xx) * 100, 1)
+        counts <- round(hist(xx, plot = F, breaks = breaks,
+                             right = FALSE)$counts / length(xx) * 100, 1)
 
-        if (color.negative)
+        if (color.classes)
         {
+            n.classes <- max(class.memberships)
+            n.bins <- length(counts)
+            values <- matrix(0, ncol = n.classes, nrow = n.bins)
+            for (i in 1:n.bins)
+            {
+                cm <- class.memberships[xx >= breaks[i] & xx < breaks[i + 1]]
+                values[i, as.numeric(names(which.max(table(cm))))] <- counts[i]
+            }
+            as.character(as.tags(sparkline(values, type = "bar", zeroColor = "lightgray",
+                                           width = hist.width, height = hist.height,
+                                           stackedBarColor = class.colors,
+                                           disableInteraction = !show.tooltips)))
+        }
+        else if (color.negative)
+        {
+            breaks <- breaks[-length(breaks)]
             positive.breaks <- breaks >= 0
             positive.counts <- rep(0, length(counts))
             positive.counts[positive.breaks] <- counts[positive.breaks]
@@ -79,6 +102,15 @@ HistTable <- function(data.values,
                      ..., # extra stats to report
                      stringsAsFactors = FALSE, check.names = FALSE)
     names(df)[1] <- histogram.column.name
+
+    if (color.classes)
+    {
+        n.classes <- max(class.memberships)
+        class.color.text <- character(n.classes)
+        for (i in 1:n.classes)
+            class.color.text[i] <- paste0("Class ", i, " ", circlePlaceholder(class.colors[i]))
+        subtitle <- c(subtitle, paste(class.color.text, collapse = emSpacePlaceholder()))
+    }
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer,
                       col.names.alignment = c("c", rep("r", length(df) - 1)))

@@ -60,6 +60,23 @@ leftToRightMarkPlaceholder <- function()
     "Replace me with the left-to-right mark"
 }
 
+emSpacePlaceholder <- function()
+{
+    "Replace me with an em space"
+}
+
+circlePlaceholder <- function(circle.color)
+{
+    paste0("Left placeholder for colored circle", circle.color,
+           "Right placeholder for colored circle")
+}
+
+replaceCirclePlaceholder <- function(html)
+{
+    html <- gsub("Left placeholder for colored circle", "<font color='", html)
+    gsub("Right placeholder for colored circle", "'>&#11044;</font>", html)
+}
+
 # Format p-values.
 #' @importFrom formattable formatter
 createPFormatter <- function(p.cutoff = 0.05)
@@ -172,7 +189,10 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     )
 
     # Replace the placeholders
-    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", HTML(tbl))
+    tbl.html <- HTML(tbl)
+    tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", tbl.html)
+    tbl.html <- gsub(emSpacePlaceholder(), "&emsp;", tbl.html)
+    tbl.html <- replaceCirclePlaceholder(tbl.html)
 
     ## DS-1445 Remove duplicate caption tag
     ## for (el in rev(tag.list))

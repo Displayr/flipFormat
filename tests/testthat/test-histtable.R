@@ -16,3 +16,18 @@ expect_error(HistTable(dat,
                        bin.min = -5,
                        bin.max = 5,
                        bin.size = 0.5), NA)
+
+dat <- data.frame(A=rnorm(500,0), B=rnorm(500,0), C=rnorm(500,0))
+class.memberships <- sample(1:6, 500, replace = TRUE)
+expect_error(HistTable(dat,
+                       class.memberships = class.memberships,
+                       class.colors = c("#ff0000", "#00ff00", "#0000ff",
+                                        "#ffff00", "#ff00ff", "#00ffff"),
+                       title = "Histograms",
+                       subtitle = "subtitle here",
+                       footer = "footer here",
+                       show.tooltips = FALSE,
+                       color.negative = TRUE,
+                       bin.min = -5,
+                       bin.max = 5,
+                       bin.size = 0.5), NA)
