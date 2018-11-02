@@ -9,6 +9,7 @@ Description: Formatting to be used in print statements and other outputs. E.g.,
 License: GPL-3
 LazyData: TRUE
 Imports:
+    colorspace,
     DT,
     flipU(>= 1.0.2),
     formattable,
