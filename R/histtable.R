@@ -4,7 +4,6 @@
 #' @param data.values A dataframe, with each column containing the values to create a histogram.
 #' @param class.memberships Class memberships for each respondent.
 #' @param class.sizes Sizes of each class as proportions.
-#' @param class.colors Colors for each class.
 #' @param title The title of the table.
 #' @param subtitle The subtitle of the table.
 #' @param footer The footer of the table.
@@ -29,7 +28,6 @@
 HistTable <- function(data.values,
                       class.memberships = NULL,
                       class.sizes = NULL,
-                      class.colors = NULL,
                       title = "",
                       subtitle = "",
                       footer = "",
@@ -53,6 +51,9 @@ HistTable <- function(data.values,
         colnames(data.values) <- paste0(colnames(data.values), " ")
 
     color.classes <- !is.null(class.memberships)
+
+    if (color.classes)
+        class.colors <- classColors(length(class.sizes))
 
     histString <- function(xx)
     {
@@ -128,4 +129,26 @@ HistTable <- function(data.values,
     ft
 }
 
+classColors <- function(n.classes)
+{
+    # Modified from the default plotly palette
+    color.palette <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+                       "#8c564b", "#e377c2", "#bcbd22", "#03E7C5", "#7f7f7f")
+    class.colors <- color.palette
 
+    # If we run out of colors from the palette,
+    # reuse a lighter version of the palette
+    new.colors <- color.palette
+    while (length(class.colors) < n.classes)
+    {
+        new.colors <- lightenColors(new.colors)
+        class.colors <- c(class.colors, new.colors)
+    }
+    class.colors[1:n.classes]
+}
+
+#' @importFrom colorspace hex2RGB
+lightenColors <- function(hex.colors)
+{
+    rgb(1 - ((1 - hex2RGB(hex.colors)@coords) * 0.6))
+}
