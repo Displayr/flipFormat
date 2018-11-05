@@ -65,16 +65,26 @@ emSpacePlaceholder <- function()
     "Replace me with an em space"
 }
 
-circlePlaceholder <- function(circle.color)
+coloredCirclePlaceholder <- function(circle.color)
 {
-    paste0("Left placeholder for colored circle", circle.color,
-           "Right placeholder for colored circle")
+    paste0(openTagPlaceholder(), "font color='", circle.color,
+           "' style='font-size:16px'", closeTagPlaceholder(), circlePlaceholder(),
+           openTagPlaceholder(), "/font", closeTagPlaceholder())
 }
 
-replaceCirclePlaceholder <- function(html)
+circlePlaceholder <- function()
 {
-    html <- gsub("Left placeholder for colored circle", "<font color='", html)
-    gsub("Right placeholder for colored circle", "'>&#11044;</font>", html)
+    "Replace me with a filled circle"
+}
+
+openTagPlaceholder <- function()
+{
+    "Replace me with a less than symbol"
+}
+
+closeTagPlaceholder <- function()
+{
+    "Replace me with a greater than symbol"
 }
 
 nonBreakingSpacePlaceholder <- function()
@@ -198,7 +208,9 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     tbl.html <- gsub(leftToRightMarkPlaceholder(), "&lrm;", tbl.html)
     tbl.html <- gsub(emSpacePlaceholder(), "&emsp;", tbl.html)
     tbl.html <- gsub(nonBreakingSpacePlaceholder(), "&#160;" , tbl.html)
-    tbl.html <- replaceCirclePlaceholder(tbl.html)
+    tbl.html <- gsub(openTagPlaceholder(), "<" , tbl.html)
+    tbl.html <- gsub(closeTagPlaceholder(), ">" , tbl.html)
+    tbl.html <- gsub(circlePlaceholder(), "&#9679;" , tbl.html)
 
     ## DS-1445 Remove duplicate caption tag
     ## for (el in rev(tag.list))

@@ -113,7 +113,7 @@ HistTable <- function(data.values,
         n.classes <- max(class.memberships)
         class.color.text <- character(n.classes)
         for (i in 1:n.classes)
-            class.color.text[i] <- paste0(circlePlaceholder(class.colors[i]),
+            class.color.text[i] <- paste0(coloredCirclePlaceholder(class.colors[i]),
                                           nonBreakingSpacePlaceholder(),
                                           "Class",
                                           nonBreakingSpacePlaceholder(),
