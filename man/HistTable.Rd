@@ -8,7 +8,8 @@ HistTable(data.values, class.memberships = NULL, class.sizes = NULL,
   title = "", subtitle = "", footer = "", bin.size = 5,
   bin.min = 0, bin.max = 100, hist.width = 100, hist.height = 20,
   show.tooltips = TRUE, color.negative = FALSE,
-  histogram.column.name = "Distribution", ...)
+  histogram.column.name = "Distribution", prior.columns = NULL,
+  show.row.names = TRUE, ...)
 }
 \arguments{
 \item{data.values}{A dataframe, with each column containing the values to create a histogram.}
@@ -38,6 +39,10 @@ HistTable(data.values, class.memberships = NULL, class.sizes = NULL,
 \item{color.negative}{Whether to show negative bars in coral.}
 
 \item{histogram.column.name}{Name for the histogram column.}
+
+\item{prior.columns}{Columns before the histogram column.}
+
+\item{show.row.names}{Whether to show row names in the table (the names of data.values).}
 
 \item{...}{Additional columns to add to the table.}
 }

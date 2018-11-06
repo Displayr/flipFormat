@@ -17,8 +17,10 @@ expect_error(HistTable(dat,
                        bin.max = 5,
                        bin.size = 0.5), NA)
 
-dat <- data.frame(A=rnorm(500,0), B=rnorm(500,0), C=rnorm(500,0))
+dat <- data.frame(A=rnorm(100,0), B=rnorm(100,0), C=rnorm(100,0))
+names(dat) <- c("A", "B", "C")
 class.memberships <- sample(1:6, 500, replace = TRUE)
+prior.columns <- data.frame("Attribute" = c("x", "y", "z"), "Level" = c("u", "v", "w"))
 expect_error(HistTable(dat,
                        class.memberships = class.memberships,
                        class.sizes = c(0.207165110577296, 0.15009896031433, 0.142735929108374,
@@ -30,4 +32,6 @@ expect_error(HistTable(dat,
                        color.negative = TRUE,
                        bin.min = -5,
                        bin.max = 5,
-                       bin.size = 0.5), NA)
+                       bin.size = 0.5,
+                       prior.columns = prior.columns,
+                       show.row.names = FALSE), NA)

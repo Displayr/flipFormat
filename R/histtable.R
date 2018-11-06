@@ -15,6 +15,8 @@
 #' @param show.tooltips Whether to display tooltips of the bar heights
 #' @param color.negative Whether to show negative bars in coral.
 #' @param histogram.column.name Name for the histogram column.
+#' @param prior.columns Columns before the histogram column.
+#' @param show.row.names Whether to show row names in the table (the names of data.values).
 #' @param ... Additional columns to add to the table.
 #' @importFrom graphics hist
 #' @importFrom htmltools as.tags
@@ -39,6 +41,8 @@ HistTable <- function(data.values,
                       show.tooltips = TRUE,
                       color.negative = FALSE,
                       histogram.column.name = "Distribution",
+                      prior.columns = NULL,
+                      show.row.names = TRUE,
                       ...)
 {
     # Input needs to be a data.frame, because we use lapply
@@ -103,10 +107,23 @@ HistTable <- function(data.values,
         }
     }
 
-    df <- data.frame("temp" = unlist(lapply(data.values, histString)),
-                     ..., # extra stats to report
-                     stringsAsFactors = FALSE, check.names = FALSE)
-    names(df)[1] <- histogram.column.name
+    if (is.null(prior.columns))
+    {
+        df <- data.frame("temp" = unlist(lapply(data.values, histString)),
+                         ..., # extra stats to report
+                         stringsAsFactors = FALSE, check.names = FALSE)
+        names(df)[1] <- histogram.column.name
+    }
+    else
+    {
+        df <- data.frame(prior.columns, "temp" = unlist(lapply(data.values, histString)),
+                         ..., # extra stats to report
+                         stringsAsFactors = FALSE, check.names = FALSE)
+        names(df)[length(prior.columns) + 1] <- histogram.column.name
+    }
+
+    if (!show.row.names)
+        rownames(df) <- NULL
 
     if (color.classes)
     {
@@ -123,8 +140,11 @@ HistTable <- function(data.values,
                                       collapse = emSpacePlaceholder()))
     }
 
+    col.names.alignment <- c(rep("l", length(prior.columns)), "c",
+                             rep("r", length(df) - 1))
+
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer,
-                      col.names.alignment = c("c", rep("r", length(df) - 1)))
+                      col.names.alignment = col.names.alignment)
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))
     ft
 }
