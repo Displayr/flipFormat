@@ -89,7 +89,12 @@ closeTagPlaceholder <- function()
 
 nonBreakingSpacePlaceholder <- function()
 {
-    paste0("Placeholder for non-breaking space")
+    "Replace me with a non-breaking space"
+}
+
+lineBreakPlaceholder <- function()
+{
+    "Replace me with a line break"
 }
 
 #' @importFrom stringr str_locate_all
@@ -121,7 +126,6 @@ createPFormatter <- function(p.cutoff = 0.05)
         }
     )
 }
-
 
 #' @importFrom formattable formatter style
 createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
@@ -190,6 +194,8 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     for (s in subtitle)
         tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
 
+    if (length(footer) > 1)
+        footer <- paste(footer, collapse = lineBreakPlaceholder())
     tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
                                                      footer)
     if (is.null(col.names.alignment) && length(col.names) != 0)
@@ -226,6 +232,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     tbl.html <- gsub(openTagPlaceholder(), "<" , tbl.html)
     tbl.html <- gsub(closeTagPlaceholder(), ">" , tbl.html)
     tbl.html <- gsub(circlePlaceholder(), "&#9679;" , tbl.html)
+    tbl.html <- gsub(lineBreakPlaceholder(), "<br>" , tbl.html)
 
     ## DS-1445 Remove duplicate caption tag
     ## for (el in rev(tag.list))
