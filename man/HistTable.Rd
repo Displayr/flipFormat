@@ -9,7 +9,7 @@ HistTable(data.values, class.memberships = NULL, class.sizes = NULL,
   bin.min = 0, bin.max = 100, hist.width = 100, hist.height = 20,
   show.tooltips = TRUE, color.negative = FALSE,
   histogram.column.name = "Distribution", prior.columns = NULL,
-  show.row.names = TRUE, ...)
+  show.row.names = TRUE, row.lines.to.thicken = NULL, ...)
 }
 \arguments{
 \item{data.values}{A dataframe, with each column containing the values to create a histogram.}

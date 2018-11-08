@@ -43,6 +43,7 @@ HistTable <- function(data.values,
                       histogram.column.name = "Distribution",
                       prior.columns = NULL,
                       show.row.names = TRUE,
+                      row.lines.to.thicken = NULL,
                       ...)
 {
     # Input needs to be a data.frame, because we use lapply
@@ -144,7 +145,8 @@ HistTable <- function(data.values,
                              rep("r", length(df) - 1))
 
     ft <- createTable(df, colnames(df), list(), title, subtitle, footer,
-                      col.names.alignment = col.names.alignment)
+                      col.names.alignment = col.names.alignment,
+                      row.lines.to.thicken = row.lines.to.thicken)
     ft$dependencies <- c(ft$dependencies, getDependency("sparkline","sparkline"))
     ft
 }

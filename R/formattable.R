@@ -92,6 +92,21 @@ nonBreakingSpacePlaceholder <- function()
     paste0("Placeholder for non-breaking space")
 }
 
+#' @importFrom stringr str_locate_all
+thickenRowLines <- function(html, row.lines.to.thicken)
+{
+    thickened.row.tag <- "<tr style='border-top: 2px solid #ddd'>"
+    # needs to be same length as thickened.row.tag
+    extended.placeholder <- "<tr xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx>"
+    html <- gsub("<tr>", extended.placeholder, html)
+    # remove first row which is the column header
+    positions <- str_locate_all(html, extended.placeholder)[[1]][-1, ]
+    for (i in row.lines.to.thicken)
+        substr(html, positions[i, 1], positions[i, 2]) <- thickened.row.tag
+    html <- gsub(extended.placeholder, "<tr>", html)
+    html
+}
+
 # Format p-values.
 #' @importFrom formattable formatter
 createPFormatter <- function(p.cutoff = 0.05)
@@ -167,7 +182,7 @@ subTitleFormat <- function(subtitle)
 #' @importFrom htmltools tags tagList browsable attachDependencies HTML
 #' @importFrom htmlwidgets sizingPolicy
 createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wrap.column.headers = FALSE,
-                        secondary.title = "", col.names.alignment = NULL)
+                        secondary.title = "", col.names.alignment = NULL, row.lines.to.thicken = NULL)
 {
     tag.list <- list(titleFormat(title))
     if (nzchar(secondary.title))
@@ -217,6 +232,12 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     ##     tbl <- sub(">", paste0(">", el), tbl)
     tbl.html <- sub("<caption><h3", "<h3", tbl.html)
     tbl.html <- sub("</caption></caption>", "</caption>", tbl.html)
+
+    # Set vertical alignment to middle for table cells
+    tbl.html <- gsub('<td style="', '<td style="vertical-align:middle; ', tbl.html)
+
+    if (!is.null(row.lines.to.thicken))
+        tbl.html <- thickenRowLines(tbl.html, row.lines.to.thicken)
 
     if (no.wrap.column.headers)
         tbl.html <- gsub("<th style=\"text-align:right;\">", "<th style=\"text-align:right;white-space:nowrap;\">", tbl.html)
