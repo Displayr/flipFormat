@@ -195,7 +195,13 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
         tag.list[[length(tag.list) + 1]] <- subTitleFormat(s)
 
     if (length(footer) > 1)
-        footer <- paste(footer, collapse = lineBreakPlaceholder())
+    {
+        p.start.tag <- paste0(openTagPlaceholder(),
+                              "p style='margin-bottom:5px;'",
+                              closeTagPlaceholder())
+        p.end.tag <- paste0(openTagPlaceholder(), "/p", closeTagPlaceholder())
+        footer <- paste0(p.start.tag, footer, p.end.tag, collapse = "")
+    }
     tag.list[[length(tag.list) + 1]] <- tags$caption(style="caption-side:bottom;font-style:italic; font-size:90%;",
                                                      footer)
     if (is.null(col.names.alignment) && length(col.names) != 0)
