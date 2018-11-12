@@ -137,8 +137,9 @@ HistTable <- function(data.values,
                                           nonBreakingSpacePlaceholder(),
                                           i, nonBreakingSpacePlaceholder(),
                                           "(", FormatAsPercent(class.sizes[i], decimals = 0), ")")
-        subtitle <- c(subtitle, paste(class.color.text,
-                                      collapse = emSpacePlaceholder()))
+        if (n.classes > 1)
+            subtitle <- c(subtitle, paste(class.color.text,
+                                          collapse = emSpacePlaceholder()))
     }
 
     col.names.alignment <- c(rep("l", length(prior.columns)), "c",
