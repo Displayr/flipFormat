@@ -4,8 +4,8 @@
 \alias{CreateChoiceModelDesignWidget}
 \title{Display choice model design output as an \code{htmlwidget}}
 \usage{
-\method{print}{ChoiceModelDesign}(x, css = NULL, nsmall = 3,
-  digits = 2, ...)
+CreateChoiceModelDesignWidget(x, css = NULL, nsmall = 3, digits = 2,
+  ...)
 }
 \arguments{
 \item{x}{An object of class \code{ChoiceModelDesign} output from
