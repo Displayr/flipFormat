@@ -1,7 +1,7 @@
 Package: flipFormat
 Type: Package
 Title: Formatting of R outputs
-Version: 1.0.6
+Version: 1.1.0
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Formatting to be used in print statements and other outputs. E.g.,
@@ -16,14 +16,19 @@ Imports:
     htmltools,
     htmlwidgets,
     rmarkdown,
+    knitr,
     sparkline,
-    stringr
+    stringr,
+    rhtmlMetro
 Suggests:
     testthat,
-    flipExampleData
+    flipExampleData,
+    flipChoice
 Remotes:
     Displayr/flipExampleData,
     Displayr/flipU,
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
-    renkun-ken/formattable
+    renkun-ken/formattable,
+    Displayr/rhtmlMetro,
+    Displayr/flipChoice
 RoxygenNote: 6.1.0
