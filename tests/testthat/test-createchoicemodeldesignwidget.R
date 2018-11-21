@@ -1,5 +1,7 @@
 context("Experimental design")
 
+require("flipChoice")
+
 # Manual test case
 manual.attribute.levels <- list(c("yamaha", "honda", "ducati", "triumph", "bmw", "kawasaki"),
                                 c("125cc", "250cc", "500cc"),
@@ -36,6 +38,7 @@ withr::with_output_sink(tfile, {
     for (model in c("Random", "Complete enumeration", "Balanced overlap", "Shortcut")) {  # can't handle prohibitions with "Shortcut"
         for (i in seq(length(levels.test.cases))) {
             test_that(paste(model, "Test case", i), {
+                skip_if_not_installed("flipChoice")
                 prohibitions <- if(model == "Shortcut") NULL else prohibitions.test.cases[[i]]
                 cmd <- suppressWarnings(ChoiceModelDesign(design.algorithm = model,
                                          attribute.levels = levels.test.cases[[i]],
@@ -55,12 +58,6 @@ withr::with_output_sink(tfile, {
 unlink(tfile)
 
 experiment4 <- CreateExperiment(c(4, 3, 2, 1), 0)
-test_that("Insufficient levels", {
-    expect_error(ChoiceModelDesign(design.algorithm = "Random",
-                                   attribute.levels = experiment4$attribute.levels,
-                                   n.questions = 6,
-                                   alternatives.per.question = 3), "All attributes must have at least 2 levels.")
-})
 
 # Warning about priors
 no.prior <- structure(c("Brand", "Hershey", "Dove", "Godiva", "Lindt", "Price",
@@ -81,6 +78,7 @@ has.prior <- structure(c("Brand", "Hershey", "Dove", "Godiva", "Lindt", "mean",
 
 test_that("ChoiceModelDesign print, none alternative",
 {
+    skip_if_not_installed("flipChoice")
     cmd <- suppressWarnings(ChoiceModelDesign(design.algorithm = "Shortcut",
                                 attribute.levels = has.prior,
                                 n.questions = 6,
@@ -95,6 +93,7 @@ test_that("ChoiceModelDesign print, none alternative",
 
 test_that("ChoiceModelDesign print, p.p with constant attributes",
 {
+    skip_if_not_installed("flipChoice")
     cmd <- suppressWarnings(ChoiceModelDesign(design.algorithm = "Partial profiles",
                                 attribute.levels = has.prior,
                                 n.questions = 6,
@@ -116,6 +115,7 @@ test_that("ChoiceModelDesign print, p.p with constant attributes",
 
 test_that("ChoiceModelDesign print, 1 version with prior",
 {
+    skip_if_not_installed("flipChoice")
     cmd <- suppressWarnings(ChoiceModelDesign(design.algorithm = "Shortcut",
                                 attribute.levels = has.prior,
                                 n.questions = 20,
@@ -142,6 +142,7 @@ test_that("ChoiceModelDesign print shows zero prior correctly",
     ## this test just checks that the user can still
     ## specify a zero prior and have that included
     ## in the prior output
+    skip_if_not_installed("flipChoice")
     has.prior <- structure(c("Brand", "Hershey", "Dove", "Godiva", "Lindt", "mean",
                          "0", "0", "0", "0", "Price", "$0.99", "$1.49", "$1.99", "$2.49",
                          "Cocoa strength", "70%", "Dark", "Milk", "White", "Sugar", "Standard",
@@ -171,6 +172,7 @@ test_that("ChoiceModelDesign print shows zero prior correctly",
 
 test_that("ChoiceModelDesign print prior with sd given",
 {
+    skip_if_not_installed("flipChoice")
     prior <- matrix(c(-0.8, -0.8, -0.8, -0.8, -0.8, -0.8, rep(0.4, 6)), ncol = 2)
     attr.list <- list(A1 = 1:2, A2 = 1:2, A3 = 1:2, A4 = 1:2,
                       A5 = 1:2, A6 = 1:2)

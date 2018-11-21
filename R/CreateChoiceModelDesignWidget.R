@@ -17,7 +17,6 @@
 #' @seealso \code{\link{ChoiceModelDesign}},
 #'     \code{\link[rhtmlMetro]{Box}}
 #' @export
-#' @method print ChoiceModelDesign
 #' @importFrom knitr kable
 #' @importFrom htmltools tagList tags includeCSS browsable
 #' @importFrom htmlwidgets onStaticRenderComplete
