@@ -19,7 +19,7 @@
 #' @export
 #' @importFrom knitr kable
 #' @importFrom htmltools tagList tags includeCSS browsable
-#' @importFrom htmlwidgets onStaticRenderComplete
+#' @importFrom htmlwidgets onRender
 #' @importFrom rhtmlMetro Box
 CreateChoiceModelDesignWidget <- function(
                                           x,
@@ -110,7 +110,8 @@ CreateChoiceModelDesignWidget <- function(
     js <- paste(readLines(system.file("js", "details-shim.min.js",
                                       package = "flipFormat")),
                 collapse = "\n")
-    out <- htmltools::tagList(out, htmlwidgets::onStaticRenderComplete(js))
+    ## out <- htmltools::tagList(out, htmlwidgets::onStaticRenderComplete(js))
+    out <- htmlwidgets::onRender(out, js)
     attr(out, "ChartData") <- x$labeled.design
     htmltools::browsable(out)
 }
