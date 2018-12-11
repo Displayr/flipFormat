@@ -66,19 +66,19 @@ CreateChoiceModelDesignWidget <- function(
     addStatistics(tfile, x, digits, nsmall)
 
     ## Standard errors
-    cata("<details open=\"true\"><summary>Standard Errors</summary>\n")
+    cata("<details open=\"true\"><div class=\"summary\"><summary>Standard Errors</summary></div>\n")
     cata(makeStandardErrorTable(x$standard.errors, x$attribute.levels,
                                 digits = digits, nsmall = nsmall), fill = TRUE)
     cata("</details>")
 
     ## Frequencies
     has.const.attr <- !is.null(x$n.constant.attributes) && x$n.constant.attributes > 0
-    cata("<details open=\"true\"><summary>Frequencies</summary>\n")
+    cata("<details open=\"true\"><div class=\"summary\"><summary>Frequencies</summary></div>\n")
     cata(makeFrequencyTable(b.o$singles, has.const.attr), fill = TRUE)
     cata("</details>")
 
     ## Pairwise frequencies
-    cata("<details open =\"true\"><summary>Pairwise Frequencies</summary>\n")
+    cata("<details open =\"true\"><div class=\"summary\"><summary>Pairwise Frequencies</summary></div>\n")
     mapply(addPairwiseFrequencyTable, b.o$pairs, names(b.o$pairs),
            MoreArgs = list(attr.names = names(x$attribute.levels), tfile = tfile))
     cata("</details>")
@@ -88,14 +88,14 @@ CreateChoiceModelDesignWidget <- function(
         addOverlaps(tfile, b.o$overlaps)
 
     ## Design
-    cata("<details><summary>Design</summary>\n")
+    cata("<details><div class=\"summary\"><summary>Design</summary></div>\n")
     cata(knitr::kable(x$labeled.design, align = "c",
                       longtable = TRUE, format = "html", digits = digits),
          fill = TRUE)
     cata("</details>")
 
     ## Priors
-    cata("<details open =\"true\"><summary>Prior</summary>\n")
+    cata("<details open =\"true\"><div class=\"summary\"><summary>Prior</summary></div>\n")
     if (!is.null(x$prior))
         cata(makePriorTable(x$prior, x$attribute.levels, digits, nsmall), fill = TRUE)
     else
@@ -107,13 +107,14 @@ CreateChoiceModelDesignWidget <- function(
                     font.family = "Circular, Arial, sans-serif",
                     font.size = 8)
     ## add JS to support details and summary elements in Microsoft Edge
-    js <- paste(readLines(system.file("js", "details-shim.min.js",
-                                      package = "flipFormat")),
-                collapse = "\n")
-    ## out <- htmltools::tagList(out, htmlwidgets::onStaticRenderComplete(js))
-    out <- htmlwidgets::onRender(out, js)
+    ## js <- paste(readLines(system.file("js", "details-shim.min.js",
+    ##                                   package = "flipFormat")),
+    ##             collapse = "\n")
+    ## ## out <- htmltools::tagList(out, htmlwidgets::onStaticRenderComplete(js))
+    ## out <- htmlwidgets::onRender(out, js)
     attr(out, "ChartData") <- x$labeled.design
-    htmltools::browsable(out)
+    ## htmltools::browsable(out)
+    return(out)
 }
 
 addStatistics <- function(tfile, x, digits, nsmall)
@@ -125,7 +126,7 @@ addStatistics <- function(tfile, x, digits, nsmall)
 
     b.o <- x$balances.and.overlaps
     cata("<details open=\"true\">\n")
-    cata("<summary>Statistics</summary>")
+    cata("<div class=\"summary\"><summary>Statistics</summary></div>")
     ## cata("<p style=\"text-align: left;\">")
     ## cata(paste0("<b>D-error: </b>", format1(x$d.error)))
     ## cata(paste0("<span style=\"float: right;\">",
@@ -260,7 +261,7 @@ addPairwiseFrequencyTable <- function(tfile, ptable, table.name, attr.names)
     ## idx2 <- vapply(attr.names, function(n) grepl(paste0("[/]", n, "$"), table.name), FALSE)
 
     cata("<details open=\"true\">")
-    cata(paste0("<summary class=\"summary-pairwise\">", table.name, "</summary>\n"))
+    cata(paste0("<summary class=\"summary-pairwise\">", table.name, "</summary></div>\n"))
     cata(knitr::kable(ptable, row.names = TRUE, col.names = colnames(ptable),
                       format = "html", align = "c",
                       table.attr = "class=\"table-pairwise\""), fill = TRUE)
@@ -274,7 +275,7 @@ addOverlaps <- function(tfile, overlaps)
     cata <- function(...)
         cat(..., file = tfile, append = TRUE)
     cata("<details open=\"true\">")
-    cata("<summary>Overlaps</summary>")
+    cata("<div class=\"summary\"><summary>Overlaps</summary></div>")
     cata(knitr::kable(t(overlaps), col.names = names(overlaps), align = "c",
                       format = "html", table.attr = "id=\"table-overlaps\""),
          fill = TRUE)

@@ -10,7 +10,7 @@
     background: white;
 }
 
-summary {
+.summary {
     /* border-bottom: 3px solid #151A1C; */
     background: #F2F5FA;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
