@@ -28,7 +28,7 @@ test_that("ChoiceModelDesign print, none alternative",
                                 none.alternatives = 1,
                                 alternatives.per.question = 4,
                                 seed = 1))
-    out <- print(cmd)
+    out <- CreateChoiceModelDesignWidget(cmd)
     expect_is(out, "htmlwidget")
     expect_equal(attr(out, "ChartData"), cmd$labeled.design)
 })
