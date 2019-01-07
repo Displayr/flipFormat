@@ -43,12 +43,6 @@ CreateChoiceModelDesignWidget <- function(
     cata(default.css, fill = TRUE)
     cata("</style>\n\n")
 
-    ## add CSS support for details and summary elements in Microsoft Edge
-    cata("<style>\n")
-    cata(readLines(system.file("css", "details-shim.min.css", package = "flipFormat")),
-         fill = TRUE)
-    cata("</style>\n\n")
-
     if (!is.null(css) && file.exists(css))
     {
         cata("<style>\n")
@@ -106,14 +100,8 @@ CreateChoiceModelDesignWidget <- function(
     out <- rhtmlMetro::Box(html, text.as.html = TRUE,
                     font.family = "Circular, Arial, sans-serif",
                     font.size = 8)
-    ## add JS to support details and summary elements in Microsoft Edge
-    ## js <- paste(readLines(system.file("js", "details-shim.min.js",
-    ##                                   package = "flipFormat")),
-    ##             collapse = "\n")
-    ## ## out <- htmltools::tagList(out, htmlwidgets::onStaticRenderComplete(js))
-    ## out <- htmlwidgets::onRender(out, js)
+
     attr(out, "ChartData") <- x$labeled.design
-    ## htmltools::browsable(out)
     return(out)
 }
 
