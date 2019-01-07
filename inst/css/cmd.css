@@ -10,7 +10,7 @@
     background: white;
 }
 
-.summary {
+summary {
     /* border-bottom: 3px solid #151A1C; */
     background: #F2F5FA;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -18,6 +18,19 @@
     font-size: 15px;
     margin-top: 10px;
     /* margin-bottom: 10px; */
+}
+
+@supports (-ms-ime-align:auto) {
+  .summary, .details {
+      /* border-bottom: 3px solid #151A1C; */
+      /* background: #F2F5FA; */
+      /* font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif; */
+      /* color: #151A1C; */
+      /* font-size: 15px; */
+      /* margin-top: 10px; */
+      /* margin-bottom: 10px; */
+      display: block;
+  }
 }
 
 details summary::-webkit-details-marker{
