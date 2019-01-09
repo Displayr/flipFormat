@@ -7,7 +7,12 @@ Formatting of R outputs
 To install from GitHub
 ```
 require(devtools)
-install_github("Displayr/flipFormat")
+install_github("Displayr/flipFormat", dependencies = NA)
 ```
+
+Note that it is necessary to use `dependencies = NA` in the above call
+because the `Suggest`ed package `flipChoice` is not publicly
+available. However, the package can still be installed and used
+without it.
 
 [![Displayr logo](https://mwmclean.github.io/img/logo-header.png)](https://www.displayr.com)
