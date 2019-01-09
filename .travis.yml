@@ -42,7 +42,6 @@ before_install:
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/ g++-6/ ${CXX}${CLANG_EXTRA_ARG}/" ~/.R/Makevars
   - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
-  - Rscript -e 'update.packages(ask = FALSE)';
   - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
   - rcode+="write.csv(as.data.frame(res), file='test_results.csv'); "
