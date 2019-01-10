@@ -101,15 +101,15 @@ test_that("ChoiceModelDesign print shows zero prior correctly",
                                 seed = 1))
     expect_true(all(cmd$prior == 0))
 
-    ## prior stripped if alg isnt one of efficient, Modfed, or p.p
+    ## As of DS-2311, prior is not stripped if alg isnt one of efficient, Modfed, or p.p
     cmd <- suppressWarnings(ChoiceModelDesign(design.algorithm = "Random",
                                 attribute.levels = has.prior,
                                 n.questions = 10,
                                 n.versions = 5,
                                 none.alternatives = 0,
                                 alternatives.per.question = 6,
-                                seed = 1))
-    expect_null(cmd$prior)
+                                seed = 1), "Priors will still be used to compute the D-error."))
+    expect_true(all(cmd$prior == 0))
 })
 
 test_that("ChoiceModelDesign print prior with sd given",
