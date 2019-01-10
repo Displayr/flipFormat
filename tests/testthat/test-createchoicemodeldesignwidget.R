@@ -108,7 +108,7 @@ test_that("ChoiceModelDesign print shows zero prior correctly",
                                 n.versions = 5,
                                 none.alternatives = 0,
                                 alternatives.per.question = 6,
-                                seed = 1), "Priors will still be used to compute the D-error."))
+                                seed = 1))
     expect_true(all(cmd$prior == 0))
 })
 
