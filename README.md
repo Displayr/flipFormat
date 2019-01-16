@@ -7,12 +7,18 @@ Formatting of R outputs
 To install from GitHub
 ```
 require(devtools)
-install_github("Displayr/flipFormat", dependencies = NA)
+cran.pkgs <- c("colorspace", "htmltools", "htmlwidgets", "rmarkdown", "knitr",
+	       "sparkline", "stringr")
+install.packages(cran.pkgs)
+gh.pkgs <- c("Displayr/flipU", "Displayr/rhtmlMetro",
+	     "rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55",
+	     "renkun-ken/formattable")
+devtools::install_github(gh.pkgs)
+devtools::install_github("Displayr/flipFormat", dependencies = FALSE)
 ```
 
-Note that it is necessary to use `dependencies = NA` in the above call
-because the `Suggest`ed package `flipChoice` is not publicly
-available. However, the package can still be installed and used
-without it.
+The additional steps are required because the `Suggest`ed package
+`flipChoice` is not publicly available. However, the package can still
+be installed and used without it.
 
 [![Displayr logo](https://mwmclean.github.io/img/logo-header.png)](https://www.displayr.com)
