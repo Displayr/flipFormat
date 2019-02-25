@@ -50,7 +50,8 @@ test_that("ChoiceModelDesign print, p.p with constant attributes",
     ## some diagnostics not available for partial profiles
     ## only one row in stats table
     tfile <- tempfile()
-    kt <- addStatistics(tfile, cmd, 2, 2)
+    cata <- createCata(tfile)
+    kt <- addStatistics(cmd, 2, 2, cata)
     m <- regexec("<tr>", readLines(tfile), fixed = TRUE)
     expect_length(unlist(regmatches(readLines(tfile), m)), 1)
 })
@@ -70,7 +71,8 @@ test_that("ChoiceModelDesign print, 1 version with prior",
 
     ## should have all diagnostics, 3 rows in stats table
     tfile <- tempfile()
-    kt <- addStatistics(tfile, cmd, 2, 2)
+    cata <- createCata(tfile)
+    kt <- addStatistics(cmd, 2, 2, cata)
     m <- regexec("<tr>", readLines(tfile), fixed = TRUE)
     expect_length(unlist(regmatches(readLines(tfile), m)), 3L)
 })
