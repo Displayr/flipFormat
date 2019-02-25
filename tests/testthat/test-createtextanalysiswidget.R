@@ -35,5 +35,5 @@ footer <- "n = 321 cases used to process the text of a total of 327; 6 cases are
 test_that("Text analysis output",
 {
     result <- CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies, footer)
-    expect_is(out, "htmlwidget")
+    expect_is(result, "htmlwidget")
 })
