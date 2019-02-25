@@ -44,6 +44,8 @@ HistTable(data.values, class.memberships = NULL, class.sizes = NULL,
 
 \item{show.row.names}{Whether to show row names in the table (the names of data.values).}
 
+\item{row.lines.to.thicken}{The indices of the row lines to be shown thicker.}
+
 \item{...}{Additional columns to add to the table.}
 }
 \description{

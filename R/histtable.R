@@ -17,6 +17,7 @@
 #' @param histogram.column.name Name for the histogram column.
 #' @param prior.columns Columns before the histogram column.
 #' @param show.row.names Whether to show row names in the table (the names of data.values).
+#' @param row.lines.to.thicken The indices of the row lines to be shown thicker.
 #' @param ... Additional columns to add to the table.
 #' @importFrom graphics hist
 #' @importFrom htmltools as.tags
