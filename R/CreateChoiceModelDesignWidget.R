@@ -37,7 +37,8 @@ CreateChoiceModelDesignWidget <- function(x,
     ## add CSS
     addCss("table.css", cata)
     addCss("cmd.css", cata)
-    addCss(css, cata, in.css.folder = FALSE)
+    if (!is.null(css))
+      addCss(css, cata, in.css.folder = FALSE)
 
     ## Needed so that Box has scollbar
     cata("<div class=\"main-container\">")
