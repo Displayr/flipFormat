@@ -21,34 +21,23 @@
 #' @importFrom htmltools tagList tags includeCSS browsable
 #' @importFrom htmlwidgets onRender
 #' @importFrom rhtmlMetro Box
-CreateChoiceModelDesignWidget <- function(
-                                          x,
+CreateChoiceModelDesignWidget <- function(x,
                                           css = NULL,
                                           nsmall = 3,
                                           digits = 2,
                                           ...)
 {
-    tfile <- tempfile(fileext = ".html")
-    on.exit(if (file.exists(tfile)) file.remove(tfile))
+    tfile <- createTempFile()
     b.o <- x$balances.and.overlaps
 
-    cata <- function(...)
-        cat(..., file = tfile, append = TRUE)
+    cata <- createCata(tfile)
     format1 <- function(x)
         format(x, nsmall = nsmall, digits = digits)
 
     ## add CSS
-    cat("<style>\n", file = tfile)
-    default.css <- readLines(system.file("css", "cmd.css", package = "flipFormat"))
-    cata(default.css, fill = TRUE)
-    cata("</style>\n\n")
-
-    if (!is.null(css) && file.exists(css))
-    {
-        cata("<style>\n")
-        cata(readLines(css), fill = TRUE)
-        cata("</style>\n\n")
-    }
+    addCss("table.css", cata)
+    addCss("cmd.css", cata)
+    addCss(css, cata, in.css.folder = FALSE)
 
     ## Needed so that Box has scollbar
     cata("<div class=\"main-container\">")
@@ -57,7 +46,7 @@ CreateChoiceModelDesignWidget <- function(
     cata("<h1>Choice Model: Experimental Design</h1>")
 
     ## statistics
-    addStatistics(tfile, x, digits, nsmall)
+    addStatistics(x, digits, nsmall, cata)
 
     ## Standard errors
     cata("<details open=\"true\" class=\"details\"><summary class=\"summary\">Standard Errors</summary>\n")
@@ -79,7 +68,7 @@ CreateChoiceModelDesignWidget <- function(
 
     ## Overlaps (N/A for alt. specific designs)
     if (!is.null(b.o$overlaps))
-        addOverlaps(tfile, b.o$overlaps)
+        addOverlaps(b.o$overlaps, cata)
 
     ## Design
     cata("<details class=\"details\"><summary class=\"summary\">Design</summary>\n")
@@ -105,10 +94,8 @@ CreateChoiceModelDesignWidget <- function(
     return(out)
 }
 
-addStatistics <- function(tfile, x, digits, nsmall)
+addStatistics <- function(x, digits, nsmall, cata)
 {
-    cata <- function(...)
-        cat(..., file = tfile, append = TRUE)
     format1 <- function(x)
         format(x, nsmall = nsmall, digits = digits)
 
@@ -258,10 +245,8 @@ addPairwiseFrequencyTable <- function(tfile, ptable, table.name, attr.names)
 }
 
 #' @importFrom knitr kable
-addOverlaps <- function(tfile, overlaps)
+addOverlaps <- function(overlaps, cata)
 {
-    cata <- function(...)
-        cat(..., file = tfile, append = TRUE)
     cata("<details open=\"true\" class=\"details\">")
     cata("<summary class=\"summary\">Overlaps</summary>")
     cata(knitr::kable(t(overlaps), col.names = names(overlaps), align = "c",
