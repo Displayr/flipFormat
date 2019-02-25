@@ -26,7 +26,8 @@ ind <- rank(-final.counts, ties.method = "first")
 final.tokens[ind] <- final.tokens
 final.counts[ind] <- final.counts
 
-raw.and.normalized.text <- data.frame(raw.text = raw.text, normalized.text = normalized.text)
+raw.and.normalized.text <- data.frame(raw.text = text.analysis.raw.text,
+                              normalized.text = text.analysis.normalized.text)
 
 n.gram.frequencies <- data.frame(n.grams = final.tokens, frequencies = final.counts)
 
