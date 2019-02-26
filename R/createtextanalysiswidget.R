@@ -18,7 +18,7 @@
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
-                                     n.gram.frequencies, 
+                                     n.gram.frequencies,
                                      footer,
                                      colors = NULL)
 {
@@ -31,8 +31,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     stylefile <- createTempFile()
     ws <- createCata(stylefile)
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, colors, ws)
-    addCss(stylefile, cata, in.css.folder = FALSE)   
- 
+    addCss(stylefile, cata, in.css.folder = FALSE)
+
     cata("<div class=\"main-container\">")
     addLeftPanel(colored.text$text, cata)
     addRightPanel(colored.text$n.grams, cata)
@@ -53,17 +53,24 @@ HighlightNGrams <- function(n.grams, text, colors, cata)
     if (is.null(colors))
         colors <- rainbow(n, start = 0, end = 2/3)
     colors <- paste0(colors, rep("", n))
-    
+
     for (i in 1:n)
     {
         # define CSS class
         cata(paste0(".word", i, "{ color: ", stripAlpha(colors[i]), "; }\n"))
-    
+
         text[,1] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("<span class=\"word", i, "\">", n.grams[i,1], "</span>"), text[,1])
+                         paste0("DELIM_OPEN_", i, "\">", n.grams[i,1], "DELIM_CLOSE"), text[,1])
         text[,2] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("<span class=\"word", i, "\">", n.grams[i,1], "</span>"), text[,2])
+                         paste0("DELIM_OPEN_", i, "\">", n.grams[i,1], "DELIM_CLOSE"), text[,2])
     }
+    # finish off substitutions - we use this two step process to avoid problems
+    # if the n-gram matches 'span' or 'class'
+    text[,1] <- gsub("DELIM_OPEN_", "<span class=\"word", text[,1])
+    text[,2] <- gsub("DELIM_OPEN_", "<span class=\"word", text[,2])
+    text[,1] <- gsub("DELIM_CLOSE", "</span>", text[,1])
+    text[,2] <- gsub("DELIM_CLOSE", "</span>", text[,2])
+
     n.grams[,1] <- paste0("<span class=\"word", 1:i, "\">", n.grams[,1], "</span>")
     return(list(n.grams = n.grams, text = text))
 

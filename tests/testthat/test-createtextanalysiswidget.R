@@ -15,12 +15,12 @@ final.tokens <- c("about", "aware", "better", "bit", "brand", "calories", "coca"
   "no", "none", "not", "nothing", "people", "pepsi", "personal",
   "prefer", "probably", "real", "some", "sugar", "sweet", "taste",
   "tend", "think", "traditional", "trying", "want", "watching",
-  "weight", "whereas", "younger", "zero")
+  "weight", "whereas", "younger", "zero", "class")
 
 final.counts <- c(13, 6, 18, 6, 11, 9, 24, 69, 47, 31, 7, 34, 6, 64, 31, 28,
   119, 19, 5, 5, 6, 5, 25, 6, 20, 11, 25, 38, 6, 5, 5, 35, 56,
   7, 23, 5, 22, 11, 101, 74, 11, 22, 10, 6, 9, 42, 8, 89, 15, 31,
-  5, 9, 12, 7, 42, 5, 5, 16)
+  5, 9, 12, 7, 42, 5, 5, 16, 1)
 
 ind <- rank(-final.counts, ties.method = "first")
 final.tokens[ind] <- final.tokens
