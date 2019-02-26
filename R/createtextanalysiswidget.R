@@ -28,8 +28,12 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     addCss("table.css", cata)
     addCss("textanalysis.css", cata)
 
+    stylefile <- createTempFile()
+    ws <- createCata(stylefile)
+    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, colors, ws)
+    addCss(stylefile, cata, in.css.folder = FALSE)   
+ 
     cata("<div class=\"main-container\">")
-    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, colors)
     addLeftPanel(colored.text$text, cata)
     addRightPanel(colored.text$n.grams, cata)
 
@@ -42,25 +46,32 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     createWidgetFromFile(tfile)
 }
 
-#' @importFrom grDevices colorRampPalette
-HighlightNGrams <- function(n.grams, text, colors)
+#' @importFrom grDevices rgb col2rgb rainbow
+HighlightNGrams <- function(n.grams, text, colors, cata)
 {
     n <- nrow(n.grams)
     if (is.null(colors))
-        colors <- colorRampPalette(c("red", "blue"))(n)
+        colors <- rainbow(n, start = 0, end = 2/3)
     colors <- paste0(colors, rep("", n))
     
     for (i in 1:n)
     {
-        text[,1] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("<font color=\"", colors[i], "\">", n.grams[i,1], "</font>"), text[,1])
-        text[,2] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("<font color=\"", colors[i], "\">", n.grams[i,1], "</font>"), text[,2])
-    }
+        # define CSS class
+        cata(paste0(".word", i, "{ color: ", stripAlpha(colors[i]), "; }\n"))
     
-    n.grams[,1] <- paste0("<font color=\"", colors, "\">", n.grams[,1], "</font>")
+        text[,1] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
+                         paste0("<span class=\"word", i, "\">", n.grams[i,1], "</span>"), text[,1])
+        text[,2] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
+                         paste0("<span class=\"word", i, "\">", n.grams[i,1], "</span>"), text[,2])
+    }
+    n.grams[,1] <- paste0("<span class=\"word", 1:i, "\">", n.grams[,1], "</span>")
     return(list(n.grams = n.grams, text = text))
 
+}
+
+stripAlpha <- function(col)
+{
+    return(rgb(t(col2rgb(col)), maxColorValue = 255, alpha = NULL))
 }
 
 # refactor code in CreateChoiceModelDesignWidget
