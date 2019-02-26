@@ -27,9 +27,11 @@ final.tokens[ind] <- final.tokens
 final.counts[ind] <- final.counts
 
 raw.and.normalized.text <- data.frame(raw.text = text.analysis.raw.text,
-                              normalized.text = text.analysis.normalized.text)
+                              normalized.text = text.analysis.normalized.text,
+                              stringsAsFactors = FALSE)
 
-n.gram.frequencies <- data.frame(n.grams = final.tokens, frequencies = final.counts)
+n.gram.frequencies <- data.frame(n.grams = final.tokens, frequencies = final.counts,
+                                 stringsAsFactors = FALSE)
 
 footer <- "n = 321 cases used to process the text of a total of 327; 6 cases are blank before transformation; 33 cases are blank after transformation."
 

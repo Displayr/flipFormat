@@ -5,7 +5,7 @@
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  footer)
+  footer, colors = NULL)
 }
 \arguments{
 \item{raw.and.normalized.text}{A data frame with two variables, the first
@@ -16,6 +16,9 @@ names of the data frame should correspond to the case index.}
 the n-gram and the second being the frequencies.}
 
 \item{footer}{Character; footer to show at the bottom of the output.}
+
+\item{colors}{Character; a vector containing colors for each entry in \code{n.gram.frequencies}.
+The vector will be recycled if there is not enough values.}
 }
 \value{
 An \code{htmlwidget} containing diagnostic information for
