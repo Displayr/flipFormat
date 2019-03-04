@@ -19,6 +19,7 @@
 #' @export
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
+                                     token.substitution,
                                      footer,
                                      colors = NULL)
 {
@@ -54,31 +55,50 @@ HighlightNGrams <- function(n.grams, text, colors, cata)
         colors <- rainbow(n, start = 0, end = 2/3)
     colors <- paste0(colors, rep("", n))
 
+    n.grams[,1] <- as.character(n.grams[,1])
+    orig.text <- text[[1]]
+    trans.tokens <- text[[2]]
     for (i in 1:n)
     {
-        # define CSS class
-        cata(paste0(".word", i, "{ color: ", stripAlpha(colors[i]), "; }\n"))
+        # Define CSS class
+        cata(paste0(".word", i, "{ display: inline; background-color: ", stripAlpha(colors[i]), "; }\n")) 
+        #                           box-shadow: 5px 0px ", "; }\n"))
 
-        text[,1] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("DELIM_OPEN_", i, "\">", n.grams[i,1], "DELIM_CLOSE"), text[,1])
-        text[,2] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                         paste0("DELIM_OPEN_", i, "\">", n.grams[i,1], "DELIM_CLOSE"), text[,2])
+        # Look for exact matches in transformed text
+        ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
+        for (ii in ind)
+        {
+            pos <- which(trans.tokens[[ii]] == n.grams[i,1])
+            trans.tokens[[ii]] <- paste0("<span class=\"word", i, "\">", trans.tokens[[ii]], "</span>")
+        }
+
+        orig.text[ind] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
+                          paste0("DELIM_OPEN_", i, "\">", escWord(n.grams[i,1]), "DELIM_CLOSE"), orig.text[ind],
+                          ignore.case = TRUE)
     }
     # finish off substitutions - we use this two step process to avoid problems
     # if the n-gram matches 'span' or 'class'
-    text[,1] <- gsub("DELIM_OPEN_", "<span class=\"word", text[,1])
-    text[,2] <- gsub("DELIM_OPEN_", "<span class=\"word", text[,2])
-    text[,1] <- gsub("DELIM_CLOSE", "</span>", text[,1])
-    text[,2] <- gsub("DELIM_CLOSE", "</span>", text[,2])
+    orig.text <- gsub("DELIM_OPEN_", "<span class=\"word", orig.text)
+    orig.text <- gsub("DELIM_CLOSE", "</span>", orig.text)
+    trans.text <- sapply(trans.tokens, paste, collapse = " ")
 
-    n.grams[,1] <- paste0("<span class=\"word", 1:i, "\">", n.grams[,1], "</span>")
-    return(list(n.grams = n.grams, text = text))
+    n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
+    return(list(n.grams = n.grams, 
+                text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text, 
+                            stringsAsFactors = FALSE)))
 
+}
+
+escWord <- function(x)
+{
+    return(gsub("+", "\\+", x, fixed = TRUE))
 }
 
 stripAlpha <- function(col)
 {
-    return(rgb(t(col2rgb(col)), maxColorValue = 255, alpha = NULL))
+    #return(rgb(t(col2rgb(col)), maxColorValue = 255, alpha = NULL))
+    vv <- col2rgb(col)
+    return(paste0("rgba(", vv[1], ",", vv[2], ",",  vv[3], ",0.5)")) 
 }
 
 # refactor code in CreateChoiceModelDesignWidget
