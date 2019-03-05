@@ -34,7 +34,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     stylefile <- createTempFile()
     ws <- createCata(stylefile)
-    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, 
+    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
                                     token.substitutions, colors, ws)
     addCss(stylefile, cata, in.css.folder = FALSE)
 
@@ -77,7 +77,7 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", stripAlpha(colors[i]), "; }\n")) 
+        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", stripAlpha(colors[i]), "; }\n"))
           #"  box-shadow: 0.2em 0 0 ", stripAlpha(colors[i]), ", -0.2em 0 0 ", stripAlpha(colors[i]), "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
@@ -116,13 +116,13 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
 
     n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
-    return(list(n.grams = n.grams, 
-                text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text, 
+    return(list(n.grams = n.grams,
+                text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
                             stringsAsFactors = FALSE)))
 
 }
 
-#  Escapes characters from pattern (e.g. '"', ''', '+'). 
+#  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
 #' @importFrom stringr str_replace_all
 escWord <- function(x)
@@ -134,7 +134,7 @@ stripAlpha <- function(col)
 {
     #return(rgb(t(col2rgb(col)), maxColorValue = 255, alpha = NULL))
     vv <- col2rgb(col)
-    return(paste0("rgba(", vv[1], ",", vv[2], ",",  vv[3], ",0.5)")) 
+    return(paste0("rgba(", vv[1], ",", vv[2], ",",  vv[3], ",0.5)"))
 }
 
 # refactor code in CreateChoiceModelDesignWidget
@@ -170,8 +170,10 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
 
 addLeftPanel <- function(raw.and.normalized.text, cata)
 {
-    t <- cbind(rownames(raw.and.normalized.text), raw.and.normalized.text)
+    t.rownames <- rownames(raw.and.normalized.text)
+    t <- cbind(t.rownames, raw.and.normalized.text)
     names(t) <- c("", "Raw text", "Normalized text")
+    rownames(t) <- NULL
 
     cata("<div id=\"left-panel\">")
     cata(knitr::kable(t, align = c("c", "l", "l"),
