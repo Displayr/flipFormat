@@ -7,6 +7,9 @@
 #'     names of the data frame should correspond to the case index.
 #' @param n.gram.frequencies A data frame with two variables, the first being
 #'     the n-gram and the second being the frequencies.
+#' @param token.substitutions A character matrix with two columns mapping the
+#'      old tokens as they appeared in the original text (column 1) to the
+#'      normalized tokens (column 2).
 #' @param footer Character; footer to show at the bottom of the output.
 #' @param colors Character; a vector containing colors for each entry in \code{n.gram.frequencies}.
 #'      The vector will be recycled if there is not enough values.
@@ -19,7 +22,7 @@
 #' @export
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
-                                     token.substitution,
+                                     token.substitutions,
                                      footer,
                                      colors = NULL)
 {
@@ -31,7 +34,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     stylefile <- createTempFile()
     ws <- createCata(stylefile)
-    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, colors, ws)
+    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text, 
+                                    token.substitutions, colors, ws)
     addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
@@ -47,13 +51,25 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     createWidgetFromFile(tfile)
 }
 
-#' @importFrom grDevices rgb col2rgb rainbow
-HighlightNGrams <- function(n.grams, text, colors, cata)
+#' @importFrom grDevices rgb col2rgb
+#' @importFrom colorspace qualitative_hcl
+HighlightNGrams <- function(n.grams, text, subs, colors, cata)
 {
     n <- nrow(n.grams)
     if (is.null(colors))
-        colors <- rainbow(n, start = 0, end = 2/3)
-    colors <- paste0(colors, rep("", n))
+        colors <- qualitative_hcl(16)
+    if (length(colors) < n)
+    {
+        c0 <- colors
+        tmp <-  colors
+        c.offset <- 0.25 / ceiling(n / length(colors))
+        while (length(c0) < n)
+        {
+            tmp <- rgb(t(col2rgb(tmp)) * (1 - c.offset), maxColorValue = 255, alpha = NULL)
+            c0 <- c(c0, tmp)
+        }
+        colors <- c0[1:n]
+    }
 
     n.grams[,1] <- as.character(n.grams[,1])
     orig.text <- text[[1]]
@@ -61,19 +77,23 @@ HighlightNGrams <- function(n.grams, text, colors, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ display: inline; background-color: ", stripAlpha(colors[i]), "; }\n")) 
-        #                           box-shadow: 5px 0px ", "; }\n"))
+        cata(paste0(".word", i, "{ display: inline-block; padding-left: 10px; text-indent: -10px; background-color: ", stripAlpha(colors[i]), "; }\n")) 
+          #"  box-shadow: 0.2em 0 0 ", stripAlpha(colors[i]), ", -0.2em 0 0 ", stripAlpha(colors[i]), "; }\n"))
 
-        # Look for exact matches in transformed text
+        # Look for exact matches in transformed text (which is already split into tokens)
         ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
         for (ii in ind)
         {
             pos <- which(trans.tokens[[ii]] == n.grams[i,1])
-            trans.tokens[[ii]] <- paste0("<span class=\"word", i, "\">", trans.tokens[[ii]], "</span>")
+            tmp <- paste0("<span class=\"word", i, "\">", trans.tokens[[ii]][pos], "</span>")
+            trans.tokens[[ii]][pos] <- tmp
         }
 
-        orig.text[ind] <- gsub(paste0("\\b", n.grams[i,1], "\\b"),
-                          paste0("DELIM_OPEN_", i, "\">", escWord(n.grams[i,1]), "DELIM_CLOSE"), orig.text[ind],
+        # Look for matches including corrections and manual replacements in original text
+        replace.ind <- which(subs[,2] == n.grams[i,1])
+        patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
+        orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
+                          paste0("DELIM_OPEN_", i, "\">", "\\1", "DELIM_CLOSE"), orig.text[ind],
                           ignore.case = TRUE)
     }
     # finish off substitutions - we use this two step process to avoid problems
@@ -89,9 +109,12 @@ HighlightNGrams <- function(n.grams, text, colors, cata)
 
 }
 
+#  Escapes characters from pattern (e.g. '"', ''', '+'). 
+#  This is needed in regular expressions unless 'fixed = TRUE' is used
+#' @importFrom stringr str_replace_all
 escWord <- function(x)
 {
-    return(gsub("+", "\\+", x, fixed = TRUE))
+    return(str_replace_all(x, "(\\W)", "\\\\\\1"))
 }
 
 stripAlpha <- function(col)

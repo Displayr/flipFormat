@@ -5,7 +5,7 @@
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  footer, colors = NULL)
+  token.substitutions, footer, colors = NULL)
 }
 \arguments{
 \item{raw.and.normalized.text}{A data frame with two variables, the first
@@ -14,6 +14,10 @@ names of the data frame should correspond to the case index.}
 
 \item{n.gram.frequencies}{A data frame with two variables, the first being
 the n-gram and the second being the frequencies.}
+
+\item{token.substitutions}{A character matrix with two columns mapping the
+old tokens as they appeared in the original text (column 1) to the
+normalized tokens (column 2).}
 
 \item{footer}{Character; footer to show at the bottom of the output.}
 
