@@ -77,7 +77,7 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ display: inline-block; padding-left: 10px; text-indent: -10px; background-color: ", stripAlpha(colors[i]), "; }\n")) 
+        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", stripAlpha(colors[i]), "; }\n")) 
           #"  box-shadow: 0.2em 0 0 ", stripAlpha(colors[i]), ", -0.2em 0 0 ", stripAlpha(colors[i]), "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
@@ -93,13 +93,13 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
         replace.ind <- which(subs[,2] == n.grams[i,1])
         patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
         orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
-                          paste0("DELIM_OPEN_", i, "\">", "\\1", "DELIM_CLOSE"), orig.text[ind],
+                          paste0("SPAN_DELIM_OPEN_", i, "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.text[ind],
                           ignore.case = TRUE)
     }
     # finish off substitutions - we use this two step process to avoid problems
     # if the n-gram matches 'span' or 'class'
-    orig.text <- gsub("DELIM_OPEN_", "<span class=\"word", orig.text)
-    orig.text <- gsub("DELIM_CLOSE", "</span>", orig.text)
+    orig.text <- gsub("SPAN_DELIM_OPEN_", "<span class=\"word", orig.text)
+    orig.text <- gsub("SPAN_DELIM_CLOSE", "</span>", orig.text)
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
 
     n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
