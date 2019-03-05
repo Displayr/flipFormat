@@ -100,8 +100,11 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
         } else
         {
             patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
-            cat(i, "patt:", patt, "\n")
-            orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
+            #cat(i, "patt:", patt, "\n")
+            if (nchar(patt) <= 2)
+                warning("Empty regular expression for ", n.grams[i,1], " ignored.")
+            else
+                orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
                           paste0("SPAN_DELIM_OPEN_", i, "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.text[ind],
                           ignore.case = TRUE)
         }
