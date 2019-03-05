@@ -91,10 +91,20 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
 
         # Look for matches including corrections and manual replacements in original text
         replace.ind <- which(subs[,2] == n.grams[i,1])
-        patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
-        orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
+        if (length(replace.ind) == 1)
+        {
+            patt <- escWord(subs[replace.ind,2])
+            orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
+                          paste0("SPAN_DELIM_OPEN_", i, "\">", patt, "SPAN_DELIM_CLOSE"), orig.text[ind],
+                          ignore.case = TRUE)
+        } else
+        {
+            patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
+            cat(i, "patt:", patt, "\n")
+            orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
                           paste0("SPAN_DELIM_OPEN_", i, "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.text[ind],
                           ignore.case = TRUE)
+        }
     }
     # finish off substitutions - we use this two step process to avoid problems
     # if the n-gram matches 'span' or 'class'
