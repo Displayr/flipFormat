@@ -63,13 +63,13 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     {
         c0 <- setAlpha(colors, 1.0)
         tmp <-  colors
-        a.offset <- 1 / (ceiling(n / length(colors)))
+        a.offset <- 0.5 / (ceiling(n / length(colors)))
         alpha <- 1
         while (length(c0) < n)
         {
             tmp <- lighten(tmp)
             c0 <- c(c0, setAlpha(tmp, alpha))
-            alpha <- max(alpha - a.offset, 0.2)
+            alpha <- max(alpha - a.offset, 0.4)
         }
         colors <- c0[1:n]
     }
