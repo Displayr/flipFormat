@@ -23,7 +23,7 @@
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
                                      token.substitutions,
-                                     footer,
+                                     footer = "",
                                      colors = NULL)
 {
     tfile <- createTempFile()
@@ -51,22 +51,24 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     createWidgetFromFile(tfile)
 }
 
-#' @importFrom grDevices rgb col2rgb
-#' @importFrom colorspace qualitative_hcl
+#' @importFrom grDevices rgb col2rgb topo.colors
+#' @importFrom colorspace qualitative_hcl lighten darken
 HighlightNGrams <- function(n.grams, text, subs, colors, cata)
 {
     n <- nrow(n.grams)
     if (is.null(colors))
-        colors <- qualitative_hcl(16)
+        colors <- rainbow(16)
     if (length(colors) < n)
     {
-        c0 <- colors
+        c0 <- setAlpha(colors, 1.0)
         tmp <-  colors
-        c.offset <- 0.25 / ceiling(n / length(colors))
+        a.offset <- 0 #1 / (ceiling(n / length(colors)))
+        alpha <- 1
         while (length(c0) < n)
         {
-            tmp <- rgb(t(col2rgb(tmp)) * (1 - c.offset), maxColorValue = 255, alpha = NULL)
-            c0 <- c(c0, tmp)
+            tmp <- darken(tmp)
+            c0 <- c(c0, setAlpha(tmp, alpha))
+            alpha <- max(alpha - a.offset, 0.2)
         }
         colors <- c0[1:n]
     }
@@ -77,8 +79,7 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", stripAlpha(colors[i]), "; }\n"))
-          #"  box-shadow: 0.2em 0 0 ", stripAlpha(colors[i]), ", -0.2em 0 0 ", stripAlpha(colors[i]), "; }\n"))
+        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", "transparent", "; text-decoration: underline; color: ", colors[i], "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
         ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
@@ -130,11 +131,10 @@ escWord <- function(x)
     return(str_replace_all(x, "(\\W)", "\\\\\\1"))
 }
 
-stripAlpha <- function(col)
+setAlpha <- function(col, alpha)
 {
-    #return(rgb(t(col2rgb(col)), maxColorValue = 255, alpha = NULL))
     vv <- col2rgb(col)
-    return(paste0("rgba(", vv[1], ",", vv[2], ",",  vv[3], ",0.5)"))
+    return(paste0("rgba(", vv[1,], ",", vv[2,], ",",  vv[3,], ",", alpha, ")"))
 }
 
 # refactor code in CreateChoiceModelDesignWidget
