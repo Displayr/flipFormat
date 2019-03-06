@@ -5,7 +5,7 @@
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  token.substitutions, footer, colors = NULL)
+  token.substitutions, footer = "", colors = NULL)
 }
 \arguments{
 \item{raw.and.normalized.text}{A data frame with two variables, the first

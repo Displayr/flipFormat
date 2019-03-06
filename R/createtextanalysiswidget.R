@@ -35,7 +35,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     stylefile <- createTempFile()
     ws <- createCata(stylefile)
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-                                    token.substitutions, colors, ws)
+                                    token.substitutions, ws)
     addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
@@ -51,22 +51,23 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     createWidgetFromFile(tfile)
 }
 
-#' @importFrom grDevices rgb col2rgb topo.colors
+#' @importFrom grDevices rgb col2rgb
 #' @importFrom colorspace qualitative_hcl lighten darken
-HighlightNGrams <- function(n.grams, text, subs, colors, cata)
+HighlightNGrams <- function(n.grams, text, subs, cata)
 {
     n <- nrow(n.grams)
-    if (is.null(colors))
-        colors <- rainbow(16)
+    colors <- c("#3e7dcc", "#04b5ac", "#f5c524", "#c44e41", 
+                "#8cc0ff", "#ff905a", "#345e8c", "#04827b", "#967f47",
+                "#96362f", "#2c4374")
     if (length(colors) < n)
     {
         c0 <- setAlpha(colors, 1.0)
         tmp <-  colors
-        a.offset <- 0 #1 / (ceiling(n / length(colors)))
+        a.offset <- 1 / (ceiling(n / length(colors)))
         alpha <- 1
         while (length(c0) < n)
         {
-            tmp <- darken(tmp)
+            tmp <- lighten(tmp)
             c0 <- c(c0, setAlpha(tmp, alpha))
             alpha <- max(alpha - a.offset, 0.2)
         }
@@ -79,7 +80,7 @@ HighlightNGrams <- function(n.grams, text, subs, colors, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ white-space: pre-wrap; background-color: ", "transparent", "; text-decoration: underline; color: ", colors[i], "; }\n"))
+        cata(paste0(".word", i, "{ white-space: pre-wrap; outline: 1px solid ", "#CCCCCC", "; background-color: ", colors[i], "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
         ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
