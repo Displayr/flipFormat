@@ -11,8 +11,6 @@
 #'      old tokens as they appeared in the original text (column 1) to the
 #'      normalized tokens (column 2).
 #' @param footer Character; footer to show at the bottom of the output.
-#' @param colors Character; a vector containing colors for each entry in \code{n.gram.frequencies}.
-#'      The vector will be recycled if there is not enough values.
 #' @return An \code{htmlwidget} containing diagnostic information for
 #'     the experimental design, including D-error, standard errors,
 #'     frequenices, pairwise frequencies, the labeled design, and
@@ -23,8 +21,7 @@
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
                                      token.substitutions,
-                                     footer = "",
-                                     colors = NULL)
+                                     footer = "")
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
