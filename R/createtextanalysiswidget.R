@@ -55,16 +55,19 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     col0 <- c("#3e7dcc", "#04b5ac", "#f5c524", "#c44e41",
               "#8cc0ff", "#ff905a", "#345e8c",
               "#04827b", "#967f47","#96362f")
-    bstyle <- c("dashed", "solid")
+    n.col <- length(col0)
+    bcol <- col0
+    bstyle <- c("dotted", "dashed", "solid")
     n <- nrow(n.grams)
-    n.rep <- ceiling(n/length(col0))
+    n.rep <- ceiling(n/n.col)
     i.offset <- 0.8/n.rep
     cc <- c(); bb <- c()
     for (i in 0:(n.rep-1))
     {
-        cc <- c(cc, setAlpha(col0, 0.8))
-        bb <- c(bb, paste("2px", bstyle[2-(i%%2)], grey(i*i.offset)))
-        col0 <- lighten(col0)
+        if (i > 0 && i %% n.col == 0)
+            bcol <- lighten(bcol)
+        cc <- c(cc, setAlpha(col0, 0.5))
+        bb <- c(bb, paste("2px", bstyle[3-(i%%3)], bcol[n.col - (i%%n.col)]))
     }
     borderstyles <- rep(bb, each = length(col0))[1:n]
     colors <- cc[1:n]
@@ -76,7 +79,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     {
         # Define CSS class
         cata(paste0(".word", i, "{ white-space: pre-wrap; border: ", borderstyles[i],
-                    "; background-color: ", colors[i], "; }\n"))
+                    "; line-height: 1.8em; background-color: ", colors[i], "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
         ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
