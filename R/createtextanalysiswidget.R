@@ -69,7 +69,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     bbi <- 0
     for (i in 0:(n.rep-1))
     {
-        if (i > 0 && i %% (n.col*n.col) == 0)
+        if (i > 0 && (i %% n.col) == 0)
             bbi <- bbi + 1
         cc <- c(cc, setAlpha(col0, 0.5))
         bb <- c(bb, paste0("border: 2px ", bcol[n.col - (i%%n.col)], "; ",
