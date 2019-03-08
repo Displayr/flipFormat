@@ -57,17 +57,23 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
               "#04827b", "#967f47","#96362f")
     n.col <- length(col0)
     bcol <- col0
-    bstyle <- c("dotted", "dashed", "solid")
+    bs0 <- c("solid", "dashed", "dotted")
+    bstyle <- apply(expand.grid(paste(bs0,bs0), paste(bs0,bs0)), 1, paste, collapse = " ")[c(2:4,6:8,9,5,1)]
+    bshape <- c("border-radius: 50%; padding-left: 5px; padding-right: 5px; ",
+                "padding-left: 1px; padding-right: 1px; ")
+
     n <- nrow(n.grams)
     n.rep <- ceiling(n/n.col)
     i.offset <- 0.8/n.rep
     cc <- c(); bb <- c()
+    bbi <- 0
     for (i in 0:(n.rep-1))
     {
-        if (i > 0 && i %% n.col == 0)
-            bcol <- lighten(bcol)
+        if (i > 0 && i %% (n.col*n.col) == 0)
+            bbi <- bbi + 1
         cc <- c(cc, setAlpha(col0, 0.5))
-        bb <- c(bb, paste("2px", bstyle[3-(i%%3)], bcol[n.col - (i%%n.col)]))
+        bb <- c(bb, paste0("border: 2px ", bcol[n.col - (i%%n.col)], "; ",
+                    bshape[2 - (bbi%%2)], "border-style: ", bstyle[9 - (bbi%%9)], "; "))
     }
     borderstyles <- rep(bb, each = length(col0))[1:n]
     colors <- cc[1:n]
@@ -78,8 +84,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     for (i in 1:n)
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ white-space: pre-wrap; border: ", borderstyles[i],
-                    "; line-height: 1.8em; background-color: ", colors[i], "; }\n"))
+        cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
+                    "line-height: 1.8em; background-color: ", colors[i], "; }\n"))
 
         # Look for exact matches in transformed text (which is already split into tokens)
         ind <- which(sapply(trans.tokens, function(x){any(x == n.grams[i,1])}))
