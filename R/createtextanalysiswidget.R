@@ -81,7 +81,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     n.grams[,1] <- as.character(n.grams[,1])
     orig.text <- text[[1]]
     trans.tokens <- text[[2]]
-    for (i in 1:n)
+    ngram.order <- order(nchar(n.grams[,1]), decreasing = TRUE)
+    for (i in ngram.order)
     {
         # Define CSS class
         cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
@@ -113,7 +114,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             else
                 orig.text[ind] <- gsub(paste0("\\b", patt, "\\b"),
                           paste0("SPAN_DELIM_OPEN_", i, "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.text[ind],
-                          ignore.case = TRUE)
+                          ignore.case = TRUE, perl = TRUE)
         }
     }
     # finish off substitutions - we use this two step process to avoid problems
