@@ -122,7 +122,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern 
                 orig.tmp <- sub(paste0("\\b(", patt[ind[k]], ")\\b"),
                           paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
-                          ignore.case = FALSE, perl = TRUE)
+                          ignore.case = TRUE, perl = TRUE)
             }
         }
         # finish off substitutions - we use this two step process to avoid problems
