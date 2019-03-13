@@ -82,6 +82,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     orig.text <- text[[1]]
     trans.tokens <- text[[2]]
     ngram.order <- order(nchar(n.grams[,1]), decreasing = TRUE)
+    patt <- n.grams[,1]
 
     # Define CSS style for each ngram
     for (i in ngram.order)
@@ -89,6 +90,14 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         # Define CSS class
         cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
                     "line-height: 1.8em; background-color: ", colors[i], "; }\n"))
+
+        # Create regex for replacement
+        replace.ind <- which(subs[,2] == n.grams[i,1])
+        if (length(replace.ind) == 1)
+            patt[i] <- escWord(subs[replace.ind,2])
+        else if (length(replace.ind) > 1)         
+            patt[i] <- paste0(paste(escWord(subs[replace.ind,1]), sep="", collapse="|"))
+            patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
     }
 
     # Search for ngrams in each response
@@ -111,24 +120,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 # Add formatting to original text. We search through text in the same order as
                 # the tokens occur. Previous substitutions should not match because the
                 # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern 
-                replace.ind <- which(subs[,2] == n.grams[ind[k],1])
-                if (length(replace.ind) == 1)
-                {
-                    patt <- escWord(subs[replace.ind,2])
-                    orig.tmp <- gsub(paste0("\\b", patt, "\\b"),
-                                  paste0("SPAN_DELIM_OPEN_", ind[k], "\">", patt, "SPAN_DELIM_CLOSE"), orig.tmp,
-                                  ignore.case = TRUE, perl = TRUE)
-                } else
-                {
-                    patt <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
-                    #cat(i, "patt:", patt, "\n")
-                    if (nchar(patt) <= 2)
-                        warning("Empty regular expression for ", n.grams[ind[k],1], " ignored.")
-                    else
-                        orig.tmp <- gsub(paste0("\\b", patt, "\\b"),
-                                  paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
-                                  ignore.case = TRUE, perl = TRUE)
-                }
+                orig.tmp <- sub(paste0("\\b(", patt[ind[k]], ")\\b"),
+                          paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
+                          ignore.case = FALSE, perl = TRUE)
             }
         }
         # finish off substitutions - we use this two step process to avoid problems
@@ -147,10 +141,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
-#' @importFrom stringr str_replace_all
 escWord <- function(x)
 {
-    return(str_replace_all(x, "(\\W)", "\\\\\\1"))
+    return(gsub("(\\W)", "\\\\\\1", x, perl = TRUE))
 }
 
 setAlpha <- function(col, alpha)
