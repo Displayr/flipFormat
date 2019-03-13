@@ -97,7 +97,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         # n.grams should be unique so a single index returned for each token in trans.tokens[[j]]
         ind <- match(trans.tokens[[j]], n.grams[,1])
         if (length(ind) == 0)
-            continue
+            next
 
         orig.tmp <- orig.text[j]
         for (k in 1:length(trans.tokens[[j]]))
