@@ -95,7 +95,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         replace.ind <- which(subs[,2] == n.grams[i,1])
         if (length(replace.ind) == 1)
             patt[i] <- escWord(subs[replace.ind,2])
-        else if (length(replace.ind) > 1)         
+        else if (length(replace.ind) > 1)
             patt[i] <- paste0(paste(escWord(subs[replace.ind,1]), sep="", collapse="|"))
             patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
     }
@@ -116,10 +116,10 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 # Add formatting to transformed text
                 tmp <- paste0("<span class=\"word", ind[k], "\">", trans.tokens[[j]][k], "</span>")
                 trans.tokens[[j]][k] <- tmp
-            
+
                 # Add formatting to original text. We search through text in the same order as
                 # the tokens occur. Previous substitutions should not match because the
-                # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern 
+                # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern
                 orig.tmp <- sub(paste0("\\b(", patt[ind[k]], ")\\b"),
                           paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
                           ignore.case = TRUE, perl = TRUE)
@@ -200,7 +200,7 @@ addLeftPanel <- function(raw.and.normalized.text, cata)
 addRightPanel <- function(n.gram.frequencies, cata)
 {
     t <- n.gram.frequencies
-    names(t) <- c("n-grams", "#")
+    names(t) <- c("Phrases", "#")
 
     cata("<div id=\"right-panel\">")
     cata(knitr::kable(t, align = c("l", "c"),
