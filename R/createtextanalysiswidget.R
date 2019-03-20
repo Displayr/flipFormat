@@ -96,7 +96,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         prefix <- "\\b("
         suffix <- ")\\b"
         if (any(grepl("^\\W", subs[replace.ind,1])))
-            suffix <- "("
+            prefix <- "("
         if (any(grepl("\\W$", subs[replace.ind,1])))
             suffix <- ")"
 
