@@ -93,11 +93,21 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
         # Create regex for replacement
         replace.ind <- which(subs[,2] == n.grams[i,1])
+        prefix <- "\\b("
+        suffix <- ")\\b"
+        if (any(grepl("^\\W", subs[replace.ind,1])))
+            suffix <- "("
+        if (any(grepl("\\W$", subs[replace.ind,1])))
+            suffix <- ")"
+
         if (length(replace.ind) == 1)
-            patt[i] <- escWord(subs[replace.ind,2])
+            patt[i] <- paste0(prefix, escWord(subs[replace.ind,1]), suffix)
         else if (length(replace.ind) > 1)
-            patt[i] <- paste0(paste(escWord(subs[replace.ind,1]), sep="", collapse="|"))
-            patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
+        {
+            replace.ind <- replace.ind[order(nchar(subs[replace.ind,1]), decreasing = TRUE)]
+            patt[i] <- paste0(prefix, "(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), 
+                        ")", suffix)
+        }
     }
 
     # Search for ngrams in each response
@@ -120,7 +130,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 # Add formatting to original text. We search through text in the same order as
                 # the tokens occur. Previous substitutions should not match because the
                 # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern
-                orig.tmp <- sub(paste0("\\b(", patt[ind[k]], ")\\b"),
+                orig.tmp <- sub(patt[ind[k]],   #paste0("\\b(", patt[ind[k]], ")"),
                           paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
                           ignore.case = TRUE, perl = TRUE)
             }
@@ -143,7 +153,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
 escWord <- function(x)
 {
-    return(gsub("(\\W)", "\\\\\\1", x, perl = TRUE))
+    return(paste0("\\Q", x, "\\E"))
 }
 
 setAlpha <- function(col, alpha)
