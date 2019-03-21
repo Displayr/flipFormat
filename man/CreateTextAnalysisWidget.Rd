@@ -8,9 +8,11 @@ CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
   token.substitutions, footer = "")
 }
 \arguments{
-\item{raw.and.normalized.text}{A data frame with two variables, the first
-being the raw text and the second being the normalized text. The row
-names of the data frame should correspond to the case index.}
+\item{raw.and.normalized.text}{A list containing the raw and normalized
+text. The first element, called "Original Text", is a character vector of
+the raw text. The second element, called "Transformed Text", is a list
+containing the identified phrases for each row. The optional third
+element, "Row Indices", contains the row indices of the text.}
 
 \item{n.gram.frequencies}{A data frame with two variables, the first being
 the n-gram and the second being the frequencies.}

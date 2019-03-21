@@ -6,7 +6,7 @@
 #'   text. The first element, called "Original Text", is a character vector of
 #'   the raw text. The second element, called "Transformed Text", is a list
 #'   containing the identified phrases for each row. The optional third
-#'   element, "Case Indices", contains the case indices of the text.
+#'   element, "Row Indices", contains the row indices of the text.
 #' @param n.gram.frequencies A data frame with two variables, the first being
 #'     the n-gram and the second being the frequencies.
 #' @param token.substitutions A character matrix with two columns mapping the
@@ -39,7 +39,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     cata("<div class=\"main-container\">")
     addLeftPanel(colored.text$text,
-                 raw.and.normalized.text[["Case Indices"]],
+                 raw.and.normalized.text[["Row Indices"]],
                  cata)
     addRightPanel(colored.text$n.grams, cata)
 
