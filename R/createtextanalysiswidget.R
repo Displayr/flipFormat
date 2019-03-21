@@ -2,9 +2,11 @@
 #'
 #' Creates a \code{htmlwidget} summary of diagnostic information for a
 #' text analysis output from flipTextAnalysis.
-#' @param raw.and.normalized.text A data frame with two variables, the first
-#'     being the raw text and the second being the normalized text. The row
-#'     names of the data frame should correspond to the case index.
+#' @param raw.and.normalized.text A list containing the raw and normalized
+#'   text. The first element, called "Original Text", is a character vector of
+#'   the raw text. The second element, called "Transformed Text", is a list
+#'   containing the identified phrases for each row. The optional third
+#'   element, "Case Indices", contains the case indices of the text.
 #' @param n.gram.frequencies A data frame with two variables, the first being
 #'     the n-gram and the second being the frequencies.
 #' @param token.substitutions A character matrix with two columns mapping the
@@ -36,7 +38,9 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
-    addLeftPanel(colored.text$text, cata)
+    addLeftPanel(colored.text$text,
+                 raw.and.normalized.text[["Case Indices"]],
+                 cata)
     addRightPanel(colored.text$n.grams, cata)
 
     cata("<div id=\"footer-container\">")
@@ -79,8 +83,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     colors <- cc[1:n]
 
     n.grams[,1] <- as.character(n.grams[,1])
-    orig.text <- text[[1]]
-    trans.tokens <- text[[2]]
+    orig.text <- text[["Original Text"]]
+    trans.tokens <- text[["Transformed Text"]]
     ngram.order <- order(nchar(n.grams[,1]), decreasing = TRUE)
     patt <- n.grams[,1]
 
@@ -105,7 +109,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         else if (length(replace.ind) > 1)
         {
             replace.ind <- replace.ind[order(nchar(subs[replace.ind,1]), decreasing = TRUE)]
-            patt[i] <- paste0(prefix, "(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), 
+            patt[i] <- paste0(prefix, "(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"),
                         ")", suffix)
         }
     }
@@ -193,16 +197,21 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
         stop("CSS file ", file.path, " not found.")
 }
 
-addLeftPanel <- function(raw.and.normalized.text, cata)
+addLeftPanel <- function(raw.and.normalized.text, case.indices, cata)
 {
-    t.rownames <- rownames(raw.and.normalized.text)
+    t.rownames <- if (!is.null(case.indices))
+        case.indices
+    else
+        raw.and.normalized.text
+
+    align <- c("c", "l", "l")
     t <- cbind(t.rownames, raw.and.normalized.text)
     names(t) <- c("", "Raw text", "Normalized text")
     rownames(t) <- NULL
 
     cata("<div id=\"left-panel\">")
-    cata(knitr::kable(t, align = c("c", "l", "l"),
-                      format = "html", escape = FALSE,
+    cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
+                      escape = FALSE,
                       table.attr = "class=\"text-analysis-table\""))
     cata("</div>") # end panel div
 }
