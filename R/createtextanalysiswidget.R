@@ -202,7 +202,7 @@ addLeftPanel <- function(raw.and.normalized.text, case.indices, cata)
     t.rownames <- if (!is.null(case.indices))
         case.indices
     else
-        raw.and.normalized.text
+        1:NROW(raw.and.normalized.text)
 
     align <- c("c", "l", "l")
     t <- cbind(t.rownames, raw.and.normalized.text)
