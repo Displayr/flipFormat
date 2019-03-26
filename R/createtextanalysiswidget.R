@@ -6,7 +6,9 @@
 #'   text. The first element, called "Original Text", is a character vector of
 #'   the raw text. The second element, called "Transformed Text", is a list
 #'   containing the identified phrases for each row. The optional third
-#'   element, "Row Indices", contains the row indices of the text.
+#'   element, "Row Numbers", contains the row numers of the text. The optional
+#'   fourth element, "Variable Start Indices", contains the a named numeric
+#'   vector corresponding to the start indices of each variable in the text.
 #' @param n.gram.frequencies A data frame with two variables, the first being
 #'     the n-gram and the second being the frequencies.
 #' @param token.substitutions A character matrix with two columns mapping the
@@ -25,6 +27,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      token.substitutions,
                                      footer = "")
 {
+    raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
+
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
@@ -39,7 +43,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     cata("<div class=\"main-container\">")
     addLeftPanel(colored.text$text,
-                 raw.and.normalized.text[["Row Indices"]],
+                 raw.and.normalized.text[["Row Numbers"]],
+                 raw.and.normalized.text[["Variable Start Indices"]],
                  cata)
     addRightPanel(colored.text$n.grams, cata)
 
@@ -50,6 +55,14 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata("</div>", fill = TRUE) # end main-container div
 
     createWidgetFromFile(tfile)
+}
+
+replaceMissingWithEmpty <- function(raw.and.normalized.text)
+{
+    original.text <- raw.and.normalized.text[["Original Text"]]
+    original.text[is.na(original.text)] <- ""
+    raw.and.normalized.text[["Original Text"]] <- original.text
+    raw.and.normalized.text
 }
 
 #' @importFrom grDevices rgb col2rgb grey
@@ -197,22 +210,45 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
         stop("CSS file ", file.path, " not found.")
 }
 
-addLeftPanel <- function(raw.and.normalized.text, case.indices, cata)
+#' @importFrom htmltools htmlEscape
+addLeftPanel <- function(raw.and.normalized.text, row.numbers,
+                         variable.start.indices, cata)
 {
-    t.rownames <- if (!is.null(case.indices))
-        case.indices
+    t.rownames <- if (!is.null(row.numbers))
+        row.numbers
     else
-        raw.and.normalized.text
-
-    align <- c("c", "l", "l")
-    t <- cbind(t.rownames, raw.and.normalized.text)
-    names(t) <- c("", "Raw text", "Normalized text")
-    rownames(t) <- NULL
+        rownames(raw.and.normalized.text)
 
     cata("<div id=\"left-panel\">")
-    cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
-                      escape = FALSE,
-                      table.attr = "class=\"text-analysis-table\""))
+
+    if (!is.null(variable.start.indices))
+    {
+        variable.end.indices <- c(variable.start.indices[-1] - 1,
+                                  nrow(raw.and.normalized.text))
+        for (i in 1:length(variable.start.indices))
+        {
+            ind <- variable.start.indices[i]:variable.end.indices[i]
+            t <- cbind(t.rownames[ind], raw.and.normalized.text[ind, ])
+            names(t) <- c("", "Raw text", "Normalized text")
+            rownames(t) <- NULL
+            cata("<span class=\"variable-name\">",
+                 htmlEscape(names(variable.start.indices)[i]),
+                 "</span>")
+            cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
+                              escape = FALSE,
+                              table.attr = "class=\"text-analysis-table\""))
+        }
+    }
+    else
+    {
+        t <- cbind(t.rownames, raw.and.normalized.text)
+        names(t) <- c("", "Raw text", "Normalized text")
+        rownames(t) <- NULL
+        cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
+                          escape = FALSE,
+                          table.attr = "class=\"text-analysis-table\""))
+    }
+
     cata("</div>") # end panel div
 }
 

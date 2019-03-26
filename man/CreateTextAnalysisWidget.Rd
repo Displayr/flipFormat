@@ -12,7 +12,9 @@ CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
 text. The first element, called "Original Text", is a character vector of
 the raw text. The second element, called "Transformed Text", is a list
 containing the identified phrases for each row. The optional third
-element, "Row Indices", contains the row indices of the text.}
+element, "Row Numbers", contains the row numers of the text. The optional
+fourth element, "Variable Start Indices", contains the a named numeric
+vector corresponding to the start indices of each variable in the text.}
 
 \item{n.gram.frequencies}{A data frame with two variables, the first being
 the n-gram and the second being the frequencies.}
