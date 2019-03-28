@@ -110,20 +110,12 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
         # Create regex for replacement
         replace.ind <- which(subs[,2] == n.grams[i,1])
-        prefix <- "\\b("
-        suffix <- ")\\b"
-        if (any(grepl("^\\W", subs[replace.ind,1])))
-            prefix <- "("
-        if (any(grepl("\\W$", subs[replace.ind,1])))
-            suffix <- ")"
-
         if (length(replace.ind) == 1)
-            patt[i] <- paste0(prefix, escWord(subs[replace.ind,1]), suffix)
+            patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
         {
             replace.ind <- replace.ind[order(nchar(subs[replace.ind,1]), decreasing = TRUE)]
-            patt[i] <- paste0(prefix, "(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"),
-                        ")", suffix)
+            patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
         }
     }
 
@@ -135,7 +127,10 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         if (length(ind) == 0)
             next
 
-        orig.tmp <- orig.text[j]
+        tmp.text <- orig.text[j]
+        tmp.len <- nchar(tmp.text)
+        tmp.pos <- 0
+        new.text <- ""
         for (k in 1:length(trans.tokens[[j]]))
         {
             if (!is.na(ind[k]))
@@ -144,18 +139,22 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 tmp <- paste0("<span class=\"word", ind[k], "\">", trans.tokens[[j]][k], "</span>")
                 trans.tokens[[j]][k] <- tmp
 
-                # Add formatting to original text. We search through text in the same order as
-                # the tokens occur. Previous substitutions should not match because the
-                # SPAN_DELIM tags will not satisfy the '\b' (word break) pattern
-                orig.tmp <- sub(patt[ind[k]],   #paste0("\\b(", patt[ind[k]], ")"),
-                          paste0("SPAN_DELIM_OPEN_", ind[k], "\">", "\\1", "SPAN_DELIM_CLOSE"), orig.tmp,
-                          ignore.case = TRUE, perl = TRUE)
+                # Add formatting to original text
+                # We search through text in the same order as the tokens occur
+                mpos <- regexpr(patt[ind[k]], substr(tmp.text, tmp.pos+1, tmp.len), ignore.case = TRUE, perl = TRUE)
+                if (mpos != -1)
+                {
+                    mlen <- attr(mpos, "match.length")
+                    new.text <- paste0(new.text,
+                        substr(tmp.text, tmp.pos+1, tmp.pos+mpos-1),
+                        "<span class=\"word", ind[k], "\">",
+                        substr(tmp.text, tmp.pos+mpos, tmp.pos+mpos+mlen-1),
+                        "</span>")
+                    tmp.pos <- tmp.pos + mpos + mlen - 1
+                }
             }
         }
-        # finish off substitutions - we use this two step process to avoid problems
-        # if the n-gram matches 'span' or 'class'
-        orig.tmp <- gsub("SPAN_DELIM_OPEN_", "<span class=\"word", orig.tmp)
-        orig.text[j] <- gsub("SPAN_DELIM_CLOSE", "</span>", orig.tmp)
+        orig.text[j] <- new.text
     }
 
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
