@@ -258,7 +258,8 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     # this is a really ugly way to return a htmlwidget
     #  I will have to spend some time thinking through this.
     # start by setting up a dummy formattable
-    ftw <- as.htmlwidget(formattable(data.frame()), sizingPolicy = sizingPolicy(browser.padding = 0))
+    ftw <- as.htmlwidget(formattable(data.frame(dummy.tag = 0)),
+                         sizingPolicy = sizingPolicy(browser.padding = 0))
     # and replace the html with our formatted html from above
     ftw$x$html <- tbl.html
     ftw
