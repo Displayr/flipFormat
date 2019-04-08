@@ -154,6 +154,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 }
             }
         }
+        new.text <- paste0(new.text, substr(tmp.text, tmp.pos+1, tmp.len))
         orig.text[j] <- new.text
     }
 
