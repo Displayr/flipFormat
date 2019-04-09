@@ -39,7 +39,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     ws <- createCata(stylefile)
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
                                     token.substitutions, ws)
-    addCss(stylefile, cata, in.css.folder = FALSE)
+    if (NROW(n.gram.frequencies) > 0)
+        addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
     addLeftPanel(colored.text$text,
@@ -122,6 +123,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     # Search for ngrams in each response
     for (j in 1:length(orig.text))
     {
+        if (sum(nchar(trans.tokens[[j]])) == 0)
+            next
+
         # n.grams should be unique so a single index returned for each token in trans.tokens[[j]]
         ind <- match(trans.tokens[[j]], n.grams[,1])
         if (length(ind) == 0)
@@ -159,7 +163,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     }
 
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
-    n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
+    if (nrow(n.grams) > 0)
+        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
                             stringsAsFactors = FALSE)))
