@@ -15,7 +15,7 @@ PCALoadingsTable <- function(loadings.matrix, variance.explained, eigenvalues,
                              min.display.value, title = "", subtitle = "", footer = "",
                              eigenvalue.label  = "Eigenvalue")
 {
-    k <- ncol(loadings.matrix)
+    k <- NCOL(loadings.matrix)
     column.labels <- character(k)
     for (i in 1:k)
     {
