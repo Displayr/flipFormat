@@ -1,10 +1,14 @@
 #' Display appearance template as a \code{htmlwidget}
 #'
-#' @param x An object of class \code{AppearanceTemplate}.
+#' @param colors A vector containing a colors as hex codes.
+#' @param brand.colors A named vector containing colors with the associated brand (i.e name).
+#' @param global.font A named vector specifying \code{family}, \code{color}, \code{size}, \code{units}.
+#' @param fonts A list of fonts (each entry containing the font family, font color and font size).
 #' @importFrom rhtmlMetro Box
-print.AppearanceTemplate <- function(x)
+#' @export
+ShowTemplateOptions <- function(colors, brand.colors, global.font, fonts)
 {
-html <- '
+    html <- '
 <style>
 .box {
    margin: 5px;
@@ -22,39 +26,39 @@ html <- '
 
 <div class=\"main-container\">'
 
-if (!is.null(x$colors))
-{
-    html <- paste0(html, '<h2>Colors</h2>
-<div>This palette will be used when <b>Template or default settings</b> is selected</div>')
-    for (cc in x$colors)
-        html <- paste0(html, '<span class="box" style="background-color:', cc,
-                 ';float:left;">', cc, '</span>')
-    html <- paste0(html, '<div style="clear: both;"></div>')
-}
+    if (length(colors) > 0)
+    {
+        html <- paste0(html, '<h2>Colors</h2>
+    <div>This palette will be used when <b>Default or template settings</b> is selected</div>')
+        for (cc in colors)
+            html <- paste0(html, '<span class="box" style="background-color:', cc,
+                     ';float:left;">', cc, '</span>')
+        html <- paste0(html, '<div style="clear: both;"></div>')
+    }
 
-if (!is.null(x$brand.colors))
-{
-    html <- paste0(html, '<h2>Brand colors</h2>
-<div>These colors will be used when <b>Brand colors</b> is used and the category names in the chart match the brand names.</div>')
-    for (ci in 1:length(x$brand.colors))
-        html <- paste0(html, '<span class="box" style="background-color:', x$brand.colors[ci],
-                 ';float:left;">', names(x$brand.colors)[ci], '</span>')
-    html <- paste0(html, '<div style="clear: both;"></div>')
-}
+    if (length(brand.colors) > 0)
+    {
+        html <- paste0(html, '<h2>Brand colors</h2>
+    <div>These colors will be used when <b>Brand colors</b> is used and the category names in the chart match the brand names.</div>')
+        for (ci in 1:length(brand.colors))
+            html <- paste0(html, '<span class="box" style="background-color:', brand.colors[ci],
+                     ';float:left;">', names(brand.colors)[ci], '</span>')
+        html <- paste0(html, '<div style="clear: both;"></div>')
+    }
 
-if (!is.null(x$fonts))
-{
-    f.sc <- if (x$global.font$units %in% c("pt", "points")) 1.3333 else 1
-    html <- paste0(html, '<h2>Fonts</h2>
-<div>The following fonts will used in their respective text elements if <b>Template or default font settings</b> is selected.')
-    for (fi in 1:length(x$fonts))
-       html <- paste0(html, '<div style="font-family:', x$fonts[[fi]]$family, '; font-size:',
-                      round(x$fonts[[fi]]$size * f.sc, 0), 'px; text-align: center; color:', x$fonts[[fi]]$color, '">', names(x$fonts)[fi], '</div>')
-}
-html <- paste0(html, '</div>\n')
+    if (length(fonts) > 0)
+    {
+        f.sc <- if (global.font$units %in% c("pt", "points")) 1.3333 else 1
+        html <- paste0(html, '<h2>Fonts</h2>
+    <div>The following fonts will used in their respective text elements if <b>Default and template font settings</b> is selected.')
+        for (fi in 1:length(fonts))
+           html <- paste0(html, '<div style="font-family:', fonts[[fi]]$family, '; font-size:',
+                          round(fonts[[fi]]$size * f.sc, 0), 'px; text-align: center; color:', fonts[[fi]]$color, '">', names(fonts)[fi], '</div>')
+    }
+    html <- paste0(html, '</div>\n')
 
 
-Box(html, text.as.html = TRUE,
-                    font.family = "Circular, Arial, sans-serif",
-                    font.size = 8)
+    Box(html, text.as.html = TRUE,
+                        font.family = "Circular, Arial, sans-serif",
+                        font.size = 8)
 }
