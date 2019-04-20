@@ -99,11 +99,10 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     n.grams[,1] <- as.character(n.grams[,1])
     orig.text <- text[["Original Text"]]
     trans.tokens <- text[["Transformed Text"]]
-    ngram.order <- order(nchar(n.grams[,1]), decreasing = TRUE)
     patt <- n.grams[,1]
 
     # Define CSS style for each ngram
-    for (i in ngram.order)
+    for (i in 1:n)
     {
         # Define CSS class
         cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
@@ -173,9 +172,13 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
+#  Usually we only want to match whole words, but wordbreak ('\b')
+#  does not match after a non-alphanumeric character.
 escWord <- function(x)
 {
-    return(paste0("\\Q", x, "\\E"))
+    prefix <- ifelse(grepl("^[a-zA-Z0-9]", x, perl = TRUE), "\\b\\Q", "\\Q")
+    suffix <- ifelse(grepl("[a-zA-Z0-0]$", x, perl = TRUE), "\\E\\b", "\\E")
+    return(paste0(prefix, x, suffix))
 }
 
 setAlpha <- function(col, alpha)

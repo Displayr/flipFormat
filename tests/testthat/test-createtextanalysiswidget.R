@@ -1,10 +1,10 @@
-raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whiskers on kittens and some extra words",
+raw.and.normalized.text <- list(`Original Text` = c("Aim to higlight ai. Raindrops on roses and whiskers on kittens",
   "Bright copper kettles and warm woolen mittens", "Brown paper packages tied up with strings",
   "These are a few of my favorite things", "Cream colored ponies and crisp apple streudels",
   "Doorbells and sleigh bells and schnitzel with noodles", "Wild geese that fly with the moon on their wings",
   "These are a few of my favorite things", "Girls in white dresses with blue satin sashes",
   "Snowflakes that stay on my nose and eyelashes", "Silver white winters that melt into springs",
-  "These are a few of my favorite things", "When the dog bites",
+  "These are a few of my favorite things", "When the dog bites!",
   "When the bee stings", "When I'm feeling sad", "I simply remember my favorite things",
   "And then I don't feel so bad", "Raindrops on roses and whiskers on kittens",
   "Bright copper kettles and warm woolen mittens", "Brown paper packages tied up with strings",
@@ -12,7 +12,7 @@ raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whis
   "Doorbells and sleigh bells and schnitzel with noodles", "Wild geese that fly with the moon on their wings",
   "These are a few of my favorite things", "Girls in white dresses with blue satin sashes",
   "Snowflakes that stay on my nose and eyelashes", "Silver white winters that melt into springs",
-  "These are a few of my favorite things", "When the dog bites",
+  "These are a few of my favorite things", "When the dog bites!",
   "When the bee stings", "When I'm feeling sad", "I simply remember my favorite things",
   "And then I don't feel so bad", "Raindraps on noses and wiskers on kattens",
   "Bright cawpper kattles and warm wolen mattens", "Brun papier packagez tied up with string",
@@ -22,7 +22,7 @@ raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whis
   "Snowflakes that stay on my nose and eyelash", "Silver whit winters that melt into sprang",
   "These are a few of my favorite things", "When the dawg bights",
   "When the bee sting", "When I'm feeling sad", "I simply remember my favorite things",
-  "And then I don't feel so bad"), `Transformed Text` = list(c("raindrops",
+  "And then I don't feel so bad"), `Transformed Text` = list(c("ai", "raindrops",
   "roses", "hair on dogs"), c("bright", "copper", "kettles", "warm",
   "woolen", "mittens"), c("brown", "paper", "packages", "tied",
   "strings"), c("few", "your majesty", "faves"), c("cream", "colored",
@@ -31,7 +31,7 @@ raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whis
   "wings"), c("few", "your majesty", "faves"), c("girls", "white",
   "dresses", "red wool", "sashes"), c("snowflakes", "stay", "your majesty",
   "nose", "eyelashes"), c("silver", "white", "winters", "melt",
-  "springs"), c("few", "your majesty", "faves"), c("dog", "bites"
+  "springs"), c("few", "your majesty", "faves"), c("dog", "bites!"
   ), c("bee", "stings"), c("feel", "sad"), c("simply", "remember",
   "your majesty", "faves"), c("dont", "feel", "bad"), c("raindrops",
   "roses", "hair on dogs"), c("bright", "copper", "kettles", "warm",
@@ -42,7 +42,7 @@ raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whis
   "wings"), c("few", "your majesty", "faves"), c("girls", "white",
   "dresses", "red wool", "sashes"), c("snowflakes", "stay", "your majesty",
   "nose", "eyelashes"), c("silver", "white", "winters", "melt",
-  "springs"), c("few", "your majesty", "faves"), c("dog", "bites"
+  "springs"), c("few", "your majesty", "faves"), c("dog", "bites!"
   ), c("bee", "stings"), c("feel", "sad"), c("simply", "remember",
   "your majesty", "faves"), c("dont", "feel", "bad"), c("raindrops",
   "nose", "wiskers", "kattens"), c("bright", "cawpper", "kattles",
@@ -62,8 +62,8 @@ raw.and.normalized.text <- list(`Original Text` = c("Raindrops on roses and whis
   42L, 43L, 44L, 45L, 46L, 47L, 48L, 49L, 50L, 52L),
   `Variable Start Indices` = c(`Variable 1` = 1, `Variable 2` = 42))
 
-n.gram.frequencies <- structure(list(Words = structure(1:69, .Label = c("apple", "bad",
-"bee", "bells", "bights", "bites", "bright", "brown", "brun",
+n.gram.frequencies <- structure(list(Words = structure(1:70, .Label = c("ai", "apple", "bad",
+"bee", "bells", "bights", "bites!", "bright", "brown", "brun",
         "cawpper", "colored", "coloured", "copper", "cream", "crisp",
         "dawg", "dog", "dont", "doorbells", "dresses", "eyelashes", "faves",
         "favourite", "feel", "few", "fly", "geese", "girls", "hair on dogs",
@@ -73,15 +73,15 @@ n.gram.frequencies <- structure(list(Words = structure(1:69, .Label = c("apple",
         "schnitzel", "silver", "simply", "sleigh", "snowflakes", "sprang",
         "springs", "stay", "stings", "streudels", "strings", "tied",
         "warm", "whit", "white", "wild", "wings", "winters", "wiskers",
-        "woolen", "your majesty"), class = "factor"), Frequencies = c(3,
+        "woolen", "your majesty"), class = "factor"), Frequencies = c(1, 3,
           3, 3, 3, 1, 2, 3, 2, 1, 1, 2, 1, 2, 3, 2, 1, 2, 3, 3, 3, 3, 11,
           1, 6, 9, 3, 3, 3, 2, 1, 1, 2, 1, 3, 3, 3, 3, 4, 3, 3, 1, 2, 3,
           3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 1, 2, 3, 3, 3, 3, 3, 3, 1, 5, 3,
-          3, 3, 1, 3, 15)), class = "data.frame", row.names = c(NA, -69L
+          3, 3, 1, 3, 15)), class = "data.frame", row.names = c(NA, -70L
           ))
 
-token.substitution <- structure(c("a", "and", "apple", "are", "bad", "bee", "bells",
-          "bights", "bites", "blue satin", "bright", "brown", "brun", "cawpper",
+token.substitution <- structure(c("ai", "a", "and", "apple", "are", "bad", "bee", "bells",
+          "bights", "bites!", "blue satin", "bright", "brown", "brun", "cawpper",
           "colored", "coloured", "copper", "cream", "creem", "crisp", "dawg",
           "dog", "don't", "doorbells", "dress", "dresses", "eyelash", "eyelashes",
           "favorite things", "favourite", "feel", "feeling", "few", "fly",
@@ -96,7 +96,7 @@ token.substitution <- structure(c("a", "and", "apple", "are", "bad", "bee", "bel
           "up", "warm", "when", "whiskers on kittens", "whit", "white",
           "wild", "wing", "wings", "winters", "wiskers", "with", "wolen",
           "woolen", "hair on dogs", "red wool", "faves", "your majesty",
-          "", "", "apple", "", "bad", "bee", "bells", "bights", "bites",
+          "ai", "", "", "apple", "", "bad", "bee", "bells", "bights", "bites!",
           "red wool", "bright", "brown", "brun", "cawpper", "colored",
           "coloured", "copper", "cream", "cream", "crisp", "dawg", "dog",
           "dont", "doorbells", "dresses", "dresses", "eyelashes", "eyelashes",
@@ -111,10 +111,12 @@ token.substitution <- structure(c("a", "and", "apple", "are", "bad", "bee", "bel
           "", "", "", "tied", "", "warm", "", "hair on dogs", "whit", "white",
           "wild", "wings", "wings", "winters", "wiskers", "", "woolen",
           "woolen", "hair on dogs", "red wool", "faves", "your majesty"
-), .Dim = c(108L, 2L), .Dimnames = list(NULL, c("old", "new")))
+), .Dim = c(109L, 2L), .Dimnames = list(NULL, c("old", "new")))
 
 footer <- "n = 51 cases used to process the text"
 
+# Manually, you also want to check that 'ai' (not "Aim") is highlighted in line 1
+# And 'bites!' is highlighted in line 13
 test_that("Text analysis output",
 {
     result <- CreateTextAnalysisWidget(raw.and.normalized.text,
