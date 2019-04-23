@@ -173,11 +173,11 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
 #  Usually we only want to match whole words, but wordbreak ('\b')
-#  does not match after a non-alphanumeric character.
+#  does not match after special characters (i.e. not alphanumeric or underscore).
 escWord <- function(x)
 {
-    prefix <- ifelse(grepl("^[a-zA-Z0-9]", x, perl = TRUE), "\\b\\Q", "\\Q")
-    suffix <- ifelse(grepl("[a-zA-Z0-0]$", x, perl = TRUE), "\\E\\b", "\\E")
+    prefix <- ifelse(grepl("^[a-zA-Z0-9_]", x, perl = TRUE), "\\b\\Q", "\\Q")
+    suffix <- ifelse(grepl("[a-zA-Z0-0_]$", x, perl = TRUE), "\\E\\b", "\\E")
     return(paste0(prefix, x, suffix))
 }
 
