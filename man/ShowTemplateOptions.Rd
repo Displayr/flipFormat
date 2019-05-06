@@ -4,7 +4,9 @@
 \alias{ShowTemplateOptions}
 \title{Display appearance template as a \code{htmlwidget}}
 \usage{
-ShowTemplateOptions(colors, brand.colors, global.font, fonts)
+ShowTemplateOptions(colors = NULL, brand.colors = NULL,
+  global.font = NULL, fonts = NULL, global.number.font = list(units =
+  "pt"), number.fonts = NULL)
 }
 \arguments{
 \item{colors}{A vector containing a colors as hex codes.}
@@ -14,6 +16,10 @@ ShowTemplateOptions(colors, brand.colors, global.font, fonts)
 \item{global.font}{A named vector specifying \code{family}, \code{color}, \code{size}, \code{units}.}
 
 \item{fonts}{A list of fonts (each entry containing the font family, font color and font size).}
+
+\item{global.number.font}{A named vector specifying  \code{units}.}
+
+\item{number.fonts}{A list of fonts (each entry containing the font family, font color and font size and optionally, weight and bg.color).}
 }
 \description{
 Display appearance template as a \code{htmlwidget}

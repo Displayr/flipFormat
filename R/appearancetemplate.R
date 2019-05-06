@@ -3,10 +3,14 @@
 #' @param colors A vector containing a colors as hex codes.
 #' @param brand.colors A named vector containing colors with the associated brand (i.e name).
 #' @param global.font A named vector specifying \code{family}, \code{color}, \code{size}, \code{units}.
+#' @param global.number.font A named vector specifying  \code{units}.
 #' @param fonts A list of fonts (each entry containing the font family, font color and font size).
+#' @param number.fonts A list of fonts (each entry containing the font family, font color and font size and optionally, weight and bg.color).
 #' @importFrom rhtmlMetro Box
 #' @export
-ShowTemplateOptions <- function(colors, brand.colors, global.font, fonts)
+ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
+    global.font = NULL, fonts = NULL,
+    global.number.font = list(units = "pt"), number.fonts = NULL)
 {
     html <- '
 <style>
@@ -49,14 +53,32 @@ ShowTemplateOptions <- function(colors, brand.colors, global.font, fonts)
     if (length(fonts) > 0)
     {
         f.sc <- if (global.font$units %in% c("pt", "points")) 1.3333 else 1
-        html <- paste0(html, '<h2>Fonts</h2>
-    <div>The following fonts will used in their respective text elements if <b>Default and template font settings</b> is selected.')
+        html <- paste0(html, '<h2>Chart fonts</h2>
+    <div>The following fonts will used in Visualization charts if <b>Default and template font settings</b> is selected.')
         for (fi in 1:length(fonts))
            html <- paste0(html, '<div style="font-family:', fonts[[fi]]$family, '; font-size:',
                           round(fonts[[fi]]$size * f.sc, 0), 'px; text-align: center; color:', fonts[[fi]]$color, '">', names(fonts)[fi], '</div>')
+        html <- paste0(html, '<div style="clear: both;"></div>')
     }
     html <- paste0(html, '</div>\n')
 
+    if (length(number.fonts) > 0)
+    {
+        f.sc <- if (global.number.font$units %in% c("pt", "points")) 1.3333 else 1
+        html <- paste0(html, '<h2>Number fonts</h2>
+    <div>The following fonts will used in <b>Visualization - Number</b> outputs if <b>Default and template font settings</b> is selected.')
+        for (fi in 1:length(number.fonts))
+        {
+            tmp.weight <- if (is.null(number.fonts[[fi]]$weight)) "Normal" else number.fonts[[fi]]$weight
+            tmp.bg <- if (is.null(number.fonts[[fi]]$bg.color)) "#FFFFFF" else number.fonts[[fi]]$bg.color
+            html <- paste0(html, '<div style="text-align:center"><span style="font-family:', number.fonts[[fi]]$family, '; font-weight:',
+                          tmp.weight, '; background-color:', tmp.bg, '; font-size:',
+                          round(number.fonts[[fi]]$size * f.sc, 0), 'px; color:',
+                          number.fonts[[fi]]$color, '">', names(number.fonts)[fi], '</span></div>')
+        }
+        html <- paste0(html, '<div style="clear: both;"></div>')
+    }
+    html <- paste0(html, '</div>\n')
 
     Box(html, text.as.html = TRUE,
                         font.family = "Circular, Arial, sans-serif",
