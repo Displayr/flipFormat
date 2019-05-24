@@ -43,7 +43,7 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
     if (length(brand.colors) > 0)
     {
         html <- paste0(html, '<h2>Brand colors</h2>
-    <div>These colors will be used when <b>Brand colors</b> is used and the category names in the chart match the brand names.</div>')
+    <div>These colors will be used when <b>Brand colors</b> is selected as the color palette and the category names in the chart match the brand names.</div>')
         for (ci in 1:length(brand.colors))
             html <- paste0(html, '<span class="box" style="background-color:', brand.colors[ci],
                      ';float:left;">', names(brand.colors)[ci], '</span>')
