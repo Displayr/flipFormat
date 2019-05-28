@@ -34,9 +34,10 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
     {
         html <- paste0(html, '<h2>Colors</h2>
     <div>This palette will be used when <b>Default or template settings</b> is selected as the color palette.</div>')
-        for (cc in colors)
-            html <- paste0(html, '<span class="box" style="background-color:', cc,
-                     ';float:left;">', cc, '</span>')
+        c.text <- if (is.null(names(colors))) colors else names(colors)
+        for (cci in 1:length(colors))
+            html <- paste0(html, '<span class="box" style="background-color:', colors[cci],
+                     ';float:left;">', c.text[cci], '</span>')
         html <- paste0(html, '<div style="clear: both;"></div>')
     }
 
