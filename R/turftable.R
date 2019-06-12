@@ -25,7 +25,7 @@ TURFTable <- function(output.table,
 
     formatters <- list(
         portfolio = x ~ x,
-        reach = x ~ FormatAsReal(x, decimals = 2),
+        reach = x ~ FormatAsReal(x, decimals = 1),
         frequency = x ~ FormatAsReal(x, decimals = 0))
 
     column.labels <- c("Portfolio", colnames(output.table))
