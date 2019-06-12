@@ -59,5 +59,5 @@ coloredAlternativeNames <- function(portfolios, alternative.names)
 
 getAlternativeNameColor <- function(alternative.index)
 {
-    d3category10Colors()[((alternative.index - 1) %% 10) + 1]
+    officialColors()[((alternative.index - 1) %% 10) + 1]
 }
