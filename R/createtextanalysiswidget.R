@@ -70,9 +70,7 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
 #' @importFrom colorspace lighten darken
 HighlightNGrams <- function(n.grams, text, subs, cata)
 {
-    col0 <- c("#3e7dcc", "#04b5ac", "#f5c524", "#c44e41",
-              "#8cc0ff", "#ff905a", "#345e8c",
-              "#04827b", "#967f47","#96362f")
+    col0 <- officialColors()
     n.col <- length(col0)
     bcol <- col0
     bs0 <- c("solid", "dashed", "dotted")

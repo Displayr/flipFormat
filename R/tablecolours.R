@@ -89,3 +89,9 @@ ZScoresAsColors <- function(z,
     result
 }
 
+officialColors <- function()
+{
+    c("#3e7dcc", "#04b5ac", "#f5c524", "#c44e41",
+      "#8cc0ff", "#ff905a", "#345e8c",
+      "#04827b", "#967f47","#96362f")
+}
