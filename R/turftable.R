@@ -16,16 +16,22 @@ TURFTable <- function(output.table,
                       subtitle = "",
                       footer = "")
 {
-    output.df <- data.frame(reach = output.table[, 1],
+    alt.names <- coloredAlternativeNames(portfolios, alternative.names)
+
+    output.df <- data.frame(portfolio = alt.names,
+                            reach = output.table[, 1],
                             frequency = output.table[, 2])
-    rownames(output.df) <- coloredAlternativeNames(portfolios,
-                                                   alternative.names)
+    rownames(output.df) <- paste0(seq_len(nrow(output.table)), " ")
+
     formatters <- list(
+        portfolio = x ~ x,
         reach = x ~ FormatAsReal(x, decimals = 2),
         frequency = x ~ FormatAsReal(x, decimals = 0))
 
-    column.labels <- colnames(output.table)
-    createTable(output.df, column.labels, formatters, title, subtitle, footer)
+    column.labels <- c("Portfolio", colnames(output.table))
+    createTable(x = output.df, col.names = column.labels,
+                formatters = formatters, title = title, subtitle = subtitle,
+                footer = footer, col.names.alignment = c("l", "r", "r"))
 }
 
 coloredAlternativeNames <- function(portfolios, alternative.names)
