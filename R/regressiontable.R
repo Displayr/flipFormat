@@ -72,7 +72,7 @@ CrosstabInteractionTable <- function(coef,
 
     formatters <- list()
     for (i in 1:k)
-        formatters[[coef.names[i]]] <- createHeatmapFormatter(sprintf("t%d",i), sprintf("p%d", i), p.cutoff)
+        formatters[[coef.names[i]]] <- createStatisticFormatter(sprintf("t%d",i), sprintf("p%d", i), p.cutoff)
     formatters[["NET"]] <- formatter("span", x~FormatAsReal(x, decimals = decimals))
     formatters[[ncol(coef.df)+1]] <- area(row=nrow(coef.df))~formatter("span", x~FormatAsReal(x, decimals = 0))
     formatters <- c(formatters, columns.to.exclude)

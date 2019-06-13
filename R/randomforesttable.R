@@ -49,7 +49,7 @@ RandomForestTable <- function(importance,
         coef.df <- data.frame(importance, z.statistics, p.values, check.names = FALSE)
         formatters <- list()
         for (i in 1:(k - 1))
-            formatters[[paste0("importance", i)]] <- createHeatmapFormatter(paste0("z", i), paste0("p", i), p.cutoff, decimals = 3)
+            formatters[[paste0("importance", i)]] <- createStatisticFormatter(paste0("z", i), paste0("p", i), p.cutoff, decimals = 3)
         formatters[[paste0("importance", k)]] <- createBarFormatter(decimals = 3)
         formatters[["gini"]] <- createBarFormatter()
         # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)

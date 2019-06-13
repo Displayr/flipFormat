@@ -49,6 +49,15 @@ heatmapColourScale <- function(x, max.abs)
     result
 }
 
+# Heatmap-like color scale (single colour)
+#' @importFrom formattable gradient csscolor
+heatmapSingleColourScale <- function(x, min.val, max.val)
+{
+    x[is.na(x)] <- min.val
+    csscolor(gradient(c(min.val, max.val, x), positiveSignificanceLighter(),
+                      positiveSignificanceColour()))[-2:-1]
+}
+
 #' \code{ZScoresAsColors}
 #'
 #' Shades z-scores.

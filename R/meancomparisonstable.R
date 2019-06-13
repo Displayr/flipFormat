@@ -29,7 +29,7 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     column.names <- c(column.names, "R-Squared", "<i>p</i>")
     formatters <- list()
     for (i in 1:k)
-        formatters[[paste0("means", i)]] <- createHeatmapFormatter(paste0("z", i), paste0("p", i), p.cutoff)
+        formatters[[paste0("means", i)]] <- createStatisticFormatter(paste0("z", i), paste0("p", i), p.cutoff)
     formatters[["rsquared"]] <- createBarFormatter()
     formatters[["pvalue"]] <- createPFormatter(p.cutoff)
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)

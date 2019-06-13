@@ -23,10 +23,14 @@ TURFTable <- function(output.table,
                             frequency = output.table[, 2])
     rownames(output.df) <- paste0(seq_len(nrow(output.table)), " ")
 
+    reach.lower <- floor(min(output.table[, 1]))
+    reach.upper <- floor(max(output.table[, 1]))
+
     formatters <- list(
         portfolio = x ~ x,
-        reach = x ~ FormatAsReal(x, decimals = 1),
-        frequency = x ~ FormatAsReal(x, decimals = 0))
+        reach = createSingleColourHeatmapFormatter(reach.lower, reach.upper,
+                                                   decimals = 1),
+        frequency = createBarFormatter(decimals = 0))
 
     column.labels <- c("Portfolio", colnames(output.table))
     createTable(x = output.df, col.names = column.labels,
@@ -45,16 +49,20 @@ coloredAlternativeNames <- function(portfolios, alternative.names)
         for (j in seq_len(portfolio.size))
         {
             alt.ind <- portfolios[i, j]
-            colored.names[j] <- paste0(openTagPlaceholder(), "font color='",
-                                       getAlternativeNameColor(alt.ind),
-                                       "'", closeTagPlaceholder(),
-                                       alternative.names[alt.ind],
-                                       openTagPlaceholder(), "/font",
-                                       closeTagPlaceholder())
+            colored.names[j] <- alternativeNameHtml(alternative.names, alt.ind)
         }
         result[i] <- paste0(colored.names, collapse = ", ")
     }
     result
+}
+
+alternativeNameHtml <- function(alternative.names, alt.ind)
+{
+    paste0(openTagPlaceholder(), "font color='",
+           getAlternativeNameColor(alt.ind),
+           "' style='font-weight: bold;'", closeTagPlaceholder(),
+           alternative.names[alt.ind], openTagPlaceholder(), "/font",
+           closeTagPlaceholder())
 }
 
 getAlternativeNameColor <- function(alternative.index)

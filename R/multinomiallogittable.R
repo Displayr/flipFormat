@@ -30,7 +30,7 @@ MultinomialLogitTable <- function(coefficients,
     coef.df <- data.frame(coefs, zs, ps, check.names = FALSE)
     formatters <- list()
     for (i in 1:k)
-        formatters[[paste0("outcome", i)]] <- createHeatmapFormatter(paste0("z", i), paste0("p", i), p.cutoff)
+        formatters[[paste0("outcome", i)]] <- createStatisticFormatter(paste0("z", i), paste0("p", i), p.cutoff)
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
     columns.to.exclude <- as.list(structure(rep(FALSE, 2 * k), names = c(colnames(zs), colnames(ps))))
     formatters <- c(formatters, columns.to.exclude)

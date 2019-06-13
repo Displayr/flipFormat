@@ -127,8 +127,10 @@ createPFormatter <- function(p.cutoff = 0.05)
     )
 }
 
+# Colors a statistic cell based on heatmapColourScale, and bolds the text if
+# p-value is below the cutoff.
 #' @importFrom formattable formatter style
-createHeatmapFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
+createStatisticFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, max.abs = 5, decimals = 2)
 {
     decimals <- decimals # force evaluation of promise before passing to .format.values
 
@@ -146,6 +148,15 @@ createEstimateFormatter <- function(statistic.name, p.name, p.cutoff = 0.05, dec
                    ifelse(%s <= p.cutoff & %s > 0, \"color:blue\", NA))",
                    p.name, statistic.name, p.name, statistic.name)
     formatter("span", style = eval(parse(text = txt)), x ~ paste0(FormatAsReal(x, decimals = decimals), suffix))
+}
+
+# Colors a statistic cell
+#' @importFrom formattable formatter style
+createSingleColourHeatmapFormatter <- function(min.val, max.val, decimals = 2)
+{
+    txt <- sprintf("x ~ style(display = \"block\", padding = \"0 4px\", `border-radius` = \"4px\",
+                   `background-color` = heatmapSingleColourScale(x, min.val, max.val))")
+    formatter("span", style = eval(parse(text = txt)), x ~ FormatAsReal(x, decimals = decimals))
 }
 
 #' @importFrom htmltools tags
