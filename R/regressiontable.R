@@ -27,7 +27,7 @@ RegressionTable <- function(coefficient.table,
     formatters <- list(
         Estimate = createEstimateFormatter("t", "p", p.cutoff),
         SE = x ~ FormatAsReal(x, decimals = 2),
-        t = createHeatmapFormatter("t", "p", p.cutoff),
+        t = createStatisticFormatter("t", "p", p.cutoff),
         p = createPFormatter(p.cutoff)
     )
     createTable(coef.df, c(estimate.name, se.name, statistic.name, p.name), formatters, title, subtitle, footer)
