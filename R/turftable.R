@@ -23,8 +23,8 @@ TURFTable <- function(output.table,
                             frequency = output.table[, 2])
     rownames(output.df) <- paste0(seq_len(nrow(output.table)), " ")
 
-    reach.lower <- floor(min(output.table[, 1]))
-    reach.upper <- floor(max(output.table[, 1]))
+    reach.lower <- min(output.table[, 1])
+    reach.upper <- max(output.table[, 1])
 
     formatters <- list(
         portfolio = x ~ x,
