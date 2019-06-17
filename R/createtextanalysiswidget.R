@@ -111,8 +111,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
         # Create regex for replacement
         replace.ind <- which(subs[,2] == n.grams[i,1])
-        n.grams[i,3] <- length(replace.ind)
-        tooltips[i] <- paste(subs[replace.ind], collapse = ", ")
+        tmp.subs <- unique(subs[replace.ind]) # group different capitalizations counted separately
+        n.grams[i,3] <- length(tmp.subs)
+        tooltips[i] <- paste(tmp.subs, collapse = ", ")
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
