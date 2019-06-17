@@ -96,14 +96,14 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     colors <- cc[1:n]
 
     n.grams[,1] <- as.character(n.grams[,1])
-    n.grams <- data.frame(n.grams, num.var = rep(1, nrow(n.grams)))
+    n.grams <- data.frame(n.grams, num.var = rep(1, n))
     orig.text <- text[["Original Text"]]
     trans.tokens <- text[["Transformed Text"]]
     patt <- n.grams[,1]
     tooltips <- n.grams[,1]
 
     # Define CSS style for each ngram
-    for (i in 1:n)
+    for (i in seq_len(n))
     {
         # Define CSS class
         cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
