@@ -78,6 +78,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     bshape <- c("border-radius: 50%; padding-left: 5px; padding-right: 5px; ",
                 "padding-left: 1px; padding-right: 1px; ")
 
+    # Set up vector of different styles for each phrase
     n <- nrow(n.grams)
     n.rep <- ceiling(n/n.col)
     i.offset <- 0.8/n.rep
@@ -95,9 +96,11 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     colors <- cc[1:n]
 
     n.grams[,1] <- as.character(n.grams[,1])
+    n.grams <- data.frame(n.grams, num.var = 1)
     orig.text <- text[["Original Text"]]
     trans.tokens <- text[["Transformed Text"]]
     patt <- n.grams[,1]
+    tooltips <- n.grams[,1]
 
     # Define CSS style for each ngram
     for (i in 1:n)
@@ -108,6 +111,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
         # Create regex for replacement
         replace.ind <- which(subs[,2] == n.grams[i,1])
+        n.grams[i,3] <- length(replace.ind)
+        tooltips[i] <- paste(subs[replace.ind], collapse = ", ")
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
@@ -160,11 +165,15 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     }
 
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
+
+    # Create n-grams table with number of counts and variants
+    # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\">", n.grams[,1], "</span>")
+        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"", tooltips, "\">", n.grams[,1], "</span>")
+
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
-                            stringsAsFactors = FALSE)))
+                stringsAsFactors = FALSE)))
 
 }
 
@@ -261,10 +270,10 @@ addLeftPanel <- function(raw.and.normalized.text, row.numbers,
 addRightPanel <- function(n.gram.frequencies, cata)
 {
     t <- n.gram.frequencies
-    names(t) <- c(paste0("Phrases (", nrow(n.gram.frequencies), ")"), "#")
+    names(t) <- c(paste0("Phrases (", nrow(n.gram.frequencies), ")"), "Frequency", "# Variants")
 
     cata("<div id=\"right-panel\">")
-    cata(knitr::kable(t, align = c("l", "c"),
+    cata(knitr::kable(t, align = c("l", "c", "c"),
                       format = "html", escape = FALSE,
                       table.attr = "class=\"text-analysis-table\""))
     cata("</div>") # end panel div
