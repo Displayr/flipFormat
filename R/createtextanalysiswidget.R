@@ -96,7 +96,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     colors <- cc[1:n]
 
     n.grams[,1] <- as.character(n.grams[,1])
-    n.grams <- data.frame(n.grams, num.var = 1)
+    n.grams <- data.frame(n.grams, num.var = rep(1, nrow(n.grams)))
     orig.text <- text[["Original Text"]]
     trans.tokens <- text[["Transformed Text"]]
     patt <- n.grams[,1]
