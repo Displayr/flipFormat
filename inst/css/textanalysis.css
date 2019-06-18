@@ -18,7 +18,7 @@
     resize: horizontal;
     height: calc(100vh - 50px);
     overflow-y: scroll;
-    flex: 1 1 70%
+    flex: 1 1 60%
 
 }
 
@@ -26,7 +26,7 @@
     resize: horizontal;
     overflow-y: scroll;
     height: calc(100vh - 50px);
-    flex: 1 1 30%
+    flex: 1 1 40%
 }
 
 #footer-container {
