@@ -271,7 +271,7 @@ addLeftPanel <- function(raw.and.normalized.text, row.numbers,
 addRightPanel <- function(n.gram.frequencies, cata)
 {
     t <- n.gram.frequencies
-    names(t) <- c(paste0("Phrases (", nrow(n.gram.frequencies), ")"), "Frequency", "# Variants")
+    names(t) <- c(paste0("Phrases (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
     cata("<div id=\"right-panel\">")
     cata(knitr::kable(t, align = c("l", "c", "c"),
