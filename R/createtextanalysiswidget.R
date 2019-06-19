@@ -46,6 +46,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     addLeftPanel(colored.text$text,
                  raw.and.normalized.text[["Row Numbers"]],
                  raw.and.normalized.text[["Variable Numbers"]],
+                 raw.and.normalized.text[["Variable Names"]],
                  cata)
     addRightPanel(colored.text$n.grams, cata)
 
@@ -228,8 +229,10 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
 
 #' @importFrom htmltools htmlEscape
 addLeftPanel <- function(raw.and.normalized.text, row.numbers,
-                         variable.numbers, cata)
+                         variable.numbers, variable.names, cata)
 {
+    if (!is.null(variable.numbers) && !is.null(variable.names) && all(is.finite(variable.numbers)))
+        variable.numbers <- sprintf("<span title=\"%s\">%d</span>", variable.names[variable.numbers], variable.numbers)
     t.rownames <- if (!is.null(row.numbers) || !is.null(variable.numbers)) cbind(variable.numbers, row.numbers)
                   else                                                     rownames(raw.and.normalized.text)
 
