@@ -122,6 +122,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             replace.ind <- replace.ind[order(nchar(subs[replace.ind,1]), decreasing = TRUE)]
             patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
         }
+        else
+            patt[i] <- escWord(patt[i])
     }
 
     # Search for ngrams in each response
