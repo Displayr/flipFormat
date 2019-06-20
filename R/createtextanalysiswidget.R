@@ -114,7 +114,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         replace.ind <- which(subs[,2] == n.grams[i,1])
         tmp.subs <- unique(subs[replace.ind,1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
-        tooltips[i] <- paste(tmp.subs, collapse = ", ")
+        tooltips[i] <- paste(escapeHTML(tmp.subs), collapse = ", ")
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
@@ -180,6 +180,13 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 stringsAsFactors = FALSE)))
 
 }
+
+escapeHTML <- function(x)
+{
+    return(gsub('"', '', x, fixed = TRUE)) 
+
+}
+
 
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
