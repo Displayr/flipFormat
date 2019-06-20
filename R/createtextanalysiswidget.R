@@ -45,7 +45,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata("<div class=\"main-container\">")
     addLeftPanel(colored.text$text,
                  raw.and.normalized.text[["Row Numbers"]],
-                 raw.and.normalized.text[["Variable Start Indices"]],
+                 raw.and.normalized.text[["Variable Numbers"]],
+                 raw.and.normalized.text[["Variable Names"]],
                  cata)
     addRightPanel(colored.text$n.grams, cata)
 
@@ -111,7 +112,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
         # Create regex for replacement
         replace.ind <- which(subs[,2] == n.grams[i,1])
-        tmp.subs <- unique(subs[replace.ind]) # group different capitalizations counted separately
+        tmp.subs <- unique(subs[replace.ind,1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
         tooltips[i] <- paste(tmp.subs, collapse = ", ")
         if (length(replace.ind) == 1)
@@ -228,42 +229,25 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
 
 #' @importFrom htmltools htmlEscape
 addLeftPanel <- function(raw.and.normalized.text, row.numbers,
-                         variable.start.indices, cata)
+                         variable.numbers, variable.names, cata)
 {
-    t.rownames <- if (!is.null(row.numbers))
-        row.numbers
-    else
-        rownames(raw.and.normalized.text)
+    if (!is.null(variable.numbers) && !is.null(variable.names) && all(is.finite(variable.numbers)))
+        variable.numbers <- sprintf("<span title=\"%s\">%d</span>", variable.names[variable.numbers], variable.numbers)
+    t.rownames <- if (!is.null(row.numbers) || !is.null(variable.numbers)) cbind(variable.numbers, row.numbers)
+                  else                                                     rownames(raw.and.normalized.text)
 
     cata("<div id=\"left-panel\">")
 
-    if (!is.null(variable.start.indices))
-    {
-        variable.end.indices <- c(variable.start.indices[-1] - 1,
-                                  nrow(raw.and.normalized.text))
-        for (i in 1:length(variable.start.indices))
-        {
-            ind <- variable.start.indices[i]:variable.end.indices[i]
-            t <- cbind(t.rownames[ind], raw.and.normalized.text[ind, ])
-            names(t) <- c("", "Raw text", "Normalized text")
-            rownames(t) <- NULL
-            cata("<span class=\"variable-name\">",
-                 htmlEscape(names(variable.start.indices)[i]),
-                 "</span>")
-            cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
-                              escape = FALSE,
-                              table.attr = "class=\"text-analysis-table\""))
-        }
-    }
-    else
-    {
         t <- cbind(t.rownames, raw.and.normalized.text)
-        names(t) <- c("", "Raw text", "Normalized text")
+        tmp.col.names <- c("Case", "Raw text", "Normalized text")
+        if (NCOL(t.rownames) == 2)
+            tmp.col.names <- c("Var", tmp.col.names)
+
+        names(t) <- tmp.col.names
         rownames(t) <- NULL
-        cata(knitr::kable(t, align = c("c", "l", "l"), format = "html",
+        cata(knitr::kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
                           escape = FALSE,
                           table.attr = "class=\"text-analysis-table\""))
-    }
 
     cata("</div>") # end panel div
 }
@@ -271,7 +255,7 @@ addLeftPanel <- function(raw.and.normalized.text, row.numbers,
 addRightPanel <- function(n.gram.frequencies, cata)
 {
     t <- n.gram.frequencies
-    names(t) <- c(paste0("Phrases (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
+    names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
     cata("<div id=\"right-panel\">")
     cata(knitr::kable(t, align = c("l", "c", "c"),
