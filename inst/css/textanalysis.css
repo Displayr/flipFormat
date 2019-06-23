@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: stretch;
 }
 
@@ -19,6 +19,8 @@
     resize: horizontal;
     height: calc(100vh - 50px);
     overflow-y: scroll;
+    overflow-x: auto;
+    min-width: 0;
     flex: 1 1 70%
 
 }
@@ -26,8 +28,9 @@
 #right-panel {
     resize: horizontal;
     overflow-y: scroll;
+    overflow-x: auto;
     height: calc(100vh - 50px);
-    flex: 1 1 30%
+    min-width: 0;
 }
 
 #footer-container {
@@ -50,7 +53,6 @@
     overflow: auto;
     resize: horizontal;
     word-break: break-word;
-    word-break: break-all;
     hyphens: auto;
 }
 
@@ -59,7 +61,6 @@
     padding-left: 5px;
     padding-right: 5px;
     word-break: break-word;
-    word-break: break-all;
     hyphens: auto;
 }
 
