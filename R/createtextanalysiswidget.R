@@ -43,12 +43,13 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
         addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
+    addRightPanel(colored.text$n.grams, cata)
     addLeftPanel(colored.text$text,
                  raw.and.normalized.text[["Row Numbers"]],
                  raw.and.normalized.text[["Variable Numbers"]],
                  raw.and.normalized.text[["Variable Names"]],
                  cata)
-    addRightPanel(colored.text$n.grams, cata)
+    #addRightPanel(colored.text$n.grams, cata)
 
     cata("<div id=\"footer-container\">")
     cata(paste0("<p id=\"footer\">", footer,"</p>"))
@@ -183,7 +184,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
 escapeHTML <- function(x)
 {
-    return(gsub('"', '', x, fixed = TRUE)) 
+    return(gsub('"', '', x, fixed = TRUE))
 
 }
 
