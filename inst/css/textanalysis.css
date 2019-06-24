@@ -52,7 +52,6 @@
 .text-analysis-table th {
     overflow: auto;
     resize: horizontal;
-    word-break: break-word;
     hyphens: auto;
 }
 
