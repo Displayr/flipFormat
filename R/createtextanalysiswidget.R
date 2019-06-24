@@ -108,7 +108,11 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     for (i in seq_len(n))
     {
         # Define CSS class
-        cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
+        if (n.grams[i,1] == "UNCLASSIFIED")
+            cata(paste0(".word", i, "{ white-space: pre-wrap; ",
+                    "line-height: 1.8em; background-color: #CCCCCC; }\n"))
+        else
+            cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
                     "line-height: 1.8em; background-color: ", colors[i], "; }\n"))
 
         # Create regex for replacement
