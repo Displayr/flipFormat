@@ -31,7 +31,8 @@
     overflow-x: auto;
     height: calc(100vh - 50px);
     min-width: 0;
-    max-width: 70%;
+    max-width: 50%;
+    /* flex 1 1 50% will make the panels a fixed width */
 }
 
 #footer-container {
@@ -60,7 +61,7 @@
     overflow: auto;
     padding-left: 5px;
     padding-right: 5px;
-    word-break: break-word;
+    word-break: break-word; /* only break words in cells not table headers */
     hyphens: auto;
 }
 
