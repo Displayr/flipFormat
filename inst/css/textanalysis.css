@@ -25,6 +25,12 @@
 
 }
 
+.raw-replacement {
+    background-color: #FFFF55;
+    border: 2px #FFFF55;
+    border-style: solid solid solid solid;
+}
+
 #ngrams-panel {
     resize: horizontal;
     overflow-y: scroll;

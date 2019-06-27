@@ -69,6 +69,7 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
 
 #' @importFrom grDevices rgb col2rgb grey
 #' @importFrom colorspace lighten darken
+#' @importFrom flipU UniquePlaceholders
 HighlightNGrams <- function(n.grams, text, subs, cata)
 {
     col0 <- officialColors()
@@ -130,46 +131,105 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             patt[i] <- escWord(patt[i])
     }
 
+    raw.replacement.rows <- sapply(text$`Raw replacement info`,
+                                   function(x) x$row.index)
+
     # Search for ngrams in each response
     for (j in 1:length(orig.text))
     {
-        if (sum(nchar(trans.tokens[[j]])) == 0)
+        trans.tokens.j <- trans.tokens[[j]]
+        if (sum(nchar(trans.tokens.j)) == 0)
             next
 
         # n.grams should be unique so a single index returned for each token in trans.tokens[[j]]
-        ind <- match(trans.tokens[[j]], n.grams[,1])
+        ind <- match(trans.tokens.j, n.grams[,1])
         if (length(ind) == 0)
             next
 
-        tmp.text <- orig.text[j]
-        tmp.len <- nchar(tmp.text)
-        tmp.pos <- 0
-        new.text <- ""
-        for (k in 1:length(trans.tokens[[j]]))
+        # Raw text
+
+        # first replace raw replacements with placeholders
+        raw.repl.ind <- raw.replacement.rows == j
+        if (sum(raw.repl.ind) > 0)
+        {
+            raw.repl <- text$`Raw replacement info`[raw.repl.ind]
+            n.raw.repl <- length(raw.repl)
+            raw.repl.placeholders <- UniquePlaceholders(n.raw.repl)
+            ord <- order(sapply(raw.repl, function(x) x$start.end[1]))
+            raw.repl <- raw.repl[ord]
+            start.ind <- sapply(raw.repl, function(x) x$start.end[1])
+            end.ind <- sapply(raw.repl, function(x) x$start.end[2])
+
+            new.text <- character(0)
+            new.text <- paste0(new.text,
+                               substr(orig.text[j], 1, start.ind[1] - 1))
+            for (i in seq_len(n.raw.repl))
+            {
+                new.text <- paste0(new.text, raw.repl.placeholders[i])
+                if (i < n.raw.repl)
+                    new.text <- paste0(new.text,
+                                       substr(orig.text[j], end.ind[i] + 1,
+                                              start.ind[i + 1]))
+                else
+                    new.text <- paste0(new.text,
+                                       substr(orig.text[j], end.ind[i] + 1,
+                                              nchar(orig.text[j])))
+            }
+        }
+        else
+        {
+            raw.repl <- list()
+            new.text <- orig.text[j]
+        }
+
+        # replace tokens with placeholders
+        n.tokens <- length(trans.tokens.j)
+        raw.token.tags <- character(0)
+        token.placeholders <- character(0)
+        for (k in 1:n.tokens)
         {
             if (!is.na(ind[k]))
             {
-                # Add formatting to transformed text
-                tmp <- paste0("<span class=\"word", ind[k], "\">", trans.tokens[[j]][k], "</span>")
-                trans.tokens[[j]][k] <- tmp
-
-                # Add formatting to original text
-                # We search through text in the same order as the tokens occur
-                mpos <- regexpr(patt[ind[k]], substr(tmp.text, tmp.pos+1, tmp.len), ignore.case = TRUE, perl = TRUE)
+                mpos <- regexpr(patt[ind[k]], new.text,
+                                ignore.case = TRUE, perl = TRUE)
                 if (mpos != -1)
                 {
-                    mlen <- attr(mpos, "match.length")
-                    new.text <- paste0(new.text,
-                        substr(tmp.text, tmp.pos+1, tmp.pos+mpos-1),
-                        "<span class=\"word", ind[k], "\">",
-                        substr(tmp.text, tmp.pos+mpos, tmp.pos+mpos+mlen-1),
-                        "</span>")
-                    tmp.pos <- tmp.pos + mpos + mlen - 1
+                    raw.token <- substr(new.text, mpos,
+                                        mpos + attr(mpos, "match.length") - 1)
+                    raw.token.tags <- c(raw.token.tags,
+                                        paste0("<span class=\"word", ind[k],
+                                               "\">", raw.token, "</span>"))
+                    placeholder <- UniquePlaceholders(1)
+                    token.placeholders <- c(token.placeholders, placeholder)
+                    new.text <- sub(patt[ind[k]], placeholder,
+                                    new.text, ignore.case = TRUE, perl = TRUE)
                 }
             }
         }
-        new.text <- paste0(new.text, substr(tmp.text, tmp.pos+1, tmp.len))
+
+        # replace token placeholders with tags
+        for (k in seq_len(length(raw.token.tags)))
+            new.text <- sub(token.placeholders[k], raw.token.tags[k], new.text,
+                            ignore.case = TRUE, perl = TRUE)
+
+        # replace raw replacements placeholders with formatted tags
+        for (i in seq_len(length(raw.repl)))
+        {
+            tag <- paste0("<span class='raw-replacement' title='Replaced with: XL'>", raw.repl[[i]]$replaced,
+                          "</span>")
+            new.text <- sub(raw.repl.placeholders[i], tag, new.text)
+        }
+
         orig.text[j] <- new.text
+
+        # Transformed text
+        for (k in 1:length(trans.tokens.j))
+            if (!is.na(ind[k]))
+                # Add formatting to transformed text
+                trans.tokens[[j]][k] <- paste0("<span class=\"word",
+                                               ind[k], "\">",
+                                               trans.tokens[[j]][k],
+                                               "</span>")
     }
 
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
