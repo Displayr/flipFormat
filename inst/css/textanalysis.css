@@ -15,7 +15,7 @@
     top: calc(100vh - 50px);
 }
 
-#left-panel {
+#text-panel {
     resize: horizontal;
     height: calc(100vh - 50px);
     overflow-y: scroll;
@@ -25,7 +25,7 @@
 
 }
 
-#right-panel {
+#ngrams-panel {
     resize: horizontal;
     overflow-y: scroll;
     overflow-x: auto;

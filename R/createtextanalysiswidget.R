@@ -43,13 +43,12 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
         addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
-    addRightPanel(colored.text$n.grams, cata)
-    addLeftPanel(colored.text$text,
+    addNGramsPanel(colored.text$n.grams, cata)
+    addTextPanel(colored.text$text,
                  raw.and.normalized.text[["Row Numbers"]],
                  raw.and.normalized.text[["Variable Numbers"]],
                  raw.and.normalized.text[["Variable Names"]],
                  cata)
-    #addRightPanel(colored.text$n.grams, cata)
 
     cata("<div id=\"footer-container\">")
     cata(paste0("<p id=\"footer\">", footer,"</p>"))
@@ -242,7 +241,7 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
 }
 
 #' @importFrom htmltools htmlEscape
-addLeftPanel <- function(raw.and.normalized.text, row.numbers,
+addTextPanel <- function(raw.and.normalized.text, row.numbers,
                          variable.numbers, variable.names, cata)
 {
     if (!is.null(variable.numbers) && !is.null(variable.names) && all(is.finite(variable.numbers)))
@@ -250,7 +249,7 @@ addLeftPanel <- function(raw.and.normalized.text, row.numbers,
     t.rownames <- if (!is.null(row.numbers) || !is.null(variable.numbers)) cbind(variable.numbers, row.numbers)
                   else                                                     rownames(raw.and.normalized.text)
 
-    cata("<div id=\"left-panel\">")
+    cata("<div id=\"text-panel\">")
 
         t <- cbind(t.rownames, raw.and.normalized.text)
         tmp.col.names <- c("Case", "Raw text", "Normalized text")
@@ -266,12 +265,12 @@ addLeftPanel <- function(raw.and.normalized.text, row.numbers,
     cata("</div>") # end panel div
 }
 
-addRightPanel <- function(n.gram.frequencies, cata)
+addNGramsPanel <- function(n.gram.frequencies, cata)
 {
     t <- n.gram.frequencies
     names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
-    cata("<div id=\"right-panel\">")
+    cata("<div id=\"ngrams-panel\">")
     cata(knitr::kable(t, align = c("l", "c", "c"),
                       format = "html", escape = FALSE,
                       table.attr = "class=\"text-analysis-table\""))
