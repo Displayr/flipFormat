@@ -215,8 +215,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         # replace raw replacements placeholders with formatted tags
         for (i in seq_len(length(raw.repl)))
         {
-            tag <- paste0("<span class='raw-replacement' title='Replaced with: XL'>", raw.repl[[i]]$replaced,
-                          "</span>")
+            tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
+                          raw.repl[[i]]$replacement, "'>",
+                          raw.repl[[i]]$replaced, "</span>")
             new.text <- sub(raw.repl.placeholders[i], tag, new.text)
         }
 
