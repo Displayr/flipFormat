@@ -170,7 +170,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                 if (i < n.raw.repl)
                     new.text <- paste0(new.text,
                                        substr(orig.text[j], end.ind[i] + 1,
-                                              start.ind[i + 1]))
+                                              start.ind[i + 1] - 1))
                 else
                     new.text <- paste0(new.text,
                                        substr(orig.text[j], end.ind[i] + 1,
