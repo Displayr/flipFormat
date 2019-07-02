@@ -260,7 +260,7 @@ escapeHTML <- function(x)
 escWord <- function(x)
 {
     prefix <- ifelse(grepl("^[a-zA-Z0-9_]", x, perl = TRUE), "\\b\\Q", "\\Q")
-    suffix <- ifelse(grepl("[a-zA-Z0-0_]$", x, perl = TRUE), "\\E\\b", "\\E")
+    suffix <- ifelse(grepl("[a-zA-Z0-9_]$", x, perl = TRUE), "\\E\\b", "\\E")
     return(paste0(prefix, x, suffix))
 }
 
