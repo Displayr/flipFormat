@@ -11,7 +11,7 @@ LazyData: TRUE
 Imports:
     colorspace,
     DT,
-    flipU(>= 1.0.2),
+    flipU(>= 1.2.5),
     formattable,
     htmltools,
     htmlwidgets,

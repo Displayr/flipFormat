@@ -154,7 +154,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         {
             raw.repl <- text$`Raw replacement info`[raw.repl.ind]
             n.raw.repl <- length(raw.repl)
-            raw.repl.placeholders <- UniquePlaceholders(n.raw.repl)
+            raw.repl.placeholders <- UniquePlaceholders(n.raw.repl,
+                                                        padding = "-")
             ord <- order(sapply(raw.repl, function(x) x$start.end[1]))
             raw.repl <- raw.repl[ord]
             start.ind <- sapply(raw.repl, function(x) x$start.end[1])
@@ -199,7 +200,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                     raw.token.tags <- c(raw.token.tags,
                                         paste0("<span class=\"word", ind[k],
                                                "\">", raw.token, "</span>"))
-                    placeholder <- UniquePlaceholders(1)
+                    placeholder <- UniquePlaceholders(1, padding = "-")
                     token.placeholders <- c(token.placeholders, placeholder)
                     new.text <- sub(patt[ind[k]], placeholder,
                                     new.text, ignore.case = TRUE, perl = TRUE)
