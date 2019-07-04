@@ -58,6 +58,7 @@
 }
 
 .text-analysis-table th {
+    overflow-x: auto;      /* needed to make table columns resizable */
     resize: horizontal;
     hyphens: auto;
 }
