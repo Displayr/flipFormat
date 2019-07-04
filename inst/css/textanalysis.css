@@ -58,13 +58,11 @@
 }
 
 .text-analysis-table th {
-    overflow: auto;
     resize: horizontal;
     hyphens: auto;
 }
 
 .text-analysis-table td {
-    overflow: auto;
     padding-left: 5px;
     padding-right: 5px;
     word-break: break-word; /* only break words in cells not table headers */
