@@ -119,7 +119,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         replace.ind <- which(subs[,2] == n.grams[i,1])
         tmp.subs <- unique(subs[replace.ind,1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
-        tooltips[i] <- paste(escapeHTML(tmp.subs), collapse = ", ")
+        tooltips[i] <- paste(escapeQuotesForHTML(tmp.subs), collapse = ", ")
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
@@ -217,7 +217,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         for (i in seq_len(length(raw.repl)))
         {
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
-                          raw.repl[[i]]$replacement, "'>",
+                          escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
                           raw.repl[[i]]$replaced, "</span>")
             new.text <- sub(raw.repl.placeholders[i], tag, new.text)
         }
@@ -247,13 +247,6 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
 }
 
-escapeHTML <- function(x)
-{
-    return(gsub('"', '', x, fixed = TRUE))
-
-}
-
-
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
 #  Usually we only want to match whole words, but wordbreak ('\b')
@@ -263,6 +256,15 @@ escWord <- function(x)
     prefix <- ifelse(grepl("^[a-zA-Z0-9_]", x, perl = TRUE), "\\b\\Q", "\\Q")
     suffix <- ifelse(grepl("[a-zA-Z0-9_]$", x, perl = TRUE), "\\E\\b", "\\E")
     return(paste0(prefix, x, suffix))
+}
+
+# Escape single and double quotes to be used in HTML attributes such as title
+# which is used for tooltips
+escapeQuotesForHTML <- function(x)
+{
+    x <- gsub("\"", "&#34;", x, fixed = TRUE)
+    x <- gsub("'", "&#39;", x, fixed = TRUE)
+    x
 }
 
 setAlpha <- function(col, alpha)
