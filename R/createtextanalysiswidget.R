@@ -33,6 +33,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata <- createCata(tfile)
 
     addCss("table.css", cata)
+    addCss("details.css", cata)
     addCss("textanalysis.css", cata)
 
     stylefile <- createTempFile()
@@ -43,17 +44,22 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
         addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
+    cata("<div class=\"vertical-container\">")
+    cata("<div class=\"top-container\">")
     addNGramsPanel(colored.text$n.grams, cata)
     addTextPanel(colored.text$text,
                  raw.and.normalized.text[["Row Numbers"]],
                  raw.and.normalized.text[["Variable Numbers"]],
                  raw.and.normalized.text[["Variable Names"]],
                  cata)
+    cata("</div>", fill = TRUE) # end top-container div
+
+    addDiagnosticsPanel(cata)
+    cata("</div>", fill = TRUE) # end vertical-container div
 
     cata("<div id=\"footer-container\">")
     cata(paste0("<p id=\"footer\">", footer,"</p>"))
     cata("</div>", fill = TRUE) # end footer-container div
-
     cata("</div>", fill = TRUE) # end main-container div
 
     createWidgetFromFile(tfile)
@@ -339,6 +345,49 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
                       format = "html", escape = FALSE,
                       table.attr = "class=\"text-analysis-table\""))
     cata("</div>") # end panel div
+}
+
+addDiagnosticsPanel <- function(cata)
+{
+    cata("<div class=\"bottom-container\">")
+    cata("<div class=\"diagnostics-container\">")
+
+    cata("<span class=\"diagnostics-title\">Diagnostics</span>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Raw text replacements</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Required categories</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Delimiters</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Conditional delimiters</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Splits by known categories</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Category replacements</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Spelling corrections</summary>")
+    cata("</tbody></table></details>")
+
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Discarded categories</summary>")
+    cata("</tbody></table></details>")
+
+    cata("</div>", fill = TRUE) # end diagnostics-container div
+    cata("</div>", fill = TRUE) # end bottom-container div
 }
 
 createWidgetFromFile <- function(tfile)

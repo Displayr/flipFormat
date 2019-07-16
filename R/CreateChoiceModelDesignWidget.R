@@ -37,6 +37,7 @@ CreateChoiceModelDesignWidget <- function(x,
     ## add CSS
     addCss("table.css", cata)
     addCss("cmd.css", cata)
+    addCss("details.css", cata)
     if (!is.null(css))
       addCss(css, cata, in.css.folder = FALSE)
 
