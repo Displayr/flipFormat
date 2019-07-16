@@ -15,6 +15,7 @@
 #'      old tokens as they appeared in the original text (column 1) to the
 #'      normalized tokens (column 2).
 #' @param footer Character; footer to show at the bottom of the output.
+#' @param show.diagnostics One of "No", "Yes", "Half",
 #' @return An \code{htmlwidget} containing diagnostic information for
 #'     the experimental design, including D-error, standard errors,
 #'     frequenices, pairwise frequencies, the labeled design, and
@@ -25,7 +26,8 @@
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
                                      token.substitutions,
-                                     footer = "")
+                                     footer = "",
+                                     show.diagnostics = "No")
 {
     raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
 
@@ -45,16 +47,14 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     cata("<div class=\"main-container\">")
     cata("<div class=\"vertical-container\">")
-    cata("<div class=\"top-container\">")
-    addNGramsPanel(colored.text$n.grams, cata)
-    addTextPanel(colored.text$text,
-                 raw.and.normalized.text[["Row Numbers"]],
-                 raw.and.normalized.text[["Variable Numbers"]],
-                 raw.and.normalized.text[["Variable Names"]],
-                 cata)
-    cata("</div>", fill = TRUE) # end top-container div
 
-    addDiagnosticsPanel(cata)
+    if (show.diagnostics != "Yes")
+        addTopPanel(cata, show.diagnostics, colored.text,
+                    raw.and.normalized.text)
+
+    if (show.diagnostics != "No")
+        addDiagnosticsPanel(cata, show.diagnostics)
+
     cata("</div>", fill = TRUE) # end vertical-container div
 
     cata("<div id=\"footer-container\">")
@@ -250,7 +250,6 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
                 stringsAsFactors = FALSE)))
-
 }
 
 #  Escapes characters from pattern (e.g. '"', ''', '+').
@@ -347,43 +346,77 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     cata("</div>") # end panel div
 }
 
-addDiagnosticsPanel <- function(cata)
+addTopPanel <- function(cata, show.diagnostics, colored.text,
+                        raw.and.normalized.text)
 {
-    cata("<div class=\"bottom-container\">")
+    if (show.diagnostics == "No")
+        cata("<div class=\"top-container top-container-full\">")
+    else if (show.diagnostics == "Half")
+        cata("<div class=\"top-container top-container-half\">")
+
+    addNGramsPanel(colored.text$n.grams, cata)
+    addTextPanel(colored.text$text,
+                 raw.and.normalized.text[["Row Numbers"]],
+                 raw.and.normalized.text[["Variable Numbers"]],
+                 raw.and.normalized.text[["Variable Names"]],
+                 cata)
+    cata("</div>", fill = TRUE) # end top-container div
+}
+
+addDiagnosticsPanel <- function(cata, show.diagnostics)
+{
+    if (show.diagnostics == "Yes")
+        cata("<div class=\"bottom-container bottom-container-full\">")
+    else # show.diagnostics == "Half"
+        cata("<div class=\"bottom-container bottom-container-half\">")
+
     cata("<div class=\"diagnostics-container\">")
 
     cata("<span class=\"diagnostics-title\">Diagnostics</span>")
 
+    # For each replacement, show cases where raw text has been replaced
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Raw text replacements</summary>")
     cata("</tbody></table></details>")
 
+    # For each manual category, show cases
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Required categories</summary>")
     cata("</tbody></table></details>")
 
+    # For each delimiter, show cases which contain the delimiter
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Delimiters</summary>")
     cata("</tbody></table></details>")
 
+    # For each conditional delimiter, show cases with conditional delimiter
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Conditional delimiters</summary>")
     cata("</tbody></table></details>")
 
+    # For each split, show cases with split
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Splits by known categories</summary>")
     cata("</tbody></table></details>")
 
+    # For each replacement, show cases with replacements
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Category replacements</summary>")
     cata("</tbody></table></details>")
 
+    # Spelling corrections, showing cases for each correction
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Spelling corrections</summary>")
     cata("</tbody></table></details>")
 
+    # Categories that have been discarded, showing cases
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Discarded categories</summary>")
+    cata("</tbody></table></details>")
+
+    # Categories below minimum frequency, showing cases
+    cata("<details class=\"details\">")
+    cata("<summary class=\"summary\">Categories below minimum frequency</summary>")
     cata("</tbody></table></details>")
 
     cata("</div>", fill = TRUE) # end diagnostics-container div

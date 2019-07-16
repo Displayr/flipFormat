@@ -15,7 +15,6 @@
 
 .top-container {
     width: 100%;
-    height: 50%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -23,7 +22,26 @@
     overflow-x: auto;
 }
 
+.top-container-full {
+    height: 100%;
+}
+
+.top-container-half {
+    height: 50%;
+}
+
 .bottom-container {
+    overflow-y: scroll;
+    display: flex;
+}
+
+.bottom-container-full {
+    overflow-y: scroll;
+    display: flex;
+    height: 100%;
+}
+
+.bottom-container-half {
     overflow-y: scroll;
     display: flex;
     height: 50%;
