@@ -11,23 +11,18 @@
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
+    overflow: auto;
 }
 
 .top-container {
     width: 100%;
+    height: calc(100vh - 120px);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: stretch;
     overflow-x: auto;
-}
-
-.top-container-full {
-    height: 100%;
-}
-
-.top-container-half {
-    height: 50%;
+    padding-top: 10px;
 }
 
 .bottom-container {

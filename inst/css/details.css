@@ -3,7 +3,7 @@ summary {
     background: #F2F5FA;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     color: #151A1C;
-    font-size: 15px;
+    font-size: 16px;
     margin-top: 10px;
     user-select: none;
     /* margin-bottom: 10px; */
@@ -25,4 +25,8 @@ summary {
 details summary::-webkit-details-marker{
     color: #3E7DCC;
     margin-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.sub-details {
+  font-size: 14px;
 }
