@@ -39,13 +39,14 @@ before_install:
   - mkdir -p ~/.R/
   - echo "CXX = g++-6" >> ~/.R/Makevars
   - echo "CXXFLAGS = `R CMD config CXXFLAGS` -g0 -flto -Wno-unused-local-typedefs" >> ~/.R/Makevars
-  - echo "CXXFLAGS += -Wno-ignored-attributes -Wno-deprecated-declerations" >> ~/.R/Makevars
+  - echo "CXXFLAGS += -Wno-ignored-attributes -Wno-deprecated-declarations" >> ~/.R/Makevars
   - echo "CXX_STD = CXX14" >> ~/.R/Makevars
   - echo "CXX14 = g++-6" >> ~/.R/Makevars
   - echo "CXX14PICFLAGS = -fpic" >> ~/.R/Makevars
   - export CLANG_EXTRA_ARG=""
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
+  - Rscript tools/travis_run_before_install.R
 
 r_packages:
   - devtools
