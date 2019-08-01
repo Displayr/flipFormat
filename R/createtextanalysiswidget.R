@@ -377,6 +377,7 @@ addDiagnosticsPanel <- function(cata, diagnostics)
     # For each manual category, show cases
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details\">Required categories</summary>")
+    requiredCategoriesDiagnostic(cata, diagnostics$required.categories)
     cata("</details>")
 
     # For each delimiter, show cases which contain the delimiter
@@ -438,26 +439,53 @@ rawTextReplacementDiagnostic <- function(cata, info)
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
-        if (length(elem$raw.text) > 0)
-        {
-            t <- cbind(elem$raw.text.var.num, elem$raw.text.case.num,
-                       htmlEscape(elem$raw.text))
-            colnames(t) <- c("Var", "Case", "Raw text")
-            cata(kable(t, align = c("c", "c", "l"), format = "html",
-                       escape = FALSE,
-                       table.attr = "class=\"diagnostics-table\""))
-        }
-        else
-        {
-            t <- matrix(htmlEscape("<NO CASES FOUND>"))
-            colnames(t) <- "Raw text"
-            cata(kable(t, align = c("l"), format = "html",
-                       escape = FALSE, table.attr = "class=\"diagnostics-table\""))
-        }
+        rawCasesTable(cata, elem)
 
         cata("</div>")
     }
     cata("</div>")
+}
+
+requiredCategoriesDiagnostic <- function(cata, info)
+{
+    cata("<div class=\"diagnostics-group\">")
+
+    for (elem in info)
+    {
+        cata("<div class=\"diagnostics-block\">")
+
+        t <- matrix(htmlEscape(elem$required.category))
+        colnames(t) <- "Required"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        rawCasesTable(cata, elem)
+
+        cata("</div>")
+    }
+    cata("</div>")
+}
+
+# Create table to display raw cases. obj contains the raw text along with the
+# corresponding variable numbers and case numbers.
+rawCasesTable <- function(cata, obj)
+{
+    if (length(obj$raw.text) > 0)
+    {
+        t <- cbind(obj$raw.text.var.num, obj$raw.text.case.num,
+                   htmlEscape(obj$raw.text))
+        colnames(t) <- c("Var", "Case", "Raw text")
+        cata(kable(t, align = c("c", "c", "l"), format = "html",
+                   escape = FALSE,
+                   table.attr = "class=\"diagnostics-table\""))
+    }
+    else
+    {
+        t <- matrix(htmlEscape("<NO CASES FOUND>"))
+        colnames(t) <- "Raw text"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+    }
 }
 
 createWidgetFromFile <- function(tfile)
