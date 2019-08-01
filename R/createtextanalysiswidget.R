@@ -201,8 +201,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                     raw.token <- substr(new.text, mpos,
                                         mpos + attr(mpos, "match.length") - 1)
                     raw.token.tags <- c(raw.token.tags,
-                                        paste0("<span class=\"word", ind[k],
-                                               "\">", raw.token, "</span>"))
+                                        paste0("<span class=\"word", ind[k], "\">",
+                                               htmlEscape(raw.token),
+                                               "</span>"))
                     placeholder <- UniquePlaceholders(1, padding = "-")
                     token.placeholders <- c(token.placeholders, placeholder)
                     new.text <- sub(patt[ind[k]], placeholder,
@@ -221,7 +222,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         {
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
-                          raw.repl[[i]]$replaced, "</span>")
+                          htmlEscape(raw.repl[[i]]$replaced), "</span>")
             new.text <- sub(raw.repl.placeholders[i], tag, new.text)
         }
 
@@ -231,9 +232,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         for (k in 1:length(trans.tokens.j))
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
-                trans.tokens[[j]][k] <- paste0("<span class=\"word",
-                                               ind[k], "\">",
-                                               trans.tokens[[j]][k],
+                trans.tokens[[j]][k] <- paste0("<span class=\"word", ind[k], "\">",
+                                               htmlEscape(trans.tokens[[j]][k]),
                                                "</span>")
     }
 
@@ -242,7 +242,8 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"", tooltips, "\">", n.grams[,1], "</span>")
+        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"",
+                              tooltips, "\">", htmlEscape(n.grams[,1]), "</span>")
 
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
@@ -427,21 +428,32 @@ rawTextReplacementDiagnostic <- function(cata, info)
     {
         cata("<div class=\"diagnostics-block\">")
 
-        t <- matrix(elem$replacement)
+        t <- matrix(htmlEscape(elem$replacement))
         colnames(t) <- "Replacement"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
-        t <- matrix(elem$to.be.replaced)
+        t <- matrix(htmlEscape(elem$to.be.replaced))
         colnames(t) <- "Replaced"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
-        t <- cbind(elem$raw.text.var.num, elem$raw.text.case.num,
-                   elem$raw.text)
-        colnames(t) <- c("Var", "Case", "Raw text")
-        cata(kable(t, align = c("c", "c", "l"), format = "html",
-                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+        if (length(elem$raw.text) > 0)
+        {
+            t <- cbind(elem$raw.text.var.num, elem$raw.text.case.num,
+                       htmlEscape(elem$raw.text))
+            colnames(t) <- c("Var", "Case", "Raw text")
+            cata(kable(t, align = c("c", "c", "l"), format = "html",
+                       escape = FALSE,
+                       table.attr = "class=\"diagnostics-table\""))
+        }
+        else
+        {
+            t <- matrix(htmlEscape("<NO CASES FOUND>"))
+            colnames(t) <- "Raw text"
+            cata(kable(t, align = c("l"), format = "html",
+                       escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+        }
 
         cata("</div>")
     }
