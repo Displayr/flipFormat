@@ -124,3 +124,43 @@ test_that("Text analysis output",
                                        token.substitution, footer)
     expect_is(result, "htmlwidget")
 })
+
+test_that("Raw text diagnostics",
+{
+    diagnostics <- list(raw.text.replacements = list(list(replacement = "Qualtrics, Decipher",
+      to.be.replaced = "Qualtics and Decipher", rows = 1115L, raw.text = "Qualtics and Decipher",
+      raw.text.var.num = 1, raw.text.case.num = 1115L)), required.categories = list(),
+      category.replacements = list(), conditional.delimitations = list(
+          raw.text = character(0), raw.text.var.num = numeric(0),
+          raw.text.case.num = integer(0)), known.category.splits = list(),
+      spelling.corrections = list(list(corrected = "E-tabs", correction = "etabs",
+          rows = c(662L, 1479L, 1576L), raw.text = c("E-tabs\r\nSPSS",
+          "e-tabs", "E-Tabs, Wincross, SPSS"), raw.text.var.num = c(1,
+          1, 1), raw.text.case.num = c(662L, 1479L, 1576L)), list(
+          corrected = "Excle", correction = "Excel", rows = 531L,
+          raw.text = "SPSS, Excle, Tableau", raw.text.var.num = 1,
+          raw.text.case.num = 531L), list(corrected = "dimension",
+          correction = "Dimensions", rows = c(1011L, 1046L), raw.text = c("dimension, spss,",
+          "Dimension"), raw.text.var.num = c(1, 1), raw.text.case.num = c(1011L,
+          1046L)), list(corrected = "excell", correction = "Excel",
+          rows = c(766L, 802L), raw.text = c("excell", "excell"
+          ), raw.text.var.num = c(1, 1), raw.text.case.num = c(766L,
+          802L)), list(corrected = "SPSS/Dimensions", correction = "SPSS Dimensions",
+          rows = 1147L, raw.text = "SPSS/Dimensions, Reporter, Excel",
+          raw.text.var.num = 1, raw.text.case.num = 1147L), list(
+          corrected = "Quamtum", correction = "Quantum", rows = 1563L,
+          raw.text = "Quamtum", raw.text.var.num = 1, raw.text.case.num = 1563L),
+          list(corrected = "Dimension desktop reporter", correction = "Dimensions desktop reporter",
+              rows = 1515L, raw.text = "Dimension desktop reporter",
+              raw.text.var.num = 1, raw.text.case.num = 1515L),
+          list(corrected = "spss. ibm dimension", correction = "spss. ibm Dimensions",
+              rows = 242L, raw.text = "spss. ibm dimension", raw.text.var.num = 1,
+              raw.text.case.num = 242L), list(corrected = "propriettary",
+              correction = "proprietary", rows = 1556L, raw.text = "propriettary",
+              raw.text.var.num = 1, raw.text.case.num = 1556L)),
+      discarded.categories = list(), low.freq.categories = list())
+
+    result <- CreateTextAnalysisWidget(raw.and.normalized.text,
+                                       n.gram.frequencies,
+                                       token.substitution, footer, diagnostics)
+})

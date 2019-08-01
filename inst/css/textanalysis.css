@@ -116,3 +116,29 @@
     margin-top: 10px;
     width: 100%;
 }
+
+.diagnostics-text {
+    display: block;
+}
+
+.diagnostics-table {
+    font-size: 12px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.diagnostics-table td {
+    padding-left: 5px;
+    padding-right: 5px;
+    word-break: break-word; /* only break words in cells not table headers */
+    hyphens: auto;
+}
+
+.diagnostics-block {
+    display: flex;
+}
+
+.diagnostics-group {
+    padding-top: 10px;
+}

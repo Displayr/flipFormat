@@ -10,25 +10,22 @@
 #'   fourth element, "Variable Start Indices", contains the a named numeric
 #'   vector corresponding to the start indices of each variable in the text.
 #' @param n.gram.frequencies A data frame with two variables, the first being
-#'     the n-gram and the second being the frequencies.
+#'   the n-gram and the second being the frequencies.
 #' @param token.substitutions A character matrix with two columns mapping the
-#'      old tokens as they appeared in the original text (column 1) to the
-#'      normalized tokens (column 2).
+#'   old tokens as they appeared in the original text (column 1) to the
+#'   normalized tokens (column 2).
 #' @param footer Character; footer to show at the bottom of the output.
-#' @param show.diagnostics Logical, whether to show the diagnostics as part of
-#'   the output.
-#' @return An \code{htmlwidget} containing diagnostic information for
-#'     the experimental design, including D-error, standard errors,
-#'     frequenices, pairwise frequencies, the labeled design, and
-#'     prior information. An attribute called \code{"ChartData"} also
-#'     contains the labeled design.
+#' @param diagnostics A list containing diagnostic information to be shown in
+#'   the diagnostic output.
+#' @return An \code{htmlwidget} containing tables showing the output from a
+#'   text analysis.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
 CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
                                      token.substitutions,
                                      footer = "",
-                                     show.diagnostics = FALSE)
+                                     diagnostics = NULL)
 {
     raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
 
@@ -52,8 +49,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     addTopPanel(cata, colored.text,
                 raw.and.normalized.text)
 
-    if (show.diagnostics)
-        addDiagnosticsPanel(cata)
+    if (!is.null(diagnostics))
+        addDiagnosticsPanel(cata, diagnostics)
 
     cata("</div>", fill = TRUE) # end vertical-container div
 
@@ -310,6 +307,7 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
 }
 
 #' @importFrom htmltools htmlEscape
+#' @importFrom knitr kable
 addTextPanel <- function(raw.and.normalized.text, row.numbers,
                          variable.numbers, variable.names, cata)
 {
@@ -327,9 +325,8 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
 
         names(t) <- tmp.col.names
         rownames(t) <- NULL
-        cata(knitr::kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
-                          escape = FALSE,
-                          table.attr = "class=\"text-analysis-table\""))
+        cata(kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"text-analysis-table\""))
 
     cata("</div>") # end panel div
 }
@@ -340,9 +337,8 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
     cata("<div id=\"ngrams-panel\">")
-    cata(knitr::kable(t, align = c("l", "c", "c"),
-                      format = "html", escape = FALSE,
-                      table.attr = "class=\"text-analysis-table\""))
+    cata(kable(t, align = c("l", "c", "c"), format = "html", escape = FALSE,
+               table.attr = "class=\"text-analysis-table\""))
     cata("</div>") # end panel div
 }
 
@@ -364,7 +360,7 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text)
     cata("</details>")
 }
 
-addDiagnosticsPanel <- function(cata)
+addDiagnosticsPanel <- function(cata, diagnostics)
 {
     cata("<details class=\"details\">")
     cata("<summary class=\"summary\">Diagnostics</summary>")
@@ -374,6 +370,7 @@ addDiagnosticsPanel <- function(cata)
     # For each replacement, show cases where raw text has been replaced
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details\">Raw text replacements</summary>")
+    rawTextReplacementDiagnostic(cata, diagnostics$raw.text.replacements)
     cata("</details>")
 
     # For each manual category, show cases
@@ -420,6 +417,35 @@ addDiagnosticsPanel <- function(cata)
     cata("</div>", fill = TRUE) # end bottom-container div
 
     cata("</details>")
+}
+
+rawTextReplacementDiagnostic <- function(cata, info)
+{
+    cata("<div class=\"diagnostics-group\">")
+
+    for (elem in info)
+    {
+        cata("<div class=\"diagnostics-block\">")
+
+        t <- matrix(elem$replacement)
+        colnames(t) <- "Replacement"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        t <- matrix(elem$to.be.replaced)
+        colnames(t) <- "Replaced"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        t <- cbind(elem$raw.text.var.num, elem$raw.text.case.num,
+                   elem$raw.text)
+        colnames(t) <- c("Var", "Case", "Raw text")
+        cata(kable(t, align = c("c", "c", "l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        cata("</div>")
+    }
+    cata("</div>")
 }
 
 createWidgetFromFile <- function(tfile)
