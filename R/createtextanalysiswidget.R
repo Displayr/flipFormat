@@ -164,9 +164,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             start.ind <- sapply(raw.repl, function(x) x$start.end[1])
             end.ind <- sapply(raw.repl, function(x) x$start.end[2])
 
-            new.text <- character(0)
-            new.text <- paste0(new.text,
-                               substr(orig.text[j], 1, start.ind[1] - 1))
+            new.text <- substr(orig.text[j], 1, start.ind[1] - 1)
             for (i in seq_len(n.raw.repl))
             {
                 new.text <- paste0(new.text, raw.repl.placeholders[i])
@@ -244,6 +242,9 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     if (nrow(n.grams) > 0)
         n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"",
                               tooltips, "\">", htmlText(n.grams[,1]), "</span>")
+
+    # Replace any newline characters with <br>
+    orig.text <- gsub("\r\n|\n\r|\n|\r", "<br>", orig.text)
 
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
