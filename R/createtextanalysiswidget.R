@@ -202,7 +202,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
                                         mpos + attr(mpos, "match.length") - 1)
                     raw.token.tags <- c(raw.token.tags,
                                         paste0("<span class=\"word", ind[k], "\">",
-                                               htmlEscape(raw.token),
+                                               htmlText(raw.token),
                                                "</span>"))
                     placeholder <- UniquePlaceholders(1, padding = "-")
                     token.placeholders <- c(token.placeholders, placeholder)
@@ -222,7 +222,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         {
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
-                          htmlEscape(raw.repl[[i]]$replaced), "</span>")
+                          htmlText(raw.repl[[i]]$replaced), "</span>")
             new.text <- sub(raw.repl.placeholders[i], tag, new.text)
         }
 
@@ -233,7 +233,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
                 trans.tokens[[j]][k] <- paste0("<span class=\"word", ind[k], "\">",
-                                               htmlEscape(trans.tokens[[j]][k]),
+                                               htmlText(trans.tokens[[j]][k]),
                                                "</span>")
     }
 
@@ -243,7 +243,7 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
         n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"",
-                              tooltips, "\">", htmlEscape(n.grams[,1]), "</span>")
+                              tooltips, "\">", htmlText(n.grams[,1]), "</span>")
 
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
@@ -371,7 +371,7 @@ addDiagnosticsPanel <- function(cata, diagnostics)
     # For each replacement, show cases where raw text has been replaced
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details\">Raw text replacements</summary>")
-    rawTextReplacementDiagnostic(cata, diagnostics$raw.text.replacements)
+    rawTextReplacementDiagnostic(cata, diagnostics$raw.text.replacement)
     cata("</details>")
 
     # For each manual category, show cases
@@ -383,11 +383,13 @@ addDiagnosticsPanel <- function(cata, diagnostics)
     # For each delimiter, show cases which contain the delimiter
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details\">Delimiters</summary>")
+    delimitersDiagnostic(cata, diagnostics$delimiters)
     cata("</details>")
 
     # For each conditional delimiter, show cases with conditional delimiter
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details\">Conditional delimiters</summary>")
+    conditionalDelimitersDiagnostic(cata, diagnostics$conditional.delimiters)
     cata("</details>")
 
     # For each split, show cases with split
@@ -429,12 +431,12 @@ rawTextReplacementDiagnostic <- function(cata, info)
     {
         cata("<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlEscape(elem$replacement))
+        t <- matrix(htmlText(elem$replacement))
         colnames(t) <- "Replacement"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
-        t <- matrix(htmlEscape(elem$to.be.replaced))
+        t <- matrix(htmlText(elem$to.be.replaced))
         colnames(t) <- "Replaced"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
@@ -454,7 +456,45 @@ requiredCategoriesDiagnostic <- function(cata, info)
     {
         cata("<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlEscape(elem$required.category))
+        t <- matrix(htmlText(elem$required.category))
+        colnames(t) <- "Required"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        rawCasesTable(cata, elem)
+
+        cata("</div>")
+    }
+    cata("</div>")
+}
+
+delimitersDiagnostic <- function(cata, info)
+{
+    cata("<div class=\"diagnostics-group\">")
+    for (elem in info)
+    {
+        cata("<div class=\"diagnostics-block\">")
+
+        t <- matrix(htmlText(elem$delimiter))
+        colnames(t) <- "Delimiter"
+        cata(kable(t, align = c("l"), format = "html",
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
+
+        rawCasesTable(cata, elem)
+
+        cata("</div>")
+    }
+    cata("</div>")
+}
+
+conditionalDelimitersDiagnostic <- function(cata, info)
+{
+    cata("<div class=\"diagnostics-group\">")
+    for (elem in info)
+    {
+        cata("<div class=\"diagnostics-block\">")
+
+        t <- matrix(htmlText(elem$conditional.delimiter))
         colnames(t) <- "Required"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
@@ -470,10 +510,16 @@ requiredCategoriesDiagnostic <- function(cata, info)
 # corresponding variable numbers and case numbers.
 rawCasesTable <- function(cata, obj)
 {
+    cata("<div class=\"diagnostics-raw-cases\">")
     if (length(obj$raw.text) > 0)
     {
         t <- cbind(obj$raw.text.var.num, obj$raw.text.case.num,
-                   htmlEscape(obj$raw.text))
+                   htmlText(obj$raw.text))
+        if (obj$is.max.exceeded)
+            t <- rbind(t, c("", "", htmlText(paste0("<TABLE TRUNCATED. ",
+                                                      obj$n.omitted.rows,
+                                                      " ROWS OMITTED>"))))
+
         colnames(t) <- c("Var", "Case", "Raw text")
         cata(kable(t, align = c("c", "c", "l"), format = "html",
                    escape = FALSE,
@@ -481,11 +527,17 @@ rawCasesTable <- function(cata, obj)
     }
     else
     {
-        t <- matrix(htmlEscape("<NO CASES FOUND>"))
+        t <- matrix(htmlText("<NO CASES FOUND>"))
         colnames(t) <- "Raw text"
         cata(kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
     }
+    cata("</div>")
+}
+
+htmlText <- function(html)
+{
+    gsub("\r\n|\n\r|\n|\r", "<br>", htmlEscape(html))
 }
 
 createWidgetFromFile <- function(tfile)
