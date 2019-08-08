@@ -1,3 +1,9 @@
+findInstDirFile <- function(file)
+{
+  file.path(system.file("testdata", package = "flipFormat", mustWork = TRUE),
+            file)
+}
+
 raw.and.normalized.text <- list(`Original Text` = c("Aim to higlight ai. Raindrops on roses and whiskers on kittens",
   "Bright copper kettles and warm woolen mittens", "Brown paper packages tied up with strings",
   "These are a few of my favorite things", "Cream colored ponies and crisp apple streudels",
@@ -123,4 +129,13 @@ test_that("Text analysis output",
                                        n.gram.frequencies,
                                        token.substitution, footer)
     expect_is(result, "htmlwidget")
+})
+
+test_that("Raw text diagnostics",
+{
+    load(findInstDirFile("text.analysis.diagnostics.rda"))
+    result <- CreateTextAnalysisWidget(raw.and.normalized.text,
+                                       n.gram.frequencies,
+                                       token.substitution, footer,
+                                       text.analysis.diagnostics)
 })

@@ -5,7 +5,7 @@
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  token.substitutions, footer = "")
+  token.substitutions, footer = "", diagnostics = NULL)
 }
 \arguments{
 \item{raw.and.normalized.text}{A list containing the raw and normalized
@@ -24,13 +24,13 @@ old tokens as they appeared in the original text (column 1) to the
 normalized tokens (column 2).}
 
 \item{footer}{Character; footer to show at the bottom of the output.}
+
+\item{diagnostics}{A list containing diagnostic information to be shown in
+the diagnostic output.}
 }
 \value{
-An \code{htmlwidget} containing diagnostic information for
-    the experimental design, including D-error, standard errors,
-    frequenices, pairwise frequencies, the labeled design, and
-    prior information. An attribute called \code{"ChartData"} also
-    contains the labeled design.
+An \code{htmlwidget} containing tables showing the output from a
+  text analysis.
 }
 \description{
 Creates a \code{htmlwidget} summary of diagnostic information for a
