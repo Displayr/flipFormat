@@ -631,30 +631,35 @@ discardedCategoriesDiagnostic <- function(info)
 lowFrequencyCategoriesDiagnostic <- function(info)
 {
     html <- "<div class=\"diagnostics-group\">"
-    html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-    t <- matrix("", nrow = sum(sapply(info, function(x) length(x$raw.text))),
-                ncol = 4)
-    colnames(t) <- c("Discarded", "Var", "Case", "Raw text")
-
-    ind <- 1
-    for (elem in info)
+    if (length(info) > 0)
     {
-        n.raw.text <- length(elem$raw.text)
-        ind.raw.text <- ind:(ind + n.raw.text - 1)
-        t[ind, 1] <- elem$low.freq.category
-        t[ind.raw.text, 2] <- elem$raw.text.var.num
-        t[ind.raw.text, 3] <- elem$raw.text.case.num
-        t[ind.raw.text, 4] <- elem$raw.text
-        ind <- ind + n.raw.text
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
+
+        n.row <- sum(sapply(info, function(x) length(x$raw.text)))
+
+        t <- matrix("", nrow = ,
+                    ncol = 4)
+        colnames(t) <- c("Discarded", "Var", "Case", "Raw text")
+
+        ind <- 1
+        for (elem in info)
+        {
+            n.raw.text <- length(elem$raw.text)
+            ind.raw.text <- ind:(ind + n.raw.text - 1)
+            t[ind, 1] <- elem$low.freq.category
+            t[ind.raw.text, 2] <- elem$raw.text.var.num
+            t[ind.raw.text, 3] <- elem$raw.text.case.num
+            t[ind.raw.text, 4] <- elem$raw.text
+            ind <- ind + n.raw.text
+        }
+
+        html <- paste0(html, kable(t, align = c("l", "c", "c", "l"),
+                                   format = "html", escape = FALSE,
+                                   table.attr = "class=\"diagnostics-table\""))
+
+        html <- paste0(html, "</div>")
     }
-
-    html <- paste0(html, kable(t, align = c("l", "c", "c", "l"),
-                               format = "html", escape = FALSE,
-                               table.attr = "class=\"diagnostics-table\""))
-
-    html <- paste0(html, "</div>")
-
     paste0(html, "</div>")
 }
 
