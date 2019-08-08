@@ -638,8 +638,7 @@ lowFrequencyCategoriesDiagnostic <- function(info)
 
         n.row <- sum(sapply(info, function(x) length(x$raw.text)))
 
-        t <- matrix("", nrow = ,
-                    ncol = 4)
+        t <- matrix("", nrow = n.row, ncol = 4)
         colnames(t) <- c("Discarded", "Var", "Case", "Raw text")
 
         ind <- 1
