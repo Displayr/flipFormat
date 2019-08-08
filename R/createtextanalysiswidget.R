@@ -369,67 +369,31 @@ addDiagnosticsPanel <- function(cata, diagnostics)
                    "<div class=\"diagnostics-container\">")
 
     # For each replacement, show cases where raw text has been replaced
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Raw text replacements</summary>",
-                   rawTextReplacementDiagnostic(diagnostics$raw.text.replacement),
-                   "</details>")
+    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement))
 
     # For each manual category, show cases
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Required categories</summary>",
-                   requiredCategoriesDiagnostic(diagnostics$required.categories),
-                   "</details>")
+    html <- paste0(html, requiredCategoriesDiagnostic(diagnostics$required.categories))
 
     # For each delimiter, show cases which contain the delimiter
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Delimiters</summary>",
-                   delimitersDiagnostic(diagnostics$delimiters),
-                   "</details>")
+    html <- paste0(html, delimitersDiagnostic(diagnostics$delimiters))
 
     # For each conditional delimiter, show cases with conditional delimiter
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Conditional delimiters</summary>",
-                   conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters),
-                   "</details>")
+    html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters))
 
     # For each split, show cases with split
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Splits by known categories</summary>",
-                   knownCategoriesSplitDiagnostic(diagnostics$known.category.splits),
-                   "</details>")
+    html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics$known.category.splits))
 
     # For each replacement, show cases with replacements
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Category replacements</summary>",
-                   categoryReplacementDiagnostic(diagnostics$category.replacements),
-                   "</details>")
+    html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements))
 
     # Spelling corrections, showing cases for each correction
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Spelling corrections</summary>",
-                   spellingCorrectionsDiagnostic(diagnostics$spelling.corrections),
-                   "</details>")
+    html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics$spelling.corrections))
 
     # Categories that have been discarded, showing cases
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Discarded categories</summary>",
-                   discardedCategoriesDiagnostic(diagnostics$discarded.categories),
-                   "</details>")
+    html <- paste0(html, discardedCategoriesDiagnostic(diagnostics$discarded.categories))
 
     # Categories below minimum frequency, showing cases
-    html <- paste0(html,
-                   "<details class=\"details\">",
-                   "<summary class=\"summary sub-details\">Categories below minimum frequency</summary>",
-                   lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories),
-                   "</details>")
+    html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories))
 
     html <- paste0(html,
                    "</div>", # end diagnostics-container div
@@ -441,7 +405,23 @@ addDiagnosticsPanel <- function(cata, diagnostics)
 
 rawTextReplacementDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Raw text replacements (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Raw text replacements are specified by clicking on ",
+                   "the button under the RAW TEXT REPLACEMENT group and ",
+                   "entering the replacement text in the first column and ",
+                   "the text to be replaced in subsequent columns of the ",
+                   "table editor. Raw text replacements are applied before ",
+                   "all other text processing. This option can be ",
+                   "used to split text that would not otherwise be split, ",
+                   "e.g.: \"Coke Pepsi\" would not be split ",
+                   "if spaces are not delimiters, but replacing it ",
+                   "with \"Coke, Pepsi\" would cause it to be split (if ",
+                   "commas are delimiters).</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -462,12 +442,24 @@ rawTextReplacementDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 requiredCategoriesDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Required categories (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Required categories are specified by clicking on ",
+                   "the button under the REQUIRED CATEGORIES group and ",
+                   "entering the required categories in the first column. ",
+                   "Required categories will be extracted from the data ",
+                   "and not be processed further. This option can be used to stop ",
+                   "categories from being removed if they fall below the ",
+                   "minimum category frequency.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -482,12 +474,21 @@ requiredCategoriesDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste(html, "</div>")
+    paste(html, "</div></details>")
 }
 
 delimitersDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Delimiters (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Delimiters are used to split raw text into categories. ",
+                   "Delimiters are selected in the DELIMITERS / SPLIT TEXT group. ",
+                   "If a required delimiter is not listed in the checkboxes, ",
+                   "it should be added to the textbox labeled \"Other\".</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -501,12 +502,21 @@ delimitersDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 conditionalDelimitersDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Conditional delimiters (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Conditional delimiters are only used to split text if the ",
+                   "resulting splits exist as categories. ",
+                   "Conditional delimiters are specified in textbox labeled \"Conditional\" ",
+                   "in the DELIMITERS / SPLIT TEXT group.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -521,12 +531,23 @@ conditionalDelimitersDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 knownCategoriesSplitDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Splits by known categories (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Categories with frequencies at or below the \"Maximum ",
+                   "category frequency to split\" setting in DELIMITERS / ",
+                   "SPLIT TEXT are split by known categories, which are ",
+                   "defined by the \"Minimum known category frequency\" ",
+                   "setting. To prevent a category from being split, specify ",
+                   "it as a required category.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -553,12 +574,23 @@ knownCategoriesSplitDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 categoryReplacementDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Category replacements (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Category replacements are specified by clicking on ",
+                   "the button under the CATEGORY REPLACEMENT group and ",
+                   "entering the replacement category in the first column and ",
+                   "the categories to be replaced in subsequent columns of the ",
+                   "table editor. This option is used to combine categories ",
+                   "that should be the same.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -579,12 +611,22 @@ categoryReplacementDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 spellingCorrectionsDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Spelling corrections (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Spelling correction settings are found in the ",
+                   "SPELLING CORRECTION group. To prevent a pharse from being ",
+                   "corrected, click on the \"Phrases that shouldn't be corrected\" ",
+                   "button and enter the phrase in the first column of the ",
+                   "table editor.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -605,12 +647,22 @@ spellingCorrectionsDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 discardedCategoriesDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Discarded categories (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Categories to be discarded can be specified by clicking on ",
+                   "the button under the CATEGORIES TO DISCARD group and ",
+                   "entering the categories in the first column of the table ",
+                   "editor. Discarded categories will be removed but are still ",
+                   "counted in the UNCLASSIFIED category.</div>")
+
     for (elem in info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
@@ -625,12 +677,20 @@ discardedCategoriesDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 lowFrequencyCategoriesDiagnostic <- function(info)
 {
-    html <- "<div class=\"diagnostics-group\">"
+    html <- paste0("<details class=\"details\">",
+                   "<summary class=\"summary sub-details\">Categories below minimum frequency (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Categories below the minimum category size are shown below. ",
+                   "These categories are removed but are still counted in the ",
+                   "UNCLASSIFIED category. The minimum category size option ",
+                   "appears in the DATA SOURCE group.</div>")
 
     if (length(info) > 0)
     {
@@ -659,7 +719,7 @@ lowFrequencyCategoriesDiagnostic <- function(info)
 
         html <- paste0(html, "</div>")
     }
-    paste0(html, "</div>")
+    paste0(html, "</div></details>")
 }
 
 # Create table to display raw cases. obj contains the raw text along with the
