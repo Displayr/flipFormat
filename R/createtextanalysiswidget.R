@@ -740,7 +740,7 @@ lowFrequencyCategoriesDiagnostic <- function(diagnostics, raw.text)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        n.row <- sum(sapply(info, function(x) length(x$raw.text)))
+        n.row <- sum(sapply(info, function(x) length(x$rows)))
 
         t <- matrix("", nrow = n.row, ncol = 4)
         colnames(t) <- c("Discarded", "Var", "Case", "Raw text")
