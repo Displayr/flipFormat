@@ -38,8 +38,12 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     stylefile <- createTempFile()
     ws <- createCata(stylefile)
+
+    ptm <- proc.time()
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
                                     token.substitutions, ws)
+    print("highligh ngrams")
+    print(proc.time() - ptm)
     if (NROW(n.gram.frequencies) > 0)
         addCss(stylefile, cata, in.css.folder = FALSE)
 
@@ -58,6 +62,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata(paste0("<p id=\"footer\">", footer,"</p>"))
     cata("</div>", fill = TRUE) # end footer-container div
     cata("</div>", fill = TRUE) # end main-container div
+
 
     createWidgetFromFile(tfile)
 }
@@ -368,32 +373,56 @@ addDiagnosticsPanel <- function(cata, diagnostics)
                    "<summary class=\"summary\">Diagnostics</summary>",
                    "<div class=\"diagnostics-container\">")
 
+    ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
     html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement))
+    print("raw text replacement")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # For each manual category, show cases
     html <- paste0(html, requiredCategoriesDiagnostic(diagnostics$required.categories))
+    print("required categories")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # For each delimiter, show cases which contain the delimiter
     html <- paste0(html, delimitersDiagnostic(diagnostics$delimiters))
+    print("delimiters")
+    print(proc.time() - ptm)
 
     # For each conditional delimiter, show cases with conditional delimiter
     html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters))
 
+    ptm <- proc.time()
     # For each split, show cases with split
     html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics$known.category.splits))
+    print("known category splits")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # For each replacement, show cases with replacements
     html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements))
+    print("category replacements")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # Spelling corrections, showing cases for each correction
     html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics$spelling.corrections))
+    print("spelling corrections")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # Categories that have been discarded, showing cases
     html <- paste0(html, discardedCategoriesDiagnostic(diagnostics$discarded.categories))
+    print("discarded")
+    print(proc.time() - ptm)
 
+    ptm <- proc.time()
     # Categories below minimum frequency, showing cases
     html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories))
+    print("min freq")
+    print(proc.time() - ptm)
 
     html <- paste0(html,
                    "</div>", # end diagnostics-container div
