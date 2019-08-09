@@ -27,6 +27,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      footer = "",
                                      diagnostics = NULL)
 {
+    ptm2 <- proc.time()
     raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
 
     tfile <- createTempFile()
@@ -64,7 +65,10 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata("</div>", fill = TRUE) # end main-container div
 
 
-    createWidgetFromFile(tfile)
+    output <- createWidgetFromFile(tfile)
+    print("CreateTextAnalysisWidget")
+    print(proc.time() - ptm2)
+    output
 }
 
 replaceMissingWithEmpty <- function(raw.and.normalized.text)
