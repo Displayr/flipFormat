@@ -746,10 +746,11 @@ lowFrequencyCategoriesDiagnostic <- function(diagnostics, raw.text)
         colnames(t) <- c("Discarded", "Var", "Case", "Raw text")
 
         ind <- 1
+
         for (elem in info)
         {
             rows <- elem$rows
-            raw.text <- raw.text[rows]
+            raw.text <- rep("raw.text[rows]", length(rows))
             raw.text.var.num <- ceiling(rows / diagnostics$n.cases)
             raw.text.case.num <- unname(unlist(diagnostics$row.numbers.list))[rows]
 
