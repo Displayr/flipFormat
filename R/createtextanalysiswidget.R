@@ -55,7 +55,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                 raw.and.normalized.text)
 
     if (!is.null(diagnostics))
-        addDiagnosticsPanel(cata, diagnostics)
+        addDiagnosticsPanel(cata, diagnostics,
+                            raw.and.normalized.text$`Original Text`)
 
     cata("</div>", fill = TRUE) # end vertical-container div
 
@@ -371,7 +372,7 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text)
     cata("</details>")
 }
 
-addDiagnosticsPanel <- function(cata, diagnostics)
+addDiagnosticsPanel <- function(cata, diagnostics, raw.text)
 {
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary\">Diagnostics</summary>",
@@ -379,52 +380,52 @@ addDiagnosticsPanel <- function(cata, diagnostics)
 
     ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
-    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement))
+    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics, raw.text))
     print("raw text replacement")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each manual category, show cases
-    html <- paste0(html, requiredCategoriesDiagnostic(diagnostics$required.categories))
+    html <- paste0(html, requiredCategoriesDiagnostic(diagnostics, raw.text))
     print("required categories")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each delimiter, show cases which contain the delimiter
-    html <- paste0(html, delimitersDiagnostic(diagnostics$delimiters))
+    html <- paste0(html, delimitersDiagnostic(diagnostics, raw.text))
     print("delimiters")
     print(proc.time() - ptm)
 
     # For each conditional delimiter, show cases with conditional delimiter
-    html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters))
+    html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics, raw.text))
 
     ptm <- proc.time()
     # For each split, show cases with split
-    html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics$known.category.splits))
+    html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics, raw.text))
     print("known category splits")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each replacement, show cases with replacements
-    html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements))
+    html <- paste0(html, categoryReplacementDiagnostic(diagnostics, raw.text))
     print("category replacements")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Spelling corrections, showing cases for each correction
-    html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics$spelling.corrections))
+    html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics, raw.text))
     print("spelling corrections")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Categories that have been discarded, showing cases
-    html <- paste0(html, discardedCategoriesDiagnostic(diagnostics$discarded.categories))
+    html <- paste0(html, discardedCategoriesDiagnostic(diagnostics, raw.text))
     print("discarded")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Categories below minimum frequency, showing cases
-    html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories))
+    html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics, raw.text))
     print("min freq")
     print(proc.time() - ptm)
 
@@ -436,8 +437,9 @@ addDiagnosticsPanel <- function(cata, diagnostics)
     cata(html)
 }
 
-rawTextReplacementDiagnostic <- function(info)
+rawTextReplacementDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$raw.text.replacement
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Raw text replacements (",
                    length(info), ")</summary>",
@@ -471,15 +473,16 @@ rawTextReplacementDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-requiredCategoriesDiagnostic <- function(info)
+requiredCategoriesDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$required.categories
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Required categories (",
                    length(info), ")</summary>",
@@ -503,15 +506,16 @@ requiredCategoriesDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste(html, "</div></details>")
 }
 
-delimitersDiagnostic <- function(info)
+delimitersDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$delimiters
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Delimiters (",
                    length(info), ")</summary>",
@@ -531,15 +535,16 @@ delimitersDiagnostic <- function(info)
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                    escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-conditionalDelimitersDiagnostic <- function(info)
+conditionalDelimitersDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$conditional.delimiters
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Conditional delimiters (",
                    length(info), ")</summary>",
@@ -560,15 +565,16 @@ conditionalDelimitersDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-knownCategoriesSplitDiagnostic <- function(info)
+knownCategoriesSplitDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$known.category.splits
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Splits by known categories (",
                    length(info), ")</summary>",
@@ -603,15 +609,16 @@ knownCategoriesSplitDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-categoryReplacementDiagnostic <- function(info)
+categoryReplacementDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$category.replacements
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Category replacements (",
                    length(info), ")</summary>",
@@ -640,15 +647,17 @@ categoryReplacementDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        elem$rows <- sort(unique((unname(unlist(elem$rows)))))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-spellingCorrectionsDiagnostic <- function(info)
+spellingCorrectionsDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$spelling.corrections
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Spelling corrections (",
                    length(info), ")</summary>",
@@ -676,15 +685,16 @@ spellingCorrectionsDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-discardedCategoriesDiagnostic <- function(info)
+discardedCategoriesDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$discarded.categories
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Discarded categories (",
                    length(info), ")</summary>",
@@ -706,15 +716,16 @@ discardedCategoriesDiagnostic <- function(info)
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
+        html <- paste0(html, rawCasesTable(elem, diagnostics, raw.text))
 
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
 
-lowFrequencyCategoriesDiagnostic <- function(info)
+lowFrequencyCategoriesDiagnostic <- function(diagnostics, raw.text)
 {
+    info <- diagnostics$low.freq.categories
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Categories below minimum frequency (",
                    length(info), ")</summary>",
@@ -737,12 +748,17 @@ lowFrequencyCategoriesDiagnostic <- function(info)
         ind <- 1
         for (elem in info)
         {
-            n.raw.text <- length(elem$raw.text)
+            rows <- elem$rows
+            raw.text <- raw.text[rows]
+            raw.text.var.num <- ceiling(rows / diagnostics$n.cases)
+            raw.text.case.num <- unname(unlist(diagnostics$row.numbers.list))[rows]
+
+            n.raw.text <- length(raw.text)
             ind.raw.text <- ind:(ind + n.raw.text - 1)
             t[ind, 1] <- elem$low.freq.category
-            t[ind.raw.text, 2] <- elem$raw.text.var.num
-            t[ind.raw.text, 3] <- elem$raw.text.case.num
-            t[ind.raw.text, 4] <- elem$raw.text
+            t[ind.raw.text, 2] <- raw.text.var.num
+            t[ind.raw.text, 3] <- raw.text.case.num
+            t[ind.raw.text, 4] <- raw.text
             ind <- ind + n.raw.text
         }
 
@@ -757,16 +773,27 @@ lowFrequencyCategoriesDiagnostic <- function(info)
 
 # Create table to display raw cases. obj contains the raw text along with the
 # corresponding variable numbers and case numbers.
-rawCasesTable <- function(obj)
+rawCasesTable <- function(obj, diagnostics, raw.text)
 {
+    rows <- obj$rows
     html <- "<div class=\"diagnostics-raw-cases\">"
-    if (length(obj$raw.text) > 0)
+    if (length(rows) > 0)
     {
-        t <- cbind(obj$raw.text.var.num, obj$raw.text.case.num,
-                   htmlText(obj$raw.text))
-        if (obj$is.max.exceeded)
+        n.original.rows <- length(rows)
+        is.max.exceeded <- n.original.rows > 100 # replace 100 with max.rows setting
+        if (is.max.exceeded)
+            rows <- rows[seq_len(100)] # replace 100 with max.rows setting
+
+        raw.text <- raw.text[rows]
+        raw.text.var.num <- ceiling(rows / diagnostics$n.cases)
+        raw.text.case.num <- unname(unlist(diagnostics$row.numbers.list))[rows]
+        n.omitted.rows <- n.original.rows - length(rows)
+
+        t <- cbind(raw.text.var.num, raw.text.case.num,
+                   htmlText(raw.text))
+        if (is.max.exceeded)
             t <- rbind(t, c("", "", htmlText(paste0("<TABLE TRUNCATED. ",
-                                                      obj$n.omitted.rows,
+                                                      n.omitted.rows,
                                                       " ROWS OMITTED>"))))
 
         colnames(t) <- c("Var", "Case", "Raw text")
