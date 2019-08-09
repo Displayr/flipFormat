@@ -747,12 +747,14 @@ lowFrequencyCategoriesDiagnostic <- function(diagnostics, raw.text)
 
         ind <- 1
 
+        rnl <- unname(unlist(diagnostics$row.numbers.list))
+
         for (elem in info)
         {
             rows <- elem$rows
-            raw.text <- rep("raw.text[rows]", length(rows))
+            raw.text <- raw.text[rows]
             raw.text.var.num <- ceiling(rows / diagnostics$n.cases)
-            raw.text.case.num <- unname(unlist(diagnostics$row.numbers.list))[rows]
+            raw.text.case.num <- rnl[rows]
 
             n.raw.text <- length(raw.text)
             ind.raw.text <- ind:(ind + n.raw.text - 1)
