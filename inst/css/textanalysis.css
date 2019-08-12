@@ -16,13 +16,16 @@
 
 .top-container {
     width: 100%;
-    height: calc(100vh - 120px);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: stretch;
     overflow-x: auto;
     padding-top: 10px;
+}
+
+.top-container-diagnostic {
+    height: calc(100vh - 120px);
 }
 
 .bottom-container {

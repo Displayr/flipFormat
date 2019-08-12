@@ -51,8 +51,9 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     cata("<div class=\"main-container\">")
     cata("<div class=\"vertical-container\">")
 
-    addTopPanel(cata, colored.text,
-                raw.and.normalized.text)
+    show.diagnostics <- !is.null(diagnostics)
+
+    addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics)
 
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics)
@@ -353,12 +354,16 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     cata("</div>") # end panel div
 }
 
-addTopPanel <- function(cata, colored.text, raw.and.normalized.text)
+addTopPanel <- function(cata, colored.text, raw.and.normalized.text, show.diagnostics)
 {
-    cata("<details open=\"true\" class=\"details\">")
-    cata("<summary class=\"summary\">Categories</summary>")
-
-    cata("<div class=\"top-container\">")
+    if (show.diagnostics)
+    {
+        cata("<details open=\"true\" class=\"details\">")
+        cata("<summary class=\"summary\">Categories</summary>")
+        cata("<div class=\"top-container top-container-diagnostic\">")
+    }
+    else
+        cata("<div class=\"top-container\">")
 
     addNGramsPanel(colored.text$n.grams, cata)
     addTextPanel(colored.text$text,
@@ -368,7 +373,8 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text)
                  cata)
     cata("</div>", fill = TRUE) # end top-container div
 
-    cata("</details>")
+    if (show.diagnostics)
+        cata("</details>")
 }
 
 addDiagnosticsPanel <- function(cata, diagnostics)
