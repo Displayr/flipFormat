@@ -5,7 +5,8 @@
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  token.substitutions, footer = "", diagnostics = NULL)
+  token.substitutions, footer = "", diagnostics = NULL,
+  details.expand = "Categories")
 }
 \arguments{
 \item{raw.and.normalized.text}{A list containing the raw and normalized
@@ -27,6 +28,8 @@ normalized tokens (column 2).}
 
 \item{diagnostics}{A list containing diagnostic information to be shown in
 the diagnostic output.}
+
+\item{details.expand}{String of the name of the detail to expand.}
 }
 \value{
 An \code{htmlwidget} containing tables showing the output from a

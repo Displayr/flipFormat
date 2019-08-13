@@ -17,6 +17,7 @@
 #' @param footer Character; footer to show at the bottom of the output.
 #' @param diagnostics A list containing diagnostic information to be shown in
 #'   the diagnostic output.
+#' @param details.expand String of the name of the detail to expand.
 #' @return An \code{htmlwidget} containing tables showing the output from a
 #'   text analysis.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
@@ -25,7 +26,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      n.gram.frequencies,
                                      token.substitutions,
                                      footer = "",
-                                     diagnostics = NULL)
+                                     diagnostics = NULL,
+                                     details.expand = "Categories")
 {
     ptm2 <- proc.time()
     raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
@@ -53,10 +55,11 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     show.diagnostics <- !is.null(diagnostics)
 
-    addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics)
+    addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics,
+                details.expand)
 
     if (!is.null(diagnostics))
-        addDiagnosticsPanel(cata, diagnostics)
+        addDiagnosticsPanel(cata, diagnostics, details.expand)
 
     cata("</div>", fill = TRUE) # end vertical-container div
 
@@ -354,11 +357,15 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     cata("</div>") # end panel div
 }
 
-addTopPanel <- function(cata, colored.text, raw.and.normalized.text, show.diagnostics)
+addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
+                        show.diagnostics, details.expand)
 {
     if (show.diagnostics)
     {
-        cata("<details open=\"true\" class=\"details\">")
+        if (details.expand == "Categories")
+            cata("<details open=\"true\" class=\"details\">")
+        else
+            cata("<details class=\"details\">")
         cata("<summary class=\"summary\">Categories</summary>")
         cata("<div class=\"top-container top-container-diagnostic\">")
     }
@@ -377,60 +384,73 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text, show.diagno
         cata("</details>")
 }
 
-addDiagnosticsPanel <- function(cata, diagnostics)
+addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
-                   "<summary class=\"summary\">Diagnostics</summary>",
+    html <- if (details.expand != "Categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
                    "<div class=\"diagnostics-container\">")
 
     ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
-    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement))
+    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement,
+                                                      details.expand))
     print("raw text replacement")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each manual category, show cases
-    html <- paste0(html, requiredCategoriesDiagnostic(diagnostics$required.categories))
+    html <- paste0(html, requiredCategoriesDiagnostic(diagnostics$required.categories,
+                                                      details.expand))
     print("required categories")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each delimiter, show cases which contain the delimiter
-    html <- paste0(html, delimitersDiagnostic(diagnostics$delimiters))
+    html <- paste0(html, delimitersDiagnostic(diagnostics$delimiters,
+                                              details.expand))
     print("delimiters")
     print(proc.time() - ptm)
 
     # For each conditional delimiter, show cases with conditional delimiter
-    html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters))
+    html <- paste0(html, conditionalDelimitersDiagnostic(diagnostics$conditional.delimiters,
+                                                         details.expand))
 
     ptm <- proc.time()
     # For each split, show cases with split
-    html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics$known.category.splits))
+    html <- paste0(html, knownCategoriesSplitDiagnostic(diagnostics$known.category.splits,
+                                                        details.expand))
     print("known category splits")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # For each replacement, show cases with replacements
-    html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements))
+    html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements,
+                                                       details.expand))
     print("category replacements")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Spelling corrections, showing cases for each correction
-    html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics$spelling.corrections))
+    html <- paste0(html, spellingCorrectionsDiagnostic(diagnostics$spelling.corrections,
+                                                       details.expand))
     print("spelling corrections")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Categories that have been discarded, showing cases
-    html <- paste0(html, discardedCategoriesDiagnostic(diagnostics$discarded.categories))
+    html <- paste0(html, discardedCategoriesDiagnostic(diagnostics$discarded.categories,
+                                                       details.expand))
     print("discarded")
     print(proc.time() - ptm)
 
     ptm <- proc.time()
     # Categories below minimum frequency, showing cases
-    html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories))
+    html <- paste0(html, lowFrequencyCategoriesDiagnostic(diagnostics$low.freq.categories,
+                                                          details.expand))
     print("min freq")
     print(proc.time() - ptm)
 
@@ -442,9 +462,14 @@ addDiagnosticsPanel <- function(cata, diagnostics)
     cata(html)
 }
 
-rawTextReplacementDiagnostic <- function(info)
+rawTextReplacementDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Raw text replacements")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Raw text replacements (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -480,9 +505,14 @@ rawTextReplacementDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-requiredCategoriesDiagnostic <- function(info)
+requiredCategoriesDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Required categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Required categories (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -512,9 +542,14 @@ requiredCategoriesDiagnostic <- function(info)
     paste(html, "</div></details>")
 }
 
-delimitersDiagnostic <- function(info)
+delimitersDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Delimiters")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Delimiters (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -540,9 +575,14 @@ delimitersDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-conditionalDelimitersDiagnostic <- function(info)
+conditionalDelimitersDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Conditional delimiters")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Conditional delimiters (",
                    length(info$conditional.delimiters), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -566,9 +606,14 @@ conditionalDelimitersDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-knownCategoriesSplitDiagnostic <- function(info)
+knownCategoriesSplitDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Splits by known categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Splits by known categories (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -606,9 +651,14 @@ knownCategoriesSplitDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-categoryReplacementDiagnostic <- function(info)
+categoryReplacementDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Category replacements")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Category replacements (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -639,9 +689,14 @@ categoryReplacementDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-spellingCorrectionsDiagnostic <- function(info)
+spellingCorrectionsDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Spelling corrections")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Spelling corrections (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -671,9 +726,14 @@ spellingCorrectionsDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-discardedCategoriesDiagnostic <- function(info)
+discardedCategoriesDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Discarded categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Discarded categories (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
@@ -701,9 +761,14 @@ discardedCategoriesDiagnostic <- function(info)
     paste0(html, "</div></details>")
 }
 
-lowFrequencyCategoriesDiagnostic <- function(info)
+lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 {
-    html <- paste0("<details class=\"details\">",
+    html <- if (details.expand == "Categories below minimum frequency")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
                    "<summary class=\"summary sub-details\">Categories below minimum frequency (",
                    length(info), ")</summary>",
                    "<div class=\"diagnostics-group\">",
