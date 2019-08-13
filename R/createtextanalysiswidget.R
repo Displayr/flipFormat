@@ -465,15 +465,11 @@ rawTextReplacementDiagnostic <- function(info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlText(elem$to.be.replaced))
-        colnames(t) <- "Replaced"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
-                                   escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
-
-        t <- matrix(htmlText(elem$replacement))
-        colnames(t) <- "Replacement"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
+        t <- matrix("", nrow = length(elem$to.be.replaced), ncol = 2)
+        t[, 1] <- htmlText(elem$to.be.replaced)
+        t[1, 2] <- htmlText(elem$replacement)
+        colnames(t) <- c("Replaced", "Replacement")
+        html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
@@ -583,32 +579,29 @@ knownCategoriesSplitDiagnostic <- function(info)
                    "defined by the \"Minimum known category frequency\" ",
                    "setting. To prevent a category from being split, specify ",
                    "it as a required category.</div>")
-
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlText(elem$replaced))
-        colnames(t) <- "Split text"
-        html <- paste0(html,
-                       kable(t, align = c("l"), format = "html",
-                             escape = FALSE,
-                             table.attr = "class=\"diagnostics-table\""))
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
+        ptm <- proc.time()
 
         replacements <- htmlText(elem$replacements)
         replacements[elem$is.known.category] <- paste0("<span style='font-weight:bold'>",
                                                        replacements[elem$is.known.category],
                                                        "</span>")
-        t <- matrix(replacements)
 
-        colnames(t) <- "Splits"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
+        t <- matrix("", nrow = length(elem$replacements), ncol = 2)
+        t[1, 1] <- htmlText(elem$replaced)
+        t[, 2] <- replacements
+        colnames(t) <- c("Split text", "Splits")
+        html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
         html <- paste0(html, "</div>")
+
     }
     paste0(html, "</div></details>")
 }
@@ -631,15 +624,11 @@ categoryReplacementDiagnostic <- function(info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlText(elem$to.be.replaced))
-        colnames(t) <- "Replaced"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
-                                   escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
-
-        t <- matrix(htmlText(elem$replacement))
-        colnames(t) <- "Replacement"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
+        t <- matrix("", nrow = length(elem$to.be.replaced), ncol = 2)
+        t[, 1] <- htmlText(elem$to.be.replaced)
+        t[1, 2] <- htmlText(elem$replacement)
+        colnames(t) <- c("Replaced", "Replacement")
+        html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
@@ -667,15 +656,11 @@ spellingCorrectionsDiagnostic <- function(info)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlText(elem$corrected))
-        colnames(t) <- "Corrected"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
-                                   escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
-
-        t <- matrix(htmlText(elem$correction))
-        colnames(t) <- "Correction"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
+        t <- matrix("", nrow = 1, ncol = 2)
+        t[1, 1] <- htmlText(elem$corrected)
+        t[1, 2] <- htmlText(elem$correction)
+        colnames(t) <- c("Corrected", "Correction")
+        html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
