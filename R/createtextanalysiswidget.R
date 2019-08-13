@@ -548,26 +548,23 @@ conditionalDelimitersDiagnostic <- function(info)
 {
     html <- paste0("<details class=\"details\">",
                    "<summary class=\"summary sub-details\">Conditional delimiters (",
-                   length(info), ")</summary>",
+                   length(info$conditional.delimiters), ")</summary>",
                    "<div class=\"diagnostics-group\">",
                    "<div class=\"diagnostics-message\">",
                    "Conditional delimiters are only used to split text if the ",
                    "resulting splits exist as categories. ",
                    "Conditional delimiters are specified in textbox labeled \"Conditional\" ",
                    "in the DELIMITERS / SPLIT TEXT group.</div>")
-
-    for (elem in info)
+    if (!is.null(info))
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
-
-        t <- matrix(htmlText(elem$conditional.delimiter))
-        colnames(t) <- "Delimiter"
+        t <- matrix(htmlText(info$conditional.delimiters))
+        colnames(t) <- "Delimiters"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
-        html <- paste0(html, rawCasesTable(elem))
-
+        html <- paste0(html, rawCasesTable(info))
         html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
