@@ -8,14 +8,14 @@
 #' @param examples Examples for each category.
 #' @param text.raw.by.categorization A list containing the raw text for each
 #'   category.
-#' @param subtitle Subtitle to show containing sample information.
+#' @param footer Footer to show containing sample information.
 #' @return An \code{htmlwidget} containing tables showing the output from an
 #'   automatic text categorization.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
 AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
                                           examples, text.raw.by.categorization,
-                                          subtitle)
+                                          footer)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -27,8 +27,6 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
     cata("<div class=\"main-container\">")
 
     cata("<h1>Automatic Categorization</h1>")
-
-    cata("<span class=\"subtitle\">", subtitle, "</span>")
 
     categories <- names(sizes)
     for (i in seq(categories))
@@ -48,6 +46,8 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
         categoryRawText(raw.text.matrix, cata)
         cata("</details>")
     }
+
+    cata("<div class=\"footer\">", footer, "</div>")
 
     cata("</div>")
 
