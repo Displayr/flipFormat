@@ -47,6 +47,19 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
         cata("</details>")
     }
 
+    missing.text <- text.raw.by.categorization$`NA`
+    if (!is.null(missing.text))
+    {
+        cata("<details class=\"details\">")
+        cata("<summary class=\"summary sub-details category-summary\">",
+             "<span>Missing cases</span>", "</summary>")
+        t <- matrix(missing.text)
+        colnames(t) <- "Text"
+        cata(kable(t, align = c("l"),
+                   format = "html", escape = FALSE,
+                   table.attr = "class=\"auto-categorization-table\""))
+    }
+
     cata("<div class=\"footer\">", footer, "</div>")
 
     cata("</div>")
