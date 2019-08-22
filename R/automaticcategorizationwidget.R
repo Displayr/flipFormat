@@ -58,6 +58,7 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
         cata(kable(t, align = c("l"),
                    format = "html", escape = FALSE,
                    table.attr = "class=\"auto-categorization-table\""))
+        cata("</details>")
     }
 
     cata("<div class=\"footer\">", footer, "</div>")
