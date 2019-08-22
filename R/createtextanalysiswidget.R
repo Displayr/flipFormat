@@ -61,13 +61,12 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics, details.expand)
 
-    cata("</div>", fill = TRUE) # end vertical-container div
+    cata("</div>") # end vertical-container div
 
     cata("<div id=\"footer-container\">")
     cata(paste0("<p id=\"footer\">", footer,"</p>"))
-    cata("</div>", fill = TRUE) # end footer-container div
-    cata("</div>", fill = TRUE) # end main-container div
-
+    cata("</div>") # end footer-container div
+    cata("</div>") # end main-container div
 
     output <- createWidgetFromFile(tfile)
     print("CreateTextAnalysisWidget")
@@ -845,6 +844,10 @@ htmlText <- function(html)
 
 createWidgetFromFile <- function(tfile)
 {
+    # This is required to stop the "incomplete final line" warning from
+    # readLines
+    cat("", fill = TRUE, file = tfile, append = TRUE)
+
     html <- paste(readLines(tfile), collapse = "\n")
     rhtmlMetro::Box(html, text.as.html = TRUE)
 }

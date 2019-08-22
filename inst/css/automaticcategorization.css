@@ -1,0 +1,53 @@
+/* CSS for automatic text categorization output in Q and Displayr */
+
+.main-container {
+    overflow: auto;
+    height: 100%;
+}
+
+h1 {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 24px;
+    color: #3E7DCC;
+    font-weight: normal;
+}
+
+.subtitle {
+    font-size: 12px;
+}
+
+.category-info {
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.category-info-label {
+    color: #3E7DCC;
+    font-weight: bold;
+}
+
+.category-summary {
+    font-size: 16px;
+    color: #3E7DCC;
+}
+
+.category-name {
+    font-weight: bold;
+}
+
+.auto-categorization-table {
+    font-size: 12px;
+}
+
+.raw-text-details {
+    margin-left: 10px;
+    margin-bottom: 20px;
+}
+
+.raw-text-summary {
+    font-size: 12px;
+    color: #3E7DCC;
+}
+
+
