@@ -17,21 +17,21 @@ categorization <- structure(c(3L, 5L, 1L, 1L, 3L, 6L, 4L, 7L, 4L, 2L, 3L, 4L, 2L
             NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
             NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
             NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA
-), .Label = c("scientologist|beliefs|don", "Negative sentiment",
-              "nothing", "Positive sentiment", "strange religious freak", "Positive sentiment|full|person",
-              "about|Negative sentiment|dislike", "Negative sentiment|crazy|little",
-              "everything|idiot|think", "like|Positive sentiment"), class = "factor")
+), .Label = c("Scientologist | Beliefs | Don", "Negative sentiment",
+              "Nothing", "Positive sentiment", "Strange religious freak", "Positive sentiment | Full | Person",
+              "About | Negative sentiment | Dislike", "Negative sentiment | Crazy | Little",
+              "Everything | Idiot | Think", "Like | Positive sentiment"), class = "factor")
 
 sizes <- structure(c(`scientologist|beliefs|don` = 10.4194209042471, `Negative sentiment` = 8.68387443618849,
                      nothing = 8.56073960289359, `Positive sentiment` = 7.65979906753637,
                      `strange religious freak` = 8.87186428671703, `Positive sentiment|full|person` = 3.95421579713002,
                      `about|Negative sentiment|dislike` = 2.29309532023035, `Negative sentiment|crazy|little` = 1.23972321441397,
                      `everything|idiot|think` = 0.426248211646453, `like|Positive sentiment` = 0.93787722941488
-), .Dim = 10L, .Dimnames = list(c("scientologist|beliefs|don",
-                                  "Negative sentiment", "nothing", "Positive sentiment", "strange religious freak",
-                                  "Positive sentiment|full|person", "about|Negative sentiment|dislike",
-                                  "Negative sentiment|crazy|little", "everything|idiot|think",
-                                  "like|Positive sentiment")))
+), .Dim = 10L, .Dimnames = list(c("Scientologist | Beliefs | Don",
+                                  "Negative sentiment", "Nothing", "Positive sentiment", "Strange religious freak",
+                                  "Positive sentiment | Full | Person", "About | Negative sentiment | Dislike",
+                                  "Negative sentiment | Crazy | Little", "Everything | Idiot | Think",
+                                  "Like | Positive sentiment")))
 
 base.size <- 53.0468580704182
 
@@ -92,10 +92,12 @@ text.raw.by.categorization <- structure(list(c("he is gay", "RELIGOUS VIEWS", "h
     c("n/a", "n/a", NA, "na", "na")),
     .Names = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", NA))
 
+title <- "Automatic Categorization: What don't you like about Tom Cruise?  That is, what is it about Tom Cruise that you dislike?"
+
 footer <- "Text was processed using 99 cases. There was 1 missing case and 200 cases have been filtered out."
 
 AutomaticCategorizationWidget(categorization = categorization, sizes = sizes,
                               base.size = base.size, examples = examples,
                               text.raw.by.categorization = text.raw.by.categorization,
-                              footer = footer)
+                              title = title, footer = footer)
 
