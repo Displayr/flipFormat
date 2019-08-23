@@ -5,7 +5,7 @@
 \title{Display automatic text categorization output as an \code{htmlwidget}}
 \usage{
 AutomaticCategorizationWidget(categorization, sizes, base.size, examples,
-  text.raw.by.categorization, subtitle)
+  text.raw.by.categorization, title, footer)
 }
 \arguments{
 \item{categorization}{A factor containing the categorization of the text.}
@@ -19,7 +19,7 @@ AutomaticCategorizationWidget(categorization, sizes, base.size, examples,
 \item{text.raw.by.categorization}{A list containing the raw text for each
 category.}
 
-\item{subtitle}{Subtitle to show containing sample information.}
+\item{footer}{Footer to show containing sample information.}
 }
 \value{
 An \code{htmlwidget} containing tables showing the output from an
