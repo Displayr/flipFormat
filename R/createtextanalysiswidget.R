@@ -43,20 +43,20 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     ws <- createCata(stylefile)
 
     ptm <- proc.time()
-    colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-                                    token.substitutions, ws)
+    # colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
+    #                                 token.substitutions, ws)
     print("highligh ngrams")
     print(proc.time() - ptm)
-    if (NROW(n.gram.frequencies) > 0)
-        addCss(stylefile, cata, in.css.folder = FALSE)
+    # if (NROW(n.gram.frequencies) > 0)
+    #     addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
     cata("<div class=\"vertical-container\">")
 
     show.diagnostics <- !is.null(diagnostics)
 
-    addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics,
-                details.expand)
+    # addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics,
+    #             details.expand)
 
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics, details.expand)
