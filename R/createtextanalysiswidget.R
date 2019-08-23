@@ -29,50 +29,51 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      diagnostics = NULL,
                                      details.expand = "Categories")
 {
-    ptm2 <- proc.time()
-    raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
-
-    tfile <- createTempFile()
-    cata <- createCata(tfile)
-
-    addCss("table.css", cata)
-    addCss("details.css", cata)
-    addCss("textanalysis.css", cata)
-
-    stylefile <- createTempFile()
-    ws <- createCata(stylefile)
-
-    ptm <- proc.time()
-    # colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-    #                                 token.substitutions, ws)
-    print("highligh ngrams")
-    print(proc.time() - ptm)
-    # if (NROW(n.gram.frequencies) > 0)
-    #     addCss(stylefile, cata, in.css.folder = FALSE)
-
-    cata("<div class=\"main-container\">")
-    cata("<div class=\"vertical-container\">")
-
-    show.diagnostics <- !is.null(diagnostics)
-
-    # addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics,
-    #             details.expand)
-
-    if (!is.null(diagnostics))
-        addDiagnosticsPanel(cata, diagnostics, details.expand)
-
-    cata("</div>", fill = TRUE) # end vertical-container div
-
-    cata("<div id=\"footer-container\">")
-    cata(paste0("<p id=\"footer\">", footer,"</p>"))
-    cata("</div>", fill = TRUE) # end footer-container div
-    cata("</div>", fill = TRUE) # end main-container div
-
-
-    output <- createWidgetFromFile(tfile)
-    print("CreateTextAnalysisWidget")
-    print(proc.time() - ptm2)
-    output
+    # ptm2 <- proc.time()
+    # raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
+    #
+    # tfile <- createTempFile()
+    # cata <- createCata(tfile)
+    #
+    # addCss("table.css", cata)
+    # addCss("details.css", cata)
+    # addCss("textanalysis.css", cata)
+    #
+    # stylefile <- createTempFile()
+    # ws <- createCata(stylefile)
+    #
+    # ptm <- proc.time()
+    # # colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
+    # #                                 token.substitutions, ws)
+    # print("highligh ngrams")
+    # print(proc.time() - ptm)
+    # # if (NROW(n.gram.frequencies) > 0)
+    # #     addCss(stylefile, cata, in.css.folder = FALSE)
+    #
+    # cata("<div class=\"main-container\">")
+    # cata("<div class=\"vertical-container\">")
+    #
+    # show.diagnostics <- !is.null(diagnostics)
+    #
+    # # addTopPanel(cata, colored.text, raw.and.normalized.text, show.diagnostics,
+    # #             details.expand)
+    #
+    # if (!is.null(diagnostics))
+    #     addDiagnosticsPanel(cata, diagnostics, details.expand)
+    #
+    # cata("</div>", fill = TRUE) # end vertical-container div
+    #
+    # cata("<div id=\"footer-container\">")
+    # cata(paste0("<p id=\"footer\">", footer,"</p>"))
+    # cata("</div>", fill = TRUE) # end footer-container div
+    # cata("</div>", fill = TRUE) # end main-container div
+    #
+    #
+    # output <- createWidgetFromFile(tfile)
+    # print("CreateTextAnalysisWidget")
+    # print(proc.time() - ptm2)
+    # output
+    1
 }
 
 replaceMissingWithEmpty <- function(raw.and.normalized.text)
