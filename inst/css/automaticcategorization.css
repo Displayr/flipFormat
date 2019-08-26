@@ -14,8 +14,9 @@ h1 {
 }
 
 .footer {
-    margin-top: 10px;
+    margin: 10px;
     font-size: 12px;
+    text-align: center;
 }
 
 .category-info {
@@ -41,14 +42,25 @@ h1 {
     font-size: 14px;
 }
 
+.raw-text-table {
+    font-size: 12px;
+    margin-left: 10px;
+}
+
 .raw-text-details {
     margin-left: 10px;
     margin-bottom: 20px;
 }
 
 .raw-text-summary {
-    font-size: 12px;
+    font-size: 14px;
     color: #3E7DCC;
 }
 
+.example-text {
+    font-style: italic;
+}
 
+.auto-categorization-table td {
+    padding: 5px;
+}

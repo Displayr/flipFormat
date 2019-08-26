@@ -8,7 +8,8 @@
 #' @param examples Examples for each category.
 #' @param text.raw.by.categorization A list containing the raw text for each
 #'   category.
-#' @param title
+#' @param missing Logical vector indicating which cases are missing.
+#' @param title The title to show at the top.
 #' @param footer Footer to show containing sample information.
 #' @return An \code{htmlwidget} containing tables showing the output from an
 #'   automatic text categorization.
@@ -16,7 +17,7 @@
 #' @export
 AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
                                           examples, text.raw.by.categorization,
-                                          title, footer)
+                                          missing, title, footer)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -29,11 +30,25 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
 
     cata("<h1>", htmlText(title), "</h1>")
 
+    autoCategorizationSummaryTable(sizes, base.size, examples, cata)
+
+    autoCategorizationRawText(categorization, sizes,
+                              text.raw.by.categorization,
+                              missing, cata)
+
+    cata("<div class=\"footer\">", htmlText(footer), "</div>")
+
+    cata("</div>")
+
+    createWidgetFromFile(tfile)
+}
+
+autoCategorizationSummaryTable <- function(sizes, base.size, examples, cata)
+{
     n.text <- if (all(round(sizes) == sizes))
         FormatWithDecimals(sizes, decimal.places = 0)
     else
         FormatWithDecimals(sizes, decimal.places = 1)
-
     categories <- names(sizes)
     t <- matrix(NA, nrow = length(categories), ncol = 4)
     colnames(t) <- c("", "Category", "Size (n)", "Example")
@@ -48,86 +63,45 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
     cata(kable(t, align = c("r", "l", "l", "l"),
                format = "html", escape = FALSE,
                table.attr = "class=\"auto-categorization-table\""))
+}
 
+autoCategorizationRawText <- function(categorization, sizes,
+                                      text.raw.by.categorization,
+                                      missing, cata)
+{
     cata("<details class=\"details\">")
     cata("<summary class=\"summary sub-details category-summary\">",
          "Raw text", "</summary>")
-
+    categories <- names(sizes)
     for (i in seq(categories))
     {
-        cata("<details class=\"details raw-text-details\">")
+        cata("<details open=\"true\" class=\"details raw-text-details\">")
         cata("<summary class=\"summary sub-details raw-text-summary\">",
-             htmlText(categories[i]), "</summary>")
+             paste0(i, ". ", htmlText(categories[i])), "</summary>")
 
         row.numbers <- which(categorization == levels(categorization)[i])
         raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
         colnames(raw.text.matrix) <- c("Case", "Text")
         cata(kable(raw.text.matrix, align = c("c", "l"),
                    format = "html", escape = FALSE,
-                   table.attr = "class=\"auto-categorization-table\""))
+                   table.attr = "class=\"raw-text-table\""))
         cata("</details>")
     }
-    cata("</details>")
 
-
-    # categories <- names(sizes)
-    # for (i in seq(categories))
-    # {
-    #     cata("<details class=\"details\">")
-    #     cata("<summary class=\"summary sub-details category-summary\">",
-    #          paste0("Category ", i, " (",
-    #          , "): ",
-    #          "<span class=\"category-name\">", htmlText(categories[i]), "</span>"),
-    #          "</summary>")
-    #
-    #     row.numbers <- which(categorization == levels(categorization)[i])
-    #     raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
-    #
-    #     categoryInfo(sizes[i], examples[i], raw.text.matrix, cata)
-    #
-    #     categoryRawText(raw.text.matrix, cata)
-    #     cata("</details>")
-    # }
-
+    # Missing text
     missing.text <- text.raw.by.categorization$`NA`
     if (!is.null(missing.text))
     {
-        cata("<details class=\"details\">")
-        cata("<summary class=\"summary sub-details category-summary\">",
-             "<span>Missing cases</span>", "</summary>")
-        t <- matrix(missing.text)
-        colnames(t) <- "Text"
-        cata(kable(t, align = c("l"),
+        cata("<details open=\"true\" class=\"details raw-text-details\">")
+        cata("<summary class=\"summary sub-details raw-text-summary\">",
+             "Missing", "</summary>")
+
+        t <- cbind(which(missing), missing.text)
+        colnames(t) <- c("Case", "Text")
+        cata(kable(t, align = c("c", "l"),
                    format = "html", escape = FALSE,
-                   table.attr = "class=\"auto-categorization-table\""))
+                   table.attr = "class=\"raw-text-table\""))
         cata("</details>")
     }
-
-    cata("<div class=\"footer\">", htmlText(footer), "</div>")
-
-    cata("</div>")
-
-    createWidgetFromFile(tfile)
-}
-
-# categoryInfo <- function(category.size, category.example, raw.text.matrix,
-#                          cata)
-# {
-#     cata("<p class=\"category-info\"><span class=\"category-info-label\">Category size: </span>",
-#          FormatWithDecimals(category.size, 1), "</p>")
-#
-#     cata("<p class=\"category-info\"><span class=\"category-info-label\">Example: </span>",
-#          htmlText(category.example), "</p>")
-# }
-
-categoryRawText <- function(raw.text.matrix, cata)
-{
-    cata("<details class=\"details raw-text-details\">")
-    cata("<summary class=\"summary sub-details raw-text-summary\">",
-         paste0("Raw text (", nrow(raw.text.matrix), " cases)"), "</summary>")
-    colnames(raw.text.matrix) <- c("Case", "Text")
-    cata(kable(raw.text.matrix, align = c("c", "l"),
-               format = "html", escape = FALSE,
-               table.attr = "class=\"auto-categorization-table\""))
     cata("</details>")
 }
