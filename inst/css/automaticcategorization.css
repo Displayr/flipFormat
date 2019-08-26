@@ -29,11 +29,6 @@ h1 {
     font-weight: bold;
 }
 
-.category-summary {
-    font-size: 16px;
-    color: #3E7DCC;
-}
-
 .category-name {
     font-weight: bold;
 }
@@ -44,7 +39,7 @@ h1 {
 
 .raw-text-table {
     font-size: 12px;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .raw-text-details {
@@ -53,14 +48,80 @@ h1 {
 }
 
 .raw-text-summary {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.raw-text-summary:focus {
+    outline: none;
+}
+
+.raw-text-category-details {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.raw-text-category-summary {
     font-size: 14px;
-    color: #3E7DCC;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.raw-text-category-summary:focus {
+    outline: none;
 }
 
 .example-text {
     font-style: italic;
 }
 
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+th {
+    font-weight: bold;
+}
+
+.auto-categorization-table tr:nth-child(odd) td {
+    background: #E8F2FF;
+}
+
+.auto-categorization-table th {
+    border-top: 2px solid #3E7DCC;
+    border-bottom: 2px solid #3E7DCC;
+    padding: 8px;
+}
+
 .auto-categorization-table td {
+    padding: 8px;
+}
+
+table.auto-categorization-table {
+    border-bottom: 2px solid #3E7DCC;
+    margin-bottom: 15px;
+}
+
+.raw-text-table tr:nth-child(odd) td {
+    background: #E9EBF0;
+}
+
+.raw-text-table th {
+    border-top: 2px solid #8F9DB3;
+    border-bottom: 2px solid #8F9DB3;
     padding: 5px;
+}
+
+.raw-text-table td {
+    padding: 5px;
+}
+
+.raw-text-table td:nth-child(1) {
+    width: 50px;
+}
+
+table.raw-text-table {
+    border-bottom: 2px solid #8F9DB3;
 }
