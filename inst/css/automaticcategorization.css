@@ -102,6 +102,7 @@ th {
 table.auto-categorization-table {
     border-bottom: 2px solid #3E7DCC;
     margin-bottom: 15px;
+    width: 100%;
 }
 
 .raw-text-table tr:nth-child(odd) td {
@@ -124,4 +125,5 @@ table.auto-categorization-table {
 
 table.raw-text-table {
     border-bottom: 2px solid #8F9DB3;
+    width: calc(60vw);
 }
