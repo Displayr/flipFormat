@@ -28,11 +28,7 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
 
     cata("<h1>", htmlText(title), "</h1>")
 
-    autoCategorizationSummaryTable(sizes, base.size, examples, cata)
-
-    autoCategorizationRawText(categorization, sizes,
-                              text.raw.by.categorization,
-                              missing, cata)
+    autoCategorizationSummaryTable(sizes, base.size, examples, missing, cata)
 
     cata("<div class=\"footer\">", htmlText(footer), "</div>")
 
@@ -41,8 +37,10 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
     createWidgetFromFile(tfile)
 }
 
-autoCategorizationSummaryTable <- function(sizes, base.size, examples, cata)
+autoCategorizationSummaryTable <- function(sizes, base.size, examples, missing, cata)
 {
+    max.rows <- 3000
+
     n.text <- if (all(round(sizes) == sizes))
         FormatWithDecimals(sizes, decimal.places = 0)
     else
@@ -58,27 +56,25 @@ autoCategorizationSummaryTable <- function(sizes, base.size, examples, cata)
                           n.text[i], ")")
         t[i, 4] <- paste0("\"",  htmlText(examples[i]), "\"")
     }
-    cata(kable(t, align = c("r", "l", "c", "l"),
-               format = "html", escape = FALSE,
-               table.attr = "class=\"auto-categorization-table\""))
-}
 
-autoCategorizationRawText <- function(categorization, sizes,
-                                      text.raw.by.categorization,
-                                      missing, cata)
-{
-    cata("<details class=\"details raw-text-details\">")
-    cata("<summary class=\"summary sub-details raw-text-summary\">",
-         "Raw text", "</summary>")
-    categories <- names(sizes)
+    missing.text <- text.raw.by.categorization$`NA`
 
-    max.rows <- 3000
-
+    # Create table
+    cata("<table class=\"auto-categorization-table\"><thead>",
+         "<th></th><th>Category</th><th>Size (n)</th><th>Example</th>",
+         "</thead><tbody>")
     for (i in seq(categories))
     {
-        cata("<details open=\"true\" class=\"details raw-text-category-details\">")
+        cata("<tr>")
+        for (j in 1:ncol(t))
+            cata(paste0("<td>", t[i, j], "</td>"))
+        cata("</tr>")
+
+        cata("<tr class=\"raw-text-row\"><td class=\"raw-text-details-cell\"></td>",
+             "<td colspan='3' class=\"raw-text-details-cell\">")
+        cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             paste0(i, ". ", htmlText(categories[i])), "</summary>")
+             "Raw text", "</summary>")
 
         row.numbers <- which(categorization == levels(categorization)[i])
         raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
@@ -89,16 +85,21 @@ autoCategorizationRawText <- function(categorization, sizes,
         cata(kable(raw.text.matrix, align = c("c", "l"),
                    format = "html", escape = FALSE,
                    table.attr = "class=\"raw-text-table\""))
+
         cata("</details>")
+        cata("</td></tr>")
     }
 
     # Missing text
     missing.text <- text.raw.by.categorization$`NA`
     if (!is.null(missing.text))
     {
-        cata("<details open=\"true\" class=\"details raw-text-category-details\">")
+        cata("<tr><td></td><td>Missing cases</td></tr>")
+        cata("<tr class=\"raw-text-row\"><td class=\"raw-text-details-cell\"></td>",
+             "<td colspan='3' class=\"raw-text-details-cell\">")
+        cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "Missing", "</summary>")
+             "Raw text", "</summary>")
 
         t <- cbind(which(missing), missing.text)
         t <- truncateRawTextTable(t, max.rows)
@@ -108,8 +109,12 @@ autoCategorizationRawText <- function(categorization, sizes,
                    format = "html", escape = FALSE,
                    table.attr = "class=\"raw-text-table\""))
         cata("</details>")
+        cata("</td></tr>")
     }
-    cata("</details>")
+
+
+    cata("</tbody></table>")
+
 }
 
 truncateRawTextTable <- function(t, max.rows)

@@ -19,53 +19,20 @@ h1 {
     text-align: center;
 }
 
-.category-info {
-    font-size: 12px;
-    margin-left: 10px;
-}
-
-.category-info-label {
-    color: #3E7DCC;
-    font-weight: bold;
-}
-
-.category-name {
-    font-weight: bold;
-}
-
-.auto-categorization-table {
-    font-size: 14px;
-}
-
-.raw-text-table {
-    font-size: 12px;
-    margin-left: 20px;
-}
-
-.raw-text-details {
-    margin-left: 10px;
-    margin-bottom: 20px;
-}
-
-.raw-text-summary {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.raw-text-summary:focus {
-    outline: none;
+.auto-categorization-table td.raw-text-details-cell {
+    padding-top: 0;
+    padding-bottom: 3px;
+    padding-left: 8px;
 }
 
 .raw-text-category-details {
-    margin-left: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .raw-text-category-summary {
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 10px;
+    margin-bottom: 5px;
+    color: #999999;
 }
 
 .raw-text-category-summary:focus {
@@ -85,38 +52,48 @@ th {
     font-weight: bold;
 }
 
-.auto-categorization-table tr:nth-child(odd) td {
-    background: #E8F2FF;
-}
-
 .auto-categorization-table th {
-    border-top: 2px solid #3E7DCC;
-    border-bottom: 2px solid #3E7DCC;
+    border-bottom: 2px solid #dddddd;
     padding: 8px;
+    font-size: 12px;
 }
 
 .auto-categorization-table td {
-    padding: 8px;
+    padding-top: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 3px;
+    font-size: 12px;
 }
 
 table.auto-categorization-table {
-    border-bottom: 2px solid #3E7DCC;
-    margin-bottom: 15px;
+    border-top: 2px solid #333333;
+    border-bottom: 2px solid #333333;
+    margin-bottom: 5px;
     width: 100%;
+    color: #333333;
 }
 
-.raw-text-table tr:nth-child(odd) td {
-    background: #E9EBF0;
+.raw-text-row {
+    border-bottom: 1px solid #dddddd;
+}
+
+.raw-text-table {
+    margin-bottom: 10px;
+    margin-left: 12px;
 }
 
 .raw-text-table th {
-    border-top: 2px solid #8F9DB3;
-    border-bottom: 2px solid #8F9DB3;
-    padding: 5px;
+    border-top: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    padding: 3px;
+    font-size: 10px;
+    font-weight: normal;
 }
 
 .raw-text-table td {
-    padding: 5px;
+    padding: 3px;
+    font-size: 10px;
 }
 
 .raw-text-table td:nth-child(1) {
@@ -124,6 +101,6 @@ table.auto-categorization-table {
 }
 
 table.raw-text-table {
-    border-bottom: 2px solid #8F9DB3;
+    border-bottom: 1px solid #dddddd;
     width: calc(60vw);
 }
