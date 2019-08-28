@@ -15,7 +15,7 @@ h1 {
 
 .footer {
     margin: 10px;
-    font-size: 12px;
+    font-size: 13px;
     text-align: center;
 }
 
@@ -30,7 +30,7 @@ h1 {
 }
 
 .raw-text-category-summary {
-    font-size: 10px;
+    font-size: 11px;
     margin-bottom: 5px;
     color: #999999;
 }
@@ -55,15 +55,15 @@ th {
 .auto-categorization-table th {
     border-bottom: 2px solid #dddddd;
     padding: 8px;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .auto-categorization-table td {
     padding-top: 8px;
     padding-left: 8px;
     padding-right: 8px;
-    padding-bottom: 3px;
-    font-size: 12px;
+    padding-bottom: 5px;
+    font-size: 13px;
 }
 
 table.auto-categorization-table {
@@ -87,13 +87,13 @@ table.auto-categorization-table {
     border-top: 1px solid #dddddd;
     border-bottom: 1px solid #dddddd;
     padding: 3px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: normal;
 }
 
 .raw-text-table td {
     padding: 3px;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .raw-text-table td:nth-child(1) {
