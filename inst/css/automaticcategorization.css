@@ -84,8 +84,8 @@ table.auto-categorization-table {
 }
 
 .raw-text-table th {
-    border-top: 1px solid #dddddd;
-    border-bottom: 1px solid #dddddd;
+    border-top: 2px solid #dddddd;
+    border-bottom: 2px solid #dddddd;
     padding: 3px;
     font-size: 11px;
     font-weight: normal;
@@ -101,6 +101,6 @@ table.auto-categorization-table {
 }
 
 table.raw-text-table {
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 2px solid #dddddd;
     width: calc(60vw);
 }
