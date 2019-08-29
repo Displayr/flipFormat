@@ -69,28 +69,27 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
          "</thead><tbody>")
     for (i in seq(categories))
     {
-        cata("<tr>")
-        for (j in 1:ncol(t))
-            cata(paste0("<td>", t[i, j], "</td>"))
-        cata("</tr>")
+        cata("<tr class=\"table-row\">")
+        cata(paste0("<td>", t[i, 1], "</td>"))
+        cata(paste0("<td>", t[i, 2], "</td>"))
+        cata(paste0("<td>", t[i, 3], "</td>"))
 
-        cata("<tr class=\"raw-text-row\"><td class=\"raw-text-details-cell\"></td>",
-             "<td colspan='3' class=\"raw-text-details-cell\">")
+        cata("<td>")
         cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "Raw text", "</summary>")
+             "<div class=\"example-text\">",
+             t[i, 4], "</div></summary>")
 
         row.numbers <- which(categorization == levels(categorization)[i])
         raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
 
         raw.text.matrix <- truncateRawTextTable(raw.text.matrix, max.rows)
 
-        colnames(raw.text.matrix) <- c("Case", "Text")
+        colnames(raw.text.matrix) <- c("Case", "Raw text")
         cata(kable(raw.text.matrix, align = c("c", "l"),
                    format = "html", escape = FALSE,
                    table.attr = "class=\"raw-text-table\""))
 
-        cata("</details>")
         cata("</td></tr>")
     }
 
@@ -98,12 +97,11 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
     missing.text <- text.raw.by.categorization$`NA`
     if (!is.null(missing.text))
     {
-        cata("<tr><td></td><td>Missing cases</td></tr>")
-        cata("<tr class=\"raw-text-row\"><td class=\"raw-text-details-cell\"></td>",
-             "<td colspan='3' class=\"raw-text-details-cell\">")
+        cata("<tr class=\"raw-text-row\"><td></td><td>Missing cases</td><td></td><td>")
+
         cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "Raw text", "</summary>")
+             "<div class=\"example-text\">", missing.text[1], "</div></summary>")
 
         t <- cbind(which(missing), missing.text)
         t <- truncateRawTextTable(t, max.rows)
