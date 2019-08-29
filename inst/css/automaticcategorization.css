@@ -28,6 +28,11 @@ h1 {
     font-size: 13px;
     margin-bottom: 5px;
     color: #333333;
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 .raw-text-category-summary:focus {
@@ -37,14 +42,6 @@ h1 {
 .raw-text-category-summary::-webkit-details-marker{
     color: #bbbbbb;
     margin-left: -15px;
-}
-
-.example-text {
-    user-select: none; /* supported by Chrome and Opera */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 table {
@@ -70,7 +67,6 @@ th {
     padding-bottom: 5px;
     font-size: 13px;
     vertical-align: top;
-
 }
 
 table.auto-categorization-table {

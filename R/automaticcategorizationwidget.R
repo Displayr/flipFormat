@@ -77,8 +77,7 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
         cata("<td>")
         cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "<span class=\"example-text\">",
-             t[i, 4], "</span></summary>")
+             "<span>", t[i, 4], "</span></summary>")
 
         row.numbers <- which(categorization == levels(categorization)[i])
         raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
@@ -101,7 +100,7 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
 
         cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "<span class=\"example-text\">", missing.text[1], "</span></summary>")
+             "<span>", missing.text[1], "</span></summary>")
 
         t <- cbind(which(missing), missing.text)
         t <- truncateRawTextTable(t, max.rows)
