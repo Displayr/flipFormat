@@ -101,7 +101,7 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
 
         cata("<details class=\"details raw-text-category-details\">")
         cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "<div class=\"example-text\">", missing.text[1], "</div></summary>")
+             "<span class=\"example-text\">", missing.text[1], "</span></summary>")
 
         t <- cbind(which(missing), missing.text)
         t <- truncateRawTextTable(t, max.rows)
