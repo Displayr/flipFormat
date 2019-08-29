@@ -40,7 +40,6 @@ h1 {
 }
 
 .example-text {
-    margin-top: -15px;
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
     -khtml-user-select: none; /* Konqueror HTML */
