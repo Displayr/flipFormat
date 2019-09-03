@@ -1,8 +1,8 @@
 #' Display a table with custom formatting
-#' @description Displays a table which fills up the entire containiner with 
+#' @description Displays a table which fills up the entire containiner with
 #'  resizable column widths and row heights.
 #' @param x Input table to display.
-#' @param format.as.percentage Display table values as percentage (multiply by 100 
+#' @param format.as.percentage Display table values as percentage (multiply by 100
 #'  and add percentage sign). Ignored if \code{x} is not numeric.
 #' @param format.decimals Controls number of decimal places shown in table cells.
 #'  Ignored if \code{x} is not numeric.
@@ -22,7 +22,7 @@
 #' @param values.font.family Font family of text in table cells.
 #' @param values.font.color Font color of text in table cells.
 #' @param values.font.size Font size (in pixels) of text in table cells.
-#' @param values.font.weight One of "normal" or "bold". 
+#' @param values.font.weight One of "normal" or "bold".
 #' @param values.font.style One of "normal" or "italic".
 #' @param colhead.show Logical; whether to show column headers in the table.
 #'  This will be ignored if \code{x} does not contain column names.
@@ -36,11 +36,11 @@
 #' @param colhead.font.family Font family of text in table column headers.
 #' @param colhead.font.color Font color of text in table column headers.
 #' @param colhead.font.size Font size (in pixels) of text in table column headers.
-#' @param colhead.font.weight One of "normal" or "bold". 
+#' @param colhead.font.weight One of "normal" or "bold".
 #' @param colhead.font.style One of "normal" or "italic".
 #' @param rowhead.show Logical; whether to show row headers in the table.
 #'  This will be ignored if \code{x} does not contain row names.
-#' @param rowhead.labels A vector or comma-separated labels to override 
+#' @param rowhead.labels A vector or comma-separated labels to override
 #'   the column names of \code{x}.
 #' @param rowhead.fill Background color of the row headers in the table.
 #' @param rowhead.border.width Width of border around table row headers (in pixels).
@@ -50,7 +50,7 @@
 #' @param rowhead.font.family Font family of text in table row headers.
 #' @param rowhead.font.color Font color of text in table row headers.
 #' @param rowhead.font.size Font size (in pixels) of text in table row headers.
-#' @param rowhead.font.weight One of "normal" or "bold". 
+#' @param rowhead.font.weight One of "normal" or "bold".
 #' @param rowhead.font.style One of "normal" or "italic".
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @export
@@ -81,20 +81,20 @@ CreateCustomTable <- function(x,
                               colhead.font.family = global.font.family,
                               colhead.font.color = global.font.color,
                               colhead.font.size = 10,
-                              colhead.font.weight = "normal",
+                              colhead.font.weight = "bold",
                               colhead.font.style = "normal",
                               rowhead.show = TRUE,
                               rowhead.labels = NULL,
                               rowhead.fill = colhead.fill,
                               rowhead.border.width = 1,
                               rowhead.border.color = "#FFFFFF",
-                              rowhead.align.horizontal = "right",
+                              rowhead.align.horizontal = "left",
                               rowhead.align.vertical = "middle",
                               rowhead.font.family = global.font.family,
                               rowhead.font.color = global.font.color,
                               rowhead.font.size = 10,
                               rowhead.font.style = "normal",
-                              rowhead.font.weight = "normal")
+                              rowhead.font.weight = "bold")
 {
     x <- as.matrix(x)
     if (transpose)
@@ -122,7 +122,7 @@ CreateCustomTable <- function(x,
         colhead.show <- FALSE
     if (is.null(rownames(x)))
         rowhead.show <- FALSE
-   
+
     # Set up formatting
     if (tolower(font.unit) %in% c("pt", "point", "points"))
     {
@@ -132,23 +132,23 @@ CreateCustomTable <- function(x,
         rowhead.font.size = round(fsc * rowhead.font.size, 0)
     }
 
-    rowhead.style <- paste0("background: ", rowhead.fill, 
+    rowhead.style <- paste0("background: ", rowhead.fill,
         "; border: ", rowhead.border.width, "px solid ", rowhead.border.color,
         "; font-size: ", rowhead.font.size, "px; font-style: ", rowhead.font.style,
-        "; font-weight: ", rowhead.font.weight, "; font-family: ", rowhead.font.family, 
-        "; color:", rowhead.font.color, "; text-align: ", rowhead.align.horizontal, 
+        "; font-weight: ", rowhead.font.weight, "; font-family: ", rowhead.font.family,
+        "; color:", rowhead.font.color, "; text-align: ", rowhead.align.horizontal,
         "; vertical-align: ", rowhead.align.vertical, ";")
-    colhead.style <- paste0("background: ", colhead.fill, 
+    colhead.style <- paste0("background: ", colhead.fill,
         "; border: ", colhead.border.width, "px solid ", colhead.border.color,
         "; font-size: ", colhead.font.size, "px; font-style: ", colhead.font.style,
-        "; font-weight: ", colhead.font.weight, "; font-family: ", colhead.font.family, 
-        "; color:", colhead.font.color, "; text-align: ", colhead.align.horizontal, 
+        "; font-weight: ", colhead.font.weight, "; font-family: ", colhead.font.family,
+        "; color:", colhead.font.color, "; text-align: ", colhead.align.horizontal,
         "; vertical-align: ", colhead.align.vertical, ";")
-    values.style <- paste0("background: ", values.fill, 
+    values.style <- paste0("background: ", values.fill,
         "; border: ", values.border.width, "px solid ", values.border.color,
         "; font-size: ", values.font.size, "px; font-style: ", values.font.style,
-        "; font-weight: ", values.font.weight, "; font-family: ", values.font.family, 
-        "; color:", values.font.color, "; text-align: ", values.align.horizontal, 
+        "; font-weight: ", values.font.weight, "; font-family: ", values.font.family,
+        "; color:", values.font.color, "; text-align: ", values.align.horizontal,
         "; vertical-align: ", values.align.vertical, ";")
 
 
