@@ -2,14 +2,15 @@
 #' @description Displays html table with custom formatting. This can be specified
 #'  separately for each cell be specifying attributes or using CSS.
 #' @param x Matrix or data frame of contents to show in the table
-#' @param sig.change.fills Matrix of same dim as \code{x} used for cell fills 
-#'  (1 denotes increase/green fill, -1 denotes decrease/red fill, 0 no fill) 
+#' @param sig.change.fills Matrix of same dim as \code{x} used for cell fills
+#'  (1 denotes increase/green fill, -1 denotes decrease/red fill, 0 no fill)
 #' @param sig.change.arrows Matrix of same dim as \code{x} used for cell arrows
 #'  (1 denotes increase/green up arrow, -1 denotes decrease/red down arrow, 0 no arrow)
-#' @param sig.leader.circles Matrix of same dim as \code{x} used for 'leader' circles 
+#' @param sig.leader.circles Matrix of same dim as \code{x} used for 'leader' circles
 #'  (2 denotes row leader, 1 denotes tied leaders, 0 denotes no circle)
-#' @param format.as.percentage Display table values as percentage (multiply by 100
-#'  and add percentage sign). Ignored if \code{x} is not numeric.
+#' @param format.type One of "Automatic", "Percentage (multiply by 100
+#'  and add percentage sign) or "Numeric". When set to "Automatic", the format type
+#'  will be determined by \code{attr(x, "statistic")}. Ignored if \code{x} is not numeric.
 #' @param format.decimals Controls number of decimal places shown in table cells.
 #'  Ignored if \code{x} is not numeric.
 #' @param transpose Whether to switch rows and columns in \code{x}.
@@ -65,8 +66,8 @@
 #'  \code{row.header.border}, \code{row.header.font}, \code{row.header.align}, etc
 #' @param col.classes any specific column classes to apply. e.g. \code{list(list(ix=3, class="bluefill"))}
 #'  will cause column 3 to have class "bluefill".
-#' @param row.classes any specific row classes to apply. 
-#' @param col.widths specify column widths in \% or px; Remaining width divided between remaining columns. 
+#' @param row.classes any specific row classes to apply.
+#' @param col.widths specify column widths in \% or px; Remaining width divided between remaining columns.
 #' @param corner Contents of the corner cell, if row and column headers are used
 #' @param corner.class Class of the corner cell, if row and column headers are used
 #' @param corner.fill Background color of the corners in the table.
@@ -92,11 +93,11 @@
 #' @param spacer.col Indices of any blank divider columns
 #' @param row.height Height of table body rows. If \code{NULL}, then the rows are stretched to fill container.
 #' @param col.header.height Height of table header rows
-#' @param col.spans List of column spans to place above the column headers: 
+#' @param col.spans List of column spans to place above the column headers:
 #'  list(list(width=,label=,class=), list(width=,label=,class=))
-#' @param row.spans List of row spans to place left of the row headers: list(list(height=,label=,class=), 
+#' @param row.spans List of row spans to place left of the row headers: list(list(height=,label=,class=),
 #'  list(height=,label=,class=)
-#' @param custom.css Any custom CSS to add to the \code{<style>} header of the html 
+#' @param custom.css Any custom CSS to add to the \code{<style>} header of the html
 #'  (e.g. defining nth-child logic or custom classes not included in the CSS function)
 #' @param use.predefined.css Logical; whether to include CSS definitions for classes
 #'  \code{rh, rhclean, simpleheader, simpleheaderclean, nsline, subjourneyHeader, subjourneySubHeader
@@ -104,13 +105,14 @@
 #'  to omit this is not used.
 #' @param suppress.nan whether to empty cells containing only NaN
 #' @param suppress.na whether to empty cells containing only NA
+#' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @export
 CreateCustomTable = function(x,
                         sig.change.fills = NULL,
                         sig.change.arrows = NULL,
                         sig.leader.circles = NULL,
-                        format.as.percentage = FALSE,
+                        format.type = "Automatic",
                         format.decimals = 0,
                         suppress.nan = TRUE,
                         suppress.na = TRUE,
@@ -176,10 +178,10 @@ CreateCustomTable = function(x,
                         banded.odd.fill = 'rgb(250,250,250)',
                         banded.even.fill = 'rgb(245,255,245)',
                         sig.fills.up = 'rgb(195,255,199)',
-                        sig.fills.down = 'rgb(255,213,213)', 
+                        sig.fills.down = 'rgb(255,213,213)',
                         sig.arrows.up = 'rgb(0,172,62)',
                         sig.arrows.down = 'rgb(192,0,0)',
-                        circle.size = 35, 
+                        circle.size = 35,
                         spacer.row = NULL,
                         spacer.col = NULL,
                         col.spans = NULL,
@@ -190,7 +192,7 @@ CreateCustomTable = function(x,
 {
     # Check input
     x <- tidyMatrixValues(x, transpose, row.header.labels, col.header.labels)
-    nrows <- nrow(x) 
+    nrows <- nrow(x)
     ncols <- ncol(x)
     if (is.null(colnames(x)))
         show.col.headers <- FALSE
@@ -198,9 +200,12 @@ CreateCustomTable = function(x,
         show.row.headers <- FALSE
 
     # Format table contents
-    content <- if (!is.numeric(x))            x
-               else if (format.as.percentage) FormatAsPercent(x, decimals = format.decimals)
-               else                           FormatAsReal(x, decimals = format.decimals)
+    if (format.type == "Automatic" && any(grepl("%", attr(x, "statistic"))))
+        format.type <- "Percentage"
+
+    content <- if (!is.numeric(x))                   x
+               else if (format.type == "Percentage") FormatAsPercent(x, decimals = format.decimals)
+               else                                  FormatAsReal(x, decimals = format.decimals)
     content <- matrix(content, nrows, ncols)
     if (suppress.nan)
         content[which(is.nan(x))] <- ""
@@ -212,7 +217,7 @@ CreateCustomTable = function(x,
     {
         content[which(sig.change.arrows ==  1)] <- paste0(content[which(sig.change.arrows ==  1)],
                     "<font style='color:", sig.arrows.up, "'>&#x2191;</font>")
-        content[which(sig.change.arrows == -1)] <- paste0(content[which(sig.change.arrows == -1)], 
+        content[which(sig.change.arrows == -1)] <- paste0(content[which(sig.change.arrows == -1)],
                     "<font style='color:", sig.arrows.down, "'>&#x2193;</font>")
     }
     circle.css <- ""
@@ -234,7 +239,7 @@ CreateCustomTable = function(x,
     else
         cell.fill <- matrix("", nrows, ncols)
     if (!is.null(sig.change.fills))
-    {    
+    {
         cell.fill[which(sig.change.fills ==  1)] <- paste("background:", sig.fills.up, ";")
         cell.fill[which(sig.change.fills == -1)] <- paste("background:", sig.fills.down, ";")
     }
@@ -254,7 +259,7 @@ CreateCustomTable = function(x,
         if (!is.null(sig.change.fills))
         {
             ind <- which(abs(sig.change.fills[cc[[1]],]) < 1)
-            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]]) 
+            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]])
         }
         else
             cell.styles[cc[[1]],] = sprintf('class="%s"',cc[[2]])
@@ -264,7 +269,7 @@ CreateCustomTable = function(x,
         if (!is.null(sig.change.fills))
         {
             ind <- which(abs(sig.change.fills[,cc[[1]]]) < 1)
-            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]]) 
+            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]])
         }
         else
             cell.styles[,cc[[1]]] = sprintf('class="%s"',cc[[2]])
@@ -272,8 +277,8 @@ CreateCustomTable = function(x,
 
     # Row headers
     if (show.row.headers)
-    {   
-        if (sum(nchar(row.header.classes)) == 0)     
+    {
+        if (sum(nchar(row.header.classes)) == 0)
             row.header.styles <- paste0("style = 'background: ", row.header.fill,
                 "; border: ", row.header.border.width, "px solid ", row.header.border.color,
                 "; font-size: ", row.header.font.size, "px; font-style: ", row.header.font.style,
@@ -290,7 +295,7 @@ CreateCustomTable = function(x,
     if (!is.null(row.spans))
     {
         span.lengths <- sapply(row.spans, function(x) x[['height']])
-        row.spans <- sapply(row.spans, function(rr) sprintf('<td rowspan="%s" class="%s">%s</td>', 
+        row.spans <- sapply(row.spans, function(rr) sprintf('<td rowspan="%s" class="%s">%s</td>',
                             rr[['height']], rr[['class']], rr[['label']]))
         row.span.html <- rep(row.spans, span.lengths)
         row.span.html[duplicated(row.span.html)] = ''
@@ -326,11 +331,11 @@ CreateCustomTable = function(x,
             col.header.styles <- c(corner.styles[1], col.header.styles)
             col.labels <- c(corner, col.labels)
         }
-        if (!is.null(spacer.col)) 
+        if (!is.null(spacer.col))
             col.class.html[spacer.col] <- 'class = "spacer"'
         if (!is.null(spacer.row))
             spacer.row <-  spacer.row + 1
-        header.html <- paste0(c('<tr>', sprintf('<th %s>%s</th>', col.header.styles, col.labels), 
+        header.html <- paste0(c('<tr>', sprintf('<th %s>%s</th>', col.header.styles, col.labels),
                                 '</tr>'), collapse='')
     } else
         header.html <- ''
@@ -339,9 +344,9 @@ CreateCustomTable = function(x,
     if (!is.null(col.spans))
     {
         spans <- append(list(list(width = 1, label = '', class = 'spacer')), col.spans)
-        spans <- sapply(spans, function(cc) sprintf('<th colspan="%s" class="%s">%s</th>', 
+        spans <- sapply(spans, function(cc) sprintf('<th colspan="%s" class="%s">%s</th>',
                         cc[['width']], cc[['class']], cc[['label']]))
-        col.span.html <- paste0('<tr>', paste0(spans, collapse=''),'</tr>')       
+        col.span.html <- paste0('<tr>', paste0(spans, collapse=''),'</tr>')
     } else
         col.span.html <- ''
 
@@ -365,7 +370,7 @@ CreateCustomTable = function(x,
 
     # Row/Column banding
     if (banded.rows)
-        cata('tbody tr:nth-child(odd){background-color:', banded.odd.fill, 
+        cata('tbody tr:nth-child(odd){background-color:', banded.odd.fill,
                 ';} tr:nth-child(even){background-color:', banded.even.fill, ';}')
     if (banded.cols)
         cata('tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
@@ -391,7 +396,7 @@ CreateCustomTable = function(x,
     # Build table
     cell.html <- matrix(sprintf('<td %s>%s</td>', cell.styles, content), nrow = nrows)
     cell.html <- cbind(row.span.html, cell.html)
-    body.html <- paste0(sprintf('<tr>%s</tr>', 
+    body.html <- paste0(sprintf('<tr>%s</tr>',
                     apply(cell.html, 1, paste0, collapse = '')), collapse='')
 
     cata(body.html)
@@ -424,7 +429,7 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
     if (length(col.header.labels) > 0)
     {
         if (length(col.header.labels) != ncol(x))
-            stop("Column labels (", length(col.header.labels), 
+            stop("Column labels (", length(col.header.labels),
             ") do not equal the number of columns (", ncol(x), ") in the input table")
         colnames(x) <- col.header.labels
     }
@@ -444,13 +449,13 @@ predefinedCSS <- function()
     .simpleheader {
         background-color: #DCDCDC;
         font-weight: bold;
-        }   
+        }
     .simpleheaderclean {
         background-color: #DCDCDC;
         font-weight: normal;
-        }   
+        }
     .nsline {
-        font-style: italic; 
+        font-style: italic;
         font-size: 9pt;
         white-space:nowrap;
         display: block;}
@@ -462,7 +467,7 @@ predefinedCSS <- function()
         font-style: bold;
         border-top: 1px grey solid;
         border-bottom: 1px grey solid;
-        } 
+        }
     .white {background-color:white;}
     .spacer {background: white;color: white;border: none;overflow:hidden;}
 "

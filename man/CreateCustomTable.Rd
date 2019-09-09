@@ -5,13 +5,14 @@
 \title{Display a html table with custom formatting}
 \usage{
 CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
-  sig.leader.circles = NULL, format.as.percentage = FALSE,
-  format.decimals = 0, transpose = FALSE, col.widths = c("25\%"),
-  row.height = NULL, col.header.height = "35px",
-  global.font.family = "Arial", global.font.color = rgb(44, 44, 44,
-  maxColorValue = 255), font.unit = "px", cell.fill = "#FFFFFF",
-  cell.border.width = 1, cell.border.color = "#FFFFFF",
-  cell.align.horizontal = "center", cell.align.vertical = "middle",
+  sig.leader.circles = NULL, format.type = "Automatic",
+  format.decimals = 0, suppress.nan = TRUE, suppress.na = TRUE,
+  transpose = FALSE, col.widths = c("25\%"), row.height = NULL,
+  col.header.height = "35px", global.font.family = "Arial",
+  global.font.color = rgb(44, 44, 44, maxColorValue = 255),
+  font.unit = "px", cell.fill = "#FFFFFF", cell.border.width = 1,
+  cell.border.color = "#FFFFFF", cell.align.horizontal = "center",
+  cell.align.vertical = "middle",
   cell.font.family = global.font.family,
   cell.font.color = global.font.color, cell.font.size = 14,
   cell.font.weight = "normal", cell.font.style = "normal",
@@ -47,25 +48,30 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   sig.arrows.down = "rgb(192,0,0)", circle.size = 35,
   spacer.row = NULL, spacer.col = NULL, col.spans = NULL,
   row.spans = NULL, custom.css = "", use.predefined.css = TRUE,
-  suppress.nan = TRUE, suppress.na = TRUE)
+  resizable = FALSE)
 }
 \arguments{
 \item{x}{Matrix or data frame of contents to show in the table}
 
-\item{sig.change.fills}{Matrix of same dim as \code{x} used for cell fills 
+\item{sig.change.fills}{Matrix of same dim as \code{x} used for cell fills
 (1 denotes increase/green fill, -1 denotes decrease/red fill, 0 no fill)}
 
 \item{sig.change.arrows}{Matrix of same dim as \code{x} used for cell arrows
 (1 denotes increase/green up arrow, -1 denotes decrease/red down arrow, 0 no arrow)}
 
-\item{sig.leader.circles}{Matrix of same dim as \code{x} used for 'leader' circles 
+\item{sig.leader.circles}{Matrix of same dim as \code{x} used for 'leader' circles
 (2 denotes row leader, 1 denotes tied leaders, 0 denotes no circle)}
 
-\item{format.as.percentage}{Display table values as percentage (multiply by 100
-and add percentage sign). Ignored if \code{x} is not numeric.}
+\item{format.type}{One of "Automatic", "Percentage (multiply by 100
+and add percentage sign) or "Numeric". When set to "Automatic", the format type
+will be determined by \code{attr(x, "statistic")}. Ignored if \code{x} is not numeric.}
 
 \item{format.decimals}{Controls number of decimal places shown in table cells.
 Ignored if \code{x} is not numeric.}
+
+\item{suppress.nan}{whether to empty cells containing only NaN}
+
+\item{suppress.na}{whether to empty cells containing only NA}
 
 \item{transpose}{Whether to switch rows and columns in \code{x}.}
 
@@ -215,13 +221,13 @@ will cause column 3 to have class "bluefill".}
 
 \item{spacer.col}{Indices of any blank divider columns}
 
-\item{col.spans}{List of column spans to place above the column headers: 
+\item{col.spans}{List of column spans to place above the column headers:
 list(list(width=,label=,class=), list(width=,label=,class=))}
 
-\item{row.spans}{List of row spans to place left of the row headers: list(list(height=,label=,class=), 
+\item{row.spans}{List of row spans to place left of the row headers: list(list(height=,label=,class=),
 list(height=,label=,class=)}
 
-\item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html 
+\item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function)}
 
 \item{use.predefined.css}{Logical; whether to include CSS definitions for classes
@@ -229,9 +235,7 @@ list(height=,label=,class=)}
 white, spacer}. This is included for backwards compatibiliy but it is probably safer
 to omit this is not used.}
 
-\item{suppress.nan}{whether to empty cells containing only NaN}
-
-\item{suppress.na}{whether to empty cells containing only NA}
+\item{resizable}{Allow column widths to be resizeable by dragging with mouse.}
 }
 \description{
 Displays html table with custom formatting. This can be specified
