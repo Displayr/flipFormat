@@ -2,35 +2,64 @@
 % Please edit documentation in R/createcustomtable.R
 \name{CreateCustomTable}
 \alias{CreateCustomTable}
-\title{Display a table with custom formatting}
+\title{Display a html table with custom formatting}
 \usage{
-CreateCustomTable(x, format.as.percentage = FALSE, format.decimals = 0,
-  transpose = FALSE, global.font.family = "Arial",
-  global.font.color = rgb(44, 44, 44, maxColorValue = 255),
-  font.unit = "pt", values.fill = "transparent",
-  values.border.width = 1, values.border.color = "#FFFFFF",
-  values.align.horizontal = "center", values.align.vertical = "middle",
-  values.font.family = global.font.family,
-  values.font.color = global.font.color, values.font.size = 10,
-  values.font.weight = "normal", values.font.style = "normal",
-  colhead.show = TRUE, colhead.labels = NULL,
-  colhead.fill = "#DDDDDD", colhead.border.width = 1,
-  colhead.border.color = "#FFFFFF",
-  colhead.align.horizontal = "center",
-  colhead.align.vertical = "middle",
-  colhead.font.family = global.font.family,
-  colhead.font.color = global.font.color, colhead.font.size = 10,
-  colhead.font.weight = "bold", colhead.font.style = "normal",
-  rowhead.show = TRUE, rowhead.labels = NULL,
-  rowhead.fill = colhead.fill, rowhead.border.width = 1,
-  rowhead.border.color = "#FFFFFF", rowhead.align.horizontal = "left",
-  rowhead.align.vertical = "middle",
-  rowhead.font.family = global.font.family,
-  rowhead.font.color = global.font.color, rowhead.font.size = 10,
-  rowhead.font.style = "normal", rowhead.font.weight = "bold")
+CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
+  sig.leader.circles = NULL, format.as.percentage = FALSE,
+  format.decimals = 0, transpose = FALSE, col.widths = c("25\%"),
+  row.height = NULL, col.header.height = "35px",
+  global.font.family = "Arial", global.font.color = rgb(44, 44, 44,
+  maxColorValue = 255), font.unit = "px", cell.fill = "#FFFFFF",
+  cell.border.width = 1, cell.border.color = "#FFFFFF",
+  cell.align.horizontal = "center", cell.align.vertical = "middle",
+  cell.font.family = global.font.family,
+  cell.font.color = global.font.color, cell.font.size = 14,
+  cell.font.weight = "normal", cell.font.style = "normal",
+  show.col.headers = TRUE, col.header.labels = NULL,
+  col.header.fill = "#DCDCDC", col.header.border.width = 1,
+  col.header.border.color = "#FFFFFF",
+  col.header.align.horizontal = "center",
+  col.header.align.vertical = "middle",
+  col.header.font.family = global.font.family,
+  col.header.font.color = global.font.color, col.header.font.size = 14,
+  col.header.font.weight = "bold", col.header.font.style = "normal",
+  show.row.headers = TRUE, row.header.labels = NULL,
+  row.header.fill = "#FFFFFF", row.header.border.width = 1,
+  row.header.border.color = col.header.border.color,
+  row.header.align.horizontal = "left",
+  row.header.align.vertical = "middle",
+  row.header.font.family = global.font.family,
+  row.header.font.color = global.font.color, row.header.font.size = 14,
+  row.header.font.style = "normal", row.header.font.weight = "bold",
+  corner = "", corner.class = "", corner.fill = "#FFFFFF",
+  corner.border.width = col.header.border.width,
+  corner.border.color = col.header.border.color,
+  corner.align.horizontal = "center", corner.align.vertical = "middle",
+  corner.font.family = global.font.family,
+  corner.font.color = global.font.color, corner.font.size = 14,
+  corner.font.weight = "bold", corner.font.style = "normal",
+  col.header.classes = "", row.header.classes = "",
+  col.classes = list(), row.classes = list(), banded.rows = FALSE,
+  banded.cols = FALSE, banded.odd.fill = "rgb(250,250,250)",
+  banded.even.fill = "rgb(245,255,245)",
+  sig.fills.up = "rgb(195,255,199)",
+  sig.fills.down = "rgb(255,213,213)", sig.arrows.up = "rgb(0,172,62)",
+  sig.arrows.down = "rgb(192,0,0)", circle.size = 35,
+  spacer.row = NULL, spacer.col = NULL, col.spans = NULL,
+  row.spans = NULL, custom.css = "", use.predefined.css = TRUE,
+  suppress.nan = TRUE, suppress.na = TRUE)
 }
 \arguments{
-\item{x}{Input table to display.}
+\item{x}{Matrix or data frame of contents to show in the table}
+
+\item{sig.change.fills}{Matrix of same dim as \code{x} used for cell fills 
+(1 denotes increase/green fill, -1 denotes decrease/red fill, 0 no fill)}
+
+\item{sig.change.arrows}{Matrix of same dim as \code{x} used for cell arrows
+(1 denotes increase/green up arrow, -1 denotes decrease/red down arrow, 0 no arrow)}
+
+\item{sig.leader.circles}{Matrix of same dim as \code{x} used for 'leader' circles 
+(2 denotes row leader, 1 denotes tied leaders, 0 denotes no circle)}
 
 \item{format.as.percentage}{Display table values as percentage (multiply by 100
 and add percentage sign). Ignored if \code{x} is not numeric.}
@@ -39,6 +68,12 @@ and add percentage sign). Ignored if \code{x} is not numeric.}
 Ignored if \code{x} is not numeric.}
 
 \item{transpose}{Whether to switch rows and columns in \code{x}.}
+
+\item{col.widths}{specify column widths in \% or px; Remaining width divided between remaining columns.}
+
+\item{row.height}{Height of table body rows. If \code{NULL}, then the rows are stretched to fill container.}
+
+\item{col.header.height}{Height of table header rows}
 
 \item{global.font.family}{Character; font family for all occurrences of any
 font attribute in the table unless specified individually.}
@@ -50,79 +85,155 @@ font attribute in the table unless specified individually.}
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 points ("pt"), which will be consistent with font sizes in text boxes.}
 
-\item{values.fill}{Background color of the cells in the table.}
+\item{cell.fill}{Background color of the cells in the table.}
 
-\item{values.border.width}{Width of border around table cells (in pixels).}
+\item{cell.border.width}{Width of border around table cells (in pixels).}
 
-\item{values.border.color}{Color of border around table cells,}
+\item{cell.border.color}{Color of border around table cells,}
 
-\item{values.align.horizontal}{Horizontal alignment of text in table cells.}
+\item{cell.align.horizontal}{Horizontal alignment of text in table cells.}
 
-\item{values.align.vertical}{Vertical alignment of text in table cells.}
+\item{cell.align.vertical}{Vertical alignment of text in table cells.}
 
-\item{values.font.family}{Font family of text in table cells.}
+\item{cell.font.family}{Font family of text in table cells.}
 
-\item{values.font.color}{Font color of text in table cells.}
+\item{cell.font.color}{Font color of text in table cells.}
 
-\item{values.font.size}{Font size (in pixels) of text in table cells.}
+\item{cell.font.size}{Font size (in pixels) of text in table cells.}
 
-\item{values.font.weight}{One of "normal" or "bold".}
+\item{cell.font.weight}{One of "normal" or "bold".}
 
-\item{values.font.style}{One of "normal" or "italic".}
+\item{cell.font.style}{One of "normal" or "italic".}
 
-\item{colhead.show}{Logical; whether to show column headers in the table.
+\item{show.col.headers}{Logical; whether to show column headers in the table.
 This will be ignored if \code{x} does not contain column names.}
 
-\item{colhead.labels}{A vector or comma-separated labels to override the
+\item{col.header.labels}{A vector or comma-separated labels to override the
 column names of \code{x}.}
 
-\item{colhead.fill}{Background color of the column headers in the table.}
+\item{col.header.fill}{Background color of the column headers in the table.}
 
-\item{colhead.border.width}{Width of border around table column headers (in pixels).}
+\item{col.header.border.width}{Width of border around table column headers (in pixels).}
 
-\item{colhead.border.color}{Color of border around table column headers,}
+\item{col.header.border.color}{Color of border around table column headers,}
 
-\item{colhead.align.horizontal}{Horizontal alignment of text in table column headers.}
+\item{col.header.align.horizontal}{Horizontal alignment of text in table column headers.}
 
-\item{colhead.align.vertical}{Vertical alignment of text in table column headers.}
+\item{col.header.align.vertical}{Vertical alignment of text in table column headers.}
 
-\item{colhead.font.family}{Font family of text in table column headers.}
+\item{col.header.font.family}{Font family of text in table column headers.}
 
-\item{colhead.font.color}{Font color of text in table column headers.}
+\item{col.header.font.color}{Font color of text in table column headers.}
 
-\item{colhead.font.size}{Font size (in pixels) of text in table column headers.}
+\item{col.header.font.size}{Font size (in pixels) of text in table column headers.}
 
-\item{colhead.font.weight}{One of "normal" or "bold".}
+\item{col.header.font.weight}{One of "normal" or "bold".}
 
-\item{colhead.font.style}{One of "normal" or "italic".}
+\item{col.header.font.style}{One of "normal" or "italic".}
 
-\item{rowhead.show}{Logical; whether to show row headers in the table.
+\item{show.row.headers}{Logical; whether to show row headers in the table.
 This will be ignored if \code{x} does not contain row names.}
 
-\item{rowhead.labels}{A vector or comma-separated labels to override
+\item{row.header.labels}{A vector or comma-separated labels to override
 the column names of \code{x}.}
 
-\item{rowhead.fill}{Background color of the row headers in the table.}
+\item{row.header.fill}{Background color of the row headers in the table.}
 
-\item{rowhead.border.width}{Width of border around table row headers (in pixels).}
+\item{row.header.border.width}{Width of border around table row headers (in pixels).}
 
-\item{rowhead.border.color}{Color of border around table row headers,}
+\item{row.header.border.color}{Color of border around table row headers,}
 
-\item{rowhead.align.horizontal}{Horizontal alignment of text in table row headers.}
+\item{row.header.align.horizontal}{Horizontal alignment of text in table row headers.}
 
-\item{rowhead.align.vertical}{Vertical alignment of text in table row headers.}
+\item{row.header.align.vertical}{Vertical alignment of text in table row headers.}
 
-\item{rowhead.font.family}{Font family of text in table row headers.}
+\item{row.header.font.family}{Font family of text in table row headers.}
 
-\item{rowhead.font.color}{Font color of text in table row headers.}
+\item{row.header.font.color}{Font color of text in table row headers.}
 
-\item{rowhead.font.size}{Font size (in pixels) of text in table row headers.}
+\item{row.header.font.size}{Font size (in pixels) of text in table row headers.}
 
-\item{rowhead.font.style}{One of "normal" or "italic".}
+\item{row.header.font.style}{One of "normal" or "italic".}
 
-\item{rowhead.font.weight}{One of "normal" or "bold".}
+\item{row.header.font.weight}{One of "normal" or "bold".}
+
+\item{corner}{Contents of the corner cell, if row and column headers are used}
+
+\item{corner.class}{Class of the corner cell, if row and column headers are used}
+
+\item{corner.fill}{Background color of the corners in the table.}
+
+\item{corner.border.width}{Width of border around table corners (in pixels).}
+
+\item{corner.border.color}{Color of border around table corners,}
+
+\item{corner.align.horizontal}{Horizontal alignment of text in table corners.}
+
+\item{corner.align.vertical}{Vertical alignment of text in table corners.}
+
+\item{corner.font.family}{Font family of text in table corners.}
+
+\item{corner.font.color}{Font color of text in table corners.}
+
+\item{corner.font.size}{Font size (in pixels) of text in table corners.}
+
+\item{corner.font.weight}{One of "normal" or "bold".}
+
+\item{corner.font.style}{One of "normal" or "italic".}
+
+\item{col.header.classes}{CSS classes of column headers. The class definition should be added to
+\code{custom.css}. This overrides \code{col.header.fill},
+\code{col.header.border}, \code{col.header.font}, \code{col.header.align}, etc.}
+
+\item{row.header.classes}{CSS classes of column headers. This overrides \code{row.header.fill},
+\code{row.header.border}, \code{row.header.font}, \code{row.header.align}, etc}
+
+\item{col.classes}{any specific column classes to apply. e.g. \code{list(list(ix=3, class="bluefill"))}
+will cause column 3 to have class "bluefill".}
+
+\item{row.classes}{any specific row classes to apply.}
+
+\item{banded.rows}{Whether to have banded rows}
+
+\item{banded.cols}{Whether to have banded columns}
+
+\item{banded.odd.fill}{Background of cells in odd rows or columns when \code{banded.rows} or \code{banded.cols}.}
+
+\item{banded.even.fill}{Background of cells in even rows or columns when \code{banded.rows} or \code{banded.cols}.}
+
+\item{sig.fills.up}{Cell color when \code{sig.change.fills} is used.}
+
+\item{sig.fills.down}{Cell color when \code{sig.change.fills} is used.}
+
+\item{sig.arrows.up}{Color of up arrows when \code{sig.change.arrows} is used.}
+
+\item{sig.arrows.down}{Color of down arrows when \code{sig.change.arrows} is used.}
+
+\item{circle.size}{Size of circles when \code{sig.leader.circles} is used.}
+
+\item{spacer.row}{Indices of any blank divider rows}
+
+\item{spacer.col}{Indices of any blank divider columns}
+
+\item{col.spans}{List of column spans to place above the column headers: 
+list(list(width=,label=,class=), list(width=,label=,class=))}
+
+\item{row.spans}{List of row spans to place left of the row headers: list(list(height=,label=,class=), 
+list(height=,label=,class=)}
+
+\item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html 
+(e.g. defining nth-child logic or custom classes not included in the CSS function)}
+
+\item{use.predefined.css}{Logical; whether to include CSS definitions for classes
+\code{rh, rhclean, simpleheader, simpleheaderclean, nsline, subjourneyHeader, subjourneySubHeader
+white, spacer}. This is included for backwards compatibiliy but it is probably safer
+to omit this is not used.}
+
+\item{suppress.nan}{whether to empty cells containing only NaN}
+
+\item{suppress.na}{whether to empty cells containing only NA}
 }
 \description{
-Displays a table which fills up the entire containiner with
- resizable column widths and row heights.
+Displays html table with custom formatting. This can be specified
+ separately for each cell be specifying attributes or using CSS.
 }
