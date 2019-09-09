@@ -112,6 +112,8 @@ CreateCustomTable = function(x,
                         sig.leader.circles = NULL,
                         format.as.percentage = FALSE,
                         format.decimals = 0,
+                        suppress.nan = TRUE,
+                        suppress.na = TRUE,
                         transpose = FALSE,
                         col.widths = c("25%"),
                         row.height = NULL,
@@ -184,9 +186,7 @@ CreateCustomTable = function(x,
                         row.spans = NULL,
                         custom.css = '',
                         use.predefined.css = TRUE,
-                        suppress.nan = TRUE,
-                        suppress.na = TRUE
-                       )
+                        resizable = FALSE)
 {
     # Check input
     x <- tidyMatrixValues(x, transpose, row.header.labels, col.header.labels)
@@ -210,10 +210,10 @@ CreateCustomTable = function(x,
     # Significance testing arrows/circles/fills
     if (!is.null(sig.change.arrows))
     {
-        content[which(sig.change.arrows ==  1)] <- paste0("<font style='color:", sig.arrows.up, 
-                    "'>&#x2191;</font>", content[which(sig.change.arrows ==  1)])
-        content[which(sig.change.arrows == -1)] <- paste0("<font style='color:", sig.arrows.down, 
-                    "'>&#x2193;</font>", content[which(sig.change.arrows == -1)])
+        content[which(sig.change.arrows ==  1)] <- paste0(content[which(sig.change.arrows ==  1)],
+                    "<font style='color:", sig.arrows.up, "'>&#x2191;</font>")
+        content[which(sig.change.arrows == -1)] <- paste0(content[which(sig.change.arrows == -1)], 
+                    "<font style='color:", sig.arrows.down, "'>&#x2193;</font>")
     }
     circle.css <- ""
     if (!is.null(sig.leader.circles))
@@ -352,13 +352,16 @@ CreateCustomTable = function(x,
     cata("table { border-collapse: collapse; table-layout: fixed; ",
                  "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
                  "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+    cata("thead, th { overflow: auto; ")
+    if (resizable)
+        cata("resize: both; ")
     if (sum(nchar(col.header.height)) > 0)
-        cata("thead, th { height:", col.header.height, "}\n")
-    table.height = ""
+        cata("height:", col.header.height, "; ")
+    cata("}\n")
+    cata("td { overflow: auto; ")
     if (sum(nchar(row.height)) > 0)
-        cata("td { height:", row.height, "}\n")
-    else
-        table.height <- "; height:100%"
+        cata("height:", row.height, "; ")
+    cata("}\n")
 
     # Row/Column banding
     if (banded.rows)
@@ -375,6 +378,7 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
+    table.height <- if (sum(nchar(row.height)) == 0) "; height:100%" else ""
     cata("<table style = 'width:100%", table.height, "'>\n")
     if (sum(nchar(col.widths)) > 0)
     {
