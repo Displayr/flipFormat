@@ -281,7 +281,7 @@ CreateCustomTable = function(x,
         if (sum(nchar(row.header.classes)) == 0)
             row.header.styles <- paste0("style = 'background: ", row.header.fill,
                 "; border: ", row.header.border.width, "px solid ", row.header.border.color,
-                "; font-size: ", row.header.font.size, "px; font-style: ", row.header.font.style,
+                "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
                 "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
                 "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
                 "; vertical-align: ", row.header.align.vertical, ";'")
@@ -308,7 +308,7 @@ CreateCustomTable = function(x,
         if (sum(nchar(col.header.classes)) == 0)
             col.header.styles <- paste0("style = 'background: ", col.header.fill,
                 "; border: ", col.header.border.width, "px solid ", col.header.border.color,
-                "; font-size: ", col.header.font.size, "px; font-style: ", col.header.font.style,
+                "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
                 "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
                 "; color:", col.header.font.color, "; text-align: ", col.header.align.horizontal,
                 "; vertical-align: ", col.header.align.vertical, ";'")
@@ -322,7 +322,7 @@ CreateCustomTable = function(x,
             if (sum(nchar(corner.class)) == 0)
             corner.styles <- paste0("style = 'background: ", corner.fill,
                 "; border: ", corner.border.width, "px solid ", corner.border.color,
-                "; font-size: ", corner.font.size, "px; font-style: ", corner.font.style,
+                "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
                 "; font-weight: ", corner.font.weight, "; font-family: ", corner.font.family,
                 "; color:", corner.font.color, "; text-align: ", corner.align.horizontal,
                 "; vertical-align: ", corner.align.vertical, ";'")
@@ -357,13 +357,13 @@ CreateCustomTable = function(x,
     cata("table { border-collapse: collapse; table-layout: fixed; ",
                  "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
                  "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
-    cata("thead, th { overflow: auto; ")
+    cata("thead, th { overflow: hidden; ")
     if (resizable)
         cata("resize: both; ")
     if (sum(nchar(col.header.height)) > 0)
         cata("height:", col.header.height, "; ")
     cata("}\n")
-    cata("td { overflow: auto; ")
+    cata("td { overflow: hidden; ")
     if (sum(nchar(row.height)) > 0)
         cata("height:", row.height, "; ")
     cata("}\n")
