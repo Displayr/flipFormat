@@ -35,6 +35,10 @@ h1 {
     -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
+.raw-text-category-summary:hover {
+    cursor:pointer;
+}
+
 .raw-text-category-summary:focus {
     outline: none;
 }

@@ -27,6 +27,10 @@ details summary::-webkit-details-marker{
     margin-left: 10px; /* so doesnt overlap with displayr resize tool */
 }
 
+summary:hover {
+    cursor:pointer;
+}
+
 .sub-details {
   font-size: 14px;
 }
