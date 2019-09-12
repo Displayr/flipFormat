@@ -340,7 +340,7 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
         names(t) <- tmp.col.names
         rownames(t) <- NULL
         cata(kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
-                   escape = FALSE, table.attr = "class=\"text-analysis-table\""))
+                   escape = FALSE, table.attr = "class=\"text-analysis-table raw-text-table\""))
 
     cata("</div>") # end panel div
 }
@@ -352,7 +352,7 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
 
     cata("<div id=\"ngrams-panel\">")
     cata(kable(t, align = c("l", "c", "c"), format = "html", escape = FALSE,
-               table.attr = "class=\"text-analysis-table\""))
+               table.attr = "class=\"text-analysis-table categories-table\""))
     cata("</div>") # end panel div
 }
 
@@ -800,7 +800,7 @@ lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 
         html <- paste0(html, kable(t, align = c("l", "c", "c", "l"),
                                    format = "html", escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table low-freq-table\""))
 
         html <- paste0(html, "</div>")
     }
@@ -824,7 +824,7 @@ rawCasesTable <- function(obj)
         colnames(t) <- c("Var", "Case", "Raw text")
         html <- paste0(html, kable(t, align = c("c", "c", "l"),
                                    format = "html", escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table raw-cases-table\""))
     }
     else
     {
@@ -832,7 +832,7 @@ rawCasesTable <- function(obj)
         colnames(t) <- "Raw text"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table raw-cases-table\""))
     }
     paste0(html, "</div>")
 }

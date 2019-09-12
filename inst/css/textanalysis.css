@@ -100,6 +100,34 @@
     hyphens: auto;
 }
 
+.categories-table td:nth-of-type(2) {
+    white-space: nowrap;
+}
+
+.categories-table td:nth-of-type(3) {
+    white-space: nowrap;
+}
+
+.raw-text-table td:nth-of-type(1) {
+    white-space: nowrap;
+}
+
+.low-freq-table td:nth-of-type(2) {
+    white-space: nowrap;
+}
+
+.low-freq-table td:nth-of-type(3) {
+    white-space: nowrap;
+}
+
+.raw-cases-table td:nth-of-type(1) {
+    white-space: nowrap;
+}
+
+.raw-cases-table td:nth-of-type(2) {
+    white-space: nowrap;
+}
+
 .variable-name {
     display: block;
     margin: 10px 15px 0 15px;
