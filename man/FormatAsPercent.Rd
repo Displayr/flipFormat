@@ -5,7 +5,8 @@
 \title{Converts a proportion to a percent}
 \usage{
 FormatAsPercent(x, digits = 2, decimals = NULL,
-  remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE)
+  remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE,
+  show.sign = TRUE)
 }
 \arguments{
 \item{x}{The number(s)}
@@ -19,6 +20,8 @@ FormatAsPercent(x, digits = 2, decimals = NULL,
 \item{comma.for.thousands}{If TRUE, uses a comma when there are thousands.}
 
 \item{pad}{If a vector is supplied and \code{decimals} is specified, adds spaces to the beginning of numbers so they become decimal aligned.}
+
+\item{show.sign}{Logical; whether to show percentage sign}
 }
 \description{
 Converts a proportion to a percent

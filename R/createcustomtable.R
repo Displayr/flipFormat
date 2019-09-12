@@ -11,6 +11,7 @@
 #' @param format.type One of "Automatic", "Percentage (multiply by 100
 #'  and add percentage sign) or "Numeric". When set to "Automatic", the format type
 #'  will be determined by \code{attr(x, "statistic")}. Ignored if \code{x} is not numeric.
+#' @param format.show.pct.sign Show percentage sign when \code{format.type} is "Percentage".
 #' @param format.decimals Controls number of decimal places shown in table cells.
 #'  Ignored if \code{x} is not numeric.
 #' @param transpose Whether to switch rows and columns in \code{x}.
@@ -31,6 +32,8 @@
 #' @param cell.font.size Font size (in pixels) of text in table cells.
 #' @param cell.font.weight One of "normal" or "bold".
 #' @param cell.font.style One of "normal" or "italic".
+#' @param cell.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param show.col.headers Logical; whether to show column headers in the table.
 #'  This will be ignored if \code{x} does not contain column names.
 #' @param col.header.labels A vector or comma-separated labels to override the
@@ -45,6 +48,8 @@
 #' @param col.header.font.size Font size (in pixels) of text in table column headers.
 #' @param col.header.font.weight One of "normal" or "bold".
 #' @param col.header.font.style One of "normal" or "italic".
+#' @param col.header.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param show.row.headers Logical; whether to show row headers in the table.
 #'  This will be ignored if \code{x} does not contain row names.
 #' @param row.header.labels A vector or comma-separated labels to override
@@ -59,6 +64,8 @@
 #' @param row.header.font.size Font size (in pixels) of text in table row headers.
 #' @param row.header.font.weight One of "normal" or "bold".
 #' @param row.header.font.style One of "normal" or "italic".
+#' @param row.header.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param col.header.classes CSS classes of column headers. The class definition should be added to
 #'  \code{custom.css}. This overrides \code{col.header.fill},
 #'  \code{col.header.border}, \code{col.header.font}, \code{col.header.align}, etc.
@@ -80,6 +87,8 @@
 #' @param corner.font.size Font size (in pixels) of text in table corners.
 #' @param corner.font.weight One of "normal" or "bold".
 #' @param corner.font.style One of "normal" or "italic".
+#' @param corner.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param banded.rows Whether to have banded rows
 #' @param banded.cols Whether to have banded columns
 #' @param banded.odd.fill Background of cells in odd rows or columns when \code{banded.rows} or \code{banded.cols}.
@@ -113,6 +122,7 @@ CreateCustomTable = function(x,
                         sig.change.arrows = NULL,
                         sig.leader.circles = NULL,
                         format.type = "Automatic",
+                        format.show.pct.sign = TRUE,
                         format.decimals = 0,
                         suppress.nan = TRUE,
                         suppress.na = TRUE,
@@ -133,6 +143,7 @@ CreateCustomTable = function(x,
                         cell.font.size = 14,
                         cell.font.weight = "normal",
                         cell.font.style = "normal",
+                        cell.pad = 0,
                         show.col.headers = TRUE,
                         col.header.labels = NULL,
                         col.header.fill = "#DCDCDC",
@@ -145,6 +156,7 @@ CreateCustomTable = function(x,
                         col.header.font.size = 14,
                         col.header.font.weight = "bold",
                         col.header.font.style = "normal",
+                        col.header.pad = 0,
                         show.row.headers = TRUE,
                         row.header.labels = NULL,
                         row.header.fill = "#FFFFFF",
@@ -157,6 +169,7 @@ CreateCustomTable = function(x,
                         row.header.font.size = 14,
                         row.header.font.style = "normal",
                         row.header.font.weight = "bold",
+                        row.header.pad = 0,
                         corner = "",
                         corner.class = "",
                         corner.fill = "#FFFFFF",
@@ -169,6 +182,7 @@ CreateCustomTable = function(x,
                         corner.font.size = 14,
                         corner.font.weight = "bold",
                         corner.font.style = "normal",
+                        corner.pad = 0,
                         col.header.classes = "",
                         row.header.classes = "",
                         col.classes = list(),
@@ -204,7 +218,7 @@ CreateCustomTable = function(x,
         format.type <- "Percentage"
 
     content <- if (!is.numeric(x))                   x
-               else if (format.type == "Percentage") FormatAsPercent(x, decimals = format.decimals)
+               else if (format.type == "Percentage") FormatAsPercent(x, decimals = format.decimals, show.sign = format.show.pct.sign)
                else                                  FormatAsReal(x, decimals = format.decimals)
     content <- matrix(content, nrows, ncols)
     if (suppress.nan)
@@ -247,6 +261,7 @@ CreateCustomTable = function(x,
     # Set up styles for each cell - vector/matrix values automatically recycled
     cell.styles <- paste0("style = '", cell.fill,
         "border: ", cell.border.width, "px solid ", cell.border.color,
+        ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
         "; color:", cell.font.color, "; text-align: ", cell.align.horizontal,
@@ -281,6 +296,7 @@ CreateCustomTable = function(x,
         if (sum(nchar(row.header.classes)) == 0)
             row.header.styles <- paste0("style = 'background: ", row.header.fill,
                 "; border: ", row.header.border.width, "px solid ", row.header.border.color,
+                ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
                 "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
                 "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
                 "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
@@ -308,6 +324,7 @@ CreateCustomTable = function(x,
         if (sum(nchar(col.header.classes)) == 0)
             col.header.styles <- paste0("style = 'background: ", col.header.fill,
                 "; border: ", col.header.border.width, "px solid ", col.header.border.color,
+                ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
                 "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
                 "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
                 "; color:", col.header.font.color, "; text-align: ", col.header.align.horizontal,
@@ -322,6 +339,7 @@ CreateCustomTable = function(x,
             if (sum(nchar(corner.class)) == 0)
             corner.styles <- paste0("style = 'background: ", corner.fill,
                 "; border: ", corner.border.width, "px solid ", corner.border.color,
+                ";", getPaddingCSS(tolower(corner.align.horizontal), corner.pad),
                 "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
                 "; font-weight: ", corner.font.weight, "; font-family: ", corner.font.family,
                 "; color:", corner.font.color, "; text-align: ", corner.align.horizontal,
@@ -434,6 +452,21 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
         colnames(x) <- col.header.labels
     }
     return(x)
+}
+
+getPaddingCSS <- function(align, pad)
+{
+    if (length(align) < length(pad))
+        align <- rep(align, length = length(pad))
+    ind <- which(align %in% c("left", "right"))
+
+    # Center alignment does not use padding
+    if (length(ind) == 0)
+        return("")
+
+    res <- rep("", length = length(align))
+    res[ind] <- paste0("padding-", align[ind], ":", pad, "px")
+    return(res)
 }
 
 predefinedCSS <- function()

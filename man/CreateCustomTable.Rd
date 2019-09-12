@@ -6,8 +6,9 @@
 \usage{
 CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   sig.leader.circles = NULL, format.type = "Automatic",
-  format.decimals = 0, suppress.nan = TRUE, suppress.na = TRUE,
-  transpose = FALSE, col.widths = c("25\%"), row.height = NULL,
+  format.show.pct.sign = TRUE, format.decimals = 0,
+  suppress.nan = TRUE, suppress.na = TRUE, transpose = FALSE,
+  col.widths = c("25\%"), row.height = NULL,
   col.header.height = "35px", global.font.family = "Arial",
   global.font.color = rgb(44, 44, 44, maxColorValue = 255),
   font.unit = "px", cell.fill = "#FFFFFF", cell.border.width = 1,
@@ -16,7 +17,7 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   cell.font.family = global.font.family,
   cell.font.color = global.font.color, cell.font.size = 14,
   cell.font.weight = "normal", cell.font.style = "normal",
-  show.col.headers = TRUE, col.header.labels = NULL,
+  cell.pad = 0, show.col.headers = TRUE, col.header.labels = NULL,
   col.header.fill = "#DCDCDC", col.header.border.width = 1,
   col.header.border.color = "#FFFFFF",
   col.header.align.horizontal = "center",
@@ -24,22 +25,24 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.header.font.family = global.font.family,
   col.header.font.color = global.font.color, col.header.font.size = 14,
   col.header.font.weight = "bold", col.header.font.style = "normal",
-  show.row.headers = TRUE, row.header.labels = NULL,
-  row.header.fill = "#FFFFFF", row.header.border.width = 1,
+  col.header.pad = 0, show.row.headers = TRUE,
+  row.header.labels = NULL, row.header.fill = "#FFFFFF",
+  row.header.border.width = 1,
   row.header.border.color = col.header.border.color,
   row.header.align.horizontal = "left",
   row.header.align.vertical = "middle",
   row.header.font.family = global.font.family,
   row.header.font.color = global.font.color, row.header.font.size = 14,
   row.header.font.style = "normal", row.header.font.weight = "bold",
-  corner = "", corner.class = "", corner.fill = "#FFFFFF",
+  row.header.pad = 0, corner = "", corner.class = "",
+  corner.fill = "#FFFFFF",
   corner.border.width = col.header.border.width,
   corner.border.color = col.header.border.color,
   corner.align.horizontal = "center", corner.align.vertical = "middle",
   corner.font.family = global.font.family,
   corner.font.color = global.font.color, corner.font.size = 14,
   corner.font.weight = "bold", corner.font.style = "normal",
-  col.header.classes = "", row.header.classes = "",
+  corner.pad = 0, col.header.classes = "", row.header.classes = "",
   col.classes = list(), row.classes = list(), banded.rows = FALSE,
   banded.cols = FALSE, banded.odd.fill = "rgb(250,250,250)",
   banded.even.fill = "rgb(245,255,245)",
@@ -65,6 +68,8 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
 \item{format.type}{One of "Automatic", "Percentage (multiply by 100
 and add percentage sign) or "Numeric". When set to "Automatic", the format type
 will be determined by \code{attr(x, "statistic")}. Ignored if \code{x} is not numeric.}
+
+\item{format.show.pct.sign}{Show percentage sign when \code{format.type} is "Percentage".}
 
 \item{format.decimals}{Controls number of decimal places shown in table cells.
 Ignored if \code{x} is not numeric.}
@@ -111,6 +116,9 @@ points ("pt"), which will be consistent with font sizes in text boxes.}
 
 \item{cell.font.style}{One of "normal" or "italic".}
 
+\item{cell.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
+
 \item{show.col.headers}{Logical; whether to show column headers in the table.
 This will be ignored if \code{x} does not contain column names.}
 
@@ -136,6 +144,9 @@ column names of \code{x}.}
 \item{col.header.font.weight}{One of "normal" or "bold".}
 
 \item{col.header.font.style}{One of "normal" or "italic".}
+
+\item{col.header.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
 
 \item{show.row.headers}{Logical; whether to show row headers in the table.
 This will be ignored if \code{x} does not contain row names.}
@@ -163,6 +174,9 @@ the column names of \code{x}.}
 
 \item{row.header.font.weight}{One of "normal" or "bold".}
 
+\item{row.header.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
+
 \item{corner}{Contents of the corner cell, if row and column headers are used}
 
 \item{corner.class}{Class of the corner cell, if row and column headers are used}
@@ -186,6 +200,9 @@ the column names of \code{x}.}
 \item{corner.font.weight}{One of "normal" or "bold".}
 
 \item{corner.font.style}{One of "normal" or "italic".}
+
+\item{corner.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
 
 \item{col.header.classes}{CSS classes of column headers. The class definition should be added to
 \code{custom.css}. This overrides \code{col.header.fill},

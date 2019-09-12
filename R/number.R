@@ -6,14 +6,16 @@
 #' @param remove.leading.0 Removes the initial 0 from numbers that are less than 1.
 #' @param comma.for.thousands If TRUE, uses a comma when there are thousands.
 #' @param pad If a vector is supplied and \code{decimals} is specified, adds spaces to the beginning of numbers so they become decimal aligned.
+#' @param show.sign Logical; whether to show percentage sign
 #' @details Multiplies by 100, keeping \code{digits} or more significant digits and
 #' putting a % at the end, and commas if in thousands or more.
 #' @export
-FormatAsPercent <- function(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE)
+FormatAsPercent <- function(x, digits = 2, decimals = NULL, remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE, show.sign = TRUE)
 {
     x <- FormatAsReal(x * 100, digits, decimals, remove.leading.0, comma.for.thousands, pad = FALSE)
     x.not.na <- x != "NA" & x != "NaN"
-    x[x.not.na] <- paste0(x[x.not.na], "%")
+    if (show.sign)
+        x[x.not.na] <- paste0(x[x.not.na], "%")
     if (pad)
         x <- padVector(x)
     return(x)
