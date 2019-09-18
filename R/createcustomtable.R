@@ -22,6 +22,8 @@
 #' @param font.unit One of "px" of "pt". By default all font sizes are specified in terms of
 #'  pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 #'  points ("pt"), which will be consistent with font sizes in text boxes.
+#' @param cell.prefix Character value/vector/matrix that is prepended before the cell values.
+#' @param cell.suffix Character value/vector/matrix that is appended after the cell values.
 #' @param cell.fill Background color of the cells in the table.
 #' @param cell.border.width Width of border around table cells (in pixels).
 #' @param cell.border.color Color of border around table cells,
@@ -133,6 +135,8 @@ CreateCustomTable = function(x,
                         global.font.family = "Arial",
                         global.font.color = rgb(44, 44, 44, maxColorValue = 255),
                         font.unit = "px",
+                        cell.prefix = "",
+                        cell.suffix = "",
                         cell.fill = "#FFFFFF",
                         cell.border.width = 1,
                         cell.border.color = "#FFFFFF",
@@ -220,7 +224,7 @@ CreateCustomTable = function(x,
     content <- if (!is.numeric(x))                   x
                else if (format.type == "Percentage") FormatAsPercent(x, decimals = format.decimals, show.sign = format.show.pct.sign)
                else                                  FormatAsReal(x, decimals = format.decimals)
-    content <- matrix(content, nrows, ncols)
+    content <- matrix(paste0(cell.prefix, content, cell.suffix), nrows, ncols)
     if (suppress.nan)
         content[which(is.nan(x))] <- ""
     if (suppress.na)

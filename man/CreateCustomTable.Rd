@@ -11,7 +11,8 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.widths = c("25\%"), row.height = NULL,
   col.header.height = "35px", global.font.family = "Arial",
   global.font.color = rgb(44, 44, 44, maxColorValue = 255),
-  font.unit = "px", cell.fill = "#FFFFFF", cell.border.width = 1,
+  font.unit = "px", cell.prefix = "", cell.suffix = "",
+  cell.fill = "#FFFFFF", cell.border.width = 1,
   cell.border.color = "#FFFFFF", cell.align.horizontal = "center",
   cell.align.vertical = "middle",
   cell.font.family = global.font.family,
@@ -95,6 +96,10 @@ font attribute in the table unless specified individually.}
 \item{font.unit}{One of "px" of "pt". By default all font sizes are specified in terms of
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 points ("pt"), which will be consistent with font sizes in text boxes.}
+
+\item{cell.prefix}{Character value/vector/matrix that is prepended before the cell values.}
+
+\item{cell.suffix}{Character value/vector/matrix that is appended after the cell values.}
 
 \item{cell.fill}{Background color of the cells in the table.}
 
