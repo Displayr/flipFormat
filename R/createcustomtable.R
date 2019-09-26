@@ -405,7 +405,7 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
-    table.height <- if (sum(nchar(row.height)) == 0) "; height:100%" else ""
+    table.height <- if (sum(nchar(row.height)) != 0) "" else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata("<table style = 'width:100%", table.height, "'>\n")
     if (sum(nchar(col.widths)) > 0)
     {
