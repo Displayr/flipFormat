@@ -26,6 +26,8 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages,
          "<th>Entity</th><th>%</th>",
          "</thead><tbody>")
 
+    entity.percentages <- sort(entity.percentages, decreasing = TRUE)
+
     n.entities <- length(entity.percentages)
     for (i in 1:n.entities)
     {
@@ -37,7 +39,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages,
         cata("<summary class=\"summary entity-summary\">",
              "<span>", htmlText(entity.name), "</span></summary>")
 
-        percentages <- variant.percentages[[entity.name]]
+        percentages <- sort(variant.percentages[[entity.name]], decreasing = TRUE)
 
         t <- cbind(htmlText(names(percentages)), unname(FormatAsPercent(percentages)))
 
