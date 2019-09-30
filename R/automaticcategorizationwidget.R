@@ -58,7 +58,10 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
         t[i, 2] <- htmlText(categories[i])
         t[i, 3] <- paste0(FormatAsPercent(sizes[i] / base.size), "&nbsp;(",
                           n.text[i], ")")
-        t[i, 4] <- paste0("\"",  htmlText(examples[i]), "\"")
+        if (!is.na(examples[i]))
+            t[i, 4] <- paste0("\"",  htmlText(examples[i]), "\"")
+        else
+            t[i, 4] <- ""
     }
 
     missing.text <- text.raw.by.categorization$`NA`
@@ -75,19 +78,23 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
         cata(paste0("<td>", t[i, 3], "</td>"))
 
         cata("<td>")
-        cata("<details class=\"details raw-text-category-details\">")
-        cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-             "<span>", t[i, 4], "</span></summary>")
 
-        row.numbers <- which(categorization == levels(categorization)[i])
-        raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
+        if (!is.na(examples[i]))
+        {
+            cata("<details class=\"details raw-text-category-details\">")
+            cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+                 "<span>", t[i, 4], "</span></summary>")
 
-        raw.text.matrix <- truncateRawTextTable(raw.text.matrix, max.rows)
+            row.numbers <- which(categorization == levels(categorization)[i])
+            raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
 
-        colnames(raw.text.matrix) <- c("Case", "Raw text")
-        cata(kable(raw.text.matrix, align = c("c", "l"),
-                   format = "html", escape = FALSE,
-                   table.attr = "class=\"raw-text-table\""))
+            raw.text.matrix <- truncateRawTextTable(raw.text.matrix, max.rows)
+
+            colnames(raw.text.matrix) <- c("Case", "Raw text")
+            cata(kable(raw.text.matrix, align = c("c", "l"),
+                       format = "html", escape = FALSE,
+                       table.attr = "class=\"raw-text-table\""))
+        }
 
         cata("</td></tr>")
     }
