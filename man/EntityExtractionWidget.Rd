@@ -4,21 +4,28 @@
 \alias{EntityExtractionWidget}
 \title{Display entity extraction output as an \code{htmlwidget}}
 \usage{
-EntityExtractionWidget(entity.percentages, variant.percentages, title,
-  footer)
+EntityExtractionWidget(entity.percentages, variant.percentages,
+  entity.counts, variant.counts, title, footer)
 }
 \arguments{
-\item{entity.percentages}{The percentage of cases for each entity.}
+\item{entity.percentages}{named numeric vector showing the percentage ocurrence of entity types
+in the named entity recognition detection.}
 
-\item{variant.percentages}{The percentage for each variant.}
+\item{variant.percentages}{named numeric vector showing the percentage ocurrence of each
+variant for each entity type in the named entity recognition detection.}
+
+\item{entity.counts}{named numeric vector showing the raw counts of entity types in the named
+entity recognition detection.}
+
+\item{variant.counts}{named numeric vector showing the raw counts of each variant for each
+entity type in the named entity recognition detection.}
 
 \item{title}{The title to show at the top.}
 
 \item{footer}{Footer to show containing sample information.}
 }
 \value{
-An \code{htmlwidget} containing tables showing the output from an
-  entity extraction.
+An \code{htmlwidget} containing tables showing the output from an entity extraction.
 }
 \description{
 Creates a \code{htmlwidget} summary of information for an
