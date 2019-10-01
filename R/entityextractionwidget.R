@@ -2,12 +2,17 @@
 #'
 #' @description Creates a \code{htmlwidget} summary of information for an
 #' entity extraction output from flipTextAnalysis.
-#' @param entity.percentages The percentage of cases for each entity.
-#' @param variant.percentages The percentage for each variant.
+#' @param entity.percentages named numeric vector showing the percentage ocurrence of entity types
+#'     in the named entity recognition detection.
+#' @param entity.counts named numeric vector showing the raw counts of entity types in the named
+#'     entity recognition detection.
+#' @param variant.percentages named numeric vector showing the percentage ocurrence of each
+#'     variant for each entity type in the named entity recognition detection.
+#' @param variant.counts named numeric vector showing the raw counts of each variant for each
+#'     entity type in the named entity recognition detection.
 #' @param title The title to show at the top.
 #' @param footer Footer to show containing sample information.
-#' @return An \code{htmlwidget} containing tables showing the output from an
-#'   entity extraction.
+#' @return An \code{htmlwidget} containing tables showing the output from an entity extraction.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
 EntityExtractionWidget <- function(entity.percentages, variant.percentages, entity.counts,
