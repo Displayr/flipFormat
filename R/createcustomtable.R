@@ -405,8 +405,10 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
-    table.height <- if (sum(nchar(row.height)) != 0) "" else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
-    cata("<table style = 'width:100%", table.height, "'>\n")
+    table.height <- if (sum(nchar(row.height)) != 0) ""
+                    else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
+    cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",
+         max(0, max(cell.border.width)), table.height))
     if (sum(nchar(col.widths)) > 0)
     {
         col.widths <- ConvertCommaSeparatedStringToVector(col.widths)
