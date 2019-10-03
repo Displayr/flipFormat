@@ -73,12 +73,25 @@ variant.counts = list(Number = c(I = 1, `11` = 1, one = 2, `90s` = 1, `80s` = 1,
                       Date = c(`10th year` = 1, `the last several years` = 1, `this day` = 1),
                       Ideology = c(neutral = 1, `church of scientology` = 1),
                       City = c(Hollywood = 1))
+
 footer <- "Text was processed for Entity detection using 300 cases. There was 1 missing case."
 
+empty.output.table <- structure(list(id = structure(integer(0), .Label = character(0), class = "factor"),
+                                     entity = structure(integer(0), .Label = character(0), class = "factor"),
+                                     entity.type = structure(integer(0), .Label = character(0), class = "factor")),
+                                class = "data.frame", row.names = integer(0))
+
+empty.EntityExtraction <-
+    structure(list(output.table = empty.output.table,
+                   n.original = 2L, n.cases = 2L, n.missing = 0, n.subset = 0,
+                   entity.percentages = 0, entity.counts = 0, variant.percentages = 0,
+                   variant.counts = 0), class = "EntityExtraction")
 test_that("Widget output check",
 {
     result <- EntityExtractionWidget(entity.percentages, variant.percentages, entity.counts,
                                      variant.counts, title, footer)
     expect_is(result, "htmlwidget")
+    null.result <- EntityExtractionWidget(0, 0, 0, 0, title, footer)
+    expect_is(null.result, "htmlwidget")
 })
 
