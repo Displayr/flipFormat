@@ -31,38 +31,56 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
          "<th>Entity</th><th>% (n)</th>",
          "</thead><tbody>")
 
-    entity.percentages <- sort(entity.percentages, decreasing = TRUE, index.return = TRUE)
-    entity.counts <- entity.counts[entity.percentages$ix]
-    entity.percentages <- entity.percentages$x
-    n.entities <- length(entity.percentages)
-
-    for (i in 1:n.entities)
-    {
-        entity.name <- names(entity.percentages)[i]
-
+    if(all(entity.counts == 0)) {
+        user.empty.msg <- paste0("No entities found to extract from dataset \n",
+                                 "Use the 'Add named entities to extraction' control if you wish ",
+                                 "to add entities to extract from the text.")
         cata("<tr class=\"table-row\"><td>")
 
-        cata("<details class=\"details entity-details\">")
-        cata("<summary class=\"summary entity-summary\">",
-             "<span>", htmlText(entity.name), "</span></summary>")
 
-        percentages <- sort(variant.percentages[[entity.name]], decreasing = TRUE, index.return = TRUE)
-        counts <- variant.counts[[entity.name]][percentages$ix]
-
-        t <- cbind(htmlText(names(percentages$x)), unname(paste0(FormatAsPercent(percentages$x), " (", counts, ")")))
-
-        colnames(t) <- c("Variants", "% (n)")
-        cata(kable(t, align = c("c", "l"),
-                   format = "html", escape = FALSE,
-                   table.attr = "class=\"entity-variants-table\""))
-
-        cata("</details>")
+        cata("<span>", htmlText(user.empty.msg), "</span>")
         cata("</td><td>")
 
-        cata(FormatAsPercent(entity.percentages[i]), " (", entity.counts[i], ")", sep = "")
+        cata("0 (0)", sep = "")
 
         cata("</td></tr>")
+        cata("</details>")
+    } else
+    {
+        entity.percentages <- sort(entity.percentages, decreasing = TRUE, index.return = TRUE)
+        entity.counts <- entity.counts[entity.percentages$ix]
+        entity.percentages <- entity.percentages$x
+        n.entities <- length(entity.percentages)
+
+        for (i in 1:n.entities)
+        {
+            entity.name <- names(entity.percentages)[i]
+
+            cata("<tr class=\"table-row\"><td>")
+
+            cata("<details class=\"details entity-details\">")
+            cata("<summary class=\"summary entity-summary\">",
+                 "<span>", htmlText(entity.name), "</span></summary>")
+
+            percentages <- sort(variant.percentages[[entity.name]], decreasing = TRUE, index.return = TRUE)
+            counts <- variant.counts[[entity.name]][percentages$ix]
+
+            t <- cbind(htmlText(names(percentages$x)), unname(paste0(FormatAsPercent(percentages$x), " (", counts, ")")))
+
+            colnames(t) <- c("Variants", "% (n)")
+            cata(kable(t, align = c("c", "l"),
+                       format = "html", escape = FALSE,
+                       table.attr = "class=\"entity-variants-table\""))
+
+            cata("</details>")
+            cata("</td><td>")
+
+            cata(FormatAsPercent(entity.percentages[i]), " (", entity.counts[i], ")", sep = "")
+
+            cata("</td></tr>")
+        }
     }
+
 
     cata("</tbody></table>")
 
