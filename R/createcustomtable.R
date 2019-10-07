@@ -444,18 +444,18 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
     row.header.labels <- ConvertCommaSeparatedStringToVector(row.header.labels)
     if (length(row.header.labels) > 0)
     {
-        if (length(row.header.labels) != nrow(x))
-            stop("Row labels (", length(row.header.labels), ") do not equal the number of rows (",
-            nrow(x), ") in the input table")
-        rownames(x) <- row.header.labels
+        new.labels <- paste0(rownames(x), rep("", nrow(x))) # in case rownames is NULL
+        tmp.len <- min(length(row.header.labels), length(new.labels))
+        new.labels[1:tmp.len] <- row.header.labels[1:tmp.len]
+        rownames(x) <- new.labels
     }
     col.header.labels <- ConvertCommaSeparatedStringToVector(col.header.labels)
     if (length(col.header.labels) > 0)
     {
-        if (length(col.header.labels) != ncol(x))
-            stop("Column labels (", length(col.header.labels),
-            ") do not equal the number of columns (", ncol(x), ") in the input table")
-        colnames(x) <- col.header.labels
+        new.labels <- paste0(colnames(x), rep("", ncol(x)))
+        tmp.len <- min(length(col.header.labels), length(new.labels))
+        new.labels[1:tmp.len] <- col.header.labels[1:tmp.len]
+        colnames(x) <- new.labels
     }
     return(x)
 }
