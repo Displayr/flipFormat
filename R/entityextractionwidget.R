@@ -55,7 +55,6 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
         n.entities <- length(entity.counts)
 
         mapply(function(x, y, z, a, b) {
-            browser()
             cata("<tr class=\"table-row\"><td>")
 
             cata("<details class=\"details entity-details\">")
