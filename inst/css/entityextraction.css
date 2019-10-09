@@ -39,6 +39,10 @@ h1 {
     outline: none;
 }
 
+.entity-summary:hover {
+    cursor:pointer;
+}
+
 .entity-summary::-webkit-details-marker{
     color: #bbbbbb;
     margin-left: -15px;

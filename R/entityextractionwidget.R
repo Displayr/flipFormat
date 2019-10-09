@@ -68,7 +68,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
             t <- cbind(htmlText(names(percentages$x)), unname(paste0(FormatAsPercent(percentages$x), " (", counts, ")")))
 
             colnames(t) <- c("Variants", "% (n)")
-            cata(kable(t, align = c("c", "l"),
+            cata(kable(t, align = c("l", "l"),
                        format = "html", escape = FALSE,
                        table.attr = "class=\"entity-variants-table\""))
 
