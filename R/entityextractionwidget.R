@@ -47,38 +47,42 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
         cata("</details>")
     } else
     {
-        entity.percentages <- sort(entity.percentages, decreasing = TRUE, index.return = TRUE)
-        entity.counts <- entity.counts[entity.percentages$ix]
-        entity.percentages <- entity.percentages$x
-        n.entities <- length(entity.percentages)
+        order.entity <- order(entity.counts, xtfrm(names(entity.counts)),
+                              decreasing = c(TRUE, FALSE),
+                              method = "radix")
+        entity.percentages <- entity.percentages[order.entity]
+        entity.counts <- entity.counts[order.entity]
+        n.entities <- length(entity.counts)
 
-        for (i in 1:n.entities)
-        {
-            entity.name <- names(entity.percentages)[i]
-
+        mapply(function(x, y, z, a, b) {
+            browser()
             cata("<tr class=\"table-row\"><td>")
 
             cata("<details class=\"details entity-details\">")
             cata("<summary class=\"summary entity-summary\">",
-                 "<span>", htmlText(entity.name), "</span></summary>")
-
-            percentages <- sort(variant.percentages[[entity.name]], decreasing = TRUE, index.return = TRUE)
-            counts <- variant.counts[[entity.name]][percentages$ix]
-
-            t <- cbind(htmlText(names(percentages$x)), unname(paste0(FormatAsPercent(percentages$x), " (", counts, ")")))
-
+                "<span>", htmlText(z), "</span></summary>")
+            variant.order <- order(x, xtfrm(names(x)),
+                                   decreasing = c(TRUE, FALSE),
+                                   method = "radix")
+            x <- x[variant.order]
+            y <- y[variant.order]
+            t <- cbind(htmlText(names(y)),
+                       unname(paste0(FormatAsPercent(y), " (", x, ")")))
             colnames(t) <- c("Variants", "% (n)")
             cata(kable(t, align = c("l", "l"),
-                       format = "html", escape = FALSE,
-                       table.attr = "class=\"entity-variants-table\""))
-
+                      format = "html", escape = FALSE,
+                      table.attr = "class=\"entity-variants-table\""))
             cata("</details>")
             cata("</td><td>")
-
-            cata(FormatAsPercent(entity.percentages[i]), " (", entity.counts[i], ")", sep = "")
+            cata(FormatAsPercent(a), " (", b, ")", sep = "")
 
             cata("</td></tr>")
-        }
+        },
+        x = variant.counts[names(entity.counts)],
+        y = variant.percentages[names(entity.counts)],
+        z = names(entity.counts),
+        a = entity.percentages,
+        b = entity.counts)
     }
 
 
