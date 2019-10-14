@@ -426,6 +426,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
     # print("known category splits")
     # print(proc.time() - ptm)
 
+    html <- paste0(html, splitIntoCategoriesDiagnostic(diagnostics$split.into.categories,
+                                                       details.expand))
+
     # ptm <- proc.time()
     # For each replacement, show cases with replacements
     if (length(diagnostics$category.replacements) > 0)
@@ -521,10 +524,13 @@ requiredCategoriesDiagnostic <- function(info, details.expand)
                    "Required categories are specified by clicking on ",
                    "the button under the REQUIRED CATEGORIES group and ",
                    "entering the required categories in the first column. ",
-                   "Required categories will be extracted from the data ",
-                   "and not be processed further. This option can be used to stop ",
-                   "categories from being removed if they fall below the ",
-                   "minimum category frequency.</div>")
+                   "Variants of the required categories are specified in ",
+                   "subsequent columns. This allows the consolidation of ",
+                   "different variants of a category. ",
+                   "A required category will always appear in the list of ",
+                   "categories and not be split into smaller categories, ",
+                   "spell corrected or removed if they fall below the minimum ",
+                   "category frequency.</div>")
 
     for (elem in info)
     {
@@ -658,6 +664,45 @@ knownCategoriesSplitDiagnostic <- function(info, details.expand)
 
         html <- paste0(html, "</div>")
 
+    }
+    paste0(html, "</div></details>")
+}
+
+splitIntoCategoriesDiagnostic <- function(info, details.expand)
+{
+    html <- if (details.expand == "Splits into categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
+                   "<summary class=\"summary sub-details\">Splits into categories (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Phrases can be manually split into categories by ",
+                   "clicking on the button at the bottom of the ",
+                   "DELIMITERS / SPLIT TEXT group, specifying the phrase to ",
+                   "be split in the first column and specifying the ",
+                   "resulting categories from the split in the subsequent ",
+                   "columns. This feature is used when categories cannot be ",
+                   "split by delimiters.</div>")
+
+    for (elem in info)
+    {
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
+
+        t <- matrix("", nrow = length(elem$categories), ncol = 2)
+        t[1, 1] <- htmlText(elem$to.be.split)
+        t[, 2] <- htmlText(elem$categories)
+        colnames(t) <- c("Split phrase", "Categories from split")
+        html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
+                                   escape = FALSE,
+                                   table.attr = "class=\"diagnostics-table\""))
+
+        html <- paste0(html, rawCasesTable(elem))
+
+        html <- paste0(html, "</div>")
     }
     paste0(html, "</div></details>")
 }
