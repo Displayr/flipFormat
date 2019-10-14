@@ -530,9 +530,19 @@ requiredCategoriesDiagnostic <- function(info, details.expand)
     {
         html <- paste0(html, "<div class=\"diagnostics-block\">")
 
-        t <- matrix(htmlText(elem$required.category))
-        colnames(t) <- "Required"
-        html <- paste0(html, kable(t, align = c("l"), format = "html",
+        if (length(elem$variants) > 0)
+        {
+            t <- matrix("", ncol = 2, nrow = length(elem$variants))
+            t[1, 1] <- htmlText(elem$required.category)
+            t[, 2] <- htmlText(elem$variants)
+            colnames(t) <- c("Required", "Variants")
+        }
+        else
+        {
+            t <- matrix(htmlText(elem$required.category))
+            colnames(t) <- c("Required")
+        }
+        html <- paste0(html, kable(t, format = "html",
                                    escape = FALSE,
                                    table.attr = "class=\"diagnostics-table\""))
 
