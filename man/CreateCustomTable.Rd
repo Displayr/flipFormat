@@ -35,7 +35,15 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   row.header.font.family = global.font.family,
   row.header.font.color = global.font.color, row.header.font.size = 14,
   row.header.font.style = "normal", row.header.font.weight = "bold",
-  row.header.pad = 0, corner = "", corner.class = "",
+  row.header.pad = 0, row.span.fill = "#FFFFFF",
+  row.span.border.width = 1,
+  row.span.border.color = col.header.border.color,
+  row.span.align.horizontal = "left",
+  row.span.align.vertical = "middle",
+  row.span.font.family = global.font.family,
+  row.span.font.color = global.font.color, row.span.font.size = 14,
+  row.span.font.style = "normal", row.span.font.weight = "bold",
+  row.span.pad = 0, corner = "", corner.class = "",
   corner.fill = "#FFFFFF",
   corner.border.width = col.header.border.width,
   corner.border.color = col.header.border.color,
@@ -182,6 +190,29 @@ the column names of \code{x}.}
 \item{row.header.pad}{Space between text and cell border in pixels. This is only used if the
 horizontal alignment is "left" or "right".}
 
+\item{row.span.fill}{Background color of the row.spans in the table.}
+
+\item{row.span.border.width}{Width of border around table row.spans (in pixels).}
+
+\item{row.span.border.color}{Color of border around table row.spans,}
+
+\item{row.span.align.horizontal}{Horizontal alignment of text in table row.spans.}
+
+\item{row.span.align.vertical}{Vertical alignment of text in table row.spans.}
+
+\item{row.span.font.family}{Font family of text in table row.spans.}
+
+\item{row.span.font.color}{Font color of text in table row.spans.}
+
+\item{row.span.font.size}{Font size (in pixels) of text in table row.spans.}
+
+\item{row.span.font.style}{One of "normal" or "italic".}
+
+\item{row.span.font.weight}{One of "normal" or "bold".}
+
+\item{row.span.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
+
 \item{corner}{Contents of the corner cell, if row and column headers are used}
 
 \item{corner.class}{Class of the corner cell, if row and column headers are used}
@@ -262,4 +293,10 @@ to omit this is not used.}
 \description{
 Displays html table with custom formatting. This can be specified
  separately for each cell be specifying attributes or using CSS.
+}
+\examples{
+xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"), 
+         c("A", "B", "C", "D", "E", "F")))
+CreateCustomTable(xx, row.spans=list(list(height=2, label="AA"),
+         list(height=1, label="BB"), list(height=1, label="CC")))
 }

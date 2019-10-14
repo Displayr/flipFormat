@@ -68,6 +68,18 @@
 #' @param row.header.font.style One of "normal" or "italic".
 #' @param row.header.pad Space between text and cell border in pixels. This is only used if the
 #'  horizontal alignment is "left" or "right".
+#' @param row.span.fill Background color of the row.spans in the table.
+#' @param row.span.border.width Width of border around table row.spans (in pixels).
+#' @param row.span.border.color Color of border around table row.spans,
+#' @param row.span.align.horizontal Horizontal alignment of text in table row.spans.
+#' @param row.span.align.vertical Vertical alignment of text in table row.spans.
+#' @param row.span.font.family Font family of text in table row.spans.
+#' @param row.span.font.color Font color of text in table row.spans.
+#' @param row.span.font.size Font size (in pixels) of text in table row.spans.
+#' @param row.span.font.weight One of "normal" or "bold".
+#' @param row.span.font.style One of "normal" or "italic".
+#' @param row.span.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param col.header.classes CSS classes of column headers. The class definition should be added to
 #'  \code{custom.css}. This overrides \code{col.header.fill},
 #'  \code{col.header.border}, \code{col.header.font}, \code{col.header.align}, etc.
@@ -118,6 +130,11 @@
 #' @param suppress.na whether to empty cells containing only NA
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
+#' @examples
+#' xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"), 
+#'          c("A", "B", "C", "D", "E", "F")))
+#' CreateCustomTable(xx, row.spans=list(list(height=2, label="AA"),
+#'          list(height=1, label="BB"), list(height=1, label="CC")))
 #' @export
 CreateCustomTable = function(x,
                         sig.change.fills = NULL,
@@ -174,6 +191,17 @@ CreateCustomTable = function(x,
                         row.header.font.style = "normal",
                         row.header.font.weight = "bold",
                         row.header.pad = 0,
+                        row.span.fill = "#FFFFFF",
+                        row.span.border.width = 1,
+                        row.span.border.color = col.header.border.color,
+                        row.span.align.horizontal = "left",
+                        row.span.align.vertical = "middle",
+                        row.span.font.family = global.font.family,
+                        row.span.font.color = global.font.color,
+                        row.span.font.size = 14,
+                        row.span.font.style = "normal",
+                        row.span.font.weight = "bold",
+                        row.span.pad = 0,
                         corner = "",
                         corner.class = "",
                         corner.fill = "#FFFFFF",
@@ -315,10 +343,23 @@ CreateCustomTable = function(x,
     if (!is.null(row.spans))
     {
         span.lengths <- sapply(row.spans, function(x) x[['height']])
-        row.spans <- sapply(row.spans, function(rr) sprintf('<td rowspan="%s" class="%s">%s</td>',
-                            rr[['height']], rr[['class']], rr[['label']]))
+        row.span.styles <- paste0("style = 'background: ", row.span.fill,
+            "; border: ", row.span.border.width, "px solid ", row.span.border.color,
+            ";", getPaddingCSS(tolower(row.span.align.horizontal), row.span.pad),
+            "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
+            "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
+            "; color:", row.span.font.color, "; text-align: ", row.span.align.horizontal,
+            "; vertical-align: ", row.span.align.vertical, ";'")
+        row.span.styles <- rep(row.span.styles, length = length(row.spans))
+        for (i in 1:length(row.spans))
+            if (!is.null(row.spans[[i]]$class))
+                row.span.styles[i] <- sprintf('class="%s"', row.spans[[i]]$class)
+
+        row.spans <- sapply(1:length(row.spans), function(i) sprintf('<td rowspan="%s" %s>%s</td>',
+                            row.spans[[i]][['height']], row.span.styles[i], row.spans[[i]][['label']]))
         row.span.html <- rep(row.spans, span.lengths)
         row.span.html[duplicated(row.span.html)] = ''
+
     } else
         row.span.html <- ''
 
@@ -352,6 +393,12 @@ CreateCustomTable = function(x,
                 corner.styles <- sprintf('class="%s"', corner.class)
             col.header.styles <- c(corner.styles[1], col.header.styles)
             col.labels <- c(corner, col.labels)
+        }
+
+        if (!is.null(row.spans))
+        {
+            col.header.styles <- c("", col.header.styles)
+            col.labels <- c("", col.labels)
         }
         if (!is.null(spacer.col))
             col.class.html[spacer.col] <- 'class = "spacer"'
