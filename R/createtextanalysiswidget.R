@@ -395,8 +395,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 
     # ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
-    html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement,
-                                                      details.expand))
+    if (length(diagnostics$raw.text.replacement) > 0)
+        html <- paste0(html, rawTextReplacementDiagnostic(diagnostics$raw.text.replacement,
+                                                          details.expand))
     # print("raw text replacement")
     # print(proc.time() - ptm)
 
@@ -427,8 +428,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 
     # ptm <- proc.time()
     # For each replacement, show cases with replacements
-    html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements,
-                                                       details.expand))
+    if (length(diagnostics$category.replacements) > 0)
+        html <- paste0(html, categoryReplacementDiagnostic(diagnostics$category.replacements,
+                                                           details.expand))
     # print("category replacements")
     # print(proc.time() - ptm)
 
