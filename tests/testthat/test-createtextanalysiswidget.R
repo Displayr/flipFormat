@@ -1,3 +1,5 @@
+context("CreateTextAnalysisWidget")
+
 findInstDirFile <- function(file)
 {
   file.path(system.file("testdata", package = "flipFormat", mustWork = TRUE),

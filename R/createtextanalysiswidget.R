@@ -1,6 +1,6 @@
-#' Display text analysis output as an \code{htmlwidget}
+#' @title Display text analysis output as an \code{htmlwidget}
 #'
-#' Creates a \code{htmlwidget} summary of diagnostic information for a
+#' @description Creates a \code{htmlwidget} summary of diagnostic information for a
 #' text analysis output from flipTextAnalysis.
 #' @param raw.and.normalized.text A list containing the raw and normalized
 #'   text. The first element, called "Original Text", is a character vector of

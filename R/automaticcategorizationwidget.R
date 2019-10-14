@@ -1,6 +1,6 @@
-#' Display automatic text categorization output as an \code{htmlwidget}
+#' @title Display automatic text categorization output as an \code{htmlwidget}
 #'
-#' Creates a \code{htmlwidget} summary of information for a
+#' @description Creates a \code{htmlwidget} summary of information for a
 #' automatic text categorization output from flipTextAnalysis.
 #' @param categorization A factor containing the categorization of the text.
 #' @param sizes The sizes of the categories.
