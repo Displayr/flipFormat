@@ -131,7 +131,7 @@
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
-#' xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"), 
+#' xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"),
 #'          c("A", "B", "C", "D", "E", "F")))
 #' CreateCustomTable(xx, row.spans=list(list(height=2, label="AA"),
 #'          list(height=1, label="BB"), list(height=1, label="CC")))
@@ -357,8 +357,13 @@ CreateCustomTable = function(x,
 
         row.spans <- sapply(1:length(row.spans), function(i) sprintf('<td rowspan="%s" %s>%s</td>',
                             row.spans[[i]][['height']], row.span.styles[i], row.spans[[i]][['label']]))
-        row.span.html <- rep(row.spans, span.lengths)
-        row.span.html[duplicated(row.span.html)] = ''
+        row.span.html <- rep("", nrows)
+        j <- 1
+        for (i in 1:length(row.spans))
+        {
+            row.span.html[j] <- row.spans[i]
+            j <- j + span.lengths[i]
+        }
 
     } else
         row.span.html <- ''
@@ -488,7 +493,8 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
     if (transpose)
         x <- t(x)
 
-    row.header.labels <- ConvertCommaSeparatedStringToVector(row.header.labels)
+    if (length(row.header.labels) < nrow(x))
+        row.header.labels <- ConvertCommaSeparatedStringToVector(row.header.labels)
     if (length(row.header.labels) > 0)
     {
         new.labels <- paste0(rownames(x), rep("", nrow(x))) # in case rownames is NULL
@@ -496,7 +502,8 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
         new.labels[1:tmp.len] <- row.header.labels[1:tmp.len]
         rownames(x) <- new.labels
     }
-    col.header.labels <- ConvertCommaSeparatedStringToVector(col.header.labels)
+    if (length(col.header.labels) > ncol(x))
+        col.header.labels <- ConvertCommaSeparatedStringToVector(col.header.labels)
     if (length(col.header.labels) > 0)
     {
         new.labels <- paste0(colnames(x), rep("", ncol(x)))

@@ -295,7 +295,7 @@ Displays html table with custom formatting. This can be specified
  separately for each cell be specifying attributes or using CSS.
 }
 \examples{
-xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"), 
+xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"),
          c("A", "B", "C", "D", "E", "F")))
 CreateCustomTable(xx, row.spans=list(list(height=2, label="AA"),
          list(height=1, label="BB"), list(height=1, label="CC")))
