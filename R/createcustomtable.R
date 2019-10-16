@@ -19,6 +19,8 @@
 #'  font attribute in the table unless specified individually.
 #' @param global.font.color Global font color as a named color in character format
 #'  (e.g. "black") or an a hex code.
+#' @param font.size Global font size of all elements in the table. This is provided for
+#'  convenience but its overriden by the font sizes of specific components.
 #' @param font.unit One of "px" of "pt". By default all font sizes are specified in terms of
 #'  pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 #'  points ("pt"), which will be consistent with font sizes in text boxes.
@@ -109,6 +111,7 @@
 #' @param banded.even.fill Background of cells in even rows or columns when \code{banded.rows} or \code{banded.cols}.
 #' @param sig.fills.up Cell color when \code{sig.change.fills} is used.
 #' @param sig.fills.down Cell color when \code{sig.change.fills} is used.
+#' @param sig.fills.nothing Cell color when \code{sig.change.nothing} is used.
 #' @param sig.arrows.up Color of up arrows when \code{sig.change.arrows} is used.
 #' @param sig.arrows.down Color of down arrows when \code{sig.change.arrows} is used.
 #' @param circle.size Size of circles when \code{sig.leader.circles} is used.
@@ -151,6 +154,7 @@ CreateCustomTable = function(x,
                         col.header.height = "35px",
                         global.font.family = "Arial",
                         global.font.color = rgb(44, 44, 44, maxColorValue = 255),
+                        font.size = 13,
                         font.unit = "px",
                         cell.prefix = "",
                         cell.suffix = "",
@@ -161,7 +165,7 @@ CreateCustomTable = function(x,
                         cell.align.vertical = "middle",
                         cell.font.family = global.font.family,
                         cell.font.color = global.font.color,
-                        cell.font.size = 14,
+                        cell.font.size = font.size,
                         cell.font.weight = "normal",
                         cell.font.style = "normal",
                         cell.pad = 0,
@@ -174,7 +178,7 @@ CreateCustomTable = function(x,
                         col.header.align.vertical = "middle",
                         col.header.font.family = global.font.family,
                         col.header.font.color = global.font.color,
-                        col.header.font.size = 14,
+                        col.header.font.size = font.size,
                         col.header.font.weight = "bold",
                         col.header.font.style = "normal",
                         col.header.pad = 0,
@@ -187,7 +191,7 @@ CreateCustomTable = function(x,
                         row.header.align.vertical = "middle",
                         row.header.font.family = global.font.family,
                         row.header.font.color = global.font.color,
-                        row.header.font.size = 14,
+                        row.header.font.size = font.size,
                         row.header.font.style = "normal",
                         row.header.font.weight = "bold",
                         row.header.pad = 0,
@@ -211,7 +215,7 @@ CreateCustomTable = function(x,
                         corner.align.vertical = "middle",
                         corner.font.family = global.font.family,
                         corner.font.color = global.font.color,
-                        corner.font.size = 14,
+                        corner.font.size = font.size,
                         corner.font.weight = "bold",
                         corner.font.style = "normal",
                         corner.pad = 0,
@@ -222,9 +226,10 @@ CreateCustomTable = function(x,
                         banded.rows = FALSE,
                         banded.cols = FALSE,
                         banded.odd.fill = 'rgb(250,250,250)',
-                        banded.even.fill = 'rgb(245,255,245)',
+                        banded.even.fill = 'rgb(245,245,245)',
                         sig.fills.up = 'rgb(195,255,199)',
                         sig.fills.down = 'rgb(255,213,213)',
+                        sig.fills.nothing = 'rgb(255,255,255)',
                         sig.arrows.up = 'rgb(0,172,62)',
                         sig.arrows.down = 'rgb(192,0,0)',
                         circle.size = 35,
@@ -273,10 +278,19 @@ CreateCustomTable = function(x,
         metric.tie.border = '1px solid rgb(150,150,150)'
         circle.fmt <- paste0('display: inline-block; line-height:', circle.size, 'px; border-radius:',
                             circle.size, 'px; height: ', circle.size, 'px; width:', circle.size, 'px;')
+
+        # Unfilled leader circles
         circle.css <- paste0('.circle2 {  border: ', metric.leader.border, ';', circle.fmt, '}\n',
                              '.circle1 {  border: ', metric.tie.border, ';', circle.fmt, '}\n',
-                             '.circle0 {  border: 0px solid rgb(0,0,0;', circle.fmt, '}\n')
+                             '.circle0 {  border: 0px solid rgb(0,0,0);', circle.fmt, '}\n')
 
+        # CSS generation for filled leader circles
+        circle.types = paste0(rep(c(2, 1, 0), 3), rep(c(1,0,-1), each=3))
+        circle.colors = rep(c(sig.fills.up, sig.fills.nothing, sig.fills.down), each=3)
+        circle.border = rep(c(metric.leader.border, metric.tie.border, '0px solid rgb(0,0,0)'), 3)
+        filled.circle.styles = paste0('.circle', circle.types,' { border: ', circle.border,';
+                               background-color:',circle.colors,';', circle.fmt, '}', collapse='  ')
+        circle.css <- paste0(circle.css, filled.circle.styles)
         sig.leader.circles[!which(sig.leader.circles == 1 | sig.leader.circles == 2)] <- 0
         content <- matrix(sprintf('<div class="circle%s">%s</div>', sig.leader.circles, content), nrows, ncols)
     }
@@ -306,20 +320,20 @@ CreateCustomTable = function(x,
         if (!is.null(sig.change.fills))
         {
             ind <- which(abs(sig.change.fills[cc[[1]],]) < 1)
-            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]])
+            cell.styles[cc[[1]], ind] = sprintf('%s class="%s"', cell.styles[cc[[1]], ind], cc[[2]])
         }
         else
-            cell.styles[cc[[1]],] = sprintf('class="%s"',cc[[2]])
+            cell.styles[cc[[1]],] = sprintf('%s class="%s"', cell.styles[cc[[1]],], cc[[2]])
     }
     for (cc in col.classes)
     {
         if (!is.null(sig.change.fills))
         {
             ind <- which(abs(sig.change.fills[,cc[[1]]]) < 1)
-            cell.styles[cc[[1]], ind] <- sprintf('class="%s"', cc[[2]])
+            cell.styles[ind, cc[[1]]] = sprintf('%s class="%s"', cell.styles[ind, cc[[1]]], cc[[2]])
         }
         else
-            cell.styles[,cc[[1]]] = sprintf('class="%s"',cc[[2]])
+            cell.styles[,cc[[1]]] = sprintf('%s class="%s"', cell.styles[,cc[[1]]], cc[[2]])
     }
 
     # Row headers
@@ -406,7 +420,7 @@ CreateCustomTable = function(x,
             col.labels <- c("", col.labels)
         }
         if (!is.null(spacer.col))
-            col.class.html[spacer.col] <- 'class = "spacer"'
+            col.header.styles[spacer.col] <- 'class = "spacer"'
         if (!is.null(spacer.row))
             spacer.row <-  spacer.row + 1
         header.html <- paste0(c('<tr>', sprintf('<th %s>%s</th>', col.header.styles, col.labels),

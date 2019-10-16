@@ -11,12 +11,12 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.widths = c("25\%"), row.height = NULL,
   col.header.height = "35px", global.font.family = "Arial",
   global.font.color = rgb(44, 44, 44, maxColorValue = 255),
-  font.unit = "px", cell.prefix = "", cell.suffix = "",
-  cell.fill = "#FFFFFF", cell.border.width = 1,
+  font.size = 13, font.unit = "px", cell.prefix = "",
+  cell.suffix = "", cell.fill = "#FFFFFF", cell.border.width = 1,
   cell.border.color = "#FFFFFF", cell.align.horizontal = "center",
   cell.align.vertical = "middle",
   cell.font.family = global.font.family,
-  cell.font.color = global.font.color, cell.font.size = 14,
+  cell.font.color = global.font.color, cell.font.size = font.size,
   cell.font.weight = "normal", cell.font.style = "normal",
   cell.pad = 0, show.col.headers = TRUE, col.header.labels = NULL,
   col.header.fill = "#DCDCDC", col.header.border.width = 1,
@@ -24,19 +24,19 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.header.align.horizontal = "center",
   col.header.align.vertical = "middle",
   col.header.font.family = global.font.family,
-  col.header.font.color = global.font.color, col.header.font.size = 14,
-  col.header.font.weight = "bold", col.header.font.style = "normal",
-  col.header.pad = 0, show.row.headers = TRUE,
-  row.header.labels = NULL, row.header.fill = "#FFFFFF",
-  row.header.border.width = 1,
+  col.header.font.color = global.font.color,
+  col.header.font.size = font.size, col.header.font.weight = "bold",
+  col.header.font.style = "normal", col.header.pad = 0,
+  show.row.headers = TRUE, row.header.labels = NULL,
+  row.header.fill = "#FFFFFF", row.header.border.width = 1,
   row.header.border.color = col.header.border.color,
   row.header.align.horizontal = "left",
   row.header.align.vertical = "middle",
   row.header.font.family = global.font.family,
-  row.header.font.color = global.font.color, row.header.font.size = 14,
-  row.header.font.style = "normal", row.header.font.weight = "bold",
-  row.header.pad = 0, row.span.fill = "#FFFFFF",
-  row.span.border.width = 1,
+  row.header.font.color = global.font.color,
+  row.header.font.size = font.size, row.header.font.style = "normal",
+  row.header.font.weight = "bold", row.header.pad = 0,
+  row.span.fill = "#FFFFFF", row.span.border.width = 1,
   row.span.border.color = col.header.border.color,
   row.span.align.horizontal = "left",
   row.span.align.vertical = "middle",
@@ -49,18 +49,19 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   corner.border.color = col.header.border.color,
   corner.align.horizontal = "center", corner.align.vertical = "middle",
   corner.font.family = global.font.family,
-  corner.font.color = global.font.color, corner.font.size = 14,
+  corner.font.color = global.font.color, corner.font.size = font.size,
   corner.font.weight = "bold", corner.font.style = "normal",
   corner.pad = 0, col.header.classes = "", row.header.classes = "",
   col.classes = list(), row.classes = list(), banded.rows = FALSE,
   banded.cols = FALSE, banded.odd.fill = "rgb(250,250,250)",
-  banded.even.fill = "rgb(245,255,245)",
+  banded.even.fill = "rgb(245,245,245)",
   sig.fills.up = "rgb(195,255,199)",
-  sig.fills.down = "rgb(255,213,213)", sig.arrows.up = "rgb(0,172,62)",
-  sig.arrows.down = "rgb(192,0,0)", circle.size = 35,
-  spacer.row = NULL, spacer.col = NULL, col.spans = NULL,
-  row.spans = NULL, custom.css = "", use.predefined.css = TRUE,
-  resizable = FALSE)
+  sig.fills.down = "rgb(255,213,213)",
+  sig.fills.nothing = "rgb(255,255,255)",
+  sig.arrows.up = "rgb(0,172,62)", sig.arrows.down = "rgb(192,0,0)",
+  circle.size = 35, spacer.row = NULL, spacer.col = NULL,
+  col.spans = NULL, row.spans = NULL, custom.css = "",
+  use.predefined.css = TRUE, resizable = FALSE)
 }
 \arguments{
 \item{x}{Matrix or data frame of contents to show in the table}
@@ -100,6 +101,9 @@ font attribute in the table unless specified individually.}
 
 \item{global.font.color}{Global font color as a named color in character format
 (e.g. "black") or an a hex code.}
+
+\item{font.size}{Global font size of all elements in the table. This is provided for
+convenience but its overriden by the font sizes of specific components.}
 
 \item{font.unit}{One of "px" of "pt". By default all font sizes are specified in terms of
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
@@ -263,6 +267,8 @@ will cause column 3 to have class "bluefill".}
 \item{sig.fills.up}{Cell color when \code{sig.change.fills} is used.}
 
 \item{sig.fills.down}{Cell color when \code{sig.change.fills} is used.}
+
+\item{sig.fills.nothing}{Cell color when \code{sig.change.nothing} is used.}
 
 \item{sig.arrows.up}{Color of up arrows when \code{sig.change.arrows} is used.}
 
