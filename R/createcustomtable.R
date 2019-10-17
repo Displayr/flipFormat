@@ -306,7 +306,7 @@ CreateCustomTable = function(x,
     override.borders <- grepl("border", custom.css)
 
     # Set up styles for each cell - vector/matrix values automatically recycled
-    cell.styles <- paste0("style = '", cell.fill, 
+    cell.styles <- paste0("style = '", cell.fill,
         if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
@@ -517,7 +517,7 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
         new.labels[1:tmp.len] <- row.header.labels[1:tmp.len]
         rownames(x) <- new.labels
     }
-    if (length(col.header.labels) > ncol(x))
+    if (length(col.header.labels) < ncol(x))
         col.header.labels <- ConvertCommaSeparatedStringToVector(col.header.labels)
     if (length(col.header.labels) > 0)
     {
