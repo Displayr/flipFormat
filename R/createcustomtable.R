@@ -510,7 +510,7 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
 
     if (length(row.header.labels) < nrow(x))
         row.header.labels <- ConvertCommaSeparatedStringToVector(row.header.labels)
-    if (length(row.header.labels) > 0)
+    if (sum(nchar(row.header.labels)) > 0)
     {
         new.labels <- paste0(rownames(x), rep("", nrow(x))) # in case rownames is NULL
         tmp.len <- min(length(row.header.labels), length(new.labels))
@@ -519,7 +519,7 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
     }
     if (length(col.header.labels) < ncol(x))
         col.header.labels <- ConvertCommaSeparatedStringToVector(col.header.labels)
-    if (length(col.header.labels) > 0)
+    if (sum(nchar(col.header.labels)) > 0)
     {
         new.labels <- paste0(colnames(x), rep("", ncol(x)))
         tmp.len <- min(length(col.header.labels), length(new.labels))
