@@ -305,8 +305,10 @@ CreateCustomTable = function(x,
     }
 
     # Set up styles for each cell - vector/matrix values automatically recycled
-    cell.styles <- paste0("style = '", cell.fill,
-        "border: ", cell.border.width, "px solid ", cell.border.color,
+    cell.borders <- paste0("border: ", cell.border.width, "px solid ", cell.border.color)
+    if (grepl("border", custom.css))
+        cell.borders <- ""
+    cell.styles <- paste0("style = '", cell.fill, cell.borders,
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
