@@ -303,12 +303,11 @@ CreateCustomTable = function(x,
         cell.fill[which(sig.change.fills ==  1)] <- paste("background:", sig.fills.up, ";")
         cell.fill[which(sig.change.fills == -1)] <- paste("background:", sig.fills.down, ";")
     }
+    override.borders <- grepl("border", custom.css)
 
     # Set up styles for each cell - vector/matrix values automatically recycled
-    cell.borders <- paste0("border: ", cell.border.width, "px solid ", cell.border.color)
-    if (grepl("border", custom.css))
-        cell.borders <- ""
-    cell.styles <- paste0("style = '", cell.fill, cell.borders,
+    cell.styles <- paste0("style = '", cell.fill, 
+        if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
@@ -343,7 +342,7 @@ CreateCustomTable = function(x,
     {
         if (sum(nchar(row.header.classes)) == 0)
             row.header.styles <- paste0("style = 'background: ", row.header.fill,
-                "; border: ", row.header.border.width, "px solid ", row.header.border.color,
+                if (override.borders) "" else paste0("; border: ", row.header.border.width, "px solid ", row.header.border.color),
                 ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
                 "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
                 "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
@@ -360,7 +359,7 @@ CreateCustomTable = function(x,
     {
         span.lengths <- sapply(row.spans, function(x) x[['height']])
         row.span.styles <- paste0("style = 'background: ", row.span.fill,
-            "; border: ", row.span.border.width, "px solid ", row.span.border.color,
+            if (override.borders) "" else paste0("; border: ", row.span.border.width, "px solid ", row.span.border.color),
             ";", getPaddingCSS(tolower(row.span.align.horizontal), row.span.pad),
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
             "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
@@ -389,7 +388,7 @@ CreateCustomTable = function(x,
     {
         if (sum(nchar(col.header.classes)) == 0)
             col.header.styles <- paste0("style = 'background: ", col.header.fill,
-                "; border: ", col.header.border.width, "px solid ", col.header.border.color,
+                if (override.borders) "" else paste0("; border: ", col.header.border.width, "px solid ", col.header.border.color),
                 ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
                 "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
                 "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
@@ -404,7 +403,7 @@ CreateCustomTable = function(x,
         {
             if (sum(nchar(corner.class)) == 0)
             corner.styles <- paste0("style = 'background: ", corner.fill,
-                "; border: ", corner.border.width, "px solid ", corner.border.color,
+                if (override.borders) "" else paste0("; border: ", corner.border.width, "px solid ", corner.border.color),
                 ";", getPaddingCSS(tolower(corner.align.horizontal), corner.pad),
                 "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
                 "; font-weight: ", corner.font.weight, "; font-family: ", corner.font.family,
