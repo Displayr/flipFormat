@@ -41,10 +41,10 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   row.span.align.horizontal = "left",
   row.span.align.vertical = "middle",
   row.span.font.family = global.font.family,
-  row.span.font.color = global.font.color, row.span.font.size = 14,
-  row.span.font.style = "normal", row.span.font.weight = "bold",
-  row.span.pad = 0, corner = "", corner.class = "",
-  corner.fill = "#FFFFFF",
+  row.span.font.color = global.font.color,
+  row.span.font.size = font.size, row.span.font.style = "normal",
+  row.span.font.weight = "bold", row.span.pad = 0, corner = "",
+  corner.class = "", corner.fill = "#FFFFFF",
   corner.border.width = col.header.border.width,
   corner.border.color = col.header.border.color,
   corner.align.horizontal = "center", corner.align.vertical = "middle",
@@ -60,8 +60,8 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   sig.fills.nothing = "rgb(255,255,255)",
   sig.arrows.up = "rgb(0,172,62)", sig.arrows.down = "rgb(192,0,0)",
   circle.size = 35, spacer.row = NULL, spacer.col = NULL,
-  col.spans = NULL, row.spans = NULL, custom.css = "",
-  use.predefined.css = TRUE, resizable = FALSE)
+  col.spans = NULL, row.spans = NULL, overflow = "hidden",
+  custom.css = "", use.predefined.css = TRUE, resizable = FALSE)
 }
 \arguments{
 \item{x}{Matrix or data frame of contents to show in the table}
@@ -285,6 +285,9 @@ list(list(width=,label=,class=), list(width=,label=,class=))}
 
 \item{row.spans}{List of row spans to place left of the row headers: list(list(height=,label=,class=),
 list(height=,label=,class=)}
+
+\item{overflow}{Determines behaviour of text that is too long to fit in the table cells. By default,
+it is set to "hidden" but change to "visible" to show overflow text.}
 
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function)}

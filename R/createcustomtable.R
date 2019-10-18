@@ -131,6 +131,8 @@
 #'  to omit this is not used.
 #' @param suppress.nan whether to empty cells containing only NaN
 #' @param suppress.na whether to empty cells containing only NA
+#' @param overflow Determines behaviour of text that is too long to fit in the table cells. By default,
+#'  it is set to "hidden" but change to "visible" to show overflow text.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -202,7 +204,7 @@ CreateCustomTable = function(x,
                         row.span.align.vertical = "middle",
                         row.span.font.family = global.font.family,
                         row.span.font.color = global.font.color,
-                        row.span.font.size = 14,
+                        row.span.font.size = font.size,
                         row.span.font.style = "normal",
                         row.span.font.weight = "bold",
                         row.span.pad = 0,
@@ -237,6 +239,7 @@ CreateCustomTable = function(x,
                         spacer.col = NULL,
                         col.spans = NULL,
                         row.spans = NULL,
+                        overflow = "hidden",
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -298,119 +301,131 @@ CreateCustomTable = function(x,
         cell.fill <- matrix(paste("background:", cell.fill, ";"), nrows, ncols)
     else
         cell.fill <- matrix("", nrows, ncols)
+
+    # Significance coloring takes precedence over cell.fill or class definitions
+    # At the moment only sig.change.fills affects cell.inline.style
+    cell.inline.style <- matrix("", nrows, ncols)
     if (!is.null(sig.change.fills))
     {
-        cell.fill[which(sig.change.fills ==  1)] <- paste("background:", sig.fills.up, ";")
-        cell.fill[which(sig.change.fills == -1)] <- paste("background:", sig.fills.down, ";")
+        cell.inline.style[which(sig.change.fills ==  1)] <- paste0(" style='background:", sig.fills.up, "'")
+        cell.inline.style[which(sig.change.fills == -1)] <- paste0(" style='background:", sig.fills.down, "'")
     }
+    if (show.row.headers)
+        cell.inline.style <- cbind("", cell.inline.style)
+    if (show.col.headers)
+        cell.inline.styl <- rbind("", cell.inline.style)
     override.borders <- grepl("border", custom.css)
 
+    # Setup html file
+    tfile <- createTempFile()
+    cata <- createCata(tfile)
+    cata("<style>\n")
+    cata("table { border-collapse: collapse; table-layout: fixed; ",
+                 "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
+                 "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+    cata("thead, th { overflow: ", overflow, "; ")
+    if (resizable)
+        cata("resize: both; ")
+    if (sum(nchar(col.header.height)) > 0)
+        cata("height:", col.header.height, "; ")
+    cata("}\n")
+    cata("td { overflow: ", overflow, "; ")
+    if (sum(nchar(row.height)) > 0)
+        cata("height:", row.height, "; ")
+    cata("}\n")
+
     # Set up styles for each cell - vector/matrix values automatically recycled
-    cell.styles <- paste0("style = '", cell.fill,
+    cell.styles <- addCSSclass(cata, "celldefault", paste0(cell.fill,
         if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
         "; color:", cell.font.color, "; text-align: ", cell.align.horizontal,
-        "; vertical-align: ", cell.align.vertical, ";'")
-    cell.styles <- matrix(cell.styles, nrow = nrows)
+        "; vertical-align: ", cell.align.vertical, ";"), nrows, ncols)
 
     # Row/column classes overrides other attributes (except coloring based on significance)
     for (cc in row.classes)
-    {
-        if (!is.null(sig.change.fills))
-        {
-            ind <- which(abs(sig.change.fills[cc[[1]],]) < 1)
-            cell.styles[cc[[1]], ind] = sprintf('%s class="%s"', cell.styles[cc[[1]], ind], cc[[2]])
-        }
-        else
-            cell.styles[cc[[1]],] = sprintf('%s class="%s"', cell.styles[cc[[1]],], cc[[2]])
-    }
+        cell.styles[cc[[1]],] = paste(cell.styles[cc[[1]],], cc[[2]])
+    
     for (cc in col.classes)
-    {
-        if (!is.null(sig.change.fills))
-        {
-            ind <- which(abs(sig.change.fills[,cc[[1]]]) < 1)
-            cell.styles[ind, cc[[1]]] = sprintf('%s class="%s"', cell.styles[ind, cc[[1]]], cc[[2]])
-        }
-        else
-            cell.styles[,cc[[1]]] = sprintf('%s class="%s"', cell.styles[,cc[[1]]], cc[[2]])
-    }
+        cell.styles[,cc[[1]]] <- paste(cell.styles[,cc[[1]]], cc[[2]])
 
     # Row headers
+    row.header.class.css <- NULL
     if (show.row.headers)
     {
-        if (sum(nchar(row.header.classes)) == 0)
-            row.header.styles <- paste0("style = 'background: ", row.header.fill,
-                if (override.borders) "" else paste0("; border: ", row.header.border.width, "px solid ", row.header.border.color),
-                ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
-                "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
-                "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
-                "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
-                "; vertical-align: ", row.header.align.vertical, ";'")
-        else
-            row.header.styles <- sprintf('class="%s"', row.header.classes)
+        row.header.styles <- addCSSclass(cata, "rowheaderdefault", paste0("background: ", row.header.fill,
+            if (override.borders) "" else paste0("; border: ", row.header.border.width, 
+            "px solid ", row.header.border.color),
+            ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
+            "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
+            "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
+            "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
+            "; vertical-align: ", row.header.align.vertical, ";"), nrows)
+        if (!is.null(row.header.classes))
+            row.header.styles <- paste(row.header.styles, row.header.classes)
         content <- cbind(rownames(x), content)
         cell.styles <- cbind(row.header.styles, cell.styles)
     } else { corner = NULL; corner.class = NULL; }
 
     # Row spans
+    row.span.class.css <- NULL
     if (!is.null(row.spans))
     {
-        span.lengths <- sapply(row.spans, function(x) x[['height']])
-        row.span.styles <- paste0("style = 'background: ", row.span.fill,
-            if (override.borders) "" else paste0("; border: ", row.span.border.width, "px solid ", row.span.border.color),
+        row.span.lengths <- sapply(row.spans, function(x) x[['height']])
+        row.span.styles <- addCSSclass(cata, "rowspandefault", paste0("background: ", row.span.fill,
+            if (override.borders) "" else paste0("; border: ", row.span.border.width, 
+            "px solid ", row.span.border.color),
             ";", getPaddingCSS(tolower(row.span.align.horizontal), row.span.pad),
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
             "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
             "; color:", row.span.font.color, "; text-align: ", row.span.align.horizontal,
-            "; vertical-align: ", row.span.align.vertical, ";'")
-        row.span.styles <- rep(row.span.styles, length = length(row.spans))
+            "; vertical-align: ", row.span.align.vertical, ";"), nrows)
         for (i in 1:length(row.spans))
             if (!is.null(row.spans[[i]]$class))
-                row.span.styles[i] <- sprintf('class="%s"', row.spans[[i]]$class)
+                row.span.styles[i] <- paste(row.span.styles[i], row.spans[[i]]$class)
 
-        row.spans <- sapply(1:length(row.spans), function(i) sprintf('<td rowspan="%s" %s>%s</td>',
+        row.spans <- sapply(1:length(row.spans), function(i) sprintf('<td rowspan="%s" class="%s">%s</td>',
                             row.spans[[i]][['height']], row.span.styles[i], row.spans[[i]][['label']]))
         row.span.html <- rep("", nrows)
         j <- 1
         for (i in 1:length(row.spans))
         {
             row.span.html[j] <- row.spans[i]
-            j <- j + span.lengths[i]
+            j <- j + row.span.lengths[i]
         }
 
     } else
         row.span.html <- ''
 
     # Column headers
+    col.header.class.css <- NULL
     if (show.col.headers)
     {
-        if (sum(nchar(col.header.classes)) == 0)
-            col.header.styles <- paste0("style = 'background: ", col.header.fill,
-                if (override.borders) "" else paste0("; border: ", col.header.border.width, "px solid ", col.header.border.color),
-                ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
-                "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
-                "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
-                "; color:", col.header.font.color, "; text-align: ", col.header.align.horizontal,
-                "; vertical-align: ", col.header.align.vertical, ";'")
-        else
-             col.header.styles <- sprintf('class="%s"', col.header.classes)
-        col.header.styles <- rep(col.header.styles, length = ncols)
+        col.header.styles <- addCSSclass(cata, "colheaderdefault", paste0("background: ", col.header.fill,
+            if (override.borders) "" else paste0("; border: ", col.header.border.width, 
+            "px solid ", col.header.border.color),
+            ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
+            "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
+            "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
+            "; color:", col.header.font.color, "; text-align: ", col.header.align.horizontal,
+            "; vertical-align: ", col.header.align.vertical, ";"), ncols)
+        if (!is.null(col.header.classes))
+            col.header.styles <- paste(col.header.styles, col.header.classes)
         col.labels <- colnames(x)
 
         if (show.row.headers)
         {
-            if (sum(nchar(corner.class)) == 0)
-            corner.styles <- paste0("style = 'background: ", corner.fill,
-                if (override.borders) "" else paste0("; border: ", corner.border.width, "px solid ", corner.border.color),
+            corner.styles <- addCSSclass(cata, "cornerdefault", paste0("background: ", corner.fill,
+                if (override.borders) "" else paste0("; border: ", corner.border.width, 
+                "px solid ", corner.border.color),
                 ";", getPaddingCSS(tolower(corner.align.horizontal), corner.pad),
                 "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
                 "; font-weight: ", corner.font.weight, "; font-family: ", corner.font.family,
                 "; color:", corner.font.color, "; text-align: ", corner.align.horizontal,
-                "; vertical-align: ", corner.align.vertical, ";'")
-            else
-                corner.styles <- sprintf('class="%s"', corner.class)
+                "; vertical-align: ", corner.align.vertical, ";"))
+            if (sum(nchar(corner.class)) > 0)
+                corner.styles <- paste(corner.styles, corner.class)
             col.header.styles <- c(corner.styles[1], col.header.styles)
             col.labels <- c(corner, col.labels)
         }
@@ -421,10 +436,10 @@ CreateCustomTable = function(x,
             col.labels <- c("", col.labels)
         }
         if (!is.null(spacer.col))
-            col.header.styles[spacer.col] <- 'class = "spacer"'
+            col.header.styles[spacer.col] <- "spacer"
         if (!is.null(spacer.row))
             spacer.row <-  spacer.row + 1
-        header.html <- paste0(c('<tr>', sprintf('<th %s>%s</th>', col.header.styles, col.labels),
+        header.html <- paste0(c('<tr>', sprintf('<th class="%s">%s</th>', col.header.styles, col.labels),
                                 '</tr>'), collapse='')
     } else
         header.html <- ''
@@ -439,23 +454,6 @@ CreateCustomTable = function(x,
     } else
         col.span.html <- ''
 
-    # Setup html file
-    tfile <- createTempFile()
-    cata <- createCata(tfile)
-    cata("<style>\n")
-    cata("table { border-collapse: collapse; table-layout: fixed; ",
-                 "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
-                 "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
-    cata("thead, th { overflow: hidden; ")
-    if (resizable)
-        cata("resize: both; ")
-    if (sum(nchar(col.header.height)) > 0)
-        cata("height:", col.header.height, "; ")
-    cata("}\n")
-    cata("td { overflow: hidden; ")
-    if (sum(nchar(row.height)) > 0)
-        cata("height:", row.height, "; ")
-    cata("}\n")
 
     # Row/Column banding
     if (banded.rows)
@@ -485,7 +483,9 @@ CreateCustomTable = function(x,
 
 
     # Build table
-    cell.html <- matrix(sprintf('<td %s>%s</td>', cell.styles, content), nrow = nrows)
+    print(str(cell.styles))
+    print(str(cell.inline.style))
+    cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content), nrow = nrows)
     cell.html <- cbind(row.span.html, cell.html)
     body.html <- paste0(sprintf('<tr>%s</tr>',
                     apply(cell.html, 1, paste0, collapse = '')), collapse='')
@@ -544,6 +544,30 @@ getPaddingCSS <- function(align, pad)
     return(res)
 }
 
+addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1)
+{
+    n <- length(class.css)
+    if (length(n) < 1)
+        return(NULL)
+
+    # The number of classes created is the length of class.css
+    # recycling occurs if needed inside CreateCustomTable
+    class.names <- paste0(class.stem, 1:n)
+    tmp.css <- paste0(".", class.names, "{ ", class.css, " }")
+
+    # Add class definition to CSS file
+    cata(paste(tmp.css, collapse = "\n"))
+
+    # Return class names - otherwise the main function does not know
+    # how many classes were created
+    if (ncol == 1)
+        return(rep(class.names, length = nrow))
+    else
+        return(matrix(class.names, nrow, ncol))
+}
+     
+
+
 predefinedCSS <- function()
 {
 "
@@ -555,11 +579,11 @@ predefinedCSS <- function()
         text-align:left;
         }
     .simpleheader {
-        background-color: #DCDCDC;
+        background: #DCDCDC;
         font-weight: bold;
         }
     .simpleheaderclean {
-        background-color: #DCDCDC;
+        background: #DCDCDC;
         font-weight: normal;
         }
     .nsline {
