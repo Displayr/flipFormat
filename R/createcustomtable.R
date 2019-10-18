@@ -173,7 +173,7 @@ CreateCustomTable = function(x,
                         cell.pad = 0,
                         show.col.headers = TRUE,
                         col.header.labels = NULL,
-                        col.header.fill = "#DCDCDC",
+                        col.header.fill = "transparent",
                         col.header.border.width = 1,
                         col.header.border.color = "#FFFFFF",
                         col.header.align.horizontal = "center",
@@ -186,7 +186,7 @@ CreateCustomTable = function(x,
                         col.header.pad = 0,
                         show.row.headers = TRUE,
                         row.header.labels = NULL,
-                        row.header.fill = "#FFFFFF",
+                        row.header.fill = "transparent",
                         row.header.border.width = 1,
                         row.header.border.color = col.header.border.color,
                         row.header.align.horizontal = "left",
@@ -197,7 +197,7 @@ CreateCustomTable = function(x,
                         row.header.font.style = "normal",
                         row.header.font.weight = "bold",
                         row.header.pad = 0,
-                        row.span.fill = "#FFFFFF",
+                        row.span.fill = "transparent",
                         row.span.border.width = 1,
                         row.span.border.color = col.header.border.color,
                         row.span.align.horizontal = "left",
@@ -210,7 +210,7 @@ CreateCustomTable = function(x,
                         row.span.pad = 0,
                         corner = "",
                         corner.class = "",
-                        corner.fill = "#FFFFFF",
+                        corner.fill = "transparent",
                         corner.border.width = col.header.border.width,
                         corner.border.color = col.header.border.color,
                         corner.align.horizontal = "center",
@@ -314,7 +314,7 @@ CreateCustomTable = function(x,
         cell.inline.style <- cbind("", cell.inline.style)
     if (show.col.headers)
         cell.inline.styl <- rbind("", cell.inline.style)
-    override.borders <- grepl("border", custom.css)
+    override.borders <- grepl("border", custom.css, fixed = TRUE) && grepl("nth-child", custom.css, fixed = TRUE)
 
     # Setup html file
     tfile <- createTempFile()
@@ -483,8 +483,6 @@ CreateCustomTable = function(x,
 
 
     # Build table
-    print(str(cell.styles))
-    print(str(cell.inline.style))
     cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content), nrow = nrows)
     cell.html <- cbind(row.span.html, cell.html)
     body.html <- paste0(sprintf('<tr>%s</tr>',
