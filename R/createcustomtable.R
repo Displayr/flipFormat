@@ -346,7 +346,7 @@ CreateCustomTable = function(x,
     # Row/column classes overrides other attributes (except coloring based on significance)
     for (cc in row.classes)
         cell.styles[cc[[1]],] = paste(cell.styles[cc[[1]],], cc[[2]])
-    
+
     for (cc in col.classes)
         cell.styles[,cc[[1]]] <- paste(cell.styles[,cc[[1]]], cc[[2]])
 
@@ -355,7 +355,7 @@ CreateCustomTable = function(x,
     if (show.row.headers)
     {
         row.header.styles <- addCSSclass(cata, "rowheaderdefault", paste0("background: ", row.header.fill,
-            if (override.borders) "" else paste0("; border: ", row.header.border.width, 
+            if (override.borders) "" else paste0("; border: ", row.header.border.width,
             "px solid ", row.header.border.color),
             ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
             "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
@@ -374,7 +374,7 @@ CreateCustomTable = function(x,
     {
         row.span.lengths <- sapply(row.spans, function(x) x[['height']])
         row.span.styles <- addCSSclass(cata, "rowspandefault", paste0("background: ", row.span.fill,
-            if (override.borders) "" else paste0("; border: ", row.span.border.width, 
+            if (override.borders) "" else paste0("; border: ", row.span.border.width,
             "px solid ", row.span.border.color),
             ";", getPaddingCSS(tolower(row.span.align.horizontal), row.span.pad),
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
@@ -403,7 +403,7 @@ CreateCustomTable = function(x,
     if (show.col.headers)
     {
         col.header.styles <- addCSSclass(cata, "colheaderdefault", paste0("background: ", col.header.fill,
-            if (override.borders) "" else paste0("; border: ", col.header.border.width, 
+            if (override.borders) "" else paste0("; border: ", col.header.border.width,
             "px solid ", col.header.border.color),
             ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
             "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
@@ -417,7 +417,7 @@ CreateCustomTable = function(x,
         if (show.row.headers)
         {
             corner.styles <- addCSSclass(cata, "cornerdefault", paste0("background: ", corner.fill,
-                if (override.borders) "" else paste0("; border: ", corner.border.width, 
+                if (override.borders) "" else paste0("; border: ", corner.border.width,
                 "px solid ", corner.border.color),
                 ";", getPaddingCSS(tolower(corner.align.horizontal), corner.pad),
                 "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
@@ -432,7 +432,7 @@ CreateCustomTable = function(x,
 
         if (!is.null(row.spans))
         {
-            col.header.styles <- c("", col.header.styles)
+            col.header.styles <- c(corner.styles[1], col.header.styles)
             col.labels <- c("", col.labels)
         }
         if (!is.null(spacer.col))
@@ -563,7 +563,7 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1)
     else
         return(matrix(class.names, nrow, ncol))
 }
-     
+
 
 
 predefinedCSS <- function()
