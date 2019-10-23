@@ -135,6 +135,7 @@ test_that("Text analysis output",
 
 test_that("Raw text diagnostics",
 {
+    # this also tests split text highlighting
     load(findInstDirFile("text.analysis.diagnostics.rda"))
     result <- CreateTextAnalysisWidget(raw.and.normalized.text,
                                        n.gram.frequencies,

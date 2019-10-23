@@ -44,7 +44,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     # ptm <- proc.time()
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-                                    token.substitutions, ws)
+                                    token.substitutions,
+                                    diagnostics$split.into.categories, ws)
     # print("highligh ngrams")
     # print(proc.time() - ptm)
     if (NROW(n.gram.frequencies) > 0)
@@ -84,8 +85,8 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
 
 #' @importFrom grDevices rgb col2rgb grey
 #' @importFrom colorspace lighten darken
-#' @importFrom flipU UniquePlaceholders
-HighlightNGrams <- function(n.grams, text, subs, cata)
+#' @importFrom flipU UniquePlaceholders EscapeRegexSymbols
+HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
 {
     col0 <- officialColors()
     n.col <- length(col0)
@@ -149,6 +150,11 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
     raw.replacement.rows <- sapply(text$`Raw replacement info`,
                                    function(x) x$row.index)
 
+    ind <- order(sapply(split.into.categories,
+                        function(x) nchar(x$to.be.split)), decreasing = TRUE)
+    split.into.categories <- split.into.categories[ind]
+    split.text.placeholders <- UniquePlaceholders(length(split.into.categories))
+
     # Search for ngrams in each response
     for (j in 1:length(orig.text))
     {
@@ -196,6 +202,22 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             new.text <- orig.text[j]
         }
 
+        # replace split text with placeholders
+        split.ind <- if (!is.null(split.into.categories) &&
+                         length(split.into.categories) > 0)
+            which(sapply(split.into.categories, function(x) j %in% x$rows))
+        else
+            integer(0)
+
+        for (i in split.ind)
+        {
+            to.be.split.patt <- paste0("(?i)(?<!\\w)",
+                EscapeRegexSymbols(split.into.categories[[i]]$to.be.split),
+                "(?!\\w)")
+            new.text <- gsub(to.be.split.patt, split.text.placeholders[i],
+                             new.text, perl = TRUE)
+        }
+
         # replace tokens with placeholders
         n.tokens <- length(trans.tokens.j)
         raw.token.tags <- character(0)
@@ -223,17 +245,29 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         }
 
         # replace token placeholders with tags
-        for (k in seq_len(length(raw.token.tags)))
+        for (k in seq(raw.token.tags))
             new.text <- sub(token.placeholders[k], raw.token.tags[k], new.text,
                             ignore.case = TRUE, perl = TRUE)
 
         # replace raw replacements placeholders with formatted tags
-        for (i in seq_len(length(raw.repl)))
+        for (i in seq(raw.repl))
         {
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
                           htmlText(raw.repl[[i]]$replaced), "</span>")
             new.text <- sub(raw.repl.placeholders[i], tag, new.text)
+        }
+
+        # replace split text placeholders with formatted tags
+        for (i in split.ind)
+        {
+            categories <-paste0(escapeQuotesForHTML(split.into.categories[[i]]$categories),
+                                collapse = ", ")
+            tag <- paste0("<span class='split-text' title='Split into: ",
+                          categories, "'>",
+                          htmlText(split.into.categories[[i]]$to.be.split),
+                          "</span>")
+            new.text <- sub(split.text.placeholders[i], tag, new.text)
         }
 
         orig.text[j] <- new.text
