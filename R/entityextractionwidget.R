@@ -12,11 +12,13 @@
 #'     entity type in the named entity recognition detection.
 #' @param title The title to show at the top.
 #' @param footer Footer to show containing sample information.
+#' @param empty.extraction character giving the reason for a possible output with no entities. Returns
+#'   \code{NA} if entities extracted.
 #' @return An \code{htmlwidget} containing tables showing the output from an entity extraction.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
 EntityExtractionWidget <- function(entity.percentages, variant.percentages, entity.counts,
-                                   variant.counts, title, footer)
+                                   variant.counts, title, footer, empty.extraction)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -32,7 +34,15 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
          "</thead><tbody>")
 
     if(all(entity.counts == 0)) {
-        user.empty.msg <- paste0("No entities found to extract from dataset \n",
+        if(empty.extraction == "output")
+        {
+            empty.reason <- NULL
+        } else
+        {
+            empty.reason <- paste0("since the only entities in the output have been removed with the user specified",
+                                   " remove entities from extraction settings.")
+        }
+        user.empty.msg <- paste0("No entities found to extract from dataset ", empty.reason, "\n",
                                  "Use the 'Add named entities to extraction' control if you wish ",
                                  "to add entities to extract from the text.")
         cata("<tr class=\"table-row\"><td>")
