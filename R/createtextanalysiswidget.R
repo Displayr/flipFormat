@@ -215,7 +215,11 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
             to.be.split.patt <- paste0("(?i)(?<!\\w)",
                 EscapeRegexSymbols(split.categories.info[[i]]$to.be.split),
                 "(?!\\w)")
-            split.text[[i]] <- grep(to.be.split.patt, new.text, value = TRUE, perl = TRUE)
+            m <- gregexpr(to.be.split.patt, new.text, perl = TRUE)[[1]]
+            split.text[[i]] <- sapply(seq(m), function(x) {
+                    substr(new.text, m[x], m[x] + attr(m, "match.length")[x] - 1)
+                })
+
             new.text <- gsub(to.be.split.patt, split.text.placeholders[i],
                              new.text, perl = TRUE)
         }
