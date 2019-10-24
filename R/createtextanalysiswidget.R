@@ -209,11 +209,13 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
         else
             integer(0)
 
+        split.text <- list()
         for (i in split.ind)
         {
             to.be.split.patt <- paste0("(?i)(?<!\\w)",
                 EscapeRegexSymbols(split.categories.info[[i]]$to.be.split),
                 "(?!\\w)")
+            split.text[[i]] <- grep(to.be.split.patt, new.text, value = TRUE, perl = TRUE)
             new.text <- gsub(to.be.split.patt, split.text.placeholders[i],
                              new.text, perl = TRUE)
         }
@@ -255,19 +257,20 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
                           htmlText(raw.repl[[i]]$replaced), "</span>")
-            new.text <- sub(raw.repl.placeholders[i], tag, new.text)
+            new.text <- gsub(raw.repl.placeholders[i], tag, new.text)
         }
 
         # replace split text placeholders with formatted tags
         for (i in split.ind)
         {
-            categories <-paste0(escapeQuotesForHTML(split.categories.info[[i]]$categories),
+            categories <- paste0(escapeQuotesForHTML(split.categories.info[[i]]$categories),
                                 collapse = ", ")
-            tag <- paste0("<span class='split-text' title='Split into: ",
-                          categories, "'>",
-                          htmlText(split.categories.info[[i]]$to.be.split),
-                          "</span>")
-            new.text <- sub(split.text.placeholders[i], tag, new.text)
+            for (t in split.text[[i]])
+            {
+                tag <- paste0("<span class='split-text' title='Split into: ",
+                              categories, "'>", htmlText(t), "</span>")
+                new.text <- sub(split.text.placeholders[i], tag, new.text)
+            }
         }
 
         orig.text[j] <- new.text
