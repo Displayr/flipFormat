@@ -149,11 +149,11 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
 
     raw.replacement.rows <- sapply(text$`Raw replacement info`,
                                    function(x) x$row.index)
-
-    ind <- order(sapply(split.into.categories,
+    split.categories.info <- text$`Split categories info`
+    ind <- order(sapply(split.categories.info,
                         function(x) nchar(x$to.be.split)), decreasing = TRUE)
-    split.into.categories <- split.into.categories[ind]
-    split.text.placeholders <- UniquePlaceholders(length(split.into.categories))
+    split.categories.info <- split.categories.info[ind]
+    split.text.placeholders <- UniquePlaceholders(length(split.categories.info))
 
     # Search for ngrams in each response
     for (j in 1:length(orig.text))
@@ -203,16 +203,16 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
         }
 
         # replace split text with placeholders
-        split.ind <- if (!is.null(split.into.categories) &&
-                         length(split.into.categories) > 0)
-            which(sapply(split.into.categories, function(x) j %in% x$rows))
+        split.ind <- if (!is.null(split.categories.info) &&
+                         length(split.categories.info) > 0)
+            which(sapply(split.categories.info, function(x) j %in% x$rows))
         else
             integer(0)
 
         for (i in split.ind)
         {
             to.be.split.patt <- paste0("(?i)(?<!\\w)",
-                EscapeRegexSymbols(split.into.categories[[i]]$to.be.split),
+                EscapeRegexSymbols(split.categories.info[[i]]$to.be.split),
                 "(?!\\w)")
             new.text <- gsub(to.be.split.patt, split.text.placeholders[i],
                              new.text, perl = TRUE)
@@ -261,11 +261,11 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
         # replace split text placeholders with formatted tags
         for (i in split.ind)
         {
-            categories <-paste0(escapeQuotesForHTML(split.into.categories[[i]]$categories),
+            categories <-paste0(escapeQuotesForHTML(split.categories.info[[i]]$categories),
                                 collapse = ", ")
             tag <- paste0("<span class='split-text' title='Split into: ",
                           categories, "'>",
-                          htmlText(split.into.categories[[i]]$to.be.split),
+                          htmlText(split.categories.info[[i]]$to.be.split),
                           "</span>")
             new.text <- sub(split.text.placeholders[i], tag, new.text)
         }
