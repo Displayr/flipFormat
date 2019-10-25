@@ -4,12 +4,10 @@
 \alias{AutomaticCategorizationWidget}
 \title{Display automatic text categorization output as an \code{htmlwidget}}
 \usage{
-AutomaticCategorizationWidget(categorization, sizes, base.size, examples,
+AutomaticCategorizationWidget(sizes, base.size, examples,
   text.raw.by.categorization, missing, title, footer)
 }
 \arguments{
-\item{categorization}{A factor containing the categorization of the text.}
-
 \item{sizes}{The sizes of the categories.}
 
 \item{base.size}{The weighted sample size.}
