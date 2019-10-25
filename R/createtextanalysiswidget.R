@@ -434,6 +434,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
     html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
                    "<div class=\"diagnostics-container\">")
 
+    html <- paste0(html, variantSuggestionsDiagnostic(diagnostics$variant.suggestions,
+                                                      details.expand))
+
     # ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
     if (length(diagnostics$raw.text.replacement) > 0)
@@ -505,6 +508,40 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
                    "</details>")
 
     cata(html)
+}
+
+variantSuggestionsDiagnostic <- function(info, details.expand)
+{
+    html <- if (details.expand == "Categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
+                   "<summary class=\"summary sub-details\">Variant suggestions (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Suggestions for category variants are shown below. ",
+                   "The suggestions can be copied and pasted into the variants ",
+                   "columns in the REQUIRED CATEGORIES table editor.</div>")
+
+    n.categories <- length(info)
+    max.variants <- max(sapply(info, length))
+
+    t <- matrix("", nrow = n.categories, ncol = max.variants + 1)
+    colnames(t) <- c("Category", paste0(rep("Variant ", max.variants), 1:max.variants))
+    t[, 1] <- htmlText(names(info))
+    for (i in seq_len(n.categories))
+        t[i, 2:(length(info[[i]]) + 1)] <- htmlText(info[[i]])
+
+    html <- paste0(html, "<div class=\"diagnostics-block\">")
+    html <- paste0(html, kable(t, format = "html",
+                               escape = FALSE,
+                               table.attr = "class=\"diagnostics-table\""))
+    html <- paste0(html, "</div>")
+
+    paste0(html, "</div></details>")
 }
 
 rawTextReplacementDiagnostic <- function(info, details.expand)
