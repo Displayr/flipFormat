@@ -44,7 +44,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
             empty.reason <- paste0("since the only entities in the output have been removed with the user specified",
                                    " remove entities from extraction settings.")
         else
-            stop("Unexpected output: Zero entities extracted with unexpected reason - ", empty.reason)
+            stop("Unexpected output: Zero entities extracted with unexpected reason - ", empty.extraction)
 
         user.empty.msg <- paste0("No entities found to extract from dataset ", empty.reason, "\n",
                                  "Use the 'Add named entities to extraction' control if you wish ",
