@@ -44,7 +44,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     # ptm <- proc.time()
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-                                    token.substitutions, ws)
+                                    token.substitutions,
+                                    diagnostics$split.into.categories, ws)
     # print("highligh ngrams")
     # print(proc.time() - ptm)
     if (NROW(n.gram.frequencies) > 0)
@@ -84,8 +85,8 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
 
 #' @importFrom grDevices rgb col2rgb grey
 #' @importFrom colorspace lighten darken
-#' @importFrom flipU UniquePlaceholders
-HighlightNGrams <- function(n.grams, text, subs, cata)
+#' @importFrom flipU UniquePlaceholders EscapeRegexSymbols
+HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
 {
     col0 <- officialColors()
     n.col <- length(col0)
@@ -148,6 +149,11 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
 
     raw.replacement.rows <- sapply(text$`Raw replacement info`,
                                    function(x) x$row.index)
+    split.categories.info <- text$`Split categories info`
+    ind <- order(sapply(split.categories.info,
+                        function(x) nchar(x$to.be.split)), decreasing = TRUE)
+    split.categories.info <- split.categories.info[ind]
+    split.text.placeholders <- UniquePlaceholders(length(split.categories.info))
 
     # Search for ngrams in each response
     for (j in 1:length(orig.text))
@@ -196,6 +202,28 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
             new.text <- orig.text[j]
         }
 
+        # replace split text with placeholders
+        split.ind <- if (!is.null(split.categories.info) &&
+                         length(split.categories.info) > 0)
+            which(sapply(split.categories.info, function(x) j %in% x$rows))
+        else
+            integer(0)
+
+        split.text <- list()
+        for (i in split.ind)
+        {
+            to.be.split.patt <- paste0("(?i)(?<!\\w)",
+                EscapeRegexSymbols(split.categories.info[[i]]$to.be.split),
+                "(?!\\w)")
+            m <- gregexpr(to.be.split.patt, new.text, perl = TRUE)[[1]]
+            split.text[[i]] <- sapply(seq(m), function(x) {
+                    substr(new.text, m[x], m[x] + attr(m, "match.length")[x] - 1)
+                })
+
+            new.text <- gsub(to.be.split.patt, split.text.placeholders[i],
+                             new.text, perl = TRUE)
+        }
+
         # replace tokens with placeholders
         n.tokens <- length(trans.tokens.j)
         raw.token.tags <- character(0)
@@ -223,17 +251,30 @@ HighlightNGrams <- function(n.grams, text, subs, cata)
         }
 
         # replace token placeholders with tags
-        for (k in seq_len(length(raw.token.tags)))
+        for (k in seq(raw.token.tags))
             new.text <- sub(token.placeholders[k], raw.token.tags[k], new.text,
                             ignore.case = TRUE, perl = TRUE)
 
         # replace raw replacements placeholders with formatted tags
-        for (i in seq_len(length(raw.repl)))
+        for (i in seq(raw.repl))
         {
             tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
                           htmlText(raw.repl[[i]]$replaced), "</span>")
-            new.text <- sub(raw.repl.placeholders[i], tag, new.text)
+            new.text <- gsub(raw.repl.placeholders[i], tag, new.text)
+        }
+
+        # replace split text placeholders with formatted tags
+        for (i in split.ind)
+        {
+            categories <- paste0(escapeQuotesForHTML(split.categories.info[[i]]$categories),
+                                collapse = ", ")
+            for (t in split.text[[i]])
+            {
+                tag <- paste0("<span class='split-text' title='Split into: ",
+                              categories, "'>", htmlText(t), "</span>")
+                new.text <- sub(split.text.placeholders[i], tag, new.text)
+            }
         }
 
         orig.text[j] <- new.text

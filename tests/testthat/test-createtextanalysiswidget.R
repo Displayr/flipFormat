@@ -135,6 +135,14 @@ test_that("Text analysis output",
 
 test_that("Raw text diagnostics",
 {
+    # for split text highlighting
+    raw.and.normalized.text$`Split categories info` <- list(list(to.be.split = "Cream colored ponies",
+                                                                 categories = c("cream", "colored", "ponies"),
+                                                                 rows = 5,
+                                                                 raw.text = "Cream colored ponies and crisp apple streudels",
+                                                                 raw.text.var.num = 1, raw.text.case.num = 5,
+                                                                 is.max.exceeded = FALSE, n.omitted.rows = 0))
+
     load(findInstDirFile("text.analysis.diagnostics.rda"))
     result <- CreateTextAnalysisWidget(raw.and.normalized.text,
                                        n.gram.frequencies,
