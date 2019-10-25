@@ -36,7 +36,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
     if(all(entity.counts == 0))
     {
         # expect empty.reason to be either "output" or "remove". NA shouldn't occur
-        if(is.na(empty.reason))
+        if(is.na(empty.extraction))
             stop("Unexpected output: Zero entities extracted with no reason specified.")
         else if(empty.extraction == "output")
             empty.reason <- ""
