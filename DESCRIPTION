@@ -30,8 +30,6 @@ Remotes:
     Displayr/flipU,
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
     renkun-ken/formattable,
-    Displayr/rhtmlMetro,
-    Displayr/flipChoice,
-    Displayr/flipTextAnalysis
+    Displayr/rhtmlMetro
 RoxygenNote: 6.1.1
 Encoding: UTF-8
