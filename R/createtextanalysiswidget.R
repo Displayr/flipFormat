@@ -523,7 +523,7 @@ variantSuggestionsDiagnostic <- function(info, details.expand)
                    "<div class=\"diagnostics-group\">",
                    "<div class=\"diagnostics-message\">",
                    "Suggestions for category variants are shown below. ",
-                   "The suggestions can be copied and pasted into the variants ",
+                   "The suggestions can be copied and pasted into the variant ",
                    "columns in the REQUIRED CATEGORIES table editor.</div>")
 
     n.categories <- length(info)
