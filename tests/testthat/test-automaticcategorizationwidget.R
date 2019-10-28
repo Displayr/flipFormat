@@ -148,30 +148,3 @@ AutomaticCategorizationWidget(sizes = sizes,
                               missing = missing,
                               title = title,
                               footer = footer)
-#
-# test_that("Text classifier: multiple response",
-#           {
-#             # toy
-#             data(encoding.toy, package = "flipTextAnalysis")
-#             toy = encoding.toy$text.raw
-#             e.toy = encoding.toy
-#             n.toy <- length(toy)
-#
-#
-#               zcat <- rep(NA, n.toy)
-#               zcat[1:3] <- "miss"
-#               zcat[8:12] <- "cat"
-#               zcat[19:22] <- "dog"
-#               zcat <- factor(zcat)
-#               names(zcat) <- toy
-#               zcat[1:3] <- NA
-#               zcat <- factor(zcat)
-#
-#               zmult <- data.frame(as.integer(zcat == "miss"),
-#                                   as.integer(zcat == "cat"),
-#                                   as.integer(zcat == "dog"))
-#               zmult <- zmult[, 2:3]
-#               flipTextAnalysis::TextClassifier(zmult, e.toy)
-#               expect_equal(flipTextAnalysis:::classiferAccuracy(z),  1, tol = 0.00001)
-#
-#             })

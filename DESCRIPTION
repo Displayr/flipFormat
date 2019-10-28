@@ -23,8 +23,7 @@ Imports:
 Suggests:
     testthat,
     flipExampleData,
-    flipChoice,
-    flipTextAnalysis
+    flipChoice
 Remotes:
     Displayr/flipExampleData,
     Displayr/flipU,
