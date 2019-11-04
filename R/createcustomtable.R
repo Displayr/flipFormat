@@ -119,7 +119,7 @@
 #' @param spacer.col Indices of any blank divider columns
 #' @param row.height Height of table body rows. If \code{NULL}, then the rows are stretched to fill container.
 #' @param num.header.rows This is the number of rows from \code{x} which always be shown at the
-#'   top of the window (only used when \code{row.height} is specified. 
+#'   top of the window (only used when \code{row.height} is specified.
 #' @param col.header.height Height of table header rows
 #' @param col.spans List of column spans to place above the column headers:
 #'  list(list(width=,label=,class=), list(width=,label=,class=))
@@ -327,7 +327,8 @@ CreateCustomTable = function(x,
     tfile <- createTempFile()
     cata <- createCata(tfile)
     cata("<style>\n")
-    cata(".main-container{ background: white; height: 100%; overflow-y: auto; overflow-x: hidden; }\n")
+    cata(".main-container{ background: white; height: 100%; overflow-x: hidden; overflow-y:",
+         if (!is.null(row.height)) "auto" else "hidden", "}\n")
     cata("table { border-collapse: collapse; table-layout: fixed; ",
                  "postion: relative; width: 100%; ",
                  "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
@@ -514,14 +515,14 @@ CreateCustomTable = function(x,
     cata('<thead>', col.span.html, header.html)
 
     # Build table
-    cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content), 
+    cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content),
                         nrow = nrows)
     cell.html <- cbind(row.span.html, cell.html)
 
     if (num.header.rows > 0) # additional rows that float at the top
     {
         extra.header.html <- paste0(sprintf('<tr>%s</tr>\n',
-                                apply(cell.html[1:num.header.rows,,drop = FALSE], 1, 
+                                apply(cell.html[1:num.header.rows,,drop = FALSE], 1,
                                 paste0, collapse = '')), collapse='')
         extra.header.html <- gsub("<td ", "<th ", extra.header.html, fixed = TRUE)
         extra.header.html <- gsub("</td>", "</th>", extra.header.html, fixed = TRUE)
