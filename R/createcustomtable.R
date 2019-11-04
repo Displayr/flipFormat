@@ -357,9 +357,7 @@ CreateCustomTable = function(x,
         {
             hh <- c(top.position, rep(row.height, num.header.rows - 1))
             top.position <- paste0("calc(", sapply(1:num.header.rows,
-                function(i) paste(rep(hh, length=i), collapse=" + ")),
-                ")")
-            print(top.position)
+                function(i) paste(rep(hh, length=i), collapse=" + ")), ")")
         }
     }
 
@@ -595,10 +593,7 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
     {
         class.css <- matrix(class.css, nrow, ncol)
         for (i in 1:length(position))
-        {
             class.css[i,] <- paste0("position: sticky; top: ", position[i], "; ", class.css[i,])
-            cat("position", i, ":", position[i], "\n")
-        }
     }
     n <- length(class.css)
 
