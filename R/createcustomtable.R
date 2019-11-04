@@ -118,6 +118,8 @@
 #' @param spacer.row Indices of any blank divider rows
 #' @param spacer.col Indices of any blank divider columns
 #' @param row.height Height of table body rows. If \code{NULL}, then the rows are stretched to fill container.
+#' @param num.header.rows This is the number of rows from \code{x} which always be shown at the
+#'   top of the window (only used when \code{row.height} is specified. 
 #' @param col.header.height Height of table header rows
 #' @param col.spans List of column spans to place above the column headers:
 #'  list(list(width=,label=,class=), list(width=,label=,class=))
@@ -154,6 +156,7 @@ CreateCustomTable = function(x,
                         col.widths = c("25%"),
                         row.height = NULL,
                         col.header.height = "35px",
+                        num.header.rows = 0,
                         global.font.family = "Arial",
                         global.font.color = rgb(44, 44, 44, maxColorValue = 255),
                         font.size = 13,
@@ -252,6 +255,10 @@ CreateCustomTable = function(x,
         show.col.headers <- FALSE
     if (is.null(rownames(x)))
         show.row.headers <- FALSE
+    if (is.null(row.height)) # all rows are stretched to fit height of window - no scrolling
+        num.header.rows <- 0
+    if (num.header.rows >= nrows)
+        num.header.rows <- nrows - 1
 
     # Format table contents
     if (format.type == "Automatic" && any(grepl("%", attr(x, "statistic"))))
@@ -320,28 +327,51 @@ CreateCustomTable = function(x,
     tfile <- createTempFile()
     cata <- createCata(tfile)
     cata("<style>\n")
+    cata(".main-container{ background: white; height: 100%; overflow-y: auto; overflow-x: hidden; }\n")
     cata("table { border-collapse: collapse; table-layout: fixed; ",
+                 "postion: relative; width: 100%; ",
                  "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
                  "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
-    cata("thead, th { overflow: ", overflow, "; ")
+
+    # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
+    # Both the height and position are defined inside cell.styles/row.header.styles
+    # to allow for multiple sticky rows
+    cata("th { position: -webkit-sticky; position: sticky; top: 0px; overflow: ", overflow, "; ")
     if (resizable)
         cata("resize: both; ")
-    if (sum(nchar(col.header.height)) > 0)
-        cata("height:", col.header.height, "; ")
     cata("}\n")
     cata("td { overflow: ", overflow, "; ")
     if (sum(nchar(row.height)) > 0)
         cata("height:", row.height, "; ")
     cata("}\n")
 
+    # initialize positions for sticky header with scrollable table
+    top.position <- NULL
+    if (!is.null(row.height) && num.header.rows > 0)
+    {
+        if (!show.col.headers)
+            col.header.height = "0px"
+        top.position <- col.header.height
+        if (num.header.rows > 1)
+        {
+            hh <- c(top.position, rep(row.height, num.header.rows - 1))
+            top.position <- paste0("calc(", sapply(1:num.header.rows,
+                function(i) paste(rep(hh, length=i), collapse=" + ")),
+                ")")
+            print(top.position)
+        }
+    }
+
     # Set up styles for each cell - vector/matrix values automatically recycled
     cell.styles <- addCSSclass(cata, "celldefault", paste0(cell.fill,
+        "; ", if (sum(nchar(row.height)) > 0) paste0("height: ", row.height, "; ") else "",
         if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
         "; color:", cell.font.color, "; text-align: ", cell.align.horizontal,
-        "; vertical-align: ", cell.align.vertical, ";"), nrows, ncols)
+        "; vertical-align: ", cell.align.vertical, ";"), nrows, ncols,
+        position = top.position)
 
     # Row/column classes overrides other attributes (except coloring based on significance)
     for (cc in row.classes)
@@ -361,7 +391,7 @@ CreateCustomTable = function(x,
             "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
             "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
             "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
-            "; vertical-align: ", row.header.align.vertical, ";"), nrows)
+            "; vertical-align: ", row.header.align.vertical, ";"), nrows, position = top.position)
         if (!is.null(row.header.classes))
             row.header.styles <- paste(row.header.styles, row.header.classes)
         content <- cbind(rownames(x), content)
@@ -380,7 +410,7 @@ CreateCustomTable = function(x,
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
             "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
             "; color:", row.span.font.color, "; text-align: ", row.span.align.horizontal,
-            "; vertical-align: ", row.span.align.vertical, ";"), nrows)
+            "; vertical-align: ", row.span.align.vertical, ";"), nrows, position = top.position)
         for (i in 1:length(row.spans))
             if (!is.null(row.spans[[i]]$class))
                 row.span.styles[i] <- paste(row.span.styles[i], row.spans[[i]]$class)
@@ -403,6 +433,7 @@ CreateCustomTable = function(x,
     if (show.col.headers)
     {
         col.header.styles <- addCSSclass(cata, "colheaderdefault", paste0("background: ", col.header.fill,
+            "; ", if (sum(nchar(col.header.height)) > 0) paste0("height: ", col.header.height, "; ") else "",
             if (override.borders) "" else paste0("; border: ", col.header.border.width,
             "px solid ", col.header.border.color),
             ";", getPaddingCSS(tolower(col.header.align.horizontal), col.header.pad),
@@ -470,6 +501,7 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
+    cata("<div class=\"main-container\">")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",
@@ -479,17 +511,29 @@ CreateCustomTable = function(x,
         col.widths <- ConvertCommaSeparatedStringToVector(col.widths)
         cata(paste(paste("<col width='", col.widths, "'>\n"), collapse = ""))
     }
-    cata('<thead>', col.span.html, header.html, '</thead>')
-
+    cata('<thead>', col.span.html, header.html)
 
     # Build table
-    cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content), nrow = nrows)
+    cell.html <- matrix(sprintf('<td class="%s"%s>%s</td>', cell.styles, cell.inline.style, content), 
+                        nrow = nrows)
     cell.html <- cbind(row.span.html, cell.html)
-    body.html <- paste0(sprintf('<tr>%s</tr>',
-                    apply(cell.html, 1, paste0, collapse = '')), collapse='')
 
+    if (num.header.rows > 0) # additional rows that float at the top
+    {
+        extra.header.html <- paste0(sprintf('<tr>%s</tr>\n',
+                                apply(cell.html[1:num.header.rows,,drop = FALSE], 1, 
+                                paste0, collapse = '')), collapse='')
+        extra.header.html <- gsub("<td ", "<th ", extra.header.html, fixed = TRUE)
+        extra.header.html <- gsub("</td>", "</th>", extra.header.html, fixed = TRUE)
+        cata(extra.header.html)
+        cell.html <- cell.html[-(1:num.header.rows),,drop = FALSE]
+    }
+    cata('</thead>')
+    body.html <- paste0(sprintf('<tr>%s</tr>\n',
+                    apply(cell.html, 1, paste0, collapse = '')), collapse='')
     cata(body.html)
     cata("</table>\n")
+    cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
     out <- rhtmlMetro::Box(html, text.as.html = TRUE,
                     font.family = "Circular, Arial, sans-serif",
@@ -542,11 +586,20 @@ getPaddingCSS <- function(align, pad)
     return(res)
 }
 
-addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1)
+addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, position = NULL)
 {
-    n <- length(class.css)
-    if (length(n) < 1)
+    if (length(class.css) < 1)
         return(NULL)
+    if (!is.null(position))
+    {
+        class.css <- matrix(class.css, nrow, ncol)
+        for (i in 1:length(position))
+        {
+            class.css[i,] <- paste0("position: sticky; top: ", position[i], "; ", class.css[i,])
+            cat("position", i, ":", position[i], "\n")
+        }
+    }
+    n <- length(class.css)
 
     # The number of classes created is the length of class.css
     # recycling occurs if needed inside CreateCustomTable
