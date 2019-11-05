@@ -52,6 +52,8 @@ r_packages:
   - devtools
   - roxygen2
   - covr
+  - StanHeaders
+  - rstan
 
 r_github_packages:
   - Displayr/flipDevTools
