@@ -352,12 +352,13 @@ CreateCustomTable = function(x,
     {
         if (!show.col.headers)
             col.header.height = "0px"
-        top.position <- col.header.height
+        top.position <- sprintf("%s + %.0fpx", col.header.height, col.header.border.width)
         if (num.header.rows > 1)
         {
+            join.str <- sprintf(" + %.0fpx + ", cell.border.width)
             hh <- c(top.position, rep(row.height, num.header.rows - 1))
             top.position <- paste0("calc(", sapply(1:num.header.rows,
-                function(i) paste(rep(hh, length=i), collapse=" + ")), ")")
+                function(i) paste(rep(hh, length = i), collapse = join.str)), ")")
         }
     }
 
@@ -401,6 +402,21 @@ CreateCustomTable = function(x,
     row.span.class.css <- NULL
     if (!is.null(row.spans))
     {
+        if (!is.null(top.position))
+        {
+            j <- 1
+            rm.index <- c()
+            for (i in 1:length(row.spans))
+            {
+                offset <- row.spans[[i]]$height - 1
+                if (offset >= 1)
+                    rm.index <- c(rm.index, j + (1:offset))
+                j <- j + offset + 1 
+            }
+            top.position <- top.position[-rm.index]
+
+        }
+
         row.span.lengths <- sapply(row.spans, function(x) x[['height']])
         row.span.styles <- addCSSclass(cata, "rowspandefault", paste0("background: ", row.span.fill,
             if (override.borders) "" else paste0("; border: ", row.span.border.width,
