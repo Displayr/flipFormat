@@ -327,7 +327,7 @@ CreateCustomTable = function(x,
     tfile <- createTempFile()
     cata <- createCata(tfile)
     cata("<style>\n")
-    cata(".main-container{ background: white; height: 100%; overflow-x: hidden; overflow-y:",
+    cata(".main-container{ background: transparent; height: 100%; overflow-x: hidden; overflow-y:",
          if (!is.null(row.height)) "auto" else "hidden", "}\n")
     cata("table { border-collapse: collapse; table-layout: fixed; ",
                  "postion: relative; width: 100%; ",
@@ -411,7 +411,7 @@ CreateCustomTable = function(x,
                 offset <- row.spans[[i]]$height - 1
                 if (offset >= 1)
                     rm.index <- c(rm.index, j + (1:offset))
-                j <- j + offset + 1 
+                j <- j + offset + 1
             }
             top.position <- top.position[-rm.index]
 
