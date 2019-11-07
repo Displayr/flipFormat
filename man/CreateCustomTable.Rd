@@ -9,50 +9,59 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   format.show.pct.sign = TRUE, format.decimals = 0,
   suppress.nan = TRUE, suppress.na = TRUE, transpose = FALSE,
   col.widths = c("25\%"), row.height = NULL,
-  col.header.height = "35px", global.font.family = "Arial",
-  global.font.color = rgb(44, 44, 44, maxColorValue = 255),
-  font.unit = "px", cell.prefix = "", cell.suffix = "",
-  cell.fill = "#FFFFFF", cell.border.width = 1,
-  cell.border.color = "#FFFFFF", cell.align.horizontal = "center",
-  cell.align.vertical = "middle",
+  col.header.height = "35px", num.header.rows = 0,
+  global.font.family = "Arial", global.font.color = rgb(44, 44, 44,
+  maxColorValue = 255), font.size = 13, font.unit = "px",
+  cell.prefix = "", cell.suffix = "", cell.fill = "#FFFFFF",
+  cell.border.width = 1, cell.border.color = "#FFFFFF",
+  cell.align.horizontal = "center", cell.align.vertical = "middle",
   cell.font.family = global.font.family,
-  cell.font.color = global.font.color, cell.font.size = 14,
+  cell.font.color = global.font.color, cell.font.size = font.size,
   cell.font.weight = "normal", cell.font.style = "normal",
   cell.pad = 0, show.col.headers = TRUE, col.header.labels = NULL,
-  col.header.fill = "#DCDCDC", col.header.border.width = 1,
+  col.header.fill = "transparent", col.header.border.width = 1,
   col.header.border.color = "#FFFFFF",
   col.header.align.horizontal = "center",
   col.header.align.vertical = "middle",
   col.header.font.family = global.font.family,
-  col.header.font.color = global.font.color, col.header.font.size = 14,
-  col.header.font.weight = "bold", col.header.font.style = "normal",
-  col.header.pad = 0, show.row.headers = TRUE,
-  row.header.labels = NULL, row.header.fill = "#FFFFFF",
-  row.header.border.width = 1,
+  col.header.font.color = global.font.color,
+  col.header.font.size = font.size, col.header.font.weight = "bold",
+  col.header.font.style = "normal", col.header.pad = 0,
+  show.row.headers = TRUE, row.header.labels = NULL,
+  row.header.fill = "transparent", row.header.border.width = 1,
   row.header.border.color = col.header.border.color,
   row.header.align.horizontal = "left",
   row.header.align.vertical = "middle",
   row.header.font.family = global.font.family,
-  row.header.font.color = global.font.color, row.header.font.size = 14,
-  row.header.font.style = "normal", row.header.font.weight = "bold",
-  row.header.pad = 0, corner = "", corner.class = "",
-  corner.fill = "#FFFFFF",
+  row.header.font.color = global.font.color,
+  row.header.font.size = font.size, row.header.font.style = "normal",
+  row.header.font.weight = "bold", row.header.pad = 0,
+  row.span.fill = "transparent", row.span.border.width = 1,
+  row.span.border.color = col.header.border.color,
+  row.span.align.horizontal = "left",
+  row.span.align.vertical = "middle",
+  row.span.font.family = global.font.family,
+  row.span.font.color = global.font.color,
+  row.span.font.size = font.size, row.span.font.style = "normal",
+  row.span.font.weight = "bold", row.span.pad = 0, corner = "",
+  corner.class = "", corner.fill = "transparent",
   corner.border.width = col.header.border.width,
   corner.border.color = col.header.border.color,
   corner.align.horizontal = "center", corner.align.vertical = "middle",
   corner.font.family = global.font.family,
-  corner.font.color = global.font.color, corner.font.size = 14,
+  corner.font.color = global.font.color, corner.font.size = font.size,
   corner.font.weight = "bold", corner.font.style = "normal",
   corner.pad = 0, col.header.classes = "", row.header.classes = "",
   col.classes = list(), row.classes = list(), banded.rows = FALSE,
   banded.cols = FALSE, banded.odd.fill = "rgb(250,250,250)",
-  banded.even.fill = "rgb(245,255,245)",
+  banded.even.fill = "rgb(245,245,245)",
   sig.fills.up = "rgb(195,255,199)",
-  sig.fills.down = "rgb(255,213,213)", sig.arrows.up = "rgb(0,172,62)",
-  sig.arrows.down = "rgb(192,0,0)", circle.size = 35,
-  spacer.row = NULL, spacer.col = NULL, col.spans = NULL,
-  row.spans = NULL, custom.css = "", use.predefined.css = TRUE,
-  resizable = FALSE)
+  sig.fills.down = "rgb(255,213,213)",
+  sig.fills.nothing = "rgb(255,255,255)",
+  sig.arrows.up = "rgb(0,172,62)", sig.arrows.down = "rgb(192,0,0)",
+  circle.size = 35, spacer.row = NULL, spacer.col = NULL,
+  col.spans = NULL, row.spans = NULL, overflow = "hidden",
+  custom.css = "", use.predefined.css = TRUE, resizable = FALSE)
 }
 \arguments{
 \item{x}{Matrix or data frame of contents to show in the table}
@@ -87,11 +96,17 @@ Ignored if \code{x} is not numeric.}
 
 \item{col.header.height}{Height of table header rows}
 
+\item{num.header.rows}{This is the number of rows from \code{x} which always be shown at the
+top of the window (only used when \code{row.height} is specified.}
+
 \item{global.font.family}{Character; font family for all occurrences of any
 font attribute in the table unless specified individually.}
 
 \item{global.font.color}{Global font color as a named color in character format
 (e.g. "black") or an a hex code.}
+
+\item{font.size}{Global font size of all elements in the table. This is provided for
+convenience but its overriden by the font sizes of specific components.}
 
 \item{font.unit}{One of "px" of "pt". By default all font sizes are specified in terms of
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
@@ -182,6 +197,29 @@ the column names of \code{x}.}
 \item{row.header.pad}{Space between text and cell border in pixels. This is only used if the
 horizontal alignment is "left" or "right".}
 
+\item{row.span.fill}{Background color of the row.spans in the table.}
+
+\item{row.span.border.width}{Width of border around table row.spans (in pixels).}
+
+\item{row.span.border.color}{Color of border around table row.spans,}
+
+\item{row.span.align.horizontal}{Horizontal alignment of text in table row.spans.}
+
+\item{row.span.align.vertical}{Vertical alignment of text in table row.spans.}
+
+\item{row.span.font.family}{Font family of text in table row.spans.}
+
+\item{row.span.font.color}{Font color of text in table row.spans.}
+
+\item{row.span.font.size}{Font size (in pixels) of text in table row.spans.}
+
+\item{row.span.font.style}{One of "normal" or "italic".}
+
+\item{row.span.font.weight}{One of "normal" or "bold".}
+
+\item{row.span.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
+
 \item{corner}{Contents of the corner cell, if row and column headers are used}
 
 \item{corner.class}{Class of the corner cell, if row and column headers are used}
@@ -233,6 +271,8 @@ will cause column 3 to have class "bluefill".}
 
 \item{sig.fills.down}{Cell color when \code{sig.change.fills} is used.}
 
+\item{sig.fills.nothing}{Cell color when \code{sig.change.nothing} is used.}
+
 \item{sig.arrows.up}{Color of up arrows when \code{sig.change.arrows} is used.}
 
 \item{sig.arrows.down}{Color of down arrows when \code{sig.change.arrows} is used.}
@@ -249,6 +289,9 @@ list(list(width=,label=,class=), list(width=,label=,class=))}
 \item{row.spans}{List of row spans to place left of the row headers: list(list(height=,label=,class=),
 list(height=,label=,class=)}
 
+\item{overflow}{Determines behaviour of text that is too long to fit in the table cells. By default,
+it is set to "hidden" but change to "visible" to show overflow text.}
+
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function)}
 
@@ -262,4 +305,10 @@ to omit this is not used.}
 \description{
 Displays html table with custom formatting. This can be specified
  separately for each cell be specifying attributes or using CSS.
+}
+\examples{
+xx <- structure(1:24, .Dim = c(4L, 6L), .Dimnames = list(c("a", "b", "c", "d"),
+         c("A", "B", "C", "D", "E", "F")))
+CreateCustomTable(xx, row.spans=list(list(height=2, label="AA"),
+         list(height=1, label="BB"), list(height=1, label="CC")))
 }

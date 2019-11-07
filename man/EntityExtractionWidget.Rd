@@ -5,7 +5,7 @@
 \title{Display entity extraction output as an \code{htmlwidget}}
 \usage{
 EntityExtractionWidget(entity.percentages, variant.percentages,
-  entity.counts, variant.counts, title, footer)
+  entity.counts, variant.counts, title, footer, empty.extraction)
 }
 \arguments{
 \item{entity.percentages}{named numeric vector showing the percentage ocurrence of entity types
@@ -23,6 +23,9 @@ entity type in the named entity recognition detection.}
 \item{title}{The title to show at the top.}
 
 \item{footer}{Footer to show containing sample information.}
+
+\item{empty.extraction}{character giving the reason for a possible output with no entities. Returns
+\code{NA} if entities extracted.}
 }
 \value{
 An \code{htmlwidget} containing tables showing the output from an entity extraction.
