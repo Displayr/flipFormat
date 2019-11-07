@@ -537,10 +537,10 @@ variantSuggestionsDiagnostic <- function(info, details.expand)
                    "columns in the REQUIRED CATEGORIES table editor.</div>")
 
     n.categories <- length(info)
-    max.variants <- max(sapply(info, length))
 
     if (n.categories > 0)
     {
+        max.variants <- max(sapply(info, length))
         t <- matrix("", nrow = n.categories, ncol = max.variants + 1)
         colnames(t) <- c("Category", paste0(rep("Variant ", max.variants), 1:max.variants))
         t[, 1] <- htmlText(names(info))
