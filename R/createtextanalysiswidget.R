@@ -529,17 +529,20 @@ variantSuggestionsDiagnostic <- function(info, details.expand)
     n.categories <- length(info)
     max.variants <- max(sapply(info, length))
 
-    t <- matrix("", nrow = n.categories, ncol = max.variants + 1)
-    colnames(t) <- c("Category", paste0(rep("Variant ", max.variants), 1:max.variants))
-    t[, 1] <- htmlText(names(info))
-    for (i in seq_len(n.categories))
-        t[i, 2:(length(info[[i]]) + 1)] <- htmlText(info[[i]])
+    if (n.categories > 0)
+    {
+        t <- matrix("", nrow = n.categories, ncol = max.variants + 1)
+        colnames(t) <- c("Category", paste0(rep("Variant ", max.variants), 1:max.variants))
+        t[, 1] <- htmlText(names(info))
+        for (i in seq_len(n.categories))
+            t[i, 2:(length(info[[i]]) + 1)] <- htmlText(info[[i]])
 
-    html <- paste0(html, "<div class=\"diagnostics-block\">")
-    html <- paste0(html, kable(t, format = "html",
-                               escape = FALSE,
-                               table.attr = "class=\"diagnostics-table\""))
-    html <- paste0(html, "</div>")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
+        html <- paste0(html, kable(t, format = "html",
+                                   escape = FALSE,
+                                   table.attr = "class=\"diagnostics-table\""))
+        html <- paste0(html, "</div>")
+    }
 
     paste0(html, "</div></details>")
 }
