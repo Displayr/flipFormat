@@ -92,6 +92,16 @@ text.raw.by.categorization <- structure(list(c("he is gay", "RELIGOUS VIEWS", "h
     c("n/a", "n/a", NA, "na", "na")),
     .Names = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", NA))
 
+
+for (i in 1:nlevels(categorization))
+{
+    m = !is.na(categorization) & categorization == levels(categorization)[i]
+    names(text.raw.by.categorization[[i]]) = (1:length(categorization))[m]
+}
+
+names(text.raw.by.categorization[[11]]) <- 1:5
+
+
 missing <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
   FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
@@ -131,8 +141,10 @@ title <- "Automatic Categorization: What don't you like about Tom Cruise?  That 
 
 footer <- "Text was processed using 99 cases. There was 1 missing case and 200 cases have been filtered out."
 
-AutomaticCategorizationWidget(categorization = categorization, sizes = sizes,
-                              base.size = base.size, examples = examples,
+AutomaticCategorizationWidget(sizes = sizes,
+                              base.size = base.size,
+                              examples = examples,
                               text.raw.by.categorization = text.raw.by.categorization,
-                              missing = missing, title = title, footer = footer)
-
+                              missing = missing,
+                              title = title,
+                              footer = footer)

@@ -2,7 +2,6 @@
 #'
 #' @description Creates a \code{htmlwidget} summary of information for a
 #' automatic text categorization output from flipTextAnalysis.
-#' @param categorization A factor containing the categorization of the text.
 #' @param sizes The sizes of the categories.
 #' @param base.size The weighted sample size.
 #' @param examples Examples for each category.
@@ -15,9 +14,13 @@
 #'   automatic text categorization.
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @export
-AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
-                                          examples, text.raw.by.categorization,
-                                          missing, title, footer)
+AutomaticCategorizationWidget <- function(sizes,
+                                          base.size,
+                                          examples,
+                                          text.raw.by.categorization,
+                                          missing,
+                                          title,
+                                          footer)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -28,9 +31,12 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
 
     cata("<h1>", htmlText(title), "</h1>")
 
-        autoCategorizationSummaryTable(categorization, sizes, base.size,
-                                       examples, text.raw.by.categorization,
-                                       missing, cata)
+    autoCategorizationSummaryTable(sizes,
+                                   base.size,
+                                   examples,
+                                   text.raw.by.categorization,
+                                   missing,
+                                   cata)
 
     cata("<div class=\"footer\">", htmlText(footer), "</div>")
 
@@ -39,7 +45,7 @@ AutomaticCategorizationWidget <- function(categorization, sizes, base.size,
     createWidgetFromFile(tfile)
 }
 
-autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
+autoCategorizationSummaryTable <- function(sizes, base.size,
                                            examples, text.raw.by.categorization,
                                            missing, cata)
 {
@@ -85,8 +91,9 @@ autoCategorizationSummaryTable <- function(categorization, sizes, base.size,
             cata("<summary class=\"summary sub-details raw-text-category-summary\">",
                  "<span>", t[i, 4], "</span></summary>")
 
-            row.numbers <- which(categorization == levels(categorization)[i])
-            raw.text.matrix <- cbind(row.numbers, htmlText(text.raw.by.categorization[[i]]))
+            text.raw.cat <- text.raw.by.categorization[[i]]
+            row.numbers <- names(text.raw.cat)
+            raw.text.matrix <- cbind(row.numbers, htmlText(unname(text.raw.cat)))
 
             raw.text.matrix <- truncateRawTextTable(raw.text.matrix, max.rows)
 
