@@ -14,6 +14,8 @@
 #' @param token.substitutions A character matrix with two columns mapping the
 #'   old tokens as they appeared in the original text (column 1) to the
 #'   normalized tokens (column 2).
+#' @param category.examples Examples for each category, to be displayed in the
+#'   tooltips.
 #' @param footer Character; footer to show at the bottom of the output.
 #' @param diagnostics A list containing diagnostic information to be shown in
 #'   the diagnostic output.
@@ -27,7 +29,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
                                      token.substitutions,
                                      footer = "",
                                      diagnostics = NULL,
-                                     details.expand = "Categories")
+                                     details.expand = "Categories",
+                                     category.examples = NULL)
 {
     # ptm2 <- proc.time()
     raw.and.normalized.text <- replaceMissingWithEmpty(raw.and.normalized.text)
@@ -44,7 +47,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     # ptm <- proc.time()
     colored.text <- HighlightNGrams(n.gram.frequencies, raw.and.normalized.text,
-                                    token.substitutions,
+                                    token.substitutions, category.examples,
                                     diagnostics$split.into.categories, ws)
     # print("highligh ngrams")
     # print(proc.time() - ptm)
@@ -86,7 +89,8 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
 #' @importFrom grDevices rgb col2rgb grey
 #' @importFrom colorspace lighten darken
 #' @importFrom flipU UniquePlaceholders EscapeRegexSymbols
-HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
+HighlightNGrams <- function(n.grams, text, subs, category.examples,
+                            split.into.categories, cata)
 {
     col0 <- officialColors()
     n.col <- length(col0)
@@ -135,7 +139,13 @@ HighlightNGrams <- function(n.grams, text, subs, split.into.categories, cata)
         replace.ind <- which(subs[,2] == n.grams[i,1])
         tmp.subs <- unique(subs[replace.ind,1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
-        tooltips[i] <- paste(escapeQuotesForHTML(tmp.subs), collapse = ", ")
+        tooltips[i] <- if (is.null(category.examples))
+            paste0(escapeQuotesForHTML(tmp.subs), collapse = ", ")
+        else
+            paste0(paste0(escapeQuotesForHTML(tmp.subs), collapse = ", "),
+                   "\nExample(s):\n",
+                   paste0(escapeQuotesForHTML(category.examples[[i]]), collapse = "\n"))
+
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
         else if (length(replace.ind) > 1)
@@ -434,6 +444,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
     html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
                    "<div class=\"diagnostics-container\">")
 
+    html <- paste0(html, variantSuggestionsDiagnostic(diagnostics$variant.suggestions,
+                                                      details.expand))
+
     # ptm <- proc.time()
     # For each replacement, show cases where raw text has been replaced
     if (length(diagnostics$raw.text.replacement) > 0)
@@ -505,6 +518,43 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
                    "</details>")
 
     cata(html)
+}
+
+variantSuggestionsDiagnostic <- function(info, details.expand)
+{
+    html <- if (details.expand == "Categories")
+        "<details open=\"true\" class=\"details\">"
+    else
+        "<details class=\"details\">"
+
+    html <- paste0(html,
+                   "<summary class=\"summary sub-details\">Variant suggestions (",
+                   length(info), ")</summary>",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
+                   "Suggestions for category variants are shown below. ",
+                   "The suggestions can be copied and pasted into the variant ",
+                   "columns in the REQUIRED CATEGORIES table editor.</div>")
+
+    n.categories <- length(info)
+
+    if (n.categories > 0)
+    {
+        max.variants <- max(sapply(info, length))
+        t <- matrix("", nrow = n.categories, ncol = max.variants + 1)
+        colnames(t) <- c("Category", paste0(rep("Variant ", max.variants), 1:max.variants))
+        t[, 1] <- htmlText(names(info))
+        for (i in seq_len(n.categories))
+            t[i, 2:(length(info[[i]]) + 1)] <- htmlText(info[[i]])
+
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
+        html <- paste0(html, kable(t, format = "html",
+                                   escape = FALSE,
+                                   table.attr = "class=\"diagnostics-table\""))
+        html <- paste0(html, "</div>")
+    }
+
+    paste0(html, "</div></details>")
 }
 
 rawTextReplacementDiagnostic <- function(info, details.expand)

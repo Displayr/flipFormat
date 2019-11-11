@@ -143,9 +143,14 @@ test_that("Raw text diagnostics",
                                                                  raw.text.var.num = 1, raw.text.case.num = 5,
                                                                  is.max.exceeded = FALSE, n.omitted.rows = 0))
 
+    category.examples <- lapply(rep(letters, 4)[1:70], function(x) x)
+    category.examples[[1]] <- c("multiple", "lines")
+
     load(findInstDirFile("text.analysis.diagnostics.rda"))
     result <- CreateTextAnalysisWidget(raw.and.normalized.text,
                                        n.gram.frequencies,
-                                       token.substitution, footer,
-                                       text.analysis.diagnostics)
+                                       token.substitution,
+                                       footer,
+                                       text.analysis.diagnostics,
+                                       category.examples = category.examples)
 })
