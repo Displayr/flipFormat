@@ -9,12 +9,12 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   format.show.pct.sign = TRUE, format.decimals = 0,
   suppress.nan = TRUE, suppress.na = TRUE, transpose = FALSE,
   col.widths = c("25\%"), row.height = NULL,
-  col.header.height = "35px", global.font.family = "Arial",
-  global.font.color = rgb(44, 44, 44, maxColorValue = 255),
-  font.size = 13, font.unit = "px", cell.prefix = "",
-  cell.suffix = "", cell.fill = "#FFFFFF", cell.border.width = 1,
-  cell.border.color = "#FFFFFF", cell.align.horizontal = "center",
-  cell.align.vertical = "middle",
+  col.header.height = "35px", num.header.rows = 0,
+  global.font.family = "Arial", global.font.color = rgb(44, 44, 44,
+  maxColorValue = 255), font.size = 13, font.unit = "px",
+  cell.prefix = "", cell.suffix = "", cell.fill = "#FFFFFF",
+  cell.border.width = 1, cell.border.color = "#FFFFFF",
+  cell.align.horizontal = "center", cell.align.vertical = "middle",
   cell.font.family = global.font.family,
   cell.font.color = global.font.color, cell.font.size = font.size,
   cell.font.weight = "normal", cell.font.style = "normal",
@@ -95,6 +95,9 @@ Ignored if \code{x} is not numeric.}
 \item{row.height}{Height of table body rows. If \code{NULL}, then the rows are stretched to fill container.}
 
 \item{col.header.height}{Height of table header rows}
+
+\item{num.header.rows}{This is the number of rows from \code{x} which always be shown at the
+top of the window (only used when \code{row.height} is specified.}
 
 \item{global.font.family}{Character; font family for all occurrences of any
 font attribute in the table unless specified individually.}
