@@ -6,7 +6,7 @@
 \usage{
 CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
   token.substitutions, footer = "", diagnostics = NULL,
-  details.expand = "Categories")
+  details.expand = "Categories", category.examples = NULL)
 }
 \arguments{
 \item{raw.and.normalized.text}{A list containing the raw and normalized
@@ -30,6 +30,9 @@ normalized tokens (column 2).}
 the diagnostic output.}
 
 \item{details.expand}{String of the name of the detail to expand.}
+
+\item{category.examples}{Examples for each category, to be displayed in the
+tooltips.}
 }
 \value{
 An \code{htmlwidget} containing tables showing the output from a
