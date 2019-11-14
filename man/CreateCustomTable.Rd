@@ -12,15 +12,17 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.header.height = "35px", num.header.rows = 0,
   global.font.family = "Arial", global.font.color = rgb(44, 44, 44,
   maxColorValue = 255), font.size = 13, font.unit = "px",
-  cell.prefix = "", cell.suffix = "", cell.fill = "#FFFFFF",
-  cell.border.width = 1, cell.border.color = "#FFFFFF",
+  border.color = "#FFFFFF", border.width = 1, cell.prefix = "",
+  cell.suffix = "", cell.fill = "#FFFFFF",
+  cell.border.width = border.width, cell.border.color = border.color,
   cell.align.horizontal = "center", cell.align.vertical = "middle",
   cell.font.family = global.font.family,
   cell.font.color = global.font.color, cell.font.size = font.size,
   cell.font.weight = "normal", cell.font.style = "normal",
   cell.pad = 0, show.col.headers = TRUE, col.header.labels = NULL,
-  col.header.fill = "transparent", col.header.border.width = 1,
-  col.header.border.color = "#FFFFFF",
+  col.header.fill = "transparent",
+  col.header.border.width = border.width,
+  col.header.border.color = border.color,
   col.header.align.horizontal = "center",
   col.header.align.vertical = "middle",
   col.header.font.family = global.font.family,
@@ -28,7 +30,8 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   col.header.font.size = font.size, col.header.font.weight = "bold",
   col.header.font.style = "normal", col.header.pad = 0,
   show.row.headers = TRUE, row.header.labels = NULL,
-  row.header.fill = "transparent", row.header.border.width = 1,
+  row.header.fill = "transparent",
+  row.header.border.width = border.width,
   row.header.border.color = col.header.border.color,
   row.header.align.horizontal = "left",
   row.header.align.vertical = "middle",
@@ -36,8 +39,9 @@ CreateCustomTable(x, sig.change.fills = NULL, sig.change.arrows = NULL,
   row.header.font.color = global.font.color,
   row.header.font.size = font.size, row.header.font.style = "normal",
   row.header.font.weight = "bold", row.header.pad = 0,
-  row.span.fill = "transparent", row.span.border.width = 1,
-  row.span.border.color = col.header.border.color,
+  row.span.fill = "transparent",
+  row.span.border.width = row.header.border.width,
+  row.span.border.color = row.header.border.color,
   row.span.align.horizontal = "left",
   row.span.align.vertical = "middle",
   row.span.font.family = global.font.family,
@@ -111,6 +115,10 @@ convenience but its overriden by the font sizes of specific components.}
 \item{font.unit}{One of "px" of "pt". By default all font sizes are specified in terms of
 pixels ("px"). But changing this to "pt" will mean that the font sizes will be in terms
 points ("pt"), which will be consistent with font sizes in text boxes.}
+
+\item{border.color}{Color of all borders. Will be overriden if specific elements are set.}
+
+\item{border.width}{Width of borders (in pixels) in all cells. Will be overriden if specific elements are set.}
 
 \item{cell.prefix}{Character value/vector/matrix that is prepended before the cell values.}
 
