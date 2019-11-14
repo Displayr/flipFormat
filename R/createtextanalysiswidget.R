@@ -522,7 +522,7 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 
 variantSuggestionsDiagnostic <- function(info, details.expand)
 {
-    html <- if (details.expand == "Categories")
+    html <- if (details.expand %in% c("Categories", "Variant suggestions"))
         "<details open=\"true\" class=\"details\">"
     else
         "<details class=\"details\">"
