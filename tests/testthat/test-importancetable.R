@@ -1,4 +1,4 @@
-context("RelativeImportanceTable")
+context("ImportanceTable")
 
 ria <- structure(list(raw.importance = c(0.118944441811052, 0.0739776637555959, 0.0877737045218754, 0.126469123604018, 0.0451172891545317, 0.0380904799320387),
                importance = c(24.2559263876135, 15.0860077113467, 17.8993863288946, 25.7904085784698, 9.2006118812969, -7.76765911237855),
@@ -11,5 +11,5 @@ ria <- structure(list(raw.importance = c(0.118944441811052, 0.0739776637555959, 
 
 row.labels <- c("Fees", "Interest", "Phone", "Branch", "Online", "ATM")
 
-expect_error(print(RelativeImportanceTable(ria, row.labels, title = "Relative Importance Analysis",
+expect_error(print(ImportanceTable(ria, row.labels, title = "Relative Importance Analysis",
                                            subtitle = "Overall", footer = "Footer")), NA)
