@@ -1,7 +1,7 @@
 Package: flipFormat
 Type: Package
 Title: Formatting of R outputs
-Version: 1.5.2
+Version: 1.5.3
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Formatting to be used in print statements and other outputs. E.g.,

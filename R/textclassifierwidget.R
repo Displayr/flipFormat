@@ -32,8 +32,7 @@ TextClassifierWidget <- function(observed.sizes,
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
-    browser()
-    addCss("automaticcategorization.css", cata)
+    addCss("textclassifier.css", cata)
 
     cata("<div class=\"main-container\">")
 
@@ -44,23 +43,49 @@ TextClassifierWidget <- function(observed.sizes,
 
     # Add metrics to footer
 
-    overall.statement <- sprintf("\nTraining sample performance - accuracy: %.2f%%; Cohen's kappa (unweighted): %.2f; F1: %.2f",
-                                 overall.metrics[1] * 100,
-                                 overall.metrics[2],
-                                 overall.metrics[3])
+    overall.statement <- metricPrint(overall.metrics, sample.type = "Training sample")
     footer <- paste0(footer, overall.statement, ".")
-    model.sizes <- as.numeric(row.names(cv.metrics))
-    validation.sizes <- sum(observed.sizes) - model.sizes
-    metric.names <- colnames(cv.metrics)
-    cv.metrics <- cbind(model.sizes, validation.sizes, round(cv.metrics, 3))
-    colnames(cv.metrics) <- c("Training size", "Validation size", metric.names)
-    rownames(cv.metrics) <- NULL
-    cata("<div class=\"footer\">", htmlText(footer), kable(cv.metrics, format = "html"), "</div>")
-
+    if (!is.null(cv.metrics))
+    {
+        if(nrow(cv.metrics) == 1)
+        {
+            model.size <- row.names(cv.metrics)
+            validation.size <- sum(observed.sizes) - model.size
+            validation.statement <- metricPrint(cv.metrics[1, ],
+                                                sample.type = paste0("Single Validation sample (model n = ", model.size,
+                                                                     " and validation n = ", validation.size, ")"))
+            footer <- paste0(footer, validation.statement, ".")
+            cata("<div class=\"footer\">", htmlText(footer), "</div>")
+        } else
+        {
+            model.sizes <- as.numeric(row.names(cv.metrics))
+            validation.sizes <- sum(observed.sizes) - model.sizes
+            metric.names <- colnames(cv.metrics)
+            cv.metrics <- cbind(model.sizes, validation.sizes,
+                                sprintf("%.2f%%", cv.metrics[, 1] * 100), round(cv.metrics[, 2:3], 3))
+            colnames(cv.metrics) <- c("Model size", "Validation size", metric.names)
+            rownames(cv.metrics) <- NULL
+            table.explanation <- "\nTable below shows out of sample performance on different model and validation set sizes."
+            footer <- paste0(footer, table.explanation)
+            cata("<div class=\"footer\">", htmlText(footer), "</div>")
+            cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
+                                                                      align = c("cclll")),"</div>")
+        }
+    } else
+        cata("<div class=\"footer\">", htmlText(footer), "</div>")
     cata("</div>")
 
     createWidgetFromFile(tfile)
 }
+
+metricPrint <- function(metrics, sample.type)
+{
+    sprintf(paste0("\n", sample.type, " performance - accuracy: %.2f%%; Cohen's kappa (unweighted): %.2f; F1: %.2f"),
+            metrics[1] * 100,
+            metrics[2],
+            metrics[3])
+}
+
 
 textClassifierSummaryTable <- function(observed.counts, base.size, examples, predicted.counts, category.accuracy,
                                        overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
@@ -74,7 +99,7 @@ textClassifierSummaryTable <- function(observed.counts, base.size, examples, pre
     t <- matrix(NA, nrow = length(categories), ncol = 6)
     colnames(t) <- c("", "Category", "Observed (n)", "Predicted (n)", "Accuracy (n)", "Example")
     t[, 1] <- paste0(seq(categories), ".")
-    browser()
+
     overall.predicted <- sum(predicted.counts)
     for (i in seq(categories))
     {
