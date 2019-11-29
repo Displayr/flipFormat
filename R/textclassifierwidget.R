@@ -6,6 +6,7 @@
 #' @param base.size The weighted sample size.
 #' @param examples Examples for each category.
 #' @param predicted.counts Numeric vector of counts of the predicted categories
+#' @param category.accuracy Numeric vector of accuracy over training sample.
 #' @param overall.metrics Numeric vector of the overall performance metrics on the trained model.
 #' @param cv.metrics Numeric matrix of the performance metrics on the cross validation data.
 #' @param text.raw.by.categorization A list containing the raw text for each
@@ -40,8 +41,6 @@ TextClassifierWidget <- function(observed.sizes,
 
     textClassifierSummaryTable(observed.sizes, base.size, examples, predicted.counts, category.accuracy,
                                overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
-
-    # Add metrics to footer
 
     overall.statement <- metricPrint(overall.metrics, sample.type = "Training sample")
     footer <- paste0(footer, overall.statement, ".")
