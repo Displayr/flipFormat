@@ -17,6 +17,8 @@ TextClassifierWidget(observed.sizes, base.size, examples, predicted.counts,
 
 \item{predicted.counts}{Numeric vector of counts of the predicted categories}
 
+\item{category.accuracy}{Numeric vector of accuracy over training sample.}
+
 \item{overall.metrics}{Numeric vector of the overall performance metrics on the trained model.}
 
 \item{cv.metrics}{Numeric matrix of the performance metrics on the cross validation data.}
