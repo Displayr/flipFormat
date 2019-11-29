@@ -48,7 +48,7 @@ TextClassifierWidget <- function(observed.sizes,
     {
         if(nrow(cv.metrics) == 1)
         {
-            model.size <- row.names(cv.metrics)
+            model.size <- as.numeric(row.names(cv.metrics))
             validation.size <- sum(observed.sizes) - model.size
             validation.statement <- metricPrint(cv.metrics[1, ],
                                                 sample.type = paste0("Single Validation sample (model n = ", model.size,
