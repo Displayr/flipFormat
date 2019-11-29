@@ -62,14 +62,14 @@ TextClassifierWidget <- function(observed.sizes,
             validation.sizes <- sum(observed.sizes) - model.sizes
             metric.names <- colnames(cv.metrics)
             cv.metrics <- cbind(model.sizes, validation.sizes,
-                                sprintf("%.2f%%", cv.metrics[, 1] * 100), round(cv.metrics[, 2:3], 3))
+                                FormatAsPercent(cv.metrics[, 1]), round(cv.metrics[, 2:3], 3))
             colnames(cv.metrics) <- c("Model size", "Validation size", metric.names)
             rownames(cv.metrics) <- NULL
             table.explanation <- "\nTable below shows out of sample performance on different model and validation set sizes."
             footer <- paste0(footer, table.explanation)
             cata("<div class=\"footer\">", htmlText(footer), "</div>")
             cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
-                                                                      align = c("cclll")),"</div>")
+                                                                      align = c("ccccc")),"</div>")
         }
     } else
         cata("<div class=\"footer\">", htmlText(footer), "</div>")
@@ -80,10 +80,8 @@ TextClassifierWidget <- function(observed.sizes,
 
 metricPrint <- function(metrics, sample.type)
 {
-    sprintf(paste0("\n", sample.type, " performance - accuracy: %.2f%%; Cohen's kappa (unweighted): %.2f; F1: %.2f"),
-            metrics[1] * 100,
-            metrics[2],
-            metrics[3])
+    paste0("\n", sample.type, " performance - accuracy: ", FormatAsPercent(metrics[1]),
+           "; Cohen's kappa: ", FormatAsReal(metrics[2]),"; F1:", FormatAsReal(metrics[3]))
 }
 
 

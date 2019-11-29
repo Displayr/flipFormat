@@ -127,7 +127,7 @@ table.raw-text-table {
 .classifier-validation-table {
     display: flex;
     justify-content: center;
-    font-size: 13px;
+    font-size: 9px;
 }
 
 .classifier-validation-table table {
