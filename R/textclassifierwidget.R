@@ -2,11 +2,10 @@
 #'
 #' @description Creates a \code{htmlwidget} summary of information for a
 #' text classifier output from flipTextAnalysis.
-#' @param observed.sizes The sizes of the observed categories.
-#' @param base.size The weighted sample size.
-#' @param examples Examples for each category.
+#' @param observed.counts Numeric vector of counts of the observed existing categories
 #' @param predicted.counts Numeric vector of counts of the predicted categories
 #' @param category.accuracy Numeric vector of accuracy over training sample.
+#' @param examples Examples for each category.
 #' @param overall.metrics Numeric vector of the overall performance metrics on the trained model.
 #' @param cv.metrics Numeric matrix of the performance metrics on the cross validation data.
 #' @param text.raw.by.categorization A list containing the raw text for each
@@ -19,11 +18,10 @@
 #' @seealso \code{\link[rhtmlMetro]{Box}}
 #' @importFrom knitr kable
 #' @export
-TextClassifierWidget <- function(observed.sizes,
-                                 base.size,
-                                 examples,
+TextClassifierWidget <- function(observed.counts,
                                  predicted.counts,
                                  category.accuracy,
+                                 examples,
                                  overall.metrics,
                                  cv.metrics,
                                  text.raw.by.categorization,
@@ -39,7 +37,7 @@ TextClassifierWidget <- function(observed.sizes,
 
     cata("<h1>", htmlText(title), "</h1>")
 
-    textClassifierSummaryTable(observed.sizes, base.size, examples, predicted.counts, category.accuracy,
+    textClassifierSummaryTable(observed.counts, predicted.counts, examples, category.accuracy,
                                overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
 
     overall.statement <- metricPrint(overall.metrics, sample.type = "Training sample")
@@ -48,8 +46,8 @@ TextClassifierWidget <- function(observed.sizes,
     {
         if(nrow(cv.metrics) == 1)
         {
-            model.size <- row.names(cv.metrics)
-            validation.size <- sum(observed.sizes) - model.size
+            model.size <- as.numeric(row.names(cv.metrics))
+            validation.size <- sum(observed.counts) - model.size
             validation.statement <- metricPrint(cv.metrics[1, ],
                                                 sample.type = paste0("Single Validation sample (model n = ", model.size,
                                                                      " and validation n = ", validation.size, ")"))
@@ -58,13 +56,13 @@ TextClassifierWidget <- function(observed.sizes,
         } else
         {
             model.sizes <- as.numeric(row.names(cv.metrics))
-            validation.sizes <- sum(observed.sizes) - model.sizes
+            validation.sizes <- sum(observed.counts) - model.sizes
             metric.names <- colnames(cv.metrics)
             cv.metrics <- cbind(model.sizes, validation.sizes,
                                 FormatAsPercent(cv.metrics[, 1]), round(cv.metrics[, 2:3], 3))
-            colnames(cv.metrics) <- c("Model size", "Validation size", metric.names)
+            colnames(cv.metrics) <- c("Estimation sample size", "Validation sample size", "accuracy", "kappa", "F1")
             rownames(cv.metrics) <- NULL
-            table.explanation <- "\nTable below shows out of sample performance on different model and validation set sizes."
+            table.explanation <- "\nTable below shows out of sample performance on estimation and validation samples."
             footer <- paste0(footer, table.explanation)
             cata("<div class=\"footer\">", htmlText(footer), "</div>")
             cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
@@ -79,12 +77,12 @@ TextClassifierWidget <- function(observed.sizes,
 
 metricPrint <- function(metrics, sample.type)
 {
-    paste0("\n", sample.type, " performance - accuracy: ", FormatAsPercent(metrics[1]),
-           "; Cohen's kappa: ", FormatAsReal(metrics[2]),"; F1:", FormatAsReal(metrics[3]))
+    paste0("\n", sample.type, " performance - accuracy: ", FormatAsPercent(metrics[1], digits = 3),
+           "; Cohen's kappa: ", FormatAsReal(metrics[2], digits = 3),"; F1:", FormatAsReal(metrics[3]), digits = 3)
 }
 
 
-textClassifierSummaryTable <- function(observed.counts, base.size, examples, predicted.counts, category.accuracy,
+textClassifierSummaryTable <- function(observed.counts, predicted.counts, examples, category.accuracy,
                                        overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
 {
     max.rows <- 3000
@@ -97,20 +95,21 @@ textClassifierSummaryTable <- function(observed.counts, base.size, examples, pre
     colnames(t) <- c("", "Category", "Observed (n)", "Predicted (n)", "Accuracy (n)", "Example")
     t[, 1] <- paste0(seq(categories), ".")
 
-    overall.predicted <- sum(predicted.counts)
+    total.predicted <- sum(predicted.counts)
+    total.count <- sum(observed.counts)
     for (i in seq(categories))
     {
         t[i, 2] <- htmlText(categories[i])
-        t[i, 3] <- paste0(FormatAsPercent(observed.counts[i] / base.size), "&nbsp;(",
+        t[i, 3] <- paste0(FormatAsPercent(observed.counts[i] / total.count), "&nbsp;(",
                           observed.n[i], ")")
-        if (!is.na(examples[i]))
-            t[i, 4] <- paste0("\"",  htmlText(examples[i]), "\"")
-        else
-            t[i, 4] <- ""
-        t[i, 5] <- paste0(FormatAsPercent(predicted.counts[i] / overall.predicted), "&nbsp;(",
+        t[i, 4] <- paste0(FormatAsPercent(predicted.counts[i] / total.predicted), "&nbsp;(",
                           predicted.n[i], ")")
-        t[i, 6] <- paste0(FormatAsPercent(category.accuracy[i]), "&nbsp;(",
+        t[i, 5] <- paste0(FormatAsPercent(category.accuracy[i]), "&nbsp;(",
                           category.n[i], ")")
+        if (!is.na(examples[i]))
+            t[i, 6] <- paste0("\"",  htmlText(examples[i]), "\"")
+        else
+            t[i, 6] <- ""
     }
 
     missing.text <- text.raw.by.categorization$`NA`
@@ -125,15 +124,15 @@ textClassifierSummaryTable <- function(observed.counts, base.size, examples, pre
         cata(paste0("<td>", t[i, 1], "</td>"))
         cata(paste0("<td>", t[i, 2], "</td>"))
         cata(paste0("<td>", t[i, 3], "</td>"))
+        cata(paste0("<td>", t[i, 4], "</td>"))
         cata(paste0("<td>", t[i, 5], "</td>"))
-        cata(paste0("<td>", t[i, 6], "</td>"))
         cata("<td>")
 
         if (!is.na(examples[i]))
         {
             cata("<details class=\"details raw-text-category-details\">")
             cata("<summary class=\"summary sub-details raw-text-category-summary\">",
-                 "<span>", t[i, 4], "</span></summary>")
+                 "<span>", t[i, 6], "</span></summary>")
 
             text.raw.cat <- text.raw.by.categorization[[i]]
             row.numbers <- names(text.raw.cat)
