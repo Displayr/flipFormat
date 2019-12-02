@@ -95,7 +95,7 @@ textClassifierSummaryTable <- function(observed.counts, predicted.counts, exampl
     colnames(t) <- c("", "Category", "Observed (n)", "Predicted (n)", "Accuracy (n)", "Example")
     t[, 1] <- paste0(seq(categories), ".")
 
-    total.predicted <- sum(predicted.counts)
+    total.predicted <- attr(predicted.counts, "n.predicted")
     total.count <- sum(observed.counts)
     for (i in seq(categories))
     {
