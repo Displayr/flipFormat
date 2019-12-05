@@ -55,15 +55,20 @@ TextClassifierWidget <- function(observed.counts,
             cata("<div class=\"footer\">", htmlText(footer), "</div>")
         } else
         {
-            accuracy <- FormatAsPercent(cv.metrics[, 3], digits = 3)
-            kappa.and.f1 <- FormatAsReal(cv.metrics[, 4:5], digits = 3)
+            n.width <- max(nchar(as.character(cv.metrics[, 1])))
+            estimation.size <- formatC(cv.metrics[, 1], digits = n.width, format = "g")
+            validation.size <- formatC(cv.metrics[, 2], digits = n.width, format = "g")
+            accuracy <- paste0(formatC(cv.metrics[, 3] * 100, digits = 1, format = "f"), "%")
+            kappa.and.f1 <- formatC(cv.metrics[, 4:5], digits = 3, format = "f")
+            cv.metrics[, 1] <- estimation.size
+            cv.metrics[, 2] <- validation.size
             cv.metrics[, 3] <- accuracy
             cv.metrics[, 4:5] <- kappa.and.f1
             table.explanation <- "\nTable below shows out of sample performance on estimation and validation samples."
             footer <- paste0(footer, table.explanation)
             cata("<div class=\"footer\">", htmlText(footer), "</div>")
             cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
-                                                                      align = c("ccccc")),"</div>")
+                                                                      align = c("rrccc")),"</div>")
         }
     } else
         cata("<div class=\"footer\">", htmlText(footer), "</div>")
@@ -74,10 +79,10 @@ TextClassifierWidget <- function(observed.counts,
 
 metricPrint <- function(metrics, sample.type)
 {
-    accuracy <- FormatAsPercent(metrics[1], digits = 3)
-    kappa.and.f1 <- FormatAsReal(metrics[2:3], digits = 3)
-    paste0("\n", sample.type, " performance - accuracy: ", accuracy,
-           "; Cohen's kappa: ", kappa.and.f1[1], "; F1:", kappa.and.f1[2])
+    accuracy <- paste0(formatC(metrics[1] * 100, digits = 1, format = "f"), "%")
+    kappa.and.f1 <- formatC(metrics[2:3], digits = 2, format = "f")
+    paste0("\n", sample.type, " performance - Accuracy: ", accuracy,
+           "; Cohen's Kappa: ", kappa.and.f1[1], "; F1:", kappa.and.f1[2])
 }
 
 
