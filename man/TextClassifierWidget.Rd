@@ -4,20 +4,18 @@
 \alias{TextClassifierWidget}
 \title{Display text classifier output as an \code{htmlwidget}}
 \usage{
-TextClassifierWidget(observed.counts, predicted.counts, category.accuracy,
+TextClassifierWidget(observed.counts, weighted.sizes, category.accuracy,
   examples, overall.metrics, cv.metrics, text.raw.by.categorization,
   missing, title, footer)
 }
 \arguments{
 \item{observed.counts}{Numeric vector of counts of the observed existing categories}
 
-\item{predicted.counts}{Numeric vector of counts of the predicted categories}
+\item{weighted.sizes}{Numeric vector of weighted counts of the predicted values}
 
 \item{category.accuracy}{Numeric vector of accuracy over training sample.}
 
 \item{examples}{Examples for each category.}
-
-\item{category.accuracy}{Numeric vector of accuracy over training sample.}
 
 \item{overall.metrics}{Numeric vector of the overall performance metrics on the trained model.}
 
