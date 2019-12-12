@@ -55,7 +55,7 @@ TextClassifierWidget <- function(observed.counts,
             cata("<div class=\"footer\">", htmlText(footer), "</div>")
         } else
         {
-            n.width <- max(nchar(as.character(cv.metrics[, 1])))
+            n.width <- max(nchar(as.character(cv.metrics[, 1:2])))
             estimation.size <- formatC(cv.metrics[, 1], digits = n.width, format = "g")
             validation.size <- formatC(cv.metrics[, 2], digits = n.width, format = "g")
             accuracy <- paste0(formatC(cv.metrics[, 3] * 100, digits = 1, format = "f"), "%")
