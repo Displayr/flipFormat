@@ -139,7 +139,7 @@ missing <- c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
 
 title <- "Automatic Categorization: What don't you like about Tom Cruise?  That is, what is it about Tom Cruise that you dislike?"
 
-footer <- "Text was processed using 99 cases. There was 1 missing case and 200 cases have been filtered out."
+footer <- "n = 295 cases were used in the text processing of a total of 300; cases containing missing values have been excluded;"
 
 AutomaticCategorizationWidget(sizes = sizes,
                               base.size = base.size,

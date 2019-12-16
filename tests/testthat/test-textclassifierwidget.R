@@ -8,7 +8,7 @@ cv.metrics <- structure(c(50, 100, 111, 61, 0.8326531, 0.9186441, 0.7457670, 0.8
                                          c("Estimation sample size", "Validation sample size",
                                            "Accuracy", "Kappa", "F1")))
 
-footer <- "Text was processed using 299 cases. There was 1 missing case. Existing Categorization classified 124 cases into one or more of 3 categories."
+footer <- "n = 299 cases were used in the text processing of a total of 300; cases containing missing values have been excluded; existing categorization classified 107 cases into 1 of 3 categories; training sample performance - Accuracy: 100.0%; Cohen's Kappa: 1.00; F1:1.00;"
 
 missing <-rep(FALSE, 300)
 missing[115] <- TRUE
@@ -121,14 +121,14 @@ examples <- c(`299` = "Tom Cruise just isn't that interesting in this day and ag
 
 test_that("Widget output check", {
     expect_error(result <- TextClassifierWidget(observed.counts, weighted.sizes, category.accuracy,
-                                                examples, overall.metrics, cv.metrics = NULL,
-                                                text.raw.by.categorization, missing, title, footer),
+                                                examples, cv.metrics = NULL, text.raw.by.categorization,
+                                                missing, title, footer),
                  NA)
     expect_is(result, "htmlwidget")
     expect_is(result, "rhtmlMetro")
     expect_error(result <- TextClassifierWidget(observed.counts, weighted.sizes, category.accuracy,
-                                                examples, overall.metrics, cv.metrics = cv.metrics,
-                                                text.raw.by.categorization, missing, title, footer),
+                                                examples, cv.metrics = cv.metrics, text.raw.by.categorization,
+                                                missing, title, footer),
                  NA)
     expect_is(result, "htmlwidget")
     expect_is(result, "rhtmlMetro")
