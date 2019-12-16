@@ -57,15 +57,6 @@ TextClassifierWidget <- function(observed.counts,
     createWidgetFromFile(tfile)
 }
 
-metricPrint <- function(metrics, sample.type)
-{
-    accuracy <- paste0(formatC(metrics[1] * 100, digits = 1, format = "f"), "%")
-    kappa.and.f1 <- formatC(metrics[2:3], digits = 2, format = "f")
-    paste0("\n", sample.type, " performance - Accuracy: ", accuracy,
-           "; Cohen's Kappa: ", kappa.and.f1[1], "; F1:", kappa.and.f1[2])
-}
-
-
 textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category.accuracy, examples,
                                        text.raw.by.categorization, missing, footer, cata)
 {
