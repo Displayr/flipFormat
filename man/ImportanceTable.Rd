@@ -4,8 +4,14 @@
 \alias{ImportanceTable}
 \title{Create formattable table of importance scores}
 \usage{
-ImportanceTable(importance, row.labels, title = "", subtitle = "",
-  footer = "", p.cutoff = 0.05)
+ImportanceTable(
+  importance,
+  row.labels,
+  title = "",
+  subtitle = "",
+  footer = "",
+  p.cutoff = 0.05
+)
 }
 \arguments{
 \item{importance}{The importance object.}

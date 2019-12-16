@@ -4,9 +4,15 @@
 \alias{CreateTextAnalysisWidget}
 \title{Display text analysis output as an \code{htmlwidget}}
 \usage{
-CreateTextAnalysisWidget(raw.and.normalized.text, n.gram.frequencies,
-  token.substitutions, footer = "", diagnostics = NULL,
-  details.expand = "Categories", category.examples = NULL)
+CreateTextAnalysisWidget(
+  raw.and.normalized.text,
+  n.gram.frequencies,
+  token.substitutions,
+  footer = "",
+  diagnostics = NULL,
+  details.expand = "Categories",
+  category.examples = NULL
+)
 }
 \arguments{
 \item{raw.and.normalized.text}{A list containing the raw and normalized

@@ -4,10 +4,17 @@
 \alias{DataTableWithRItemFormat}
 \title{\code{DataTableWithRItemFormat}}
 \usage{
-DataTableWithRItemFormat(dd, caption = NULL, header.alignments = NULL,
-  allow.length.change = TRUE, length.menu = c(10, 15, 20),
-  page.length = min(15, nrow(dd)), allow.paging = TRUE,
-  show.info = TRUE, escape.html = TRUE)
+DataTableWithRItemFormat(
+  dd,
+  caption = NULL,
+  header.alignments = NULL,
+  allow.length.change = TRUE,
+  length.menu = c(10, 15, 20),
+  page.length = min(15, nrow(dd)),
+  allow.paging = TRUE,
+  show.info = TRUE,
+  escape.html = TRUE
+)
 }
 \arguments{
 \item{dd}{The \code{data frame} that you want to show as a widget.}

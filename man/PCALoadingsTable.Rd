@@ -4,9 +4,16 @@
 \alias{PCALoadingsTable}
 \title{PCALoadingsTable}
 \usage{
-PCALoadingsTable(loadings.matrix, variance.explained, eigenvalues,
-  min.display.value, title = "", subtitle = "", footer = "",
-  eigenvalue.label = "Eigenvalue")
+PCALoadingsTable(
+  loadings.matrix,
+  variance.explained,
+  eigenvalues,
+  min.display.value,
+  title = "",
+  subtitle = "",
+  footer = "",
+  eigenvalue.label = "Eigenvalue"
+)
 }
 \arguments{
 \item{loadings.matrix}{A matrix of the PCA loadings/structure.}

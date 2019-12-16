@@ -4,8 +4,15 @@
 \alias{MultinomialLogitTable}
 \title{MultinomialLogitTable}
 \usage{
-MultinomialLogitTable(coefficients, z.statistics, p.values, title = "",
-  subtitle = "", footer = "", p.cutoff = 0.05)
+MultinomialLogitTable(
+  coefficients,
+  z.statistics,
+  p.values,
+  title = "",
+  subtitle = "",
+  footer = "",
+  p.cutoff = 0.05
+)
 }
 \arguments{
 \item{coefficients}{A matrix of coefficients from the regression.

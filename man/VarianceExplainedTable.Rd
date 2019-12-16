@@ -4,8 +4,14 @@
 \alias{VarianceExplainedTable}
 \title{VarianceExplainedTable}
 \usage{
-VarianceExplainedTable(eigenvalues, variance.proportions,
-  cumulative.proportions, title = "", subtitle = "", footer = "")
+VarianceExplainedTable(
+  eigenvalues,
+  variance.proportions,
+  cumulative.proportions,
+  title = "",
+  subtitle = "",
+  footer = ""
+)
 }
 \arguments{
 \item{eigenvalues}{A vector of eigenvalues corresponding to the components.}

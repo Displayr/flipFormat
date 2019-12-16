@@ -4,9 +4,14 @@
 \alias{ShowTemplateOptions}
 \title{Display appearance template as a \code{htmlwidget}}
 \usage{
-ShowTemplateOptions(colors = NULL, brand.colors = NULL,
-  global.font = NULL, fonts = NULL, global.number.font = list(units =
-  "pt"), number.fonts = NULL)
+ShowTemplateOptions(
+  colors = NULL,
+  brand.colors = NULL,
+  global.font = NULL,
+  fonts = NULL,
+  global.number.font = list(units = "pt"),
+  number.fonts = NULL
+)
 }
 \arguments{
 \item{colors}{A vector containing a colors as hex codes.}

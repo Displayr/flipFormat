@@ -4,8 +4,13 @@
 \alias{MaxDiffTableClasses}
 \title{MaxDiffTableClasses}
 \usage{
-MaxDiffTableClasses(probabilities, column.labels, title = "",
-  subtitle = "", footer = "")
+MaxDiffTableClasses(
+  probabilities,
+  column.labels,
+  title = "",
+  subtitle = "",
+  footer = ""
+)
 }
 \arguments{
 \item{probabilities}{A matrix of the probabilities to be shown in the table.}

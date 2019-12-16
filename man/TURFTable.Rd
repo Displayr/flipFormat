@@ -4,8 +4,14 @@
 \alias{TURFTable}
 \title{TURFTable}
 \usage{
-TURFTable(output.table, portfolios, alternative.names, title = "",
-  subtitle = "", footer = "")
+TURFTable(
+  output.table,
+  portfolios,
+  alternative.names,
+  title = "",
+  subtitle = "",
+  footer = ""
+)
 }
 \arguments{
 \item{output.table}{A matrix of the statistics to be shown in the table.}

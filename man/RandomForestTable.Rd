@@ -4,9 +4,16 @@
 \alias{RandomForestTable}
 \title{RandomForestTable}
 \usage{
-RandomForestTable(importance, z.statistics, p.values,
-  sort.by.importance = TRUE, title = "", subtitle = "",
-  footer = "", p.cutoff = 0.05)
+RandomForestTable(
+  importance,
+  z.statistics,
+  p.values,
+  sort.by.importance = TRUE,
+  title = "",
+  subtitle = "",
+  footer = "",
+  p.cutoff = 0.05
+)
 }
 \arguments{
 \item{importance}{A matrix of importance values from the regression.}

@@ -4,8 +4,15 @@
 \alias{EntityExtractionWidget}
 \title{Display entity extraction output as an \code{htmlwidget}}
 \usage{
-EntityExtractionWidget(entity.percentages, variant.percentages,
-  entity.counts, variant.counts, title, footer, empty.extraction)
+EntityExtractionWidget(
+  entity.percentages,
+  variant.percentages,
+  entity.counts,
+  variant.counts,
+  title,
+  footer,
+  empty.extraction
+)
 }
 \arguments{
 \item{entity.percentages}{named numeric vector showing the percentage ocurrence of entity types
