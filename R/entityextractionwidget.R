@@ -99,9 +99,10 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
     }
 
 
-    cata("</tbody></table>")
+    cata("</tbody>")
+    cata("<caption>", htmlText(footer), "</caption>")
+    cata("</table>")
 
-    cata("<div class=\"footer\">", htmlText(footer), "</div>")
 
     cata("</div>")
 

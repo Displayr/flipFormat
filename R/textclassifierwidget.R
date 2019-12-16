@@ -6,7 +6,6 @@
 #' @param weighted.sizes Numeric vector of weighted counts of the predicted values
 #' @param category.accuracy Numeric vector of accuracy over training sample.
 #' @param examples Examples for each category.
-#' @param overall.metrics Numeric vector of the overall performance metrics on the trained model.
 #' @param cv.metrics Numeric matrix of the performance metrics on the cross validation data.
 #' @param text.raw.by.categorization A list containing the raw text for each
 #'   category.
@@ -22,7 +21,6 @@ TextClassifierWidget <- function(observed.counts,
                                  weighted.sizes,
                                  category.accuracy,
                                  examples,
-                                 overall.metrics,
                                  cv.metrics,
                                  text.raw.by.categorization,
                                  missing,
@@ -31,47 +29,29 @@ TextClassifierWidget <- function(observed.counts,
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
-    addCss("textclassifier.css", cata)
+    addCss("automaticcategorization.css", cata)
 
     cata("<div class=\"main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
     textClassifierSummaryTable(observed.counts, weighted.sizes, category.accuracy, examples,
-                               overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
+                               text.raw.by.categorization, missing, footer, cata)
 
-    overall.statement <- metricPrint(overall.metrics, sample.type = "Training sample")
-    footer <- paste0(footer, overall.statement, ".")
-    if (!is.null(cv.metrics))
+    if (!is.null(cv.metrics) && nrow(cv.metrics) > 1)
     {
-        if(nrow(cv.metrics) == 1)
-        {
-            model.size <- cv.metrics[1, 1]
-            validation.size <- cv.metrics[1, 2]
-            validation.statement <- metricPrint(cv.metrics[1, 3:5],
-                                                sample.type = paste0("Single Validation sample (estimation n = ", model.size,
-                                                                     " and validation n = ", validation.size, ")"))
-            footer <- paste0(footer, validation.statement, ".")
-            cata("<div class=\"footer\">", htmlText(footer), "</div>")
-        } else
-        {
-            n.width <- max(nchar(as.character(cv.metrics[, 1:2])))
-            estimation.size <- formatC(cv.metrics[, 1], digits = n.width, format = "g")
-            validation.size <- formatC(cv.metrics[, 2], digits = n.width, format = "g")
-            accuracy <- paste0(formatC(cv.metrics[, 3] * 100, digits = 1, format = "f"), "%")
-            kappa.and.f1 <- formatC(cv.metrics[, 4:5], digits = 3, format = "f")
-            cv.metrics[, 1] <- estimation.size
-            cv.metrics[, 2] <- validation.size
-            cv.metrics[, 3] <- accuracy
-            cv.metrics[, 4:5] <- kappa.and.f1
-            table.explanation <- "\nTable below shows out of sample performance on estimation and validation samples."
-            footer <- paste0(footer, table.explanation)
-            cata("<div class=\"footer\">", htmlText(footer), "</div>")
-            cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
-                                                                      align = c("rrccc")),"</div>")
-        }
-    } else
-        cata("<div class=\"footer\">", htmlText(footer), "</div>")
+        n.width <- max(nchar(as.character(cv.metrics[, 1:2])))
+        estimation.size <- formatC(cv.metrics[, 1], digits = n.width, format = "g")
+        validation.size <- formatC(cv.metrics[, 2], digits = n.width, format = "g")
+        accuracy <- paste0(formatC(cv.metrics[, 3] * 100, digits = 1, format = "f"), "%")
+        kappa.and.f1 <- formatC(cv.metrics[, 4:5], digits = 3, format = "f")
+        cv.metrics[, 1] <- estimation.size
+        cv.metrics[, 2] <- validation.size
+        cv.metrics[, 3] <- accuracy
+        cv.metrics[, 4:5] <- kappa.and.f1
+        cata("<div class=\"classifier-validation-table\">", kable(cv.metrics, format = "html",
+                                                                  align = c("rrccc")),"</div>")
+    }
     cata("</div>")
 
     createWidgetFromFile(tfile)
@@ -87,7 +67,7 @@ metricPrint <- function(metrics, sample.type)
 
 
 textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category.accuracy, examples,
-                                       overall.metrics, cv.metrics, text.raw.by.categorization, missing, cata)
+                                       text.raw.by.categorization, missing, footer, cata)
 {
     max.rows <- 3000
 
@@ -175,7 +155,9 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
         cata("</details>")
         cata("</td></tr>")
     }
-    cata("</tbody></table>")
+    cata("</tbody>")
+    cata("<caption>", htmlText(footer), "</caption>")
+    cata("</table>")
 
 }
 
