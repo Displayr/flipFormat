@@ -139,14 +139,14 @@ table.raw-text-table {
 .classifier-validation-table {
     display: flex;
     justify-content: center;
-    color: #777;
-    font-style:italic;
 }
 
 .classifier-validation-table table {
     border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     font-size: 11px;
+    color: #777;
+    font-style:italic;
 }
 
 .classifier-validation-table th {
