@@ -1,17 +1,28 @@
 /* CSS for text analysis outputs in Q and Displayr */
 
 .main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
     width: 100%;
-    height: 100%;
+    height: 100vh;
+    overflow: auto;
+}
+
+.dummy-container {
+    flex: 1 0 0;
 }
 
 .vertical-container {
-    height: calc(100vh - 50px);
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    align-items: stretch;
+    align-content: flex-start;
+    align-self: stretch;
     overflow: auto;
+    flex-shrink: 1;
+    min-height: 2em;
 }
 
 .top-container {
@@ -24,7 +35,7 @@
 }
 
 .top-container-diagnostic {
-    height: calc(100vh - 120px);
+    height: 100vh;
     padding-top: 10px;
 }
 
@@ -45,11 +56,10 @@
     height: 50%;
 }
 
-#footer-container {
-    position: absolute;
-    top: calc(100vh - 50px);
+.footer-container {
+    height: auto;
+    min-height: 15px;
     margin-bottom: 4px;
-    caption-side:bottom;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
     color: #777;
@@ -57,11 +67,12 @@
     font-size:11.7px;
     text-align:left;
     width: 100%;
+    padding-bottom: 4px;
+    padding-top: 4px;
 }
 
 #footer {
-    padding-bottom: 4px;
-    padding-top: 4px;
+
 }
 
 #text-panel {
