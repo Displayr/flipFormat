@@ -4,11 +4,17 @@
 \alias{RegressionTable}
 \title{RegressionTable}
 \usage{
-RegressionTable(coefficient.table, footer, title = "", subtitle = "",
-  estimate.name = "Estimate", se.name = "Standard<br/>Error",
+RegressionTable(
+  coefficient.table,
+  footer,
+  title = "",
+  subtitle = "",
+  estimate.name = "Estimate",
+  se.name = "Standard<br/>Error",
   statistic.name = "<span style='font-style:italic;'>t</span>",
   p.name = "<span style='font-style:italic;'>p</span>",
-  p.cutoff = 0.05)
+  p.cutoff = 0.05
+)
 }
 \arguments{
 \item{coefficient.table}{A table of regression coefficients, standard errors, z or t statistics, and p-values.}

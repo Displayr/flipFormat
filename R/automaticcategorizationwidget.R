@@ -36,9 +36,8 @@ AutomaticCategorizationWidget <- function(sizes,
                                    examples,
                                    text.raw.by.categorization,
                                    missing,
+                                   footer,
                                    cata)
-
-    cata("<div class=\"footer\">", htmlText(footer), "</div>")
 
     cata("</div>")
 
@@ -47,7 +46,7 @@ AutomaticCategorizationWidget <- function(sizes,
 
 autoCategorizationSummaryTable <- function(sizes, base.size,
                                            examples, text.raw.by.categorization,
-                                           missing, cata)
+                                           missing, footer, cata)
 {
     max.rows <- 3000
 
@@ -126,9 +125,9 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
         cata("</details>")
         cata("</td></tr>")
     }
-
-
-    cata("</tbody></table>")
+    cata("</tbody>")
+    cata("<caption>", htmlText(footer), "</caption>")
+    cata("</table>")
 
 }
 

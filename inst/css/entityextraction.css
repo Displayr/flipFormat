@@ -73,6 +73,19 @@ th {
     vertical-align: top;
 }
 
+.entity-extraction-table caption {
+    padding-bottom: 8px;
+    padding-top: 8px;
+    margin-bottom:5px;
+    caption-side:bottom;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 1.42857143;
+    color: #777;
+    font-style:italic;
+    font-size:11.7px;
+    text-align:left;
+}
+
 table.entity-extraction-table {
     border-top: 2px solid #333333;
     border-bottom: 2px solid #333333;

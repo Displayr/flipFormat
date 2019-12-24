@@ -4,8 +4,14 @@
 \alias{DeepLearningTable}
 \title{DeepLearningTable}
 \usage{
-DeepLearningTable(values, column.labels = "Variable Importance",
-  order.values = TRUE, title = "", subtitle = "", footer = "")
+DeepLearningTable(
+  values,
+  column.labels = "Variable Importance",
+  order.values = TRUE,
+  title = "",
+  subtitle = "",
+  footer = ""
+)
 }
 \arguments{
 \item{values}{A named vector of values}

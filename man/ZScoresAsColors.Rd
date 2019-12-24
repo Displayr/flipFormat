@@ -4,10 +4,16 @@
 \alias{ZScoresAsColors}
 \title{\code{ZScoresAsColors}}
 \usage{
-ZScoresAsColors(z, light.negative.color = "#FB9080",
-  dark.negative.color = "#FA614B", light.positive.color = "#80B4F4",
-  dark.positive.color = "#3E7DCC", non.significant.color = "#888888",
-  max.abs = 5, alpha = 0.05)
+ZScoresAsColors(
+  z,
+  light.negative.color = "#FB9080",
+  dark.negative.color = "#FA614B",
+  light.positive.color = "#80B4F4",
+  dark.positive.color = "#3E7DCC",
+  non.significant.color = "#888888",
+  max.abs = 5,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{z}{A \code{\link{numeric}} vector containing colors.}

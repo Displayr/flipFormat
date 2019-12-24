@@ -74,7 +74,7 @@ variant.counts = list(Number = c(I = 1, `11` = 1, one = 2, `90s` = 1, `80s` = 1,
                       Ideology = c(neutral = 1, `church of scientology` = 1),
                       City = c(Hollywood = 1))
 
-footer <- "Text was processed using 299 cases. There was 1 missing case."
+footer <- "n = 295 cases were used in the text processing of a total of 300; cases containing missing values have been excluded;"
 
 empty.output.table <- structure(list(id = structure(integer(0), .Label = character(0), class = "factor"),
                                      entity = structure(integer(0), .Label = character(0), class = "factor"),

@@ -121,7 +121,7 @@ token.substitution <- structure(c("ai", "a", "and", "apple", "are", "bad", "bee"
           "woolen", "hair on dogs", "red wool", "faves", "your majesty"
 ), .Dim = c(109L, 2L), .Dimnames = list(NULL, c("old", "new")))
 
-footer <- "n = 51 cases used to process the text"
+footer <- "n = 51 cases were used in the text processing;"
 
 # Manually, you also want to check that 'ai' (not "Aim") is highlighted in line 1
 # And 'bites!' is highlighted in line 13

@@ -4,9 +4,15 @@
 \alias{FormatAsPercent}
 \title{Converts a proportion to a percent}
 \usage{
-FormatAsPercent(x, digits = 2, decimals = NULL,
-  remove.leading.0 = FALSE, comma.for.thousands = TRUE, pad = FALSE,
-  show.sign = TRUE)
+FormatAsPercent(
+  x,
+  digits = 2,
+  decimals = NULL,
+  remove.leading.0 = FALSE,
+  comma.for.thousands = TRUE,
+  pad = FALSE,
+  show.sign = TRUE
+)
 }
 \arguments{
 \item{x}{The number(s)}

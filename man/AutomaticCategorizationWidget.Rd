@@ -4,8 +4,15 @@
 \alias{AutomaticCategorizationWidget}
 \title{Display automatic text categorization output as an \code{htmlwidget}}
 \usage{
-AutomaticCategorizationWidget(sizes, base.size, examples,
-  text.raw.by.categorization, missing, title, footer)
+AutomaticCategorizationWidget(
+  sizes,
+  base.size,
+  examples,
+  text.raw.by.categorization,
+  missing,
+  title,
+  footer
+)
 }
 \arguments{
 \item{sizes}{The sizes of the categories.}

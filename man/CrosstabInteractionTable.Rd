@@ -4,9 +4,17 @@
 \alias{CrosstabInteractionTable}
 \title{CrosstabInteractionTable}
 \usage{
-CrosstabInteractionTable(coef, coef.tstat, coef.pval, group.size,
-  footer = "", title = "", subtitle = "", decimals = 2,
-  p.cutoff = 0.05)
+CrosstabInteractionTable(
+  coef,
+  coef.tstat,
+  coef.pval,
+  group.size,
+  footer = "",
+  title = "",
+  subtitle = "",
+  decimals = 2,
+  p.cutoff = 0.05
+)
 }
 \arguments{
 \item{coef}{Matrix containing estimates of the coefficient.}

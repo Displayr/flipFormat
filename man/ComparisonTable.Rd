@@ -4,8 +4,13 @@
 \alias{ComparisonTable}
 \title{Creates a pretty formattable table for an comapring models.}
 \usage{
-ComparisonTable(values, order.values = FALSE, title = "",
-  subtitle = "", footer = "")
+ComparisonTable(
+  values,
+  order.values = FALSE,
+  title = "",
+  subtitle = "",
+  footer = ""
+)
 }
 \arguments{
 \item{values}{A matrix of values.}
