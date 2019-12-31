@@ -29,7 +29,7 @@ TextClassifierWidget <- function(observed.counts,
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
-    addCss("automaticcategorization.css", cata)
+    addCss("textclassifier.css", cata)
 
     cata("<div class=\"main-container\">")
 
