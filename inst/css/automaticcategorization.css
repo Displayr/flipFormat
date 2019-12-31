@@ -83,8 +83,7 @@ table.auto-categorization-table {
 
 .auto-categorization-table caption {
     padding-bottom: 4px;
-    padding-top: 8px;
-    margin-bottom: 0;
+    padding-top: 4px;
     caption-side:bottom;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
