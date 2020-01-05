@@ -151,12 +151,12 @@ table.raw-text-table {
 
 
 .classifier-validation-table {
-display: flex;
+    display: flex;
     justify-content: center;
 }
 
 .classifier-validation-table table {
-border-top: 2px solid #dddddd;
+    border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     font-size: 11px;
     color: #777;
@@ -164,7 +164,7 @@ border-top: 2px solid #dddddd;
 }
 
 .classifier-validation-table th {
-font-weight: normal;
+    font-weight: normal;
     border-bottom: 1px solid #dddddd;
     padding: 3px;
 }
