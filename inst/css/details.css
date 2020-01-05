@@ -9,6 +9,10 @@ summary {
     /* margin-bottom: 10px; */
 }
 
+.details {
+  max-height: 100%;
+}
+
 @supports (-ms-ime-align:auto) {
   .summary, .details {
       /* border-bottom: 3px solid #151A1C; */

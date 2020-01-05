@@ -10,7 +10,7 @@
 }
 
 .dummy-container {
-    flex: 1 0 0;
+    flex: 1000 0 0;
 }
 
 .vertical-container {
@@ -34,8 +34,8 @@
 }
 
 .top-container-diagnostic {
-    height: 100vh;
-    padding-top: 10px;
+    max-height: calc(100% - 2em - 4px);
+    padding-top: 4px;
 }
 
 .bottom-container {
