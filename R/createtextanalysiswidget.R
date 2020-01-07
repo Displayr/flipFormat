@@ -55,6 +55,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
         addCss(stylefile, cata, in.css.folder = FALSE)
 
     cata("<div class=\"main-container\">")
+    cata("<div class=\"vertical-container\">")
 
     show.diagnostics <- !is.null(diagnostics)
 
@@ -63,9 +64,10 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics, details.expand)
-    cata("<div class=\"dummy-container\"></div>")
-    cata("<div class=\"footer-container\">", htmlText(footer),"</div>")
 
+    cata("</div>") # end vertical-container div
+
+    cata("<div id=\"footer-container\">", footer, "</div>")
     cata("</div>") # end main-container div
 
     output <- createWidgetFromFile(tfile)
@@ -408,7 +410,6 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
 {
     if (show.diagnostics)
     {
-        cata("<div class=\"vertical-container\">")
         if (details.expand == "Categories")
             cata("<details open=\"true\" class=\"details\">")
         else
@@ -425,26 +426,19 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
                  raw.and.normalized.text[["Variable Numbers"]],
                  raw.and.normalized.text[["Variable Names"]],
                  cata)
-
-    if(!show.diagnostics)
-        cata("</div>", fill = TRUE) # end top-container div
+    cata("</div>", fill = TRUE) # end top-container div
 
     if (show.diagnostics)
-    {
         cata("</details>")
-        cata("</div>")
-    }
-
 }
 
 addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 {
-    html <- "<div class = \"vertical-container\">"
-    details <- if (details.expand != "Categories")
+    html <- if (details.expand != "Categories")
         "<details open=\"true\" class=\"details\">"
     else
         "<details class=\"details\">"
-    html <- paste0(html, details)
+
     html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
                    "<div class=\"diagnostics-container\">")
 
@@ -517,10 +511,9 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
     # print(proc.time() - ptm)
 
     html <- paste0(html,
-                   # end diagnostics-container div
+                   "</div>", # end diagnostics-container div
                    "</div>", # end bottom-container div
-                   "</details>",
-                   "</div>")
+                   "</details>")
 
     cata(html)
 }
