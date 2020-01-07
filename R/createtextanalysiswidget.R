@@ -65,9 +65,10 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics, details.expand)
 
-    cata("</div>") # end vertical-container div
+
 
     cata("<div id=\"footer-container\">", footer, "</div>")
+    cata("</div>") # end vertical-container div
     cata("</div>") # end main-container div
 
     output <- createWidgetFromFile(tfile)
@@ -512,7 +513,6 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 
     html <- paste0(html,
                    "</div>", # end diagnostics-container div
-                   "</div>", # end bottom-container div
                    "</details>")
 
     cata(html)
