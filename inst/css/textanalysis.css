@@ -1,51 +1,50 @@
 /* CSS for text analysis outputs in Q and Displayr */
 
 .main-container {
-    width: 100%;
-    height: 100vh;
-}
-
-.vertical-container {
-    height: 100%;
+    box-sizing: border-box;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: stretch;
+}
+
+.panel-container {
+    display: flex;
+    flex: 0 10000 auto;
     overflow: auto;
 }
 
-.top-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    overflow-x: auto;
+details + .panel-container {
+    min-height: 0;
+    max-height: 0;
 }
 
-.top-container-diagnostic {
-    height: calc(100vh - 115px);
-    padding-top: 10px;
+details[open] + .panel-container {
+    min-height: 5em;
+    max-height: inherit;
 }
 
-.bottom-container {
-    overflow-y: scroll;
-    display: flex;
+.panel {
+    padding: 0.25em;
+    overflow: auto;
 }
 
-.bottom-container-full {
-    overflow-y: scroll;
-    display: flex;
-    height: 100%;
+.text-panel {
+    flex: 1 1 70%;
 }
 
-.bottom-container-half {
-    overflow-y: scroll;
-    display: flex;
-    height: 50%;
+.ngrams-panel {
+    flex: 1 1 auto;
 }
 
-#footer-container {
+.diagnostics-panel {
+    flex: 1 1 100%;
+}
+
+.footer-container {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
     color: #777;
@@ -53,15 +52,8 @@
     font-size: 11.7px;
     text-align: left;
     width: 100%;
-    padding-top: 4px;
-    padding-bottom: 4px;
-}
-
-#text-panel {
-    overflow-y: scroll;
-    overflow-x: auto;
-    min-width: 0;
-    flex: 1 1 70%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .raw-replacement {
@@ -74,14 +66,6 @@
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
-}
-
-#ngrams-panel {
-    resize: horizontal;
-    overflow-y: scroll;
-    overflow-x: auto;
-    max-width: calc(50vw);
-    flex: 1 1 auto;
 }
 
 .text-analysis-table {
@@ -140,22 +124,6 @@
     font-size: 18px;
 }
 
-.diagnostics-title {
-    color: #3E7DCC;
-    font-size: 22px;
-    margin: 10px 15px 0 15px;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.diagnostics-container {
-    margin-top: 10px;
-    width: 100%;
-}
-
-.diagnostics-text {
-    display: block;
-}
-
 .diagnostics-table {
     font-size: 12px;
     margin-left: 10px;
@@ -186,4 +154,20 @@
     margin-top: 5px;
     margin-bottom: 10px;
     color: #444;
+}
+
+.footer-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.footer-spacing {
+    flex-grow: 1;
+}
+
+.footer {
+    max-height: 6em;
+    overflow: auto;
 }
