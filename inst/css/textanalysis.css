@@ -33,11 +33,11 @@ details[open] + .panel-container {
 }
 
 .text-panel {
-    flex: 1 1 70%;
+    flex: 1 1 60%;
 }
 
 .ngrams-panel {
-    flex: 1 1 auto;
+    flex: 1 1 40%;
 }
 
 .diagnostics-panel {
