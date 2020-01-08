@@ -25,6 +25,7 @@ AutomaticCategorizationWidget <- function(sizes,
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
+    addCss("categorization.css", cata)
     addCss("automaticcategorization.css", cata)
 
     cata("<div class=\"main-container\">")
@@ -72,7 +73,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
     missing.text <- text.raw.by.categorization$`NA`
 
     # Create table
-    cata("<table class=\"auto-categorization-table\"><thead>",
+    cata("<table class=\"categorization-table auto-categorization-table\"><thead>",
          "<th></th><th>Category</th><th>Size (n)</th><th>Example</th>",
          "</thead><tbody>")
     for (i in seq(categories))
