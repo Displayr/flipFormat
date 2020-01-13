@@ -63,8 +63,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
 
     if (!is.null(diagnostics))
         addDiagnosticsPanel(cata, diagnostics, details.expand)
-    cata("<div class=\"dummy-container\"></div>")
-    cata("<div class=\"footer-container\">", htmlText(footer),"</div>")
+
+    addFooter(footer, cata)
 
     cata("</div>") # end main-container div
 
@@ -374,20 +374,21 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
 {
     if (!is.null(variable.numbers) && !is.null(variable.names) && all(is.finite(variable.numbers)))
         variable.numbers <- sprintf("<span title=\"%s\">%d</span>", variable.names[variable.numbers], variable.numbers)
+
     t.rownames <- if (!is.null(row.numbers) || !is.null(variable.numbers)) cbind(variable.numbers, row.numbers)
                   else                                                     rownames(raw.and.normalized.text)
 
-    cata("<div id=\"text-panel\">")
+    cata("<div class=\"panel text-panel\">")
 
-        t <- cbind(t.rownames, raw.and.normalized.text)
-        tmp.col.names <- c("Case", "Raw text", "Normalized text")
-        if (NCOL(t.rownames) == 2)
-            tmp.col.names <- c("Var", tmp.col.names)
+    t <- cbind(t.rownames, raw.and.normalized.text)
+    tmp.col.names <- c("Case", "Raw text", "Normalized text")
+    if (NCOL(t.rownames) == 2)
+        tmp.col.names <- c("Var", tmp.col.names)
 
-        names(t) <- tmp.col.names
-        rownames(t) <- NULL
-        cata(kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
-                   escape = FALSE, table.attr = "class=\"text-analysis-table raw-text-table\""))
+    names(t) <- tmp.col.names
+    rownames(t) <- NULL
+    cata(kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
+               escape = FALSE, table.attr = "class=\"text-analysis-table raw-text-table\""))
 
     cata("</div>") # end panel div
 }
@@ -397,7 +398,7 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     t <- n.gram.frequencies
     names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
-    cata("<div id=\"ngrams-panel\">")
+    cata("<div class=\"panel ngrams-panel\">")
     cata(kable(t, align = c("l", "c", "c"), format = "html", escape = FALSE,
                table.attr = "class=\"text-analysis-table categories-table\""))
     cata("</div>") # end panel div
@@ -408,16 +409,16 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
 {
     if (show.diagnostics)
     {
-        cata("<div class=\"vertical-container\">")
         if (details.expand == "Categories")
             cata("<details open=\"true\" class=\"details\">")
         else
             cata("<details class=\"details\">")
         cata("<summary class=\"summary\">Categories</summary>")
-        cata("<div class=\"top-container top-container-diagnostic\">")
+        cata("</details>")
     }
-    else
-        cata("<div class=\"top-container\">")
+
+    cata("</details>")
+    cata("<div class=\"panel-container\">")
 
     addNGramsPanel(colored.text$n.grams, cata)
     addTextPanel(colored.text$text,
@@ -426,27 +427,18 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
                  raw.and.normalized.text[["Variable Names"]],
                  cata)
 
-    if(!show.diagnostics)
-        cata("</div>", fill = TRUE) # end top-container div
-
-    if (show.diagnostics)
-    {
-        cata("</details>")
-        cata("</div>")
-    }
-
+    cata("</div>")
 }
 
 addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 {
-    html <- "<div class = \"vertical-container\">"
-    details <- if (details.expand != "Categories")
+    html <- if (details.expand != "Categories")
         "<details open=\"true\" class=\"details\">"
     else
         "<details class=\"details\">"
-    html <- paste0(html, details)
+
     html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
-                   "<div class=\"diagnostics-container\">")
+                   "</details><div class=\"panel-container\"><div class=\"panel diagnostics-panel\">")
 
     html <- paste0(html, variantSuggestionsDiagnostic(diagnostics$variant.suggestions,
                                                       details.expand))
@@ -516,11 +508,7 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
     # print("min freq")
     # print(proc.time() - ptm)
 
-    html <- paste0(html,
-                   # end diagnostics-container div
-                   "</div>", # end bottom-container div
-                   "</details>",
-                   "</div>")
+    html <- paste0(html, "</div></div>") # end panel and panel-container divs
 
     cata(html)
 }
@@ -988,6 +976,12 @@ rawCasesTable <- function(obj)
                                    table.attr = "class=\"diagnostics-table raw-cases-table\""))
     }
     paste0(html, "</div>")
+}
+
+addFooter <- function(footer, cata)
+{
+    cata("<div class=\"footer-container\"><div class=\"footer-spacing\"><div class=\"footer\">",
+         footer, "</div></div></div>")
 }
 
 htmlText <- function(html)

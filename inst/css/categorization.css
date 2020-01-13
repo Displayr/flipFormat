@@ -1,4 +1,4 @@
-/* CSS for entity extraction output in Q and Displayr */
+/* Common CSS for automatic text categorization and text classifier output in Q and Displayr */
 
 .main-container {
     overflow: auto;
@@ -19,12 +19,12 @@ h1 {
     text-align: center;
 }
 
-.entity-details {
+.raw-text-category-details {
     margin-bottom: 5px;
     margin-left: 16px;
 }
 
-.entity-summary {
+.raw-text-category-summary {
     font-size: 13px;
     margin-bottom: 5px;
     color: #333333;
@@ -35,15 +35,15 @@ h1 {
     -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
-.entity-summary:focus {
-    outline: none;
-}
-
-.entity-summary:hover {
+.raw-text-category-summary:hover {
     cursor:pointer;
 }
 
-.entity-summary::-webkit-details-marker{
+.raw-text-category-summary:focus {
+    outline: none;
+}
+
+.raw-text-category-summary::-webkit-details-marker{
     color: #bbbbbb;
     margin-left: -15px;
 }
@@ -58,13 +58,13 @@ th {
     text-align: left;
 }
 
-.entity-extraction-table th {
+.categorization-table th {
     border-bottom: 2px solid #dddddd;
     padding: 8px;
     font-size: 13px;
 }
 
-.entity-extraction-table td {
+.categorization-table td {
     padding-top: 8px;
     padding-left: 8px;
     padding-right: 8px;
@@ -73,7 +73,15 @@ th {
     vertical-align: top;
 }
 
-.entity-extraction-table caption {
+table.categorization-table {
+    border-top: 2px solid #333333;
+    border-bottom: 2px solid #333333;
+    margin-bottom: 0;
+    width: 100%;
+    color: #333333;
+}
+
+.categorization-table caption {
     padding-bottom: 4px;
     padding-top: 4px;
     caption-side:bottom;
@@ -85,14 +93,6 @@ th {
     text-align:left;
 }
 
-table.entity-extraction-table {
-    border-top: 2px solid #333333;
-    border-bottom: 2px solid #333333;
-    margin-bottom: 5px;
-    width: 100%;
-    color: #333333;
-}
-
 .table-row {
     border-bottom: 1px solid #dddddd;
 }
@@ -102,7 +102,7 @@ table.entity-extraction-table {
     margin-bottom: 10px;
 }
 
-.entity-variants-table th {
+.raw-text-table th {
     border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     padding: 3px;
@@ -110,15 +110,15 @@ table.entity-extraction-table {
     font-weight: normal;
 }
 
-.entity-variants-table td {
+.raw-text-table td {
     padding: 3px;
     font-size: 11px;
 }
 
-.entity-variants-table td:nth-child(1) {
+.raw-text-table td:nth-child(1) {
     width: 50px;
 }
 
-table.entity-variants-table {
+table.raw-text-table {
     border-bottom: 2px solid #dddddd;
 }

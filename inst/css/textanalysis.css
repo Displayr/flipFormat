@@ -1,85 +1,59 @@
 /* CSS for text analysis outputs in Q and Displayr */
 
 .main-container {
+    box-sizing: border-box;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-start;
-    width: 100%;
-    height: 100vh;
+}
+
+.panel-container {
+    display: flex;
+    flex: 0 10000 auto;
     overflow: auto;
 }
 
-.dummy-container {
-    flex: 1 0 0;
+details + .panel-container {
+    min-height: 0;
+    max-height: 0;
 }
 
-.vertical-container {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-content: flex-start;
-    align-self: stretch;
+details[open] + .panel-container {
+    min-height: 5em;
+    max-height: inherit;
+}
+
+.panel {
+    padding: 0.25em;
     overflow: auto;
-    flex-shrink: 1;
-    min-height: 2em;
 }
 
-.top-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    overflow-x: auto;
+.text-panel {
+    flex: 1 1 60%;
 }
 
-.top-container-diagnostic {
-    height: 100vh;
-    padding-top: 10px;
+.ngrams-panel {
+    flex: 1 1 40%;
 }
 
-.bottom-container {
-    overflow-y: scroll;
-    display: flex;
-}
-
-.bottom-container-full {
-    overflow-y: scroll;
-    display: flex;
-    height: 100%;
-}
-
-.bottom-container-half {
-    overflow-y: scroll;
-    display: flex;
-    height: 50%;
+.diagnostics-panel {
+    flex: 1 1 100%;
 }
 
 .footer-container {
-    height: auto;
-    min-height: 15px;
-    margin-bottom: 4px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
     color: #777;
-    font-style:italic;
-    font-size:11.7px;
-    text-align:left;
+    font-style: italic;
+    font-size: 11.7px;
+    text-align: left;
     width: 100%;
-    padding-bottom: 4px;
-    padding-top: 4px;
-}
-
-#footer {
-
-}
-
-#text-panel {
-    overflow-y: scroll;
-    overflow-x: auto;
-    min-width: 0;
-    flex: 1 1 70%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .raw-replacement {
@@ -92,14 +66,6 @@
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
-}
-
-#ngrams-panel {
-    resize: horizontal;
-    overflow-y: scroll;
-    overflow-x: auto;
-    max-width: calc(50vw);
-    flex: 1 1 auto;
 }
 
 .text-analysis-table {
@@ -158,22 +124,6 @@
     font-size: 18px;
 }
 
-.diagnostics-title {
-    color: #3E7DCC;
-    font-size: 22px;
-    margin: 10px 15px 0 15px;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-}
-
-.diagnostics-container {
-    margin-top: 10px;
-    width: 100%;
-}
-
-.diagnostics-text {
-    display: block;
-}
-
 .diagnostics-table {
     font-size: 12px;
     margin-left: 10px;
@@ -204,4 +154,20 @@
     margin-top: 5px;
     margin-bottom: 10px;
     color: #444;
+}
+
+.footer-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.footer-spacing {
+    flex-grow: 1;
+}
+
+.footer {
+    max-height: 6em;
+    overflow: auto;
 }

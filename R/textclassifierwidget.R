@@ -29,7 +29,9 @@ TextClassifierWidget <- function(observed.counts,
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
-    addCss("automaticcategorization.css", cata)
+
+    addCss("categorization.css", cata)
+    addCss("textclassifier.css", cata)
 
     cata("<div class=\"main-container\">")
 
@@ -93,7 +95,7 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
     missing.text <- text.raw.by.categorization$`NA`
 
     # Create table
-    cata("<table class=\"auto-categorization-table\"><thead>",
+    cata("<table class=\"categorization-table text-classfier-table\"><thead>",
          "<th></th><th>Category</th><th>Observed (n)</th><th>Predicted (n)</th><th>Accuracy (n)</n><th>Example</th>",
          "</thead><tbody>")
     for (i in seq(categories))
