@@ -37,7 +37,9 @@ details[open] + .panel-container {
 }
 
 .ngrams-panel {
-    flex: 1 1 40%;
+    flex: 1 1 auto;
+    resize: horizontal;
+    max-width: calc(50vw);
 }
 
 .diagnostics-panel {
