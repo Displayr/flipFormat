@@ -75,6 +75,17 @@ CreateCustomTable(
   row.span.font.style = "normal",
   row.span.font.weight = "bold",
   row.span.pad = 0,
+  col.span.fill = "transparent",
+  col.span.border.width = col.header.border.width,
+  col.span.border.color = col.header.border.color,
+  col.span.align.horizontal = "center",
+  col.span.align.vertical = "middle",
+  col.span.font.family = global.font.family,
+  col.span.font.color = global.font.color,
+  col.span.font.size = font.size,
+  col.span.font.style = "normal",
+  col.span.font.weight = "bold",
+  col.span.pad = 0,
   corner = "",
   corner.class = "",
   corner.fill = "transparent",
@@ -271,6 +282,29 @@ horizontal alignment is "left" or "right".}
 \item{row.span.font.weight}{One of "normal" or "bold".}
 
 \item{row.span.pad}{Space between text and cell border in pixels. This is only used if the
+horizontal alignment is "left" or "right".}
+
+\item{col.span.fill}{Background color of the col.spans in the table.}
+
+\item{col.span.border.width}{Width of border around table col.spans (in pixels).}
+
+\item{col.span.border.color}{Color of border around table col.spans,}
+
+\item{col.span.align.horizontal}{Horizontal alignment of text in table col.spans.}
+
+\item{col.span.align.vertical}{Vertical alignment of text in table col.spans.}
+
+\item{col.span.font.family}{Font family of text in table col.spans.}
+
+\item{col.span.font.color}{Font color of text in table col.spans.}
+
+\item{col.span.font.size}{Font size (in pixels) of text in table col.spans.}
+
+\item{col.span.font.style}{One of "normal" or "italic".}
+
+\item{col.span.font.weight}{One of "normal" or "bold".}
+
+\item{col.span.pad}{Space between text and cell border in pixels. This is only used if the
 horizontal alignment is "left" or "right".}
 
 \item{corner}{Contents of the corner cell, if row and column headers are used}

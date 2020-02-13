@@ -84,6 +84,18 @@
 #' @param row.span.font.style One of "normal" or "italic".
 #' @param row.span.pad Space between text and cell border in pixels. This is only used if the
 #'  horizontal alignment is "left" or "right".
+#' @param col.span.fill Background color of the col.spans in the table.
+#' @param col.span.border.width Width of border around table col.spans (in pixels).
+#' @param col.span.border.color Color of border around table col.spans,
+#' @param col.span.align.horizontal Horizontal alignment of text in table col.spans.
+#' @param col.span.align.vertical Vertical alignment of text in table col.spans.
+#' @param col.span.font.family Font family of text in table col.spans.
+#' @param col.span.font.color Font color of text in table col.spans.
+#' @param col.span.font.size Font size (in pixels) of text in table col.spans.
+#' @param col.span.font.weight One of "normal" or "bold".
+#' @param col.span.font.style One of "normal" or "italic".
+#' @param col.span.pad Space between text and cell border in pixels. This is only used if the
+#'  horizontal alignment is "left" or "right".
 #' @param col.header.classes CSS classes of column headers. The class definition should be added to
 #'  \code{custom.css}. This overrides \code{col.header.fill},
 #'  \code{col.header.border}, \code{col.header.font}, \code{col.header.align}, etc.
@@ -215,6 +227,17 @@ CreateCustomTable = function(x,
                         row.span.font.style = "normal",
                         row.span.font.weight = "bold",
                         row.span.pad = 0,
+                        col.span.fill = "transparent",
+                        col.span.border.width = col.header.border.width,
+                        col.span.border.color = col.header.border.color,
+                        col.span.align.horizontal = "center",
+                        col.span.align.vertical = "middle",
+                        col.span.font.family = global.font.family,
+                        col.span.font.color = global.font.color,
+                        col.span.font.size = font.size,
+                        col.span.font.style = "normal",
+                        col.span.font.weight = "bold",
+                        col.span.pad = 0,
                         corner = "",
                         corner.class = "",
                         corner.fill = "transparent",
@@ -497,10 +520,22 @@ CreateCustomTable = function(x,
     # Column spans
     if (!is.null(col.spans))
     {
-        spans <- append(list(list(width = 1, label = '', class = 'spacer')), col.spans)
-        spans <- sapply(spans, function(cc) sprintf('<th colspan="%s" class="%s">%s</th>',
-                        cc[['width']], cc[['class']], cc[['label']]))
-        col.span.html <- paste0('<tr>', paste0(spans, collapse=''),'</tr>')
+        col.span.lengths <- sapply(col.spans, function(x) x[['width']])
+        col.span.styles <- addCSSclass(cata, "colspandefault", paste0("background: ", col.span.fill,
+            if (override.borders) "" else paste0("; border: ", col.span.border.width,
+            "px solid ", col.span.border.color),
+            ";", getPaddingCSS(tolower(col.span.align.horizontal), col.span.pad),
+            "; font-size: ", col.span.font.size, font.unit, "; font-style: ", col.span.font.style,
+            "; font-weight: ", col.span.font.weight, "; font-family: ", col.span.font.family,
+            "; color:", col.span.font.color, "; text-align: ", col.span.align.horizontal,
+            "; vertical-align: ", col.span.align.vertical, ";"), ncols, position = top.position)
+        for (i in 1:length(col.spans))
+            if (!is.null(col.spans[[i]]$class))
+                col.span.styles[i] <- paste(col.span.styles[i], col.spans[[i]]$class)
+
+        col.spans <- sapply(1:length(col.spans), function(i) sprintf('<th colspan="%s" class="%s">%s</th>',
+                            col.spans[[i]][['width']], col.span.styles[i], col.spans[[i]][['label']]))
+        col.span.html <- paste0('<tr>', paste0(col.spans, collapse=''),'</tr>')
     } else
         col.span.html <- ''
 
