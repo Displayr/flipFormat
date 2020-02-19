@@ -23,7 +23,7 @@ details + .panel-container {
 }
 
 details[open] + .panel-container {
-    min-height: 5em;
+    min-height: calc(40vh - 2em);
     max-height: inherit;
 }
 
