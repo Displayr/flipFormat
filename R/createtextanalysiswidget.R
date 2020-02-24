@@ -148,6 +148,16 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         {
             replace.ind <- replace.ind[order(nchar(subs[replace.ind,1]), decreasing = TRUE)]
             patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
+            if (nchar(patt[i]) > 20000)
+            {
+                # if the pattern is too long (> 20K characters), we truncate the pattern
+                # this may lead to some patterns being not highlighted
+                tmp.nchar <- nchar(subs[replace.ind,1])
+                tmp.cumsum <- cumsum(tmp.nchar)
+                tmp.ind <- which(tmp.cumsum <= 20000)
+                replace.ind <- replace.ind[tmp.ind]
+                patt[i] <- paste0("(", paste(escWord(subs[replace.ind,1]), sep="", collapse="|"), ")")
+            }
         }
         else
             patt[i] <- escWord(patt[i])
