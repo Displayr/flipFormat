@@ -103,6 +103,11 @@ test_that("Labels",
     z <- data.frame(a = 1:10, b = 1:10, c = 1:10)
     Labels(z) <- c("A", "B")
     expect_equal(as.character(Labels(z)), c("A","B", "c"))
+    # DS-2703 Data stacking creates a situation when a variable has a label but not a nem
+    # Return the label when name doesnt exist but Labels asks for it (flipRegression does this)
+    z <- c(1:2)
+    attr(z, "label") <- "C"
+    expect_equal(Labels(z, show.name = TRUE), "C")
 })
 
 
