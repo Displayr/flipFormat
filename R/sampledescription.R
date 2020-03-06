@@ -20,12 +20,14 @@
 #' that typically appears in a footer.
 #' @param resample Whether resampling is used whenever weights are applied.
 #' @param effective.sample.size The effective sample size when weights are applied.
+#' @param dummy.adjusted Logical to determine if dummy variables have been used in the sample.
 #' @return character description of sample
 #' @export
 SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, weighted = TRUE,
                               weight.label = "", missing, imputation.label = NULL, m,
                               variable.description = "", resample = FALSE,
-                              effective.sample.size = NULL)
+                              effective.sample.size = NULL,
+                              dummy.adjusted = FALSE)
 {
     # Warning if there is less than 50% data.
     missing.data.proportion <- if (n.subset)
@@ -45,14 +47,16 @@ SampleDescription <- function(n.total, n.subset, n.estimation, subset.label, wei
     if (variable.description != "")
         variable.description <- paste0(variable.description, " ")
     if (missing.data || (imputation && !is.null(imputation.label))) # imputation implies no missing data, NULL label if no missing data to impute
-        description <- paste(description, switch(missing,
+        description <- paste0(description, switch(missing,
                                                  "Error if missing data" = "",
-                                                 "Exclude cases with missing data" = "cases containing missing values have been excluded;",
-                                                 "Exclude cases with all missing data" = "cases containing all missing values have been excluded;",
+                                                 "Exclude cases with missing data" = " cases containing missing values have been excluded;",
+                                                 "Exclude cases with all missing data" = " cases containing all missing values have been excluded;",
                                                  "Imputation (replace missing values with estimates)" =
-                                                     paste0("missing values of ", variable.description, "variables have been imputed using ", imputation.label, ";"),
+                                                     paste0(" missing values of ", variable.description, "variables have been imputed using ", imputation.label, ";"),
                                                  "Multiple imputation" =
-                                                     paste0("multiple imputation (m = ", m, ", ", imputation.label, ") has been used to impute missing values of predictor variables;")))
+                                                     paste0(" multiple imputation (m = ", m, ", ", imputation.label, ") has been used to impute missing values of predictor variables;")))
+    if (dummy.adjusted)
+        description <- paste(description, paste0("missing values of ", variable.description, "variables have been adjusted using dummy variables;"))
     description
 }
 
@@ -97,4 +101,3 @@ BaseDescription <- function(description.of.n, n.total, n.subset, n.estimation, s
         ""
     paste0(description.of.n, base, ";", weight.text, ess.text)
 }
-

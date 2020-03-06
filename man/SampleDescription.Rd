@@ -16,7 +16,8 @@ SampleDescription(
   m,
   variable.description = "",
   resample = FALSE,
-  effective.sample.size = NULL
+  effective.sample.size = NULL,
+  dummy.adjusted = FALSE
 )
 }
 \arguments{
@@ -49,6 +50,8 @@ that typically appears in a footer.}
 \item{resample}{Whether resampling is used whenever weights are applied.}
 
 \item{effective.sample.size}{The effective sample size when weights are applied.}
+
+\item{dummy.adjusted}{Logical to determine if dummy variables have been used in the sample.}
 }
 \value{
 character description of sample
