@@ -19,3 +19,54 @@ test_that("Effective sample size", {
                 "data has been weighted (wgt); effective sample size: 127.07; ",
                 "cases containing missing values have been excluded;"))})
 
+test_that("Missing value strings", {
+    n.tot <- 123
+    n.sub <- 123
+    n.est <- 100
+    # Missing data excluded
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Exclude cases with missing data"),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, "; ",
+                        "cases containing missing values have been excluded;"))
+    # Error if missing
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Error if missing data"),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, ";"))
+    # Single imputation
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Imputation (replace missing values with estimates)",
+                                   imputation.label = "chained equations (predictive mean matching)",
+                                   variable.description = "predictor"),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, "; ",
+                        "missing values of predictor variables have been imputed using chained equations ",
+                        "(predictive mean matching);"))
+    # Multiple imputation
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Multiple imputation", m = 2,
+                                   imputation.label = "chained equations (predictive mean matching)",
+                                   variable.description = "predictor"),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, "; ",
+                        "multiple imputation (m = 2, chained equations (predictive mean matching)) has been ",
+                        "used to impute missing values of predictor variables;"))
+    # Dummy variable adjustment selected but no dummy variables created. No dummy variable message
+    # should appear in footer
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Dummy variable adjustment",
+                                   dummy.adjusted = FALSE),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, ";"))
+    # Expect dummy variable adjustment method message to appear
+    expect_equal(SampleDescription(n.total = n.tot, n.subset = n.sub,
+                                   weighted = FALSE, n.estimation = n.est,
+                                   missing = "Dummy variable adjustment",
+                                   dummy.adjusted = TRUE),
+                 paste0("n = ", n.est, " cases used in estimation of a total sample size of ", n.sub, "; ",
+                        "missing values of variables have been adjusted using dummy variables;"))
+
+
+})
+
