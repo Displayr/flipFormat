@@ -57,6 +57,8 @@ Labels <- function(x, names.to.lookup = NULL, show.name = FALSE)
             return(label)
         if (!show.name | is.null(label))
             return(name)
+        if (is.null(name) & !is.null(label))
+            return(label)
         paste0(label, " (", name, ")")
     }
     # Single variable case.
