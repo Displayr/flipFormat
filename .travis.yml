@@ -31,11 +31,6 @@ before_install:
   - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt-get -qq update
   - sudo apt-get install -y libgdal-dev libproj-dev python-protobuf libprotoc-dev libprotobuf-dev libv8-dev librsvg2-dev libmpfr-dev libnlopt-dev
-  - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
-  - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
-  - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
-  - rcode+="write.csv(out, file='test_results.csv'); "
-  - rcode+="quit(status = !identical(n.fail, 0), save='no');"
   - mkdir -p ~/.R/
   - echo "CXX = g++-6" >> ~/.R/Makevars
   - echo "CXXFLAGS = `R CMD config CXXFLAGS` -g0 -flto -Wno-unused-local-typedefs" >> ~/.R/Makevars
@@ -46,6 +41,14 @@ before_install:
   - export CLANG_EXTRA_ARG=""
   - if [[ $CXX = "clang++" ]] ;  then export CLANG_EXTRA_ARG=" -Qunused-arguments -fcolor-diagnostics " ; fi
   - sed -i.bak "s/O[0-3]/O$CXX_OLEVEL/" ~/.R/Makevars
+  - Rscript tools/travis_run_before_install.R
+# install debian libraries to match R-servers
+# update pre-installed packages to latest versions
+  - rcode="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
+  - rcode+="n.fail <- as.numeric(sub('Failed:[[:space:]]', '', out[grep('Failed:[[:space:]]', out)])); "
+  - rcode+="res <- as.data.frame(res); out <- data.frame(file = unlist(res[['file']]), warning = unlist(res[['warning']])); "
+  - rcode+="write.csv(out, file='test_results.csv'); "
+  - rcode+="quit(status = !identical(n.fail, 0), save='no');"
   - Rscript tools/travis_run_before_install.R
 
 r_packages:
