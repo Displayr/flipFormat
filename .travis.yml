@@ -55,6 +55,7 @@ r_packages:
   - devtools
   - roxygen2
   - covr
+  - Rcpp
   - StanHeaders
   - rstan
 
