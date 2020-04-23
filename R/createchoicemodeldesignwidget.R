@@ -51,10 +51,13 @@ CreateChoiceModelDesignWidget <- function(x,
     addStatistics(x, digits, nsmall, cata)
 
     ## Standard errors
-    cata("<details open=\"true\" class=\"details\"><summary class=\"summary\">Standard Errors</summary>\n")
-    cata(makeStandardErrorTable(x$standard.errors, x$attribute.levels,
-                                digits = digits, nsmall = nsmall), fill = TRUE)
-    cata("</details>")
+    if (!is.null(x$standard.errors))
+    {
+        cata("<details open=\"true\" class=\"details\"><summary class=\"summary\">Standard Errors</summary>\n")
+        cata(makeStandardErrorTable(x$standard.errors, x$attribute.levels,
+                                    digits = digits, nsmall = nsmall), fill = TRUE)
+        cata("</details>")
+    }
 
     ## Frequencies
     has.const.attr <- !is.null(x$n.constant.attributes) && x$n.constant.attributes > 0
