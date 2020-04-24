@@ -12,4 +12,5 @@ ria <- structure(list(raw.importance = c(0.118944441811052, 0.0739776637555959, 
 row.labels <- c("Fees", "Interest", "Phone", "Branch", "Online", "ATM")
 
 expect_error(print(ImportanceTable(ria, row.labels, title = "Relative Importance Analysis",
-                                           subtitle = "Overall", footer = "Footer")), NA)
+                                   subtitle = "Overall", footer = "Footer",
+                                   output.type = "Relative Importance Analysis")), NA)
