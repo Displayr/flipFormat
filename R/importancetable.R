@@ -44,7 +44,6 @@ ImportanceTable <- function(driver.analysis.output,
         column.names <- c("Importance", output.type, "Sample<br>Size", "<span style='font-style:italic;'>p</span>")
     }
 
-
     row.names(coef.df) <- row.labels
 
     formatters <- list(
