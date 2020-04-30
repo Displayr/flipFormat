@@ -124,3 +124,45 @@ test_that("ChoiceModelDesign print prior with sd given",
     out <- makePriorTable(prior, attr.list, 2, 2)
     expect_true(grepl("class=\"table-two-stat\"", out, fixed = TRUE))
 })
+
+test_that("CMD print when no standard errors; DS-2881",
+{
+    al <- structure(c("MECHANISM OF ACTION", "MOA 1", "MOA 2",
+                      "MOA 3", "", "", "", "ROA", "ROA 1", "ROA 2",
+                      "ROA 3", "", "", "", "DOSING FREQUENCY",
+                      "Twice weekly", "Every 2 weeks",
+                      "Every 2 weeks with option to\n  titrate to every 4 weeks",
+                      "Every 4 weeks", "Once daily", "Twice daily",
+                      "PRIMARY\n  ENDPOINT", "44%", "65%", "84%",
+                      "87%", "52%", "", "SAFETY", "Safety 1",
+                      "Safety 2", "", "", "", ""), .Dim = c(7L, 5L))
+    p <- structure(c("MOA 1", "MOA 2", "MOA 3", "MOA 1", "MOA 1", "MOA 2",
+                     "MOA 3", "MOA 2", "MOA 3", "", "", "", "", "",
+                     "", "", "", "", "", "", "", "", "", "", "", "",
+                     "", "", "", "ROA 3", "ROA 1", "ROA 1", "", "",
+                     "", "", "", "", "ROA 1", "ROA 3", "ROA 2",
+                     "ROA 1", "ROA 3", "ROA 1", "ROA 1", "", "", "",
+                     "", "", "", "", "", "", "", "ROA 3", "ROA 2",
+                     "ROA 1", "", "", "", "Once daily", "Twice daily",
+                     "", "", "", "", "", "", "", "", "", "", "",
+                     "Every 2 weeks",
+                     "Every 2 weeks with option to\n  titrate to every 4 weeks",
+                     "Every 4 weeks", "Once daily", "Twice daily",
+                     "Every 2 weeks",
+                     "Every 2 weeks with option to\n  titrate to every 4 weeks",
+                     "Every 4 weeks", "Once daily", "Twice daily", "",
+                     "", "", "", "", "", "", "", "52%", "52%", "84%",
+                     "84%", "44%", "52%", "52%", "84%", "84%", "65%",
+                     "87%", "84%", "84%", "84%", "84%", "84%", "52%",
+                     "52%", "52%", "52%", "52%", "", "", "", "", "",
+                     "", "", "", "", "", "", "", "", "", "", "", "",
+                     "", "", "", "", "", "", "", "", "", "", "", "",
+                     "Safety 1", "Safety 2", "Safety 2"), .Dim = c(29L,
+                                                                   5L))
+    expect_warning(cmd <- ChoiceModelDesign(design.algorithm = "Balanced overlap",
+                                            prohibitions = p, attribute.levels = al,
+                                            alternatives.per.question= 3,
+                                            n.questions = 6, n.versions = 10),
+                   "Standard errors cannot be calculated")
+    expect_error(print(cmd), NA)
+})
