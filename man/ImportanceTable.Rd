@@ -5,16 +5,25 @@
 \title{Create formattable table of importance scores}
 \usage{
 ImportanceTable(
-  importance,
+  driver.analysis.output,
   row.labels,
   title = "",
   subtitle = "",
   footer = "",
-  p.cutoff = 0.05
+  p.cutoff = 0.05,
+  output.type
 )
 }
 \arguments{
-\item{importance}{The importance object.}
+\item{driver.analysis.output}{A list containing the
+  relative importance scores and bootstrap computed p-values. relevant elements to be plotted.
+This covers the case of outputs of type
+\itemize{
+  \item \code{"Relative Importance Analysis"} and \code{"Shapley Regression"} where a list of importance
+scores is required.
+  \item \code{"Jaccard Coefficient"} where a list is required that includes the Jaccard Coefficients,
+  \item \code{"Correlation"} where a list of correlation and relative importance scores and computed p values.
+}}
 
 \item{row.labels}{The row labels corresponding to the predictor variable names/labels.}
 

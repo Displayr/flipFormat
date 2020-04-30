@@ -30,5 +30,5 @@ Remotes:
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
     renkun-ken/formattable,
     Displayr/rhtmlMetro
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Encoding: UTF-8
