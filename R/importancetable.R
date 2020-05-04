@@ -4,8 +4,8 @@
 #' @param driver.analysis.output A list containing the relative importance scores, output coefficients
 #'   and significance test values. The list needs to contain the following elements:
 #'   \itemize{
-#'   \item \code{importance}: A numeric vector of relative importance values based off the \code{raw.importance.scores}
-#'   \item \code{raw.importance.scores}: A numeric vector of coefficients, these could be the output coefficients from a Shapley
+#'   \item \code{importance}: A numeric vector of relative importance values based off the \code{raw.importance}
+#'   \item \code{raw.importance}: A numeric vector of coefficients, these could be the output coefficients from a Shapley
 #'    Regression or Relative Importance Analysis or the Jaccard Coefficients or Correlation coefficients if the \code{output.type} (see below) is
 #'    \code{"Shapley Regression"}, \code{"Relative Importance Analysis"}, \code{"Jaccard Coefficient"} or \code{"Correlation"}
 #'    respectively.
