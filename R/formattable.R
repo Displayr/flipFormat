@@ -97,6 +97,26 @@ lineBreakPlaceholder <- function()
     "Replace me with a line break"
 }
 
+#' @title Placeholder for html open bold tag <b>
+#' @description Insert this into table text in order to add the html open bold
+#' tag, since <b> will be escaped if inserted directly.
+#' @return Placeholder text for the open bold tag.
+#' @export
+OpenBoldTagPlaceholder <- function()
+{
+    "Replace me with an open bold tag"
+}
+
+#' @title Placeholder for html close bold tag </b>
+#' @description Insert this into table text in order to add the html close bold
+#' tag, since </b> will be escaped if inserted directly.
+#' @return Placeholder text for the close bold tag.
+#' @export
+CloseBoldTagPlaceholder <- function()
+{
+    "Replace me with a close bold tag"
+}
+
 #' @importFrom stringr str_locate_all
 thickenRowLines <- function(html, row.lines.to.thicken)
 {
@@ -250,6 +270,8 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
     tbl.html <- gsub(closeTagPlaceholder(), ">" , tbl.html)
     tbl.html <- gsub(circlePlaceholder(), "&#9679;" , tbl.html)
     tbl.html <- gsub(lineBreakPlaceholder(), "<br>" , tbl.html)
+    tbl.html <- gsub(OpenBoldTagPlaceholder(), "<b>" , tbl.html)
+    tbl.html <- gsub(CloseBoldTagPlaceholder(), "</b>" , tbl.html)
 
     ## DS-1445 Remove duplicate caption tag
     ## for (el in rev(tag.list))
