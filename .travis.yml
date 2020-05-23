@@ -18,9 +18,6 @@ matrix:
           packages:
             - g++-6
             - gfortran-6
-            - r-cran-stringi
-            - r-cran-xml2
-            - r-cran-rcppeigen
       env:
         - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6 && CXX_OLEVEL=2"
 
