@@ -15,7 +15,7 @@ CreateCustomTable(
   suppress.nan = TRUE,
   suppress.na = TRUE,
   transpose = FALSE,
-  col.widths = c("25\%"),
+  col.widths = if (is.null(rownames(x))) NULL else c("25\%"),
   row.height = NULL,
   col.header.height = "35px",
   num.header.rows = 0,
