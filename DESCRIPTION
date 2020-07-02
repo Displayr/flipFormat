@@ -23,7 +23,7 @@ Imports:
 Suggests:
     testthat,
     flipExampleData,
-    flipChoice@DS-2981
+    flipChoice
 Remotes:
     Displayr/flipExampleData,
     Displayr/flipU,
