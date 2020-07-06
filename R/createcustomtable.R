@@ -288,7 +288,7 @@ CreateCustomTable = function(x,
         num.header.rows <- nrows - 1
 
     # Format table contents
-    if (format.type == "Automatic" && any(grepl("%", attr(x, "statistic"))))
+    if (format.type == "Automatic" && any(grepl("%)?$", attr(x, "statistic"))))
         format.type <- "Percentage"
 
     content <- if (!is.numeric(x))                   x
