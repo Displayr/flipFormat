@@ -7,16 +7,16 @@ createBarFormatter <- function(decimals = 2, bar.shows.magnitude = FALSE, min.di
     if (is.na(max.display.value))
     {
         .get.bar.widths <- if (bar.shows.magnitude)
-            function(x) percent(abs(x) / max(abs(x), na.rm = TRUE))
+            function(x) percent(abs(x) / max(abs(x), na.rm = TRUE), as.output = FALSE)
         else
-            function(x) percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE))
+            function(x) percent(pmax(x, 0) / max(pmax(x, 0), na.rm = TRUE), as.output = FALSE)
     }
     else
     {
         .get.bar.widths <- if (bar.shows.magnitude)
-            function(x) percent(abs(x) / max.display.value)
+            function(x) percent(abs(x) / max.display.value, as.output = FALSE)
         else
-            function(x) percent(pmax(x, 0) / max.display.value)
+            function(x) percent(pmax(x, 0) / max.display.value, as.output = FALSE)
     }
 
     format.fn <- if (show.as.percent) FormatAsPercent else FormatAsReal
