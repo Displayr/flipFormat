@@ -123,7 +123,13 @@ addStatistics <- function(x, digits, nsmall, cata)
     cata("<td style=\"text-align: left;\">")
     cata(paste0("<b>Algorithm: </b>", x$design.algorithm, "</td>"))
     cata("<td style=\"text-align: left;\">")
-    cata(paste0("<b>D-error: </b>", format1(x$d.error), "</td></tr>"))
+    cata(paste0("<b>D-error: </b>", format1(x$d.error), "</td>"))
+    if (!is.null(x$a.error))
+    {
+        cata("<td style=\"text-align: left;\">")
+        cata(paste0("<b>A-error: </b>", format1(x$a.error), "</td>"))
+    }
+    cata("</tr>\n")
     if (!is.null(b.o$mean.version.balance))
     {  # not available for partial profiles with constant attributes
         cata(paste0("<tr><td style=\"text-align: left;\">",
@@ -133,7 +139,10 @@ addStatistics <- function(x, digits, nsmall, cata)
         cata(paste0("<td style=\"text-align: left;\">",
                     "<b>Across version balance: </b>",
                     format1(b.o$across.version.balance),
-                    "</td></tr>\n"))
+                    "</td>\n"))
+        if (!is.null(x$a.error))
+            cata("<td></td>\n")
+        cata("</tr>\n")
     }
 
     if (!is.null(b.o$across.version.pairwise.balance))
@@ -145,7 +154,10 @@ addStatistics <- function(x, digits, nsmall, cata)
       cata(paste0("<td style=\"text-align: left;\">",
                   "<b>Across version pairwise balance: </b>",
                   format1(b.o$across.version.pairwise.balance),
-                  "</td></tr>\n"))
+                  "</td>\n"))
+      if (!is.null(x$a.error))
+          cata("<td></td>\n")
+      cata("</tr>\n")
     }
     cata("</tbody></table></details>\n\n")
     invisible()
