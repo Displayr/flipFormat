@@ -53,7 +53,7 @@ r_packages:
 r_github_packages:
   - Displayr/flipDevTools
   - Displayr/flipExampleData
-  - Displayr/flipChoice@DS-2981
+  - Displayr/flipChoice
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
