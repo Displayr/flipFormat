@@ -150,6 +150,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     if (length(unclassified))
         cata(paste0(paste0(".w", unclassified, collapse = ","), "{ background-color: #CCCCCC;}\n"))
 
+    # Append the tokens to the span silently, including unclassified possibly removed earlier.
+    cata(paste0(".w", c(ngram.seq, unclassified), ":after{content: \"", n.grams[[1]], "\"}"))
     for (i in seq_len(n))
     {
         # Create regex for replacement
