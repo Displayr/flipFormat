@@ -99,41 +99,62 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Set up vector of different styles for each phrase
     n <- nrow(n.grams)
     n.rep <- ceiling(n/n.col)
-    i.offset <- 0.8/n.rep
     cc <- c(); bb <- c()
     bbi <- 0
     for (i in 0:(n.rep-1))
     {
         if (i > 0 && (i %% n.col) == 0)
             bbi <- bbi + 1
-        cc <- c(cc, setAlpha(col0, 0.5))
         bb <- c(bb, paste0("border: 2px ", bcol[n.col - (i%%n.col)], "; ",
-                    bshape[2 - (bbi%%2)], "border-style: ", bstyle[9 - (bbi%%9)], "; "))
+                           bshape[2 - (bbi%%2)], "border-style: ", bstyle[9 - (bbi%%9)], "; "))
     }
-    borderstyles <- rep(bb, each = length(col0))[1:n]
-    colors <- cc[1:n]
+    border.styles <- rep(bb, each = length(col0))[1:n]
+    ngram.seq <- seq(nrow(n.grams))
+    # Create colours
+    potential.colours <- setAlpha(col0, 0.5)
+    # Make mapping for the colour index
+    color.index <- 1:n %% n.col
+    # Replace the 0 remainder with length of number of colours
+    color.index[color.index == 0] <- n.col
+    # Remove Unclassified tokens since they get separate styling
+    unclassified <- which(n.grams[[1]] == "UNCLASSIFIED")
+    if (length(unclassified))
+    {
+        color.indices <- color.indices[-unclassified]
+        border.style.indices <- border.style.indices[-unclassified]
+        ngram.seq <- ngram.seq[-unclassified]
+    }
+    color.indices <- split(ngram.seq, potential.colours[color.index])
+    border.style.indices <- split(ngram.seq, border.styles)
+    border.style.classes <- vapply(names(border.style.indices),
+                                   function(x) paste0(paste0(".w", border.style.indices[[x]], collapse = ","),
+                                                      "{", x, "}", collapse = ""),
+                                   character(1), USE.NAMES = FALSE)
 
-    n.grams[,1] <- as.character(n.grams[,1])
+    color.classes <- vapply(names(color.indices),
+                            function(x) paste0(paste0(".w", color.indices[[x]], collapse = ","),
+                                               "{ background-color:", x, "}", collapse = ""),
+                            character(1), USE.NAMES = FALSE)
+    # Add styling (border styles, colours) to the file
+    cata(color.classes, border.style.classes,
+         paste0('[class*=w] { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
+    # Inspect n.grams
+    n.grams[[1]] <- as.character(n.grams[[1]])
     n.grams <- data.frame(n.grams, num.var = rep(1, n))
     orig.text <- text[["Original Text"]]
     trans.tokens <- text[["Transformed Text"]]
-    patt <- n.grams[,1]
-    tooltips <- n.grams[,1]
+    patt <- n.grams[[1]]
+    tooltips <- n.grams[[1]]
 
-    # Define CSS style for each ngram
+    # Styling for unclassified tokens
+    if (length(unclassified))
+        cata(paste0(paste0(".w", unclassified, collapse = ","), "{ background-color: #CCCCCC;}\n"))
+
     for (i in seq_len(n))
     {
-        # Define CSS class
-        if (n.grams[i,1] == "UNCLASSIFIED")
-            cata(paste0(".word", i, "{ white-space: pre-wrap; ",
-                    "line-height: 1.8em; background-color: #CCCCCC; }\n"))
-        else
-            cata(paste0(".word", i, "{ white-space: pre-wrap; ", borderstyles[i],
-                    "line-height: 1.8em; background-color: ", colors[i], "; }\n"))
-
         # Create regex for replacement
-        replace.ind <- which(subs[,2] == n.grams[i,1])
-        tmp.subs <- unique(subs[replace.ind,1]) # group different capitalizations counted separately
+        replace.ind <- which(subs[, 2] == n.grams[i, 1])
+        tmp.subs <- unique(subs[replace.ind, 1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
         tooltips[i] <- if (is.null(category.examples))
             paste0(escapeQuotesForHTML(tmp.subs), collapse = ", ")
@@ -255,7 +276,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                     raw.token <- substr(new.text, mpos,
                                         mpos + attr(mpos, "match.length") - 1)
                     raw.token.tags <- c(raw.token.tags,
-                                        paste0("<span class=\"word", ind[k], "\">",
+                                        paste0("<span class=\"w", ind[k], "\">",
                                                htmlText(raw.token),
                                                "</span>"))
                     placeholder <- UniquePlaceholders(1, padding = "-")
@@ -299,7 +320,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         for (k in 1:length(trans.tokens.j))
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
-                trans.tokens[[j]][k] <- paste0("<span class=\"word", ind[k], "\">",
+                trans.tokens[[j]][k] <- paste0("<span class=\"w", ind[k], "\">",
                                                htmlText(trans.tokens[[j]][k]),
                                                "</span>")
     }
@@ -309,7 +330,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<span class=\"word", 1:n, "\" title=\"",
+        n.grams[,1] <- paste0("<span class=\"w", 1:n, "\" title=\"",
                               tooltips, "\">", htmlText(n.grams[,1]), "</span>")
 
     # Replace any newline characters with <br>
@@ -319,6 +340,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
                 stringsAsFactors = FALSE)))
 }
+
+
 
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
