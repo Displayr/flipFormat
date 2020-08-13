@@ -397,7 +397,8 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
 
     names(t) <- tmp.col.names
     rownames(t) <- NULL
-    cata(kable(t, align = c(rep("c", NCOL(t.rownames)), "l", "l"), format = "html",
+
+    cata(kable(t, align = NULL, format = "html",
                escape = FALSE, table.attr = "class=\"text-analysis-table raw-text-table\""))
 
     cata("</div>") # end panel div
@@ -409,7 +410,7 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
     cata("<div class=\"panel ngrams-panel\">")
-    cata(kable(t, align = c("l", "c", "c"), format = "html", escape = FALSE,
+    cata(kable(t, align = NULL, format = "html", escape = FALSE,
                table.attr = "class=\"text-analysis-table categories-table\""))
     cata("</div>") # end panel div
 }
