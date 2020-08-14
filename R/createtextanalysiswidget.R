@@ -281,9 +281,9 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                     raw.token <- substr(new.text, mpos,
                                         mpos + attr(mpos, "match.length") - 1)
                     raw.token.tags <- c(raw.token.tags,
-                                        paste0("<span class=\"w", base.seq[ind[k]], "\">",
+                                        paste0("<a class=\"w", base.seq[ind[k]], "\">",
                                                # htmlText(raw.token),
-                                               "</span>"))
+                                               "</a>"))
                     placeholder <- UniquePlaceholders(1, padding = "-")
                     token.placeholders <- c(token.placeholders, placeholder)
                     new.text <- sub(patt[ind[k]], placeholder,
@@ -325,9 +325,9 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         for (k in 1:length(trans.tokens.j))
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
-                trans.tokens[[j]][k] <- paste0("<span class=\"w", base.seq[ind[k]], "\">",
+                trans.tokens[[j]][k] <- paste0("<a class=\"w", base.seq[ind[k]], "\">",
                                                # htmlText(trans.tokens[[j]][k]),
-                                               "</span>")
+                                               "</a>")
     }
 
     trans.text <- sapply(trans.tokens, paste, collapse = " ")
@@ -335,8 +335,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<span class=\"w", base.seq[1:n], "\" title=\"",
-                              tooltips, "\">",  "</span>") #htmlText(n.grams[,1]),
+        n.grams[,1] <- paste0("<a class=\"w", base.seq[1:n], "\" title=\"",
+                              tooltips, "\">",  "</a>") #htmlText(n.grams[,1]),
 
     # Replace any newline characters with <br>
     orig.text <- gsub("\r\n|\n\r|\n|\r", "<br>", orig.text)
