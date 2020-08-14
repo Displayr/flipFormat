@@ -110,6 +110,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     }
     border.styles <- rep(bb, each = length(col0))[1:n]
     ngram.seq <- seq(nrow(n.grams))
+    base.seq <- vapply(ngram.seq, decimalToBase, character(1))
     # Create colours
     potential.colours <- setAlpha(col0, 0.5)
     # Make mapping for the colour index
@@ -127,12 +128,12 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     color.indices <- split(ngram.seq, potential.colours[color.index])
     border.style.indices <- split(ngram.seq, border.styles)
     border.style.classes <- vapply(names(border.style.indices),
-                                   function(x) paste0(paste0(".w", border.style.indices[[x]], collapse = ","),
+                                   function(x) paste0(paste0(".w", base.seq[border.style.indices[[x]]], collapse = ","),
                                                       "{", x, "}", collapse = ""),
                                    character(1), USE.NAMES = FALSE)
 
     color.classes <- vapply(names(color.indices),
-                            function(x) paste0(paste0(".w", color.indices[[x]], collapse = ","),
+                            function(x) paste0(paste0(".w", base.seq[color.indices[[x]]], collapse = ","),
                                                "{ background-color:", x, "}", collapse = ""),
                             character(1), USE.NAMES = FALSE)
     # Add styling (border styles, colours) to the file
@@ -148,10 +149,12 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
 
     # Styling for unclassified tokens
     if (length(unclassified))
-        cata(paste0(paste0(".w", unclassified, collapse = ","), "{ background-color: #CCCCCC;}\n"))
+        cata(paste0(paste0(".w", base.seq[unclassified], collapse = ","),
+                    "{ background-color: #CCCCCC; content: \"UNCLASSIFIED\";}\n"))
+
 
     # Append the tokens to the span silently, including unclassified possibly removed earlier.
-    cata(paste0(".w", c(ngram.seq, unclassified), ":after{content: \"", n.grams[[1]], "\"}"))
+    cata(paste0(".w", base.seq[ngram.seq], ":after{content: \"", n.grams[[1]], "\"}"))
     for (i in seq_len(n))
     {
         # Create regex for replacement
@@ -278,8 +281,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                     raw.token <- substr(new.text, mpos,
                                         mpos + attr(mpos, "match.length") - 1)
                     raw.token.tags <- c(raw.token.tags,
-                                        paste0("<span class=\"w", ind[k], "\">",
-                                               htmlText(raw.token),
+                                        paste0("<span class=\"w", base.seq[ind[k]], "\">",
+                                               # htmlText(raw.token),
                                                "</span>"))
                     placeholder <- UniquePlaceholders(1, padding = "-")
                     token.placeholders <- c(token.placeholders, placeholder)
@@ -322,8 +325,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         for (k in 1:length(trans.tokens.j))
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
-                trans.tokens[[j]][k] <- paste0("<span class=\"w", ind[k], "\">",
-                                               htmlText(trans.tokens[[j]][k]),
+                trans.tokens[[j]][k] <- paste0("<span class=\"w", base.seq[ind[k]], "\">",
+                                               # htmlText(trans.tokens[[j]][k]),
                                                "</span>")
     }
 
@@ -332,8 +335,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<span class=\"w", 1:n, "\" title=\"",
-                              tooltips, "\">", htmlText(n.grams[,1]), "</span>")
+        n.grams[,1] <- paste0("<span class=\"w", base.seq[1:n], "\" title=\"",
+                              tooltips, "\">",  "</span>") #htmlText(n.grams[,1]),
 
     # Replace any newline characters with <br>
     orig.text <- gsub("\r\n|\n\r|\n|\r", "<br>", orig.text)

@@ -178,5 +178,23 @@ hasTextFromIndexOnwards <- function(labels, index, non.word.chars)
     result
 }
 
-
+possible.chars <- c(0:9, letters, "-", "_")
+names(possible.chars) <- 0:37
+# Convert index to higher counting base for character efficiency in class names
+# valid css identifier name seem to be able to use base 64 (0-9,a-z,A-Z,- and _)
+# see for example the first bullet point at https://www.w3.org/TR/CSS21/syndata.html#characters
+# However, HTML class names seem to be case insensitive (so "wA" would be the same as "wa")
+#' @param x Integer vector, typically a sequence from 1:n that is to be converted to base64
+#' @noRd
+decimalToBase <- function(x, base = 38)
+{
+    out <- ""
+    while (x)
+    {
+        r <- as.character(x %% base)
+        x <- x %/% base
+        out <- paste0(possible.chars[r], out)
+    }
+    out
+}
 
