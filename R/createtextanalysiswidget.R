@@ -161,12 +161,17 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         replace.ind <- which(subs[, 2] == n.grams[i, 1])
         tmp.subs <- unique(subs[replace.ind, 1]) # group different capitalizations counted separately
         n.grams[i,3] <- length(tmp.subs)
+        tmp.subs <- tmp.subs[!tmp.subs == n.grams[i, 1]]
+        if (length(tmp.subs))
+            tmp.subs <- paste0(length(tmp.subs),
+                               ngettext(length(tmp.subs), " Variant: ", " Variants: "),
+                               paste0(escapeQuotesForHTML(tmp.subs), collapse = ", "), "\n")
         tooltips[i] <- if (is.null(category.examples))
             paste0(escapeQuotesForHTML(tmp.subs), collapse = ", ")
         else
-            paste0(paste0(escapeQuotesForHTML(tmp.subs), collapse = ", "),
-                   "\nExample(s):\n",
-                   paste0(escapeQuotesForHTML(category.examples[[i]]), collapse = "\n"))
+            paste0(tmp.subs,
+                   paste(length(category.examples[[i]]), ngettext(length(category.examples[[i]]), "Example:\n", "Examples:\n"), collapse = " "),
+                   paste0(escapeQuotesForHTML(sQuote(category.examples[[i]], q = FALSE)), collapse = "\n"))
 
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")
