@@ -1028,12 +1028,14 @@ htmlText <- function(html)
     gsub("\r\n|\n\r|\n|\r", "<br>", htmlEscape(html))
 }
 
+#' @importFrom minifyHTML minifyHTML
 createWidgetFromFile <- function(tfile)
 {
     # This is required to stop the "incomplete final line" warning from
     # readLines
     cat("", fill = TRUE, file = tfile, append = TRUE)
 
-    html <- paste(readLines(tfile), collapse = "\n")
+    input <- paste0(readLines(tfile), collapse = "\n")
+    html <- minifyHTML::minifyHTML(input)
     rhtmlMetro::Box(html, text.as.html = TRUE)
 }
