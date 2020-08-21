@@ -172,7 +172,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         else
             paste0(tmp.subs,
                    paste(length(category.examples[[i]]), ngettext(length(category.examples[[i]]), "Example:\n", "Examples:\n"), collapse = " "),
-                   paste0(escapeQuotesForHTML(sQuote(category.examples[[i]], q = FALSE)), collapse = "\n"))
+                   paste0(escapeQuotesForHTML(category.examples[[i]]), collapse = "\n"))
 
         if (length(replace.ind) == 1)
             patt[i] <- paste0("(", escWord(subs[replace.ind,1]), ")")

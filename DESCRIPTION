@@ -19,6 +19,8 @@ Imports:
     knitr,
     sparkline,
     stringr,
+    stringi,
+    minifyHTML,
     rhtmlMetro
 Suggests:
     testthat,
