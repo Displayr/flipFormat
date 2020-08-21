@@ -82,6 +82,7 @@ replaceMissingWithEmpty <- function(raw.and.normalized.text)
     raw.and.normalized.text
 }
 
+#' @importFrom stringi stri_rand_strings
 #' @importFrom grDevices rgb col2rgb grey
 #' @importFrom colorspace lighten darken
 #' @importFrom flipU UniquePlaceholders EscapeRegexSymbols
@@ -274,7 +275,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         # replace tokens with placeholders
         n.tokens <- length(trans.tokens.j)
         raw.token.tags <- character(0)
-        token.placeholders <- character(0)
+        token.placeholders <- paste0("-", make.unique(stri_rand_strings(n.tokens, 64)), "-")
         for (k in 1:n.tokens)
         {
             if (!is.na(ind[k]))
@@ -291,9 +292,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                     else # Otherwise if the raw token is not the same, keep the raw token
                         tag <- paste0("<a class=\"s", base.seq[ind[k]], "\">", htmlText(raw.token), "</a>")
                     raw.token.tags <- c(raw.token.tags, tag)
-                    placeholder <- UniquePlaceholders(1, padding = "-")
-                    token.placeholders <- c(token.placeholders, placeholder)
-                    new.text <- sub(patt[ind[k]], placeholder,
+                    new.text <- sub(patt[ind[k]], token.placeholders[k],
                                     new.text, ignore.case = TRUE, perl = TRUE)
                 }
             }
