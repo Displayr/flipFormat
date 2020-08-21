@@ -347,6 +347,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Replace any newline characters with <br>
     orig.text <- gsub("\r\n|\n\r|\n|\r", "<br>", orig.text)
 
+    # Prevent incomplete final line warning
+    cata("\n")
     return(list(n.grams = n.grams,
                 text = data.frame('Raw text' = orig.text, 'Normalized text' = trans.text,
                 stringsAsFactors = FALSE)))
