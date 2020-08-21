@@ -27,6 +27,7 @@ Suggests:
     flipExampleData,
     flipChoice
 Remotes:
+    csgillespie/minifyHTML,
     Displayr/flipExampleData,
     Displayr/flipU,
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
