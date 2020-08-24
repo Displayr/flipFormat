@@ -95,33 +95,30 @@ details[open] + .panel-container {
     text-align: left;
 }
 
-.categories-table td:nth-of-type(1) {
+.categories-table td:nth-child(n+2) {
+    text-align: center; white-space: nowrap;
+}
+
+.categories-table th {
     text-align: left;
 }
 
-.categories-table td:nth-of-type(2) {
-    white-space: nowrap;
+.categories-table th:nth-child(n+2) {
     text-align: center;
 }
 
-.categories-table td:nth-of-type(3) {
-    white-space: nowrap;
-    text-align: center;
+.raw-text-table td {
+    text-align: left;
 }
-
 .raw-text-table td:nth-of-type(1) {
     white-space: nowrap;
+}
+.raw-text-table td:nth-last-child(n+3) {
     text-align: center;
 }
-
-.raw-text-table td:nth-of-type(3) {
-    text-align: left;
+.raw-text-table th:nth-child(n+1){
+    text-align:left;
 }
-
-.raw-text-table td:nth-of-type(4) {
-    text-align: left;
-}
-
 
 .low-freq-table td:nth-of-type(2) {
     white-space: nowrap;
