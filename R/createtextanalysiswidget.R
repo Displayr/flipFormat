@@ -362,8 +362,6 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                 stringsAsFactors = FALSE)))
 }
 
-
-
 #  Escapes characters from pattern (e.g. '"', ''', '+').
 #  This is needed in regular expressions unless 'fixed = TRUE' is used
 #  Usually we only want to match whole words, but wordbreak ('\b')
