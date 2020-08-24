@@ -276,6 +276,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         n.tokens <- length(trans.tokens.j)
         raw.token.tags <- character(0)
         token.placeholders <- paste0("-", make.unique(stri_rand_strings(n.tokens, 64)), "-")
+        found <- logical(n.tokens)
         for (k in 1:n.tokens)
         {
             if (!is.na(ind[k]))
@@ -284,6 +285,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                                 ignore.case = TRUE, perl = TRUE)
                 if (mpos != -1)
                 {
+                    found[k] <- TRUE
                     raw.token <- substr(new.text, mpos,
                                         mpos + attr(mpos, "match.length") - 1)
                     # If raw token same as n.grams token get the content from the .wXXXX css class
@@ -297,6 +299,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                 }
             }
         }
+        token.placeholders <- token.placeholders[found]
 
         # replace token placeholders with tags
         for (k in seq(raw.token.tags))
