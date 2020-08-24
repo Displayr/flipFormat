@@ -139,7 +139,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                             character(1), USE.NAMES = FALSE)
     # Add styling (border styles, colours) to the file
     cata(color.classes, border.style.classes,
-         paste0('[class^=s] { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
+         paste0('[class^=s]:not(.summary) { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
     # Inspect n.grams
     n.grams[[1]] <- as.character(n.grams[[1]])
     n.grams <- data.frame(n.grams, num.var = rep(1, n))
