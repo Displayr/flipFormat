@@ -139,7 +139,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                             character(1), USE.NAMES = FALSE)
     # Add styling (border styles, colours) to the file
     cata(color.classes, border.style.classes,
-         paste0('[class*=s] { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
+         paste0('[class^=s] { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
     # Inspect n.grams
     n.grams[[1]] <- as.character(n.grams[[1]])
     n.grams <- data.frame(n.grams, num.var = rep(1, n))
@@ -341,7 +341,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<a class=\"w", base.seq[1:n], " s", base.seq[1:n], "\" title=\"",
+        n.grams[,1] <- paste0("<a class=\"s", base.seq[1:n], " w", base.seq[1:n], "\" title=\"",
                               tooltips, "\">",  "</a>") #htmlText(n.grams[,1]),
 
     # Replace any newline characters with <br>
