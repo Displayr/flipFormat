@@ -122,9 +122,9 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     unclassified <- which(n.grams[[1]] == "UNCLASSIFIED")
     if (length(unclassified))
     {
-        color.indices <- color.indices[-unclassified]
-        border.style.indices <- border.style.indices[-unclassified]
         ngram.seq <- ngram.seq[-unclassified]
+        color.index <- color.index[-unclassified]
+        border.styles <- border.styles[-unclassified]
     }
     color.indices <- split(ngram.seq, potential.colours[color.index])
     border.style.indices <- split(ngram.seq, border.styles)
@@ -148,14 +148,19 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     patt <- n.grams[[1]]
     tooltips <- n.grams[[1]]
 
+    n.gram.content <- n.grams[[1]]
     # Styling for unclassified tokens
     if (length(unclassified))
+    {
         cata(paste0(paste0(".s", base.seq[unclassified], collapse = ","),
-                    "{ background-color: #CCCCCC; content: \"UNCLASSIFIED\";}\n"))
+                    "{ background-color: #CCCCCC;}"))
+        cata(paste0(paste0(".w", base.seq[unclassified], collapse = ", "),
+                    ":after{content: \"UNCLASSIFIED\";}\n"))
+        n.gram.content <- n.gram.content[-unclassified]
+    }
 
-
-    # Append the tokens to the span silently, including unclassified possibly removed earlier.
-    cata(paste0(".w", base.seq[ngram.seq], ":after{content: \"", n.grams[[1]], "\"}"))
+    # Append the tokens to the span silently
+    cata(paste0(".w", base.seq[ngram.seq], ":after{content: \"", n.gram.content, "\"}"))
     for (i in seq_len(n))
     {
         # Create regex for replacement
