@@ -115,7 +115,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create colours
     potential.colours <- setAlpha(col0, 0.5)
     # Make mapping for the colour index
-    color.index <- 1:n %% n.col
+    color.index <- 0:n %% n.col + 1
     # Replace the 0 remainder with length of number of colours
     color.index[color.index == 0] <- n.col
     # Remove Unclassified tokens since they get separate styling
