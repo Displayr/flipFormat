@@ -1008,3 +1008,45 @@ createWidgetFromFile <- function(tfile)
     html <- paste(readLines(tfile), collapse = "\n")
     rhtmlMetro::Box(html, text.as.html = TRUE)
 }
+
+#' Extract the transformed text from the transformed tokens.
+#'
+#' Convert the transformed tokenized element to transformed text. Adjusting for the blanks after
+#' transformation as necessary.
+#' @param word.bag The object of class \code{\link[flipTextAnalysis]{wordBag}} to create the transformed text from the transformed
+#' tokenized list element.
+#' @return A character vector with the transformed text determined from the list of tokens
+#' @export
+CreateTransformedText <- function(word.bag)
+{
+    if (!is(word.bag, "wordBag"))
+        stop("Transformed text can only be created from an object of class: wordBag")
+    # For legacy outputs, return the already determined transformed text.
+    if (!is.null(word.bag$transformed.text))
+        return(word.bag$transformed.text)
+    subset <- word.bag$subset
+    text <- tolower(word.bag$original.text)
+    n.subset <- sum(subset)
+    n.cases <- length(text)
+    # Convert the transformed tokenized to a list of characters
+    if (n.subset < n.cases)
+    {
+        transformed.tokenized <- vector("list", length = n.cases)
+        transformed.tokenized[subset] <- decodeNumericText(word.bag$transformed.tokenized[subset],
+                                                           levels = attr(word.bag$transformed.tokenized, "levels"))
+    } else
+        transformed.tokenized <- decodeNumericText(word.bag$transformed.tokenized)
+    # Determine if there are any cases with blank entries after transformation
+    blank.after.transform <- word.bag$blank.after.transform
+    transformed.text <- vapply(transformed.tokenized, paste, character(1),
+                               collapse = " ")
+
+    if (n.subset < length(text))
+    {
+        transformed.text[!subset] <- text[!subset]
+        transformed.text[subset][blank.after.transform] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
+    } else
+        transformed.text[blank.after.transform] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
+
+    transformed.text
+}

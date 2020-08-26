@@ -1,7 +1,7 @@
 Package: flipFormat
 Type: Package
 Title: Formatting of R outputs
-Version: 1.7.3
+Version: 1.7.4
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Formatting to be used in print statements and other outputs. E.g.,
@@ -30,5 +30,5 @@ Remotes:
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
     Displayr/formattable,
     Displayr/rhtmlMetro
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Encoding: UTF-8
