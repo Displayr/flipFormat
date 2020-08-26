@@ -1013,31 +1013,33 @@ createWidgetFromFile <- function(tfile)
 #'
 #' Convert the transformed tokenized element to transformed text. Adjusting for the blanks after
 #' transformation as necessary.
-#' @param word.bag The object of class \code{\link[flipTextAnalysis]{wordBag}} to create the transformed text from the transformed
-#' tokenized list element.
+#' @param x Either a object of class \code{wordBag} or a list with a
+#' \code{transformed.text} element. In the former, the transformed text is created  from the transformed
+#' tokenized list element. If the latter then the \code{transformed.text} element is returned.
 #' @return A character vector with the transformed text determined from the list of tokens
 #' @export
-CreateTransformedText <- function(word.bag)
+CreateTransformedText <- function(x)
 {
-    if (!is(word.bag, "wordBag"))
+    # For legacy outputs or other outputs that already have the element
+    # then return word.bags
+    if (!is.null(x$transformed.text))
+        return(x$transformed.text)
+    if (!inherits(x, "wordBag"))
         stop("Transformed text can only be created from an object of class: wordBag")
-    # For legacy outputs, return the already determined transformed text.
-    if (!is.null(word.bag$transformed.text))
-        return(word.bag$transformed.text)
-    subset <- word.bag$subset
-    text <- tolower(word.bag$original.text)
+    subset <- x$subset
+    text <- tolower(x$original.text)
     n.subset <- sum(subset)
     n.cases <- length(text)
     # Convert the transformed tokenized to a list of characters
     if (n.subset < n.cases)
     {
         transformed.tokenized <- vector("list", length = n.cases)
-        transformed.tokenized[subset] <- decodeNumericText(word.bag$transformed.tokenized[subset],
-                                                           levels = attr(word.bag$transformed.tokenized, "levels"))
+        transformed.tokenized[subset] <- decodeNumericText(x$transformed.tokenized[subset],
+                                                           levels = attr(x$transformed.tokenized, "levels"))
     } else
-        transformed.tokenized <- decodeNumericText(word.bag$transformed.tokenized)
+        transformed.tokenized <- decodeNumericText(x$transformed.tokenized)
     # Determine if there are any cases with blank entries after transformation
-    blank.after.transform <- word.bag$blank.after.transform
+    blank.after.transform <- x$blank.after.transform
     transformed.text <- vapply(transformed.tokenized, paste, character(1),
                                collapse = " ")
 
@@ -1049,4 +1051,30 @@ CreateTransformedText <- function(word.bag)
         transformed.text[blank.after.transform] <- "<NO_WORDS_REMAIN_AFTER_PROCESSING>"
 
     transformed.text
+}
+
+#' Function to convert the list of numerically encoded text back to a list of character vectors
+#' (or as a character vector from a factor). Typical use case is a list of integer vectors to represent
+#' different text elements. The integers are mapped to the text elements using a levels attribute.
+#' If the levels attribute is not found, then a second argument is inspected. The second argument is useful when
+#' a list has been subsetted and the attribute of the original list is lost.
+#' @param tokens A list of integer vectors or a single factor
+#' @param levels The character vector whose indices contain the characters to decode the tokens.
+#' @noRd
+decodeNumericText <- function(text, levels = NULL)
+{
+    if (inherits(text, "list"))
+    {
+        if (is.null(levels))
+            levels <- attr(text, "levels")
+        if (is.null(levels))
+            return(text)
+        text <- lapply(text, function(x) levels[x])
+    } else if (inherits(text, "factor"))
+        text <- as.character(text)
+    else if (inherits(text, "character"))
+        text
+    else
+        stop("Unexpected input: text needs to be a character vector, list or a factor")
+    text
 }
