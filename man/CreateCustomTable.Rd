@@ -104,6 +104,7 @@ CreateCustomTable(
   corner.pad = 0,
   footer = "",
   footer.height = paste0(footer.font.size + 5, font.unit),
+  footer.lineheight = "normal",
   footer.fill = "transparent",
   footer.align.horizontal = "center",
   footer.align.vertical = "bottom",
@@ -359,6 +360,10 @@ horizontal alignment is "left" or "right".}
 \item{footer}{Optional text shown as a footer below the table}
 
 \item{footer.height}{Height of the footer (ignored if no text in footer).}
+
+\item{footer.lineheight}{Controls spacing between the lines of text in the
+footer. It can be specified in multiple ways but as a unitless number
+it is applied as a multiple to the font size.}
 
 \item{footer.fill}{Background color of the footer in the table.}
 

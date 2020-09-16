@@ -128,6 +128,9 @@
 #' @param footer Optional text shown as a footer below the table
 #' @param footer.fill Background color of the footer in the table.
 #' @param footer.height Height of the footer (ignored if no text in footer).
+#' @param footer.lineheight Controls spacing between the lines of text in the
+#'   footer. It can be specified in multiple ways but as a unitless number
+#'   it is applied as a multiple to the font size.
 #' @param footer.align.horizontal Horizontal alignment of text in table footer.
 #' @param footer.align.vertical Vertical alignment of text in table footer.
 #' @param footer.font.family Font family of text in table footer.
@@ -272,6 +275,7 @@ CreateCustomTable = function(x,
                         corner.pad = 0,
                         footer = "",
                         footer.height = paste0(footer.font.size + 5, font.unit),
+                        footer.lineheight = "normal",
                         footer.fill = "transparent",
                         footer.align.horizontal = "center",
                         footer.align.vertical = "bottom",
@@ -628,6 +632,7 @@ CreateCustomTable = function(x,
         tot.columns <- (ncols + show.row.headers + !is.null(row.spans))
         cata(paste0('<tr><th colspan="', tot.columns, '" style="',
             'height:', footer.height,
+            '; line-height:', footer.lineheight,
             '; background-color:', footer.fill,
             '; font-family:', footer.font.family,
             '; color:', footer.font.color,
