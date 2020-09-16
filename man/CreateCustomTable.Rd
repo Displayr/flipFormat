@@ -99,6 +99,16 @@ CreateCustomTable(
   corner.font.weight = "bold",
   corner.font.style = "normal",
   corner.pad = 0,
+  footer = "",
+  footer.height = "10px",
+  footer.fill = "transparent",
+  footer.align.horizontal = "center",
+  footer.align.vertical = "bottom",
+  footer.font.family = global.font.family,
+  footer.font.color = global.font.color,
+  footer.font.size = 8,
+  footer.font.weight = "normal",
+  footer.font.style = "normal",
   col.header.classes = "",
   row.header.classes = "",
   col.classes = list(),
@@ -333,6 +343,26 @@ horizontal alignment is "left" or "right".}
 
 \item{corner.pad}{Space between text and cell border in pixels. This is only used if the
 horizontal alignment is "left" or "right".}
+
+\item{footer}{Optional text shown as a footer below the table}
+
+\item{footer.height}{Height of the footer (ignored if no text in footer).}
+
+\item{footer.fill}{Background color of the footer in the table.}
+
+\item{footer.align.horizontal}{Horizontal alignment of text in table footer.}
+
+\item{footer.align.vertical}{Vertical alignment of text in table footer.}
+
+\item{footer.font.family}{Font family of text in table footer.}
+
+\item{footer.font.color}{Font color of text in table footer.}
+
+\item{footer.font.size}{Font size of text in table footer.}
+
+\item{footer.font.weight}{One of "normal" or "bold".}
+
+\item{footer.font.style}{One of "normal" or "italic".}
 
 \item{col.header.classes}{CSS classes of column headers. The class definition should be added to
 \code{custom.css}. This overrides \code{col.header.fill},

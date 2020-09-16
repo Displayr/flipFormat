@@ -119,6 +119,16 @@
 #' @param corner.font.style One of "normal" or "italic".
 #' @param corner.pad Space between text and cell border in pixels. This is only used if the
 #'  horizontal alignment is "left" or "right".
+#' @param footer Optional text shown as a footer below the table
+#' @param footer.fill Background color of the footer in the table.
+#' @param footer.height Height of the footer (ignored if no text in footer).
+#' @param footer.align.horizontal Horizontal alignment of text in table footer.
+#' @param footer.align.vertical Vertical alignment of text in table footer.
+#' @param footer.font.family Font family of text in table footer.
+#' @param footer.font.color Font color of text in table footer.
+#' @param footer.font.size Font size of text in table footer.
+#' @param footer.font.weight One of "normal" or "bold".
+#' @param footer.font.style One of "normal" or "italic".
 #' @param banded.rows Whether to have banded rows
 #' @param banded.cols Whether to have banded columns
 #' @param banded.odd.fill Background of cells in odd rows or columns when \code{banded.rows} or \code{banded.cols}.
@@ -251,6 +261,16 @@ CreateCustomTable = function(x,
                         corner.font.weight = "bold",
                         corner.font.style = "normal",
                         corner.pad = 0,
+                        footer = "",
+                        footer.height = "10px",
+                        footer.fill = "transparent",
+                        footer.align.horizontal = "center",
+                        footer.align.vertical = "bottom",
+                        footer.font.family = global.font.family,
+                        footer.font.color = global.font.color,
+                        footer.font.size = 8,
+                        footer.font.weight = "normal",
+                        footer.font.style = "normal",
                         col.header.classes = "",
                         row.header.classes = "",
                         col.classes = list(),
@@ -586,6 +606,23 @@ CreateCustomTable = function(x,
     body.html <- paste0(sprintf('<tr>%s</tr>\n',
                     apply(cell.html, 1, paste0, collapse = '')), collapse='')
     cata(body.html)
+
+    # Optional footer
+    if (nchar(footer) > 0)
+    {
+        tot.columns <- (ncols + show.row.headers + !is.null(row.spans))
+        cata(paste0('<tr><th colspan="', tot.columns, '" style="',
+            'height:', footer.height,
+            '; background-color:', footer.fill, 
+            '; font-family:', footer.font.family,
+            '; color:', footer.font.color,
+            '; font-size:', footer.font.size, font.unit,
+            '; font-style:', footer.font.style,
+            '; font-weight:', footer.font.weight,
+            '; text-align:', footer.align.horizontal,
+            '; vertical-align:', footer.align.vertical,
+            '">', footer, '</th></tr>\n'))
+    }
     cata("</table>\n")
     cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
