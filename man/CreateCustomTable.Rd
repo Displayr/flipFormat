@@ -25,6 +25,9 @@ CreateCustomTable(
   font.unit = "px",
   border.color = "#FFFFFF",
   border.width = 1,
+  border.collapse = TRUE,
+  border.row.gap = 2,
+  border.column.gap = 2,
   cell.prefix = "",
   cell.suffix = "",
   cell.fill = "#FFFFFF",
@@ -100,7 +103,7 @@ CreateCustomTable(
   corner.font.style = "normal",
   corner.pad = 0,
   footer = "",
-  footer.height = "10px",
+  footer.height = paste0(footer.font.size + 5, font.unit),
   footer.fill = "transparent",
   footer.align.horizontal = "center",
   footer.align.vertical = "bottom",
@@ -185,6 +188,15 @@ points ("pt"), which will be consistent with font sizes in text boxes.}
 \item{border.color}{Color of all borders. Will be overriden if specific elements are set.}
 
 \item{border.width}{Width of borders (in pixels) in all cells. Will be overriden if specific elements are set.}
+
+\item{border.collapse}{Logical; whether the borders of adjacent cells
+should be shown as a single line or separate lines.}
+
+\item{border.row.gap}{Numeric; the space between the borders
+separating different rows. Only used if \code{border.collapse} is false.}
+
+\item{border.column.gap}{Numeric; the space between the borders
+separating different columns. Only used if \code{border.collapse} is false.}
 
 \item{cell.prefix}{Character value/vector/matrix that is prepended before the cell values.}
 

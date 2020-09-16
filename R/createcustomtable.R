@@ -26,6 +26,12 @@
 #'  points ("pt"), which will be consistent with font sizes in text boxes.
 #' @param border.color Color of all borders. Will be overriden if specific elements are set.
 #' @param border.width Width of borders (in pixels) in all cells. Will be overriden if specific elements are set.
+#' @param border.collapse Logical; whether the borders of adjacent cells
+#'   should be shown as a single line or separate lines.
+#' @param border.row.gap Numeric; the space between the borders
+#'   separating different rows. Only used if \code{border.collapse} is false.
+#' @param border.column.gap Numeric; the space between the borders
+#'   separating different columns. Only used if \code{border.collapse} is false.
 #' @param cell.prefix Character value/vector/matrix that is prepended before the cell values.
 #' @param cell.suffix Character value/vector/matrix that is appended after the cell values.
 #' @param cell.fill Background color of the cells in the table.
@@ -187,6 +193,9 @@ CreateCustomTable = function(x,
                         font.unit = "px",
                         border.color = "#FFFFFF",
                         border.width = 1,
+                        border.collapse = TRUE,
+                        border.row.gap = 2,
+                        border.column.gap = 2,
                         cell.prefix = "",
                         cell.suffix = "",
                         cell.fill = "#FFFFFF",
@@ -262,7 +271,7 @@ CreateCustomTable = function(x,
                         corner.font.style = "normal",
                         corner.pad = 0,
                         footer = "",
-                        footer.height = "10px",
+                        footer.height = paste0(footer.font.size + 5, font.unit),
                         footer.fill = "transparent",
                         footer.align.horizontal = "center",
                         footer.align.vertical = "bottom",
@@ -376,10 +385,16 @@ CreateCustomTable = function(x,
     cata("<style>\n")
     cata(".main-container{ background: transparent; height: 100%; overflow-x: hidden; overflow-y:",
          if (!is.null(row.height)) "auto" else "hidden", "}\n")
-    cata("table { border-collapse: collapse; table-layout: fixed; ",
-                 "postion: relative; width: 100%; ",
-                 "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
-                 "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+    if (is.numeric(border.row.gap))
+        border.row.gap <- paste0(border.row.gap, "px")
+    if (is.numeric(border.column.gap))
+        border.column.gap <- paste0(border.column.gap, "px")
+    cata("table { table-layout: fixed; border-collapse: ",
+         if (border.collapse) "collapse; " else "separate; ",
+         "border-spacing: ", border.column.gap, border.row.gap, ";",
+         "position: relative; width: 100%; ",
+         "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
+         "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
 
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
@@ -613,7 +628,7 @@ CreateCustomTable = function(x,
         tot.columns <- (ncols + show.row.headers + !is.null(row.spans))
         cata(paste0('<tr><th colspan="', tot.columns, '" style="',
             'height:', footer.height,
-            '; background-color:', footer.fill, 
+            '; background-color:', footer.fill,
             '; font-family:', footer.font.family,
             '; color:', footer.font.color,
             '; font-size:', footer.font.size, font.unit,
