@@ -49,7 +49,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
                                            examples, text.raw.by.categorization,
                                            missing, footer, cata)
 {
-    max.rows <- 3000
+    max.rows <- 1000
 
     n.text <- if (all(round(sizes) == sizes))
         FormatWithDecimals(sizes, decimal.places = 0)
