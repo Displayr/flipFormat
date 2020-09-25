@@ -25,6 +25,9 @@ CreateCustomTable(
   font.unit = "px",
   border.color = "#FFFFFF",
   border.width = 1,
+  border.collapse = TRUE,
+  border.row.gap = 2,
+  border.column.gap = 2,
   cell.prefix = "",
   cell.suffix = "",
   cell.fill = "#FFFFFF",
@@ -99,6 +102,17 @@ CreateCustomTable(
   corner.font.weight = "bold",
   corner.font.style = "normal",
   corner.pad = 0,
+  footer = "",
+  footer.height = paste0(footer.font.size + 5, font.unit),
+  footer.lineheight = "normal",
+  footer.fill = "transparent",
+  footer.align.horizontal = "center",
+  footer.align.vertical = "bottom",
+  footer.font.family = global.font.family,
+  footer.font.color = global.font.color,
+  footer.font.size = 8,
+  footer.font.weight = "normal",
+  footer.font.style = "normal",
   col.header.classes = "",
   row.header.classes = "",
   col.classes = list(),
@@ -175,6 +189,15 @@ points ("pt"), which will be consistent with font sizes in text boxes.}
 \item{border.color}{Color of all borders. Will be overriden if specific elements are set.}
 
 \item{border.width}{Width of borders (in pixels) in all cells. Will be overriden if specific elements are set.}
+
+\item{border.collapse}{Logical; whether the borders of adjacent cells
+should be shown as a single line or separate lines.}
+
+\item{border.row.gap}{Numeric; the space between the borders
+separating different rows. Only used if \code{border.collapse} is false.}
+
+\item{border.column.gap}{Numeric; the space between the borders
+separating different columns. Only used if \code{border.collapse} is false.}
 
 \item{cell.prefix}{Character value/vector/matrix that is prepended before the cell values.}
 
@@ -333,6 +356,30 @@ horizontal alignment is "left" or "right".}
 
 \item{corner.pad}{Space between text and cell border in pixels. This is only used if the
 horizontal alignment is "left" or "right".}
+
+\item{footer}{Optional text shown as a footer below the table}
+
+\item{footer.height}{Height of the footer (ignored if no text in footer).}
+
+\item{footer.lineheight}{Controls spacing between the lines of text in the
+footer. It can be specified in multiple ways but as a unitless number
+it is applied as a multiple to the font size.}
+
+\item{footer.fill}{Background color of the footer in the table.}
+
+\item{footer.align.horizontal}{Horizontal alignment of text in table footer.}
+
+\item{footer.align.vertical}{Vertical alignment of text in table footer.}
+
+\item{footer.font.family}{Font family of text in table footer.}
+
+\item{footer.font.color}{Font color of text in table footer.}
+
+\item{footer.font.size}{Font size of text in table footer.}
+
+\item{footer.font.weight}{One of "normal" or "bold".}
+
+\item{footer.font.style}{One of "normal" or "italic".}
 
 \item{col.header.classes}{CSS classes of column headers. The class definition should be added to
 \code{custom.css}. This overrides \code{col.header.fill},

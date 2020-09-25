@@ -26,6 +26,12 @@
 #'  points ("pt"), which will be consistent with font sizes in text boxes.
 #' @param border.color Color of all borders. Will be overriden if specific elements are set.
 #' @param border.width Width of borders (in pixels) in all cells. Will be overriden if specific elements are set.
+#' @param border.collapse Logical; whether the borders of adjacent cells
+#'   should be shown as a single line or separate lines.
+#' @param border.row.gap Numeric; the space between the borders
+#'   separating different rows. Only used if \code{border.collapse} is false.
+#' @param border.column.gap Numeric; the space between the borders
+#'   separating different columns. Only used if \code{border.collapse} is false.
 #' @param cell.prefix Character value/vector/matrix that is prepended before the cell values.
 #' @param cell.suffix Character value/vector/matrix that is appended after the cell values.
 #' @param cell.fill Background color of the cells in the table.
@@ -119,6 +125,19 @@
 #' @param corner.font.style One of "normal" or "italic".
 #' @param corner.pad Space between text and cell border in pixels. This is only used if the
 #'  horizontal alignment is "left" or "right".
+#' @param footer Optional text shown as a footer below the table
+#' @param footer.fill Background color of the footer in the table.
+#' @param footer.height Height of the footer (ignored if no text in footer).
+#' @param footer.lineheight Controls spacing between the lines of text in the
+#'   footer. It can be specified in multiple ways but as a unitless number
+#'   it is applied as a multiple to the font size.
+#' @param footer.align.horizontal Horizontal alignment of text in table footer.
+#' @param footer.align.vertical Vertical alignment of text in table footer.
+#' @param footer.font.family Font family of text in table footer.
+#' @param footer.font.color Font color of text in table footer.
+#' @param footer.font.size Font size of text in table footer.
+#' @param footer.font.weight One of "normal" or "bold".
+#' @param footer.font.style One of "normal" or "italic".
 #' @param banded.rows Whether to have banded rows
 #' @param banded.cols Whether to have banded columns
 #' @param banded.odd.fill Background of cells in odd rows or columns when \code{banded.rows} or \code{banded.cols}.
@@ -177,6 +196,9 @@ CreateCustomTable = function(x,
                         font.unit = "px",
                         border.color = "#FFFFFF",
                         border.width = 1,
+                        border.collapse = TRUE,
+                        border.row.gap = 2,
+                        border.column.gap = 2,
                         cell.prefix = "",
                         cell.suffix = "",
                         cell.fill = "#FFFFFF",
@@ -251,6 +273,17 @@ CreateCustomTable = function(x,
                         corner.font.weight = "bold",
                         corner.font.style = "normal",
                         corner.pad = 0,
+                        footer = "",
+                        footer.height = paste0(footer.font.size + 5, font.unit),
+                        footer.lineheight = "normal",
+                        footer.fill = "transparent",
+                        footer.align.horizontal = "center",
+                        footer.align.vertical = "bottom",
+                        footer.font.family = global.font.family,
+                        footer.font.color = global.font.color,
+                        footer.font.size = 8,
+                        footer.font.weight = "normal",
+                        footer.font.style = "normal",
                         col.header.classes = "",
                         row.header.classes = "",
                         col.classes = list(),
@@ -356,10 +389,16 @@ CreateCustomTable = function(x,
     cata("<style>\n")
     cata(".main-container{ background: transparent; height: 100%; overflow-x: hidden; overflow-y:",
          if (!is.null(row.height)) "auto" else "hidden", "}\n")
-    cata("table { border-collapse: collapse; table-layout: fixed; ",
-                 "postion: relative; width: 100%; ",
-                 "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
-                 "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+    if (is.numeric(border.row.gap))
+        border.row.gap <- paste0(border.row.gap, "px")
+    if (is.numeric(border.column.gap))
+        border.column.gap <- paste0(border.column.gap, "px")
+    cata("table { table-layout: fixed; border-collapse: ",
+         if (border.collapse) "collapse; " else "separate; ",
+         "border-spacing: ", border.column.gap, border.row.gap, ";",
+         "position: relative; width: 100%; ",
+         "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
+         "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
 
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
@@ -586,6 +625,24 @@ CreateCustomTable = function(x,
     body.html <- paste0(sprintf('<tr>%s</tr>\n',
                     apply(cell.html, 1, paste0, collapse = '')), collapse='')
     cata(body.html)
+
+    # Optional footer
+    if (nchar(footer) > 0)
+    {
+        tot.columns <- (ncols + show.row.headers + !is.null(row.spans))
+        cata(paste0('<tr><th colspan="', tot.columns, '" style="',
+            'height:', footer.height,
+            '; line-height:', footer.lineheight,
+            '; background-color:', footer.fill,
+            '; font-family:', footer.font.family,
+            '; color:', footer.font.color,
+            '; font-size:', footer.font.size, font.unit,
+            '; font-style:', footer.font.style,
+            '; font-weight:', footer.font.weight,
+            '; text-align:', footer.align.horizontal,
+            '; vertical-align:', footer.align.vertical,
+            '">', footer, '</th></tr>\n'))
+    }
     cata("</table>\n")
     cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
