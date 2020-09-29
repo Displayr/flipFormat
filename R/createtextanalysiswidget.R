@@ -149,6 +149,8 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     tooltips <- n.grams[[1]]
 
     n.gram.content <- n.grams[[1]]
+    n.gram.content <- gsub("\"", "\\\\\"", n.gram.content) # escape any double quotes
+
     # Styling for unclassified tokens
     if (length(unclassified))
     {
