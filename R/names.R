@@ -48,13 +48,13 @@ RemoveParentName <- function(x)
 #' @return A \code{character} of the name.
 #' @details This function will not generate the correct answer if the actual call is nested within another function.
 #' @references Adapted from http://stackoverflow.com/a/26558733/1547926.
-#' @importFrom utils head
+#' @importFrom verbs First
 #' @export
 OriginalName <- function(x)
 {
     my.call <- quote(substitute(x))
     original.name <- eval(my.call)
-    for(i in rev(head(sys.frames(), -1L)))
+    for(i in rev(First(sys.frames(), -1L)))
     {
         prev <- original.name
         my.call[[2]] <- original.name
