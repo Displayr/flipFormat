@@ -55,15 +55,14 @@ r_packages:
 r_github_packages:
   - Displayr/flipDevTools
   - Displayr/flipExampleData
-  - Displayr/flipChoice
+#  - Displayr/flipChoice # Avoid flipChoice because tests also timeout installing this
 
 script:
   - R CMD build --no-manual --no-build-vignettes --no-resave-data .
   - R CMD check --as-cran --no-manual --no-build-vignettes --no-tests *.tar.gz
-# comment out tests to get package installed with cache
-#  - if [ -d tests/testthat ]; then
-#    Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
-#    fi
+  - if [ -d tests/testthat ]; then
+    Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
+    fi
 
 notifications:
   slack:
