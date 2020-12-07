@@ -55,7 +55,7 @@ test_that("ChoiceModelDesign print, p.p with constant attributes",
     #                                           seed = 1))
     load(findInstDirFile("choice.model.design.2.rda"))
     cmd <- choice.model.design.2
-    out <- print(cmd)
+    out <- CreateChoiceModelDesignWidget(cmd)
     expect_is(out, "htmlwidget")
 
     ## some diagnostics not available for partial profiles
@@ -78,7 +78,7 @@ test_that("ChoiceModelDesign print, 1 version with prior",
     #                                           seed = 1))
     load(findInstDirFile("choice.model.design.3.rda"))
     cmd <- choice.model.design.3
-    out <- print(cmd)
+    out <- CreateChoiceModelDesignWidget(cmd)
     expect_is(out, "htmlwidget")
 
     ## should have all diagnostics, 3 rows in stats table
