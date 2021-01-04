@@ -398,7 +398,7 @@ CreateCustomTable = function(x,
          "border-spacing: ", border.column.gap, border.row.gap, ";",
          "position: relative; width: 100%; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
-         "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+         "cellspacing:'0'; cellpadding:'0'; }\n")
 
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
