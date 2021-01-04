@@ -4,6 +4,11 @@
     margin-bottom: 0;
 }
 
+.text-classifier-table {
+    white-space: normal;
+    line-height: normal;
+}
+
 .text-classfier-table td:nth-of-type(1) {
 width: 0;
 }

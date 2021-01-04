@@ -1,5 +1,10 @@
 /* CSS for automatic text categorization output in Q and Displayr */
 
+.auto-categorization-table {
+    white-space: normal;
+    line-height: normal;
+}
+
 .auto-categorization-table td:nth-of-type(1) {
     width: calc(0vw);
 }
