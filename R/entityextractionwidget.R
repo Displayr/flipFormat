@@ -25,7 +25,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
 
     addCss("entityextraction.css", cata)
 
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"entity-extraction-main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
@@ -49,7 +49,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
         user.empty.msg <- paste0("No entities found to extract from dataset ", empty.reason, "\n",
                                  "Use the 'Add named entities to extraction' control if you wish ",
                                  "to add entities to extract from the text.")
-        cata("<tr class=\"table-row\"><td>")
+        cata("<tr class=\"entity-extraction-table-row\"><td>")
 
 
         cata("<span>", htmlText(user.empty.msg), "</span>")
@@ -69,7 +69,7 @@ EntityExtractionWidget <- function(entity.percentages, variant.percentages, enti
         n.entities <- length(entity.counts)
 
         mapply(function(x, y, z, a, b) {
-            cata("<tr class=\"table-row\"><td>")
+            cata("<tr class=\"entity-extraction-table-row\"><td>")
 
             cata("<details class=\"details entity-details\">")
             cata("<summary class=\"summary entity-summary\">",

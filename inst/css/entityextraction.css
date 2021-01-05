@@ -1,11 +1,11 @@
 /* CSS for entity extraction output in Q and Displayr */
 
-.main-container {
+.entity-extraction-main-container {
     overflow: auto;
     height: 100%;
 }
 
-h1 {
+.entity-extraction-main-container h1 {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 24px;
@@ -13,13 +13,13 @@ h1 {
     font-weight: normal;
 }
 
-.footer {
+.entity-extraction-main-container .footer {
     margin: 10px;
     font-size: 13px;
     text-align: center;
 }
 
-.entity-details {
+.entity-extraction-main-container .entity-details {
     margin-bottom: 5px;
     margin-left: 16px;
 }
@@ -48,12 +48,12 @@ h1 {
     margin-left: -15px;
 }
 
-table {
+.entity-extraction-main-container table {
     border-spacing: 0;
     border-collapse: collapse;
 }
 
-th {
+.entity-extraction-main-container th {
     font-weight: bold;
     text-align: left;
 }
@@ -93,13 +93,8 @@ table.entity-extraction-table {
     color: #333333;
 }
 
-.table-row {
+.entity-extraction-table-row {
     border-bottom: 1px solid #dddddd;
-}
-
-.raw-text-table {
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 .entity-variants-table th {
