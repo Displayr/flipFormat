@@ -14,21 +14,22 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
 {
     html <- '
 <style>
-.box {
+.displayr-color-palette-template-box{
    margin: 5px;
    padding: 20px;
    display: inline-block;
 }
 
-.main-container{
+.displayr-color-palette-template-container{
     background: white;
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    line-height: normal;
 }
 </style>
 
-<div class=\"main-container\">'
+<div class=\"displayr-color-palette-template-container\">'
 
     if (length(colors) > 0)
     {
@@ -36,7 +37,7 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
     <div>This palette will be used when <b>Default or template settings</b> is selected as the color palette.</div>')
         c.text <- if (is.null(names(colors))) colors else names(colors)
         for (cci in 1:length(colors))
-            html <- paste0(html, '<span class="box" style="background-color:', colors[cci],
+            html <- paste0(html, '<span class="displayr-color-palette-template-box" style="background-color:', colors[cci],
                      ';float:left;">', c.text[cci], '</span>')
         html <- paste0(html, '<div style="clear: both;"></div>')
     }
@@ -46,8 +47,9 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
         html <- paste0(html, '<h2>Brand colors</h2>
     <div>These colors will be used when <b>Brand colors</b> is selected as the color palette and the category names in the chart match the brand names.</div>')
         for (ci in 1:length(brand.colors))
-            html <- paste0(html, '<span class="box" style="background-color:', brand.colors[ci],
-                     ';float:left;">', names(brand.colors)[ci], '</span>')
+            html <- paste0(html, '<span class="displayr-color-palette-template-box',
+                           '" style="background-color:', brand.colors[ci],
+                           ';float:left;">', names(brand.colors)[ci], '</span>')
         html <- paste0(html, '<div style="clear: both;"></div>')
     }
 
