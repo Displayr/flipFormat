@@ -1,11 +1,13 @@
 /* Common CSS for automatic text categorization and text classifier output in Q and Displayr */
 
-.main-container {
+.unstructured-text-main-container {
     overflow: auto;
     height: 100%;
+    white-space: normal;
+    line-height: normal;
 }
 
-h1 {
+.unstructured-text-main-container h1 {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 24px;
@@ -48,12 +50,7 @@ h1 {
     margin-left: -15px;
 }
 
-table {
-    border-spacing: 0;
-    border-collapse: collapse;
-}
-
-th {
+th.categorization-table {
     font-weight: bold;
     text-align: left;
 }
@@ -79,6 +76,8 @@ table.categorization-table {
     margin-bottom: 0;
     width: 100%;
     color: #333333;
+    border-spacing: 0;
+    border-collapse: collapse;
 }
 
 .categorization-table caption {
@@ -93,16 +92,16 @@ table.categorization-table {
     text-align:left;
 }
 
-.table-row {
+.unstructured-text-table-row {
     border-bottom: 1px solid #dddddd;
 }
 
-.raw-text-table {
+.unstructured-text-raw-text-table {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.raw-text-table th {
+.unstructured-text-raw-text-table th {
     border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     padding: 3px;
@@ -110,15 +109,15 @@ table.categorization-table {
     font-weight: normal;
 }
 
-.raw-text-table td {
+.unstructured-text-raw-text-table td {
     padding: 3px;
     font-size: 11px;
 }
 
-.raw-text-table td:nth-child(1) {
+.unstructured-text-raw-text-table td:nth-child(1) {
     width: 50px;
 }
 
-table.raw-text-table {
+table.unstructured-text-raw-text-table {
     border-bottom: 2px solid #dddddd;
 }
