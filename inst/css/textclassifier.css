@@ -14,7 +14,7 @@ width: 0;
 }
 
 .text-classfier-table td:nth-of-type(2) {
-width: 25%;
+width: 21%;
 }
 
 .text-classfier-table td:nth-of-type(3) {
@@ -30,7 +30,7 @@ width: 13%;
 }
 
 .text-classfier-table td:nth-of-type(6) {
-width: 36%;
+width: 40%;
 }
 
 .classifier-validation-table {
