@@ -28,7 +28,7 @@ AutomaticCategorizationWidget <- function(sizes,
     addCss("categorization.css", cata)
     addCss("automaticcategorization.css", cata)
 
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"unstructured-text-main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
@@ -78,7 +78,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
          "</thead><tbody>")
     for (i in seq(categories))
     {
-        cata("<tr class=\"table-row\">")
+        cata("<tr class=\"unstructured-text-table-row\">")
         cata(paste0("<td>", t[i, 1], "</td>"))
         cata(paste0("<td>", t[i, 2], "</td>"))
         cata(paste0("<td>", t[i, 3], "</td>"))

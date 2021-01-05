@@ -33,7 +33,7 @@ TextClassifierWidget <- function(observed.counts,
     addCss("categorization.css", cata)
     addCss("textclassifier.css", cata)
 
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"unstructured-text-main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
