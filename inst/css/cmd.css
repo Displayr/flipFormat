@@ -1,6 +1,6 @@
 /* CSS for ChoiceModelDesign outputs in Q and Displayr */
 
-.main-container{
+.choice-modelling-design-main-container{
     overflow: auto;
     position: absolute;
     bottom: 0;
@@ -9,7 +9,7 @@
     right: 0;
 }
 
-h1 {
+.choice-modelling-design-main-container h1 {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 24px;
@@ -19,12 +19,12 @@ h1 {
 
 
 
-h2, h3 {
+.choice-modelling-design-main-container h2, .choice-modelling-design-main-container h3 {
     color: #151A1C;
     font-weight: normal;
 }
 
-table {
+.choice-modelling-design-main-container table {
     color: #303A3F;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     /* width: 640px;  */
@@ -33,48 +33,48 @@ table {
     border-spacing: 0;
 }
 
-th {
+.choice-modelling-design-main-container th {
     text-align: center;
     /* margin: 25px; */
     font-size: 12px;
     /* border-bottom: 2px solid #3E7DCC; */
 }
 
-td {
+.choice-modelling-design-main-container td {
     text-align: center;
     font-size: 12px;
     /* margin: 5px; */
 }
 
-tr td:hover { background: #FA614B; color: #FFF; }
+.choice-modelling-design-main-container tr td:hover { background: #FA614B; color: #FFF; }
 
-#table-diagnostics{
+#cmd-table-diagnostics{
     margin-top: 10px;
 }
 
 /************************* Pairwise balance table ***********************/
 
-.table-pairwise{
+.cmd-table-pairwise{
     margin-left: 10px;
 }
 
 /* style first column like <th> */
-.table-pairwise td:nth-child(1){
+.cmd-table-pairwise td:nth-child(1){
     color: #3E7DCC;
     background: white;
     padding-right: 10px;
 }
 
-.table-pairwise th{
+.cmd-table-pairwise th{
     font-weight: normal;
     border-bottom: 2px solid white;
 }
 
-.table-pairwise td, #table-overlaps td{
+.cmd-table-pairwise td, #cmd-table-overlaps td{
     border: 2px solid white;
 }
 
-.summary-pairwise{
+.cmd-summary-pairwise{
     margin-left: 10px;
     /* font-weight: lighter; */
     font-size: 12px;
@@ -82,26 +82,26 @@ tr td:hover { background: #FA614B; color: #FFF; }
 
 /************************* End Pairwise table ***********************/
 
-.table-one-stat td:nth-child(even), .table-one-stat th{
+.cmd-table-one-stat td:nth-child(even), .cmd-table-one-stat th{
     border-right: 6px solid white;
 }
 
-.table-one-stat td:nth-child(odd){
+.cmd-table-one-stat td:nth-child(odd){
     border-right: 2px solid white;
 }
 
-.table-one-stat td{
+.cmd-table-one-stat td{
     border-top: 2px solid white;
 }
 
-.table-two-stat td:nth-child(3n+3), .table-two-stat th{
+.cmd-table-two-stat td:nth-child(3n+3), .cmd-table-two-stat th{
     border-right: 6px solid white;
 }
 
-.table-two-stat td:nth-child(3n+2), .table-two-stat td:nth-child(3n+1){
+.cmd-table-two-stat td:nth-child(3n+2), .cmd-table-two-stat td:nth-child(3n+1){
     border-right: 2px solid white;
 }
 
-.table-two-stat td{
+.cmd-table-two-stat td{
     border-top: 2px solid white;
 }

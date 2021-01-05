@@ -42,7 +42,7 @@ CreateChoiceModelDesignWidget <- function(x,
       addCss(css, cata, in.css.folder = FALSE)
 
     ## Needed so that Box has scollbar
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"choice-modelling-design-main-container\">")
 
     ## Title
     cata("<h1>Choice Model: Experimental Design</h1>")
@@ -119,7 +119,7 @@ addStatistics <- function(x, digits, nsmall, cata)
     ##             "<b>Mean version balance: </b>",
     ##             format1(b.o$mean.version.balance),
     ##             "</span></p>\n"))
-    cata("<table id = \"table-diagnostics\"><tbody><tr>\n")
+    cata("<table id = \"cmd-table-diagnostics\"><tbody><tr>\n")
     cata("<td style=\"text-align: left;\">")
     cata(paste0("<b>Algorithm: </b>", x$design.algorithm, "</td>"))
     cata("<td style=\"text-align: left;\">")
@@ -184,7 +184,7 @@ makeStandardErrorTable <- function(std.err, al, digits, nsmall)
         idx <- idx + n.lvls-1
     }
     out <- knitr::kable(out, format = "html", col.names = cnames, digits = digits,
-                 table.attr = "class=\"table-one-stat\"",
+                 table.attr = "class=\"cmd-table-one-stat\"",
                  align = rep(c("l", "r"), length(al)))
     ## change table headers to span multiple columns
     out <- gsub("<th style=\"text-align:right;\">  </th>", "", out, fixed = TRUE)
@@ -234,7 +234,7 @@ makeFrequencyTable <- function(freq, const.attr = FALSE)
         }
     }
     out <- knitr::kable(out, format = "html", col.names = cnames, align = "c",
-                        table.attr = "class=\"table-one-stat\"", escape = FALSE)
+                        table.attr = "class=\"cmd-table-one-stat\"", escape = FALSE)
     ## center column headers across two columns
     out <- gsub("<th style=\"text-align:center;\">  </th>", "", out, fixed = TRUE)
     out <- gsub("<th style=\"text-align:center;\">",
@@ -253,10 +253,10 @@ addPairwiseFrequencyTable <- function(tfile, ptable, table.name, attr.names)
     ## idx2 <- vapply(attr.names, function(n) grepl(paste0("[/]", n, "$"), table.name), FALSE)
 
     cata("<details open=\"true\" class=\"details\">")
-    cata(paste0("<summary class=\"summary-pairwise summary\">", table.name, "</summary>\n"))
+    cata(paste0("<summary class=\"cmd-summary-pairwise summary\">", table.name, "</summary>\n"))
     cata(knitr::kable(ptable, row.names = TRUE, col.names = colnames(ptable),
                       format = "html", align = "c",
-                      table.attr = "class=\"table-pairwise\""), fill = TRUE)
+                      table.attr = "class=\"cmd-table-pairwise\""), fill = TRUE)
     cata("</details>")
     invisible()
 }
@@ -267,7 +267,7 @@ addOverlaps <- function(overlaps, cata)
     cata("<details open=\"true\" class=\"details\">")
     cata("<summary class=\"summary\">Overlaps</summary>")
     cata(knitr::kable(t(overlaps), col.names = names(overlaps), align = "c",
-                      format = "html", table.attr = "id=\"table-overlaps\""),
+                      format = "html", table.attr = "id=\"cmd-table-overlaps\""),
          fill = TRUE)
     cata("</details>")
     invisible()
@@ -292,13 +292,13 @@ makePriorTable <- function(prior, al, digits = 2, nsmall = 2)
         cnames[seq(1, ncol(out), by = 3)] <- names(al)
         cnames[seq(2, ncol(out), by = 3)] <- "Mean"
         cnames[seq(3, ncol(out), by = 3)] <- "Std. Dev."
-        table.attr <- "class=\"table-two-stat\""
+        table.attr <- "class=\"cmd-table-two-stat\""
         col.span <- "3"
         col.align <- c("l", "r", "r")
     }else
     {
         cnames[seq(1, ncol(out), by = 2)] <- names(al)
-        table.attr <- "class=\"table-one-stat\""
+        table.attr <- "class=\"cmd-table-one-stat\""
         col.span <- "2"
         col.align <- c("l", "r")
     }
