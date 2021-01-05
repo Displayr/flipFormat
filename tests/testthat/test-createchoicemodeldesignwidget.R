@@ -136,7 +136,7 @@ test_that("ChoiceModelDesign print prior with sd given",
                       A5 = 1:2, A6 = 1:2)
     ## make sure printing with
     out <- makePriorTable(prior, attr.list, 2, 2)
-    expect_true(grepl("class=\"table-two-stat\"", out, fixed = TRUE))
+    expect_true(grepl("class=\"cmd-table-two-stat\"", out, fixed = TRUE))
 })
 
 test_that("CMD print when no standard errors; DS-2881",
