@@ -88,7 +88,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
         if (!is.na(examples[i]))
         {
             cata("<details class=\"details raw-text-category-details\">")
-            cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+            cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
                  "<span>", t[i, 4], "</span></summary>")
 
             text.raw.cat <- text.raw.by.categorization[[i]]
@@ -113,7 +113,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
         cata("<tr class=\"raw-text-row\"><td></td><td>Missing cases</td><td></td><td>")
 
         cata("<details class=\"details raw-text-category-details\">")
-        cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+        cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
              "<span>", missing.text[1], "</span></summary>")
 
         t <- cbind(which(missing), missing.text)

@@ -7,6 +7,7 @@
     left: 0;
     top: 0;
     right: 0;
+    background: white;
 }
 
 .choice-modelling-design-main-container h1 {
@@ -104,4 +105,68 @@
 
 .cmd-table-two-stat td{
     border-top: 2px solid white;
+}
+
+.choice-modelling-design-main-container table {
+    color: #303A3F;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    border-collapse: collapse;
+    text-align: center;
+    border-spacing: 0;
+}
+
+.choice-modelling-design-main-container th {
+    background: white;
+    font-weight: bold;
+    color: #3E7DCC;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.choice-modelling-design-main-container td {
+    min-width: 30px;
+}
+
+.choice-modelling-design-main-container tr:nth-child(even) td { background: #F2F5FA; }
+
+/* Cells in odd rows (1,3,5...) are another (excludes header cells)  */
+.choice-modelling-design-main-container tr:nth-child(odd) td { background: #E5E8EE; }
+
+.choice-modelling-design-main-container summary {
+    /* border-bottom: 3px solid #151A1C; */
+    background: #F2F5FA;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 16px;
+    margin-top: 10px;
+    user-select: none;
+    /* margin-bottom: 10px; */
+}
+
+@supports (-ms-ime-align:auto) {
+  .choice-modelling-design-summary, .choice-modelling-design-details {
+      /* border-bottom: 3px solid #151A1C; */
+      /* background: #F2F5FA; */
+      /* font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif; */
+      /* color: #151A1C; */
+      /* font-size: 15px; */
+      /* margin-top: 10px; */
+      /* margin-bottom: 10px; */
+      display: block;
+  }
+}
+
+.choice-modelling-design-main-container details summary::-webkit-details-marker{
+    color: #3E7DCC;
+    margin-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.choice-modelling-design-main-container summary:hover {
+    cursor:pointer;
+}
+
+.displayr-sub-details {
+  font-size: 14px;
 }
