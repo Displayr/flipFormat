@@ -1,6 +1,6 @@
 /* CSS for text analysis outputs in Q and Displayr */
 
-.text-analysis-main-container {
+.main-container {
     box-sizing: border-box;
     position:absolute;
     left:0;
@@ -9,45 +9,44 @@
     bottom:0;
     display: flex;
     flex-direction: column;
-    background: white;
 }
 
-.text-analysis-panel-container {
+.panel-container {
     display: flex;
     flex: 0 10000 auto;
     overflow: auto;
 }
 
-details + .text-analysis-panel-container {
+details + .panel-container {
     min-height: 0;
     max-height: 0;
 }
 
-details[open] + .text-analysis-panel-container {
+details[open] + .panel-container {
     min-height: calc(40vh - 2em);
     max-height: inherit;
 }
 
-.text-analysis-panel {
+.panel {
     padding: 0.25em;
     overflow: auto;
 }
 
-.text-analysis-text-panel {
+.text-panel {
     flex: 1 1 60%;
 }
 
-.text-analysis-ngrams-panel {
+.ngrams-panel {
     flex: 1 1 auto;
     resize: horizontal;
     max-width: calc(50vw);
 }
 
-.text-analysis-diagnostics-panel {
+.diagnostics-panel {
     flex: 1 1 100%;
 }
 
-.text-analysis-footer-container {
+.footer-container {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
     color: #777;
@@ -59,13 +58,13 @@ details[open] + .text-analysis-panel-container {
     padding-bottom: 0.5em;
 }
 
-.text-analysis-raw-replacement {
+.raw-replacement {
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
 }
 
-.text-analysis-split-text {
+.split-text {
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
@@ -92,53 +91,53 @@ details[open] + .text-analysis-panel-container {
     text-align:left;
 }
 
-.text-analysis-raw-text-table td {
+.raw-text-table td {
     text-align: left;
 }
 
-.text-analysis-categories-table td:nth-child(n+2) {
+.categories-table td:nth-child(n+2) {
     text-align: center; white-space: nowrap;
 }
 
-.text-analysis-categories-table th {
+.categories-table th {
     text-align: left;
 }
 
-.text-analysis-categories-table th:nth-child(n+2) {
+.categories-table th:nth-child(n+2) {
     text-align: center;
 }
 
-.text-analysis-raw-text-table td {
+.raw-text-table td {
     text-align: left;
 }
-.text-analysis-raw-text-table th {
+.raw-text-table th {
     text-align: left;
 }
-.text-analysis-raw-text-table td:nth-last-child(n+3) {
+.raw-text-table td:nth-last-child(n+3) {
     text-align: center; white-space: nowrap;
 }
-.text-analysis-raw-text-table th:nth-last-child(n+3) {
+.raw-text-table th:nth-last-child(n+3) {
     text-align: center;
 }
 
 
-.text-analysis-low-freq-table td:nth-of-type(2) {
+.low-freq-table td:nth-of-type(2) {
     white-space: nowrap;
 }
 
-.text-analysis-low-freq-table td:nth-of-type(3) {
+.low-freq-table td:nth-of-type(3) {
     white-space: nowrap;
 }
 
-.text-analysis-raw-cases-table td:nth-of-type(1) {
+.raw-cases-table td:nth-of-type(1) {
     white-space: nowrap;
 }
 
-.text-analysis-raw-cases-table td:nth-of-type(2) {
+.raw-cases-table td:nth-of-type(2) {
     white-space: nowrap;
 }
 
-.text-analysis-variable-name {
+.variable-name {
     display: block;
     margin: 10px 15px 0 15px;
     color: #3E7DCC;
@@ -146,30 +145,30 @@ details[open] + .text-analysis-panel-container {
     font-size: 18px;
 }
 
-.text-analysis-diagnostics-table {
+.diagnostics-table {
     font-size: 12px;
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 20px;
 }
 
-.text-analysis-diagnostics-table td {
+.diagnostics-table td {
     padding-left: 5px;
     padding-right: 5px;
     word-break: break-word; /* only break words in cells not table headers */
     hyphens: auto;
 }
 
-.text-analysis-diagnostics-block {
+.diagnostics-block {
     display: flex;
     border-bottom: solid 1px #BBB;
 }
 
-.text-analysis-diagnostics-group {
+.diagnostics-group {
     padding-top: 10px;
 }
 
-.text-analysis-diagnostics-message {
+.diagnostics-message {
     font-size: 12px;
     margin-left: 10px;
     margin-right: 10px;
@@ -178,82 +177,18 @@ details[open] + .text-analysis-panel-container {
     color: #444;
 }
 
-.text-analysis-footer-container {
+.footer-container {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     overflow: auto;
 }
 
-.text-analysis-footer-spacing {
+.footer-spacing {
     flex-grow: 1;
 }
 
-.text-analysis-footer {
+.footer {
     max-height: 6em;
     overflow: auto;
 }
-
-.text-analysis-main-container summary {
-    /* border-bottom: 3px solid #151A1C; */
-    background: #F2F5FA;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    color: #151A1C;
-    font-size: 16px;
-    margin-top: 10px;
-    user-select: none;
-    /* margin-bottom: 10px; */
-}
-
-@supports (-ms-ime-align:auto) {
-  .text-analysis-summary, .text-analysis-details {
-      /* border-bottom: 3px solid #151A1C; */
-      /* background: #F2F5FA; */
-      /* font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif; */
-      /* color: #151A1C; */
-      /* font-size: 15px; */
-      /* margin-top: 10px; */
-      /* margin-bottom: 10px; */
-      display: block;
-  }
-}
-
-.text-analysis-main-container details summary::-webkit-details-marker{
-    color: #3E7DCC;
-    margin-left: 10px; /* so doesnt overlap with displayr resize tool */
-}
-
-.text-analysis-main-container summary:hover {
-    cursor:pointer;
-}
-
-.displayr-sub-details {
-  font-size: 14px;
-}
-
-.text-analysis-table table {
-    color: #303A3F;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    border-collapse: collapse;
-    text-align: center;
-    border-spacing: 0;
-}
-
-.text-analysis-table th {
-    background: white;
-    font-weight: bold;
-    color: #3E7DCC;
-    min-width: 24px;
-    min-height: 24px;
-    padding: 5px;
-    vertical-align: middle;
-}
-
-.text-analysis-table td {
-    min-width: 30px;
-}
-
-.text-analysis-table tr:nth-child(even) td { background: #F2F5FA; }
-
-/* Cells in odd rows (1,3,5...) are another (excludes header cells)  */
-.text-analysis-table tr:nth-child(odd) td { background: #E5E8EE; }

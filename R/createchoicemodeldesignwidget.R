@@ -35,12 +35,14 @@ CreateChoiceModelDesignWidget <- function(x,
         format(x, nsmall = nsmall, digits = digits)
 
     ## add CSS
+    addCss("table.css", cata)
     addCss("cmd.css", cata)
+    addCss("details.css", cata)
     if (!is.null(css))
       addCss(css, cata, in.css.folder = FALSE)
 
     ## Needed so that Box has scollbar
-    cata("<div class=\"choice-modelling-design-main-container\">")
+    cata("<div class=\"main-container\">")
 
     ## Title
     cata("<h1>Choice Model: Experimental Design</h1>")
@@ -51,7 +53,7 @@ CreateChoiceModelDesignWidget <- function(x,
     ## Standard errors
     if (!is.null(x$standard.errors))
     {
-        cata("<details open=\"true\" class=\"choice-modelling-design-details\"><summary class=\"choice-modelling-design-summary\">Standard Errors</summary>\n")
+        cata("<details open=\"true\" class=\"details\"><summary class=\"summary\">Standard Errors</summary>\n")
         cata(makeStandardErrorTable(x$standard.errors, x$attribute.levels,
                                     digits = digits, nsmall = nsmall), fill = TRUE)
         cata("</details>")
@@ -59,12 +61,12 @@ CreateChoiceModelDesignWidget <- function(x,
 
     ## Frequencies
     has.const.attr <- !is.null(x$n.constant.attributes) && x$n.constant.attributes > 0
-    cata("<details open=\"true\" class=\"choice-modelling-design-details\"><summary class=\"choice-modelling-design-summary\">Frequencies</summary>\n")
+    cata("<details open=\"true\" class=\"details\"><summary class=\"summary\">Frequencies</summary>\n")
     cata(makeFrequencyTable(b.o$singles, has.const.attr), fill = TRUE)
     cata("</details>")
 
     ## Pairwise frequencies
-    cata("<details open =\"true\" class=\"choice-modelling-design-details\"><summary class=\"choice-modelling-design-summary\">Pairwise Frequencies</summary>\n")
+    cata("<details open =\"true\" class=\"details\"><summary class=\"summary\">Pairwise Frequencies</summary>\n")
     mapply(addPairwiseFrequencyTable, b.o$pairs, names(b.o$pairs),
            MoreArgs = list(attr.names = names(x$attribute.levels), tfile = tfile))
     cata("</details>")
@@ -74,14 +76,14 @@ CreateChoiceModelDesignWidget <- function(x,
         addOverlaps(b.o$overlaps, cata)
 
     ## Design
-    cata("<details class=\"choice-modelling-design-details\"><summary class=\"choice-modelling-design-summary\">Design</summary>\n")
+    cata("<details class=\"details\"><summary class=\"summary\">Design</summary>\n")
     cata(knitr::kable(x$labeled.design, align = "c",
                       longtable = TRUE, format = "html", digits = digits),
          fill = TRUE)
     cata("</details>")
 
     ## Priors
-    cata("<details open =\"true\" class=\"choice-modelling-design-details\"><summary class=\"choice-modelling-design-summary\">Prior</summary>\n")
+    cata("<details open =\"true\" class=\"details\"><summary class=\"summary\">Prior</summary>\n")
     if (!is.null(x$prior))
         cata(makePriorTable(x$prior, x$attribute.levels, digits, nsmall), fill = TRUE)
     else
@@ -103,8 +105,8 @@ addStatistics <- function(x, digits, nsmall, cata)
         format(x, nsmall = nsmall, digits = digits)
 
     b.o <- x$balances.and.overlaps
-    cata("<details open=\"true\" class=\"choice-modelling-design-details\">\n")
-    cata("<summary class=\"choice-modelling-design-summary\">Statistics</summary>")
+    cata("<details open=\"true\" class=\"details\">\n")
+    cata("<summary class=\"summary\">Statistics</summary>")
     ## cata("<p style=\"text-align: left;\">")
     ## cata(paste0("<b>D-error: </b>", format1(x$d.error)))
     ## cata(paste0("<span style=\"float: right;\">",
@@ -117,7 +119,7 @@ addStatistics <- function(x, digits, nsmall, cata)
     ##             "<b>Mean version balance: </b>",
     ##             format1(b.o$mean.version.balance),
     ##             "</span></p>\n"))
-    cata("<table id = \"cmd-table-diagnostics\"><tbody><tr>\n")
+    cata("<table id = \"table-diagnostics\"><tbody><tr>\n")
     cata("<td style=\"text-align: left;\">")
     cata(paste0("<b>Algorithm: </b>", x$design.algorithm, "</td>"))
     cata("<td style=\"text-align: left;\">")
@@ -182,7 +184,7 @@ makeStandardErrorTable <- function(std.err, al, digits, nsmall)
         idx <- idx + n.lvls-1
     }
     out <- knitr::kable(out, format = "html", col.names = cnames, digits = digits,
-                 table.attr = "class=\"cmd-table-one-stat\"",
+                 table.attr = "class=\"table-one-stat\"",
                  align = rep(c("l", "r"), length(al)))
     ## change table headers to span multiple columns
     out <- gsub("<th style=\"text-align:right;\">  </th>", "", out, fixed = TRUE)
@@ -232,7 +234,7 @@ makeFrequencyTable <- function(freq, const.attr = FALSE)
         }
     }
     out <- knitr::kable(out, format = "html", col.names = cnames, align = "c",
-                        table.attr = "class=\"cmd-table-one-stat\"", escape = FALSE)
+                        table.attr = "class=\"table-one-stat\"", escape = FALSE)
     ## center column headers across two columns
     out <- gsub("<th style=\"text-align:center;\">  </th>", "", out, fixed = TRUE)
     out <- gsub("<th style=\"text-align:center;\">",
@@ -250,11 +252,11 @@ addPairwiseFrequencyTable <- function(tfile, ptable, table.name, attr.names)
     ## idx1 <- vapply(attr.names, function(n) grepl(paste0("^", n, "[/]"), table.name), FALSE)
     ## idx2 <- vapply(attr.names, function(n) grepl(paste0("[/]", n, "$"), table.name), FALSE)
 
-    cata("<details open=\"true\" class=\"choice-modelling-design-details\">")
-    cata(paste0("<summary class=\"cmd-summary-pairwise summary\">", table.name, "</summary>\n"))
+    cata("<details open=\"true\" class=\"details\">")
+    cata(paste0("<summary class=\"summary-pairwise summary\">", table.name, "</summary>\n"))
     cata(knitr::kable(ptable, row.names = TRUE, col.names = colnames(ptable),
                       format = "html", align = "c",
-                      table.attr = "class=\"cmd-table-pairwise\""), fill = TRUE)
+                      table.attr = "class=\"table-pairwise\""), fill = TRUE)
     cata("</details>")
     invisible()
 }
@@ -262,10 +264,10 @@ addPairwiseFrequencyTable <- function(tfile, ptable, table.name, attr.names)
 #' @importFrom knitr kable
 addOverlaps <- function(overlaps, cata)
 {
-    cata("<details open=\"true\" class=\"choice-modelling-design-details\">")
-    cata("<summary class=\"choice-modelling-design-summary\">Overlaps</summary>")
+    cata("<details open=\"true\" class=\"details\">")
+    cata("<summary class=\"summary\">Overlaps</summary>")
     cata(knitr::kable(t(overlaps), col.names = names(overlaps), align = "c",
-                      format = "html", table.attr = "id=\"cmd-table-overlaps\""),
+                      format = "html", table.attr = "id=\"table-overlaps\""),
          fill = TRUE)
     cata("</details>")
     invisible()
@@ -290,13 +292,13 @@ makePriorTable <- function(prior, al, digits = 2, nsmall = 2)
         cnames[seq(1, ncol(out), by = 3)] <- names(al)
         cnames[seq(2, ncol(out), by = 3)] <- "Mean"
         cnames[seq(3, ncol(out), by = 3)] <- "Std. Dev."
-        table.attr <- "class=\"cmd-table-two-stat\""
+        table.attr <- "class=\"table-two-stat\""
         col.span <- "3"
         col.align <- c("l", "r", "r")
     }else
     {
         cnames[seq(1, ncol(out), by = 2)] <- names(al)
-        table.attr <- "class=\"cmd-table-one-stat\""
+        table.attr <- "class=\"table-one-stat\""
         col.span <- "2"
         col.align <- c("l", "r")
     }

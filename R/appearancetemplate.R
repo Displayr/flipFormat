@@ -12,16 +12,15 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
     global.font = NULL, fonts = NULL,
     global.number.font = list(units = "pt"), number.fonts = NULL)
 {
-    unique.class.suffix <- generateRandomString()
-    html <- paste0('
+    html <- '
 <style>
-.box', unique.class.suffix, '{
+.box {
    margin: 5px;
    padding: 20px;
    display: inline-block;
 }
 
-.template-container-', unique.class.suffix, '{
+.main-container{
     background: white;
     height: 100%;
     overflow-y: auto;
@@ -29,7 +28,7 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
 }
 </style>
 
-<div class=\"template-container-', unique.class.suffix, '\">', collapse = "")
+<div class=\"main-container\">'
 
     if (length(colors) > 0)
     {
@@ -47,9 +46,8 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
         html <- paste0(html, '<h2>Brand colors</h2>
     <div>These colors will be used when <b>Brand colors</b> is selected as the color palette and the category names in the chart match the brand names.</div>')
         for (ci in 1:length(brand.colors))
-            html <- paste0(html, '<span class="', paste0(box, unique.class.suffix, collapse = ""),
-                           '" style="background-color:', brand.colors[ci],
-                           ';float:left;">', names(brand.colors)[ci], '</span>')
+            html <- paste0(html, '<span class="box" style="background-color:', brand.colors[ci],
+                     ';float:left;">', names(brand.colors)[ci], '</span>')
         html <- paste0(html, '<div style="clear: both;"></div>')
     }
 

@@ -38,6 +38,8 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
+    addCss("table.css", cata)
+    addCss("details.css", cata)
     addCss("textanalysis.css", cata)
 
     stylefile <- createTempFile()
@@ -52,7 +54,7 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     if (NROW(n.gram.frequencies) > 0)
         addCss(stylefile, cata, in.css.folder = FALSE)
 
-    cata("<div class=\"text-analysis-main-container\">")
+    cata("<div class=\"main-container\">")
 
     show.diagnostics <- !is.null(diagnostics)
 
@@ -124,23 +126,20 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         color.index <- color.index[-unclassified]
         border.styles <- border.styles[-unclassified]
     }
-    # Generate unique ID to prefix on class names
-    unique.prefix <- paste0(sample(letters, 1), generateRandomString(digits = 2L), collapse = "")
-    # Continue with style generation
     color.indices <- split(ngram.seq, potential.colours[color.index])
     border.style.indices <- split(ngram.seq, border.styles)
     border.style.classes <- vapply(names(border.style.indices),
-                                   function(x) paste0(paste0(".", unique.prefix, "s", base.seq[border.style.indices[[x]]], collapse = ","),
+                                   function(x) paste0(paste0(".s", base.seq[border.style.indices[[x]]], collapse = ","),
                                                       "{", x, "}", collapse = ""),
                                    character(1), USE.NAMES = FALSE)
 
     color.classes <- vapply(names(color.indices),
-                            function(x) paste0(paste0(".", unique.prefix, "s", base.seq[color.indices[[x]]], collapse = ","),
+                            function(x) paste0(paste0(".s", base.seq[color.indices[[x]]], collapse = ","),
                                                "{ background-color:", x, "}", collapse = ""),
                             character(1), USE.NAMES = FALSE)
     # Add styling (border styles, colours) to the file
     cata(color.classes, border.style.classes,
-         paste0('[class^=', unique.prefix, 's]:not(.summary) { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
+         paste0('[class^=s]:not(.summary) { white-space: pre-wrap; line-height: 1.8em;}')) # Common styling
     # Inspect n.grams
     n.grams[[1]] <- as.character(n.grams[[1]])
     n.grams <- data.frame(n.grams, num.var = rep(1, n))
@@ -155,15 +154,15 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Styling for unclassified tokens
     if (length(unclassified))
     {
-        cata(paste0(paste0(".", unique.prefix, "s", base.seq[unclassified], collapse = ","),
+        cata(paste0(paste0(".s", base.seq[unclassified], collapse = ","),
                     "{ background-color: #CCCCCC;}"))
-        cata(paste0(paste0(".", unique.prefix, "w", base.seq[unclassified], collapse = ", "),
+        cata(paste0(paste0(".w", base.seq[unclassified], collapse = ", "),
                     ":after{content: \"UNCLASSIFIED\";}\n"))
         n.gram.content <- n.gram.content[-unclassified]
     }
 
     # Append the tokens to the span silently
-    cata(paste0(".", unique.prefix, "w", base.seq[ngram.seq], ":after{content: \"", n.gram.content, "\"}"))
+    cata(paste0(".w", base.seq[ngram.seq], ":after{content: \"", n.gram.content, "\"}"))
     for (i in seq_len(n))
     {
         # Create regex for replacement
@@ -294,11 +293,9 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                                         mpos + attr(mpos, "match.length") - 1)
                     # If raw token same as n.grams token get the content from the .wXXXX css class
                     if (raw.token %in% n.grams[[1]])
-                        tag <- paste0("<a class=\"", unique.prefix, "s", base.seq[ind[k]], " ",
-                                      unique.prefix, "w", base.seq[ind[k]], "\">", "</a>")
+                        tag <- paste0("<a class=\"s", base.seq[ind[k]], " w", base.seq[ind[k]], "\">", "</a>")
                     else # Otherwise if the raw token is not the same, keep the raw token
-                        tag <- paste0("<a class=\"", unique.prefix, "s", base.seq[ind[k]], "\">",
-                                      htmlText(raw.token), "</a>")
+                        tag <- paste0("<a class=\"s", base.seq[ind[k]], "\">", htmlText(raw.token), "</a>")
                     raw.token.tags <- c(raw.token.tags, tag)
                     new.text <- sub(patt[ind[k]], token.placeholders[k],
                                     new.text, ignore.case = TRUE, perl = TRUE)
@@ -315,7 +312,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         # replace raw replacements placeholders with formatted tags
         for (i in seq(raw.repl))
         {
-            tag <- paste0("<span class='text-analysis-raw-replacement' title='Replaced with: ",
+            tag <- paste0("<span class='raw-replacement' title='Replaced with: ",
                           escapeQuotesForHTML(raw.repl[[i]]$replacement), "'>",
                           htmlText(raw.repl[[i]]$replaced), "</span>")
             new.text <- gsub(raw.repl.placeholders[i], tag, new.text)
@@ -328,7 +325,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
                                 collapse = ", ")
             for (t in split.text[[i]])
             {
-                tag <- paste0("<span class='text-analysis-split-text' title='Split into: ",
+                tag <- paste0("<span class='split-text' title='Split into: ",
                               categories, "'>", htmlText(t), "</span>")
                 new.text <- sub(split.text.placeholders[i], tag, new.text)
             }
@@ -340,8 +337,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
         for (k in 1:length(trans.tokens.j))
             if (!is.na(ind[k]))
                 # Add formatting to transformed text
-                trans.tokens[[j]][k] <- paste0("<a class=\"", unique.prefix, "s", base.seq[ind[k]], " ",
-                                               unique.prefix, "w", base.seq[ind[k]], "\">",
+                trans.tokens[[j]][k] <- paste0("<a class=\"s", base.seq[ind[k]], " w", base.seq[ind[k]], "\">",
                                                # htmlText(trans.tokens[[j]][k]),
                                                "</a>")
     }
@@ -351,8 +347,7 @@ HighlightNGrams <- function(n.grams, text, subs, category.examples,
     # Create n-grams table with number of counts and variants
     # Tooltips is added via "title" - not related to the class CSS
     if (nrow(n.grams) > 0)
-        n.grams[,1] <- paste0("<a class=\"", unique.prefix, "s", base.seq[1:n], " ",
-                              unique.prefix, "w", base.seq[1:n], "\" title=\"",
+        n.grams[,1] <- paste0("<a class=\"s", base.seq[1:n], " w", base.seq[1:n], "\" title=\"",
                               tooltips, "\">",  "</a>") #htmlText(n.grams[,1]),
 
     # Replace any newline characters with <br>
@@ -433,7 +428,7 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
     t.rownames <- if (!is.null(row.numbers) || !is.null(variable.numbers)) cbind(variable.numbers, row.numbers)
                   else                                                     rownames(raw.and.normalized.text)
 
-    cata("<div class=\"text-analysis-panel text-analysis-text-panel\">")
+    cata("<div class=\"panel text-panel\">")
 
     t <- cbind(t.rownames, raw.and.normalized.text)
     tmp.col.names <- c("Case", "Raw text", "Normalized text")
@@ -444,7 +439,7 @@ addTextPanel <- function(raw.and.normalized.text, row.numbers,
     rownames(t) <- NULL
 
     cata(kable(t, align = NULL, format = "html",
-               escape = FALSE, table.attr = "class=\"text-analysis-table text-analysis-raw-text-table\""))
+               escape = FALSE, table.attr = "class=\"text-analysis-table raw-text-table\""))
 
     cata("</div>") # end panel div
 }
@@ -454,7 +449,7 @@ addNGramsPanel <- function(n.gram.frequencies, cata)
     t <- n.gram.frequencies
     names(t) <- c(paste0("Category (", nrow(n.gram.frequencies), ")"), "Frequency", "Variants")
 
-    cata("<div class=\"text-analysis-panel text-analysis-ngrams-panel\">")
+    cata("<div class=\"panel ngrams-panel\">")
     cata(kable(t, align = NULL, format = "html", escape = FALSE,
                table.attr = "class=\"text-analysis-table categories-table\""))
     cata("</div>") # end panel div
@@ -466,15 +461,15 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
     if (show.diagnostics)
     {
         if (details.expand == "Categories")
-            cata("<details open=\"true\" class=\"text-analysis-details\">")
+            cata("<details open=\"true\" class=\"details\">")
         else
-            cata("<details class=\"text-analysis-details\">")
-        cata("<summary class=\"text-analysis-summary\">Categories</summary>")
+            cata("<details class=\"details\">")
+        cata("<summary class=\"summary\">Categories</summary>")
         cata("</details>")
     }
 
     cata("</details>")
-    cata("<div class=\"text-analysis-panel-container\">")
+    cata("<div class=\"panel-container\">")
 
     addNGramsPanel(colored.text$n.grams, cata)
     addTextPanel(colored.text$text,
@@ -489,13 +484,12 @@ addTopPanel <- function(cata, colored.text, raw.and.normalized.text,
 addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 {
     html <- if (details.expand != "Categories")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
-    html <- paste0(html, "<summary class=\"text-analysis-summary\">Diagnostics</summary>",
-                   "</details><div class=\"text-analysis-panel-container\">",
-                   "<div class=\"text-analysis-panel text-analysis-diagnostics-panel\">")
+    html <- paste0(html, "<summary class=\"summary\">Diagnostics</summary>",
+                   "</details><div class=\"panel-container\"><div class=\"panel diagnostics-panel\">")
 
     html <- paste0(html, variantSuggestionsDiagnostic(diagnostics$variant.suggestions,
                                                       details.expand))
@@ -573,15 +567,15 @@ addDiagnosticsPanel <- function(cata, diagnostics, details.expand)
 variantSuggestionsDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand %in% c("Categories", "Variant suggestions"))
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Variant suggestions (",
+                   "<summary class=\"summary sub-details\">Variant suggestions (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Suggestions for category variants are shown below. ",
                    "The suggestions can be copied and pasted into the variant ",
                    "columns in the REQUIRED CATEGORIES table editor.</div>")
@@ -597,10 +591,10 @@ variantSuggestionsDiagnostic <- function(info, details.expand)
         for (i in seq_len(n.categories))
             t[i, 2:(length(info[[i]]) + 1)] <- htmlText(info[[i]])
 
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
         html <- paste0(html, kable(t, format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
         html <- paste0(html, "</div>")
     }
 
@@ -610,15 +604,15 @@ variantSuggestionsDiagnostic <- function(info, details.expand)
 rawTextReplacementDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Raw text replacements")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Raw text replacements (",
+                   "<summary class=\"summary sub-details\">Raw text replacements (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Raw text replacements are specified by clicking on ",
                    "the button under the RAW TEXT REPLACEMENT group and ",
                    "entering the replacement text in the first column and ",
@@ -633,7 +627,7 @@ rawTextReplacementDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix("", nrow = length(elem$to.be.replaced), ncol = 2)
         t[, 1] <- htmlText(elem$to.be.replaced)
@@ -641,7 +635,7 @@ rawTextReplacementDiagnostic <- function(info, details.expand)
         colnames(t) <- c("Replaced", "Replacement")
         html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -653,15 +647,15 @@ rawTextReplacementDiagnostic <- function(info, details.expand)
 requiredCategoriesDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Required categories")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Required categories (",
+                   "<summary class=\"summary sub-details\">Required categories (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Required categories are specified by clicking on ",
                    "the button under the REQUIRED CATEGORIES group and ",
                    "entering the required categories in the first column. ",
@@ -675,7 +669,7 @@ requiredCategoriesDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         if (length(elem$variants) > 0)
         {
@@ -691,7 +685,7 @@ requiredCategoriesDiagnostic <- function(info, details.expand)
         }
         html <- paste0(html, kable(t, format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -703,15 +697,15 @@ requiredCategoriesDiagnostic <- function(info, details.expand)
 delimitersDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Delimiters")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Delimiters (",
+                   "<summary class=\"summary sub-details\">Delimiters (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Delimiters are used to split raw text into categories. ",
                    "Delimiters are selected in the DELIMITERS / SPLIT TEXT group. ",
                    "If a required delimiter is not listed in the checkboxes, ",
@@ -719,12 +713,12 @@ delimitersDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix(htmlText(elem$delimiter))
         colnames(t) <- "Delimiter"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
-                   escape = FALSE, table.attr = "class=\"text-analysis-diagnostics-table\""))
+                   escape = FALSE, table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -736,27 +730,27 @@ delimitersDiagnostic <- function(info, details.expand)
 conditionalDelimitersDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Conditional delimiters")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Conditional delimiters (",
+                   "<summary class=\"summary sub-details\">Conditional delimiters (",
                    length(info$conditional.delimiters), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Conditional delimiters are only used to split text if the ",
                    "resulting splits exist as categories. ",
                    "Conditional delimiters are specified in textbox labeled \"Conditional\" ",
                    "in the DELIMITERS / SPLIT TEXT group.</div>")
     if (!is.null(info))
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
         t <- matrix(htmlText(info$conditional.delimiters))
         colnames(t) <- "Delimiters"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(info))
         html <- paste0(html, "</div>")
@@ -767,15 +761,15 @@ conditionalDelimitersDiagnostic <- function(info, details.expand)
 knownCategoriesSplitDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Splits by known categories")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Splits by known categories (",
+                   "<summary class=\"summary sub-details\">Splits by known categories (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Categories with frequencies at or below the \"Maximum ",
                    "category frequency to split\" setting in DELIMITERS / ",
                    "SPLIT TEXT are split by known categories, which are ",
@@ -785,7 +779,7 @@ knownCategoriesSplitDiagnostic <- function(info, details.expand)
     for (elem in info)
     {
 
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
         ptm <- proc.time()
 
         replacements <- htmlText(elem$replacements)
@@ -799,7 +793,7 @@ knownCategoriesSplitDiagnostic <- function(info, details.expand)
         colnames(t) <- c("Split text", "Splits")
         html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -812,15 +806,15 @@ knownCategoriesSplitDiagnostic <- function(info, details.expand)
 splitIntoCategoriesDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Splits into categories")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Splits into categories (",
+                   "<summary class=\"summary sub-details\">Splits into categories (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Phrases can be manually split into categories by ",
                    "clicking on the button at the bottom of the ",
                    "DELIMITERS / SPLIT TEXT group, specifying the phrase to ",
@@ -831,7 +825,7 @@ splitIntoCategoriesDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix("", nrow = length(elem$categories), ncol = 2)
         t[1, 1] <- htmlText(elem$to.be.split)
@@ -839,7 +833,7 @@ splitIntoCategoriesDiagnostic <- function(info, details.expand)
         colnames(t) <- c("Split phrase", "Categories from split")
         html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -851,15 +845,15 @@ splitIntoCategoriesDiagnostic <- function(info, details.expand)
 categoryReplacementDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Category replacements")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Category replacements (",
+                   "<summary class=\"summary sub-details\">Category replacements (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Category replacements are specified by clicking on ",
                    "the button under the CATEGORY REPLACEMENT group and ",
                    "entering the replacement category in the first column and ",
@@ -869,7 +863,7 @@ categoryReplacementDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix("", nrow = length(elem$to.be.replaced), ncol = 2)
         t[, 1] <- htmlText(elem$to.be.replaced)
@@ -877,7 +871,7 @@ categoryReplacementDiagnostic <- function(info, details.expand)
         colnames(t) <- c("Replaced", "Replacement")
         html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -889,15 +883,15 @@ categoryReplacementDiagnostic <- function(info, details.expand)
 spellingCorrectionsDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Spelling corrections")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Spelling corrections (",
+                   "<summary class=\"summary sub-details\">Spelling corrections (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Spelling correction settings are found in the ",
                    "SPELLING CORRECTION group. To prevent a pharse from being ",
                    "corrected, click on the \"Phrases that shouldn't be corrected\" ",
@@ -906,7 +900,7 @@ spellingCorrectionsDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix("", nrow = 1, ncol = 2)
         t[1, 1] <- htmlText(elem$corrected)
@@ -914,7 +908,7 @@ spellingCorrectionsDiagnostic <- function(info, details.expand)
         colnames(t) <- c("Corrected", "Correction")
         html <- paste0(html, kable(t, align = c("l", "l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -926,15 +920,15 @@ spellingCorrectionsDiagnostic <- function(info, details.expand)
 discardedCategoriesDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Discarded categories")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Discarded categories (",
+                   "<summary class=\"summary sub-details\">Discarded categories (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Categories to be discarded can be specified by clicking on ",
                    "the button under the CATEGORIES TO DISCARD group and ",
                    "entering the categories in the first column of the table ",
@@ -943,13 +937,13 @@ discardedCategoriesDiagnostic <- function(info, details.expand)
 
     for (elem in info)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         t <- matrix(htmlText(elem$discarded))
         colnames(t) <- "Discarded"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table\""))
+                                   table.attr = "class=\"diagnostics-table\""))
 
         html <- paste0(html, rawCasesTable(elem))
 
@@ -961,15 +955,15 @@ discardedCategoriesDiagnostic <- function(info, details.expand)
 lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 {
     html <- if (details.expand == "Categories below minimum frequency")
-        "<details open=\"true\" class=\"text-analysis-details\">"
+        "<details open=\"true\" class=\"details\">"
     else
-        "<details class=\"text-analysis-details\">"
+        "<details class=\"details\">"
 
     html <- paste0(html,
-                   "<summary class=\"text-analysis-summary displayr-sub-details\">Categories below minimum frequency (",
+                   "<summary class=\"summary sub-details\">Categories below minimum frequency (",
                    length(info), ")</summary>",
-                   "<div class=\"text-analysis-diagnostics-group\">",
-                   "<div class=\"text-analysis-diagnostics-message\">",
+                   "<div class=\"diagnostics-group\">",
+                   "<div class=\"diagnostics-message\">",
                    "Categories below the minimum category size are shown below. ",
                    "These categories are removed but are still counted in the ",
                    "UNCLASSIFIED category. The minimum category size option ",
@@ -977,7 +971,7 @@ lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 
     if (length(info) > 0)
     {
-        html <- paste0(html, "<div class=\"text-analysis-diagnostics-block\">")
+        html <- paste0(html, "<div class=\"diagnostics-block\">")
 
         n.row <- sum(sapply(info, function(x) length(x$raw.text)))
 
@@ -998,7 +992,7 @@ lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 
         html <- paste0(html, kable(t, align = c("l", "c", "c", "l"),
                                    format = "html", escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table text-analysis-low-freq-table\""))
+                                   table.attr = "class=\"diagnostics-table low-freq-table\""))
 
         html <- paste0(html, "</div>")
     }
@@ -1009,7 +1003,7 @@ lowFrequencyCategoriesDiagnostic <- function(info, details.expand)
 # corresponding variable numbers and case numbers.
 rawCasesTable <- function(obj)
 {
-    html <- "<div class=\"text-analysis-diagnostics-raw-cases\">"
+    html <- "<div class=\"diagnostics-raw-cases\">"
     if (length(obj$raw.text) > 0)
     {
         t <- cbind(obj$raw.text.var.num, obj$raw.text.case.num,
@@ -1022,7 +1016,7 @@ rawCasesTable <- function(obj)
         colnames(t) <- c("Var", "Case", "Raw text")
         html <- paste0(html, kable(t, align = c("c", "c", "l"),
                                    format = "html", escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table text-analysis-raw-cases-table\""))
+                                   table.attr = "class=\"diagnostics-table raw-cases-table\""))
     }
     else
     {
@@ -1030,14 +1024,14 @@ rawCasesTable <- function(obj)
         colnames(t) <- "Raw text"
         html <- paste0(html, kable(t, align = c("l"), format = "html",
                                    escape = FALSE,
-                                   table.attr = "class=\"text-analysis-diagnostics-table text-analysis-raw-cases-table\""))
+                                   table.attr = "class=\"diagnostics-table raw-cases-table\""))
     }
     paste0(html, "</div>")
 }
 
 addFooter <- function(footer, cata)
 {
-    cata("<div class=\"text-analysis-footer-container\"><div class=\"text-analysis-footer-spacing\"><div class=\"text-analysis-footer\">",
+    cata("<div class=\"footer-container\"><div class=\"footer-spacing\"><div class=\"footer\">",
          footer, "</div></div></div>")
 }
 
