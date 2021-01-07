@@ -1,7 +1,7 @@
 #' AnovaTable
 #'
 #' Creates a pretty formattable table for ANOVA/ANCOVA of a regression.
-#' @param anova An Anova table of Regresssion.
+#' @param anova An Anova table of Regression.
 #' @param footer Text to place in the footer of the table.
 #' @param title The title for the table.
 #' @param subtitle Subtitle for the table.

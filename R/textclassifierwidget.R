@@ -95,7 +95,7 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
     missing.text <- text.raw.by.categorization$`NA`
 
     # Create table
-    cata("<table class=\"categorization-table text-classfier-table\"><thead>",
+    cata("<table class=\"categorization-table text-classifier-table\"><thead>",
          "<th></th><th>Category</th><th>Observed (n)</th><th>Predicted (n)</th><th>Accuracy (n)</n><th>Example</th>",
          "</thead><tbody>")
     for (i in seq(categories))

@@ -7,7 +7,7 @@
     line-height: normal;
 }
 
-.unstructured-text-main-container h1 {
+div.unstructured-text-main-container h1 {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 24px;
@@ -15,18 +15,12 @@
     font-weight: normal;
 }
 
-.footer {
-    margin: 10px;
-    font-size: 13px;
-    text-align: center;
-}
-
-.raw-text-category-details {
+div.unstructured-text-main-container .raw-text-category-details {
     margin-bottom: 5px;
     margin-left: 16px;
 }
 
-.raw-text-category-summary {
+div.unstructured-text-main-container .raw-text-category-summary {
     font-size: 13px;
     margin-bottom: 5px;
     color: #333333;
@@ -37,31 +31,31 @@
     -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
-.raw-text-category-summary:hover {
+div.unstructured-text-main-container .raw-text-category-summary:hover {
     cursor:pointer;
 }
 
-.raw-text-category-summary:focus {
+div.unstructured-text-main-container .raw-text-category-summary:focus {
     outline: none;
 }
 
-.raw-text-category-summary::-webkit-details-marker{
+div.unstructured-text-main-container .raw-text-category-summary::-webkit-details-marker{
     color: #bbbbbb;
     margin-left: -15px;
 }
 
-th.categorization-table {
+div.unstructured-text-main-container th.categorization-table {
     font-weight: bold;
     text-align: left;
 }
 
-.categorization-table th {
+div.unstructured-text-main-container .categorization-table th {
     border-bottom: 2px solid #dddddd;
     padding: 8px;
     font-size: 13px;
 }
 
-.categorization-table td {
+div.unstructured-text-main-container .categorization-table td {
     padding-top: 8px;
     padding-left: 8px;
     padding-right: 8px;
@@ -70,7 +64,7 @@ th.categorization-table {
     vertical-align: top;
 }
 
-table.categorization-table {
+div.unstructured-text-main-container table.categorization-table {
     border-top: 2px solid #333333;
     border-bottom: 2px solid #333333;
     margin-bottom: 0;
@@ -80,7 +74,7 @@ table.categorization-table {
     border-collapse: collapse;
 }
 
-.categorization-table caption {
+div.unstructured-text-main-container .categorization-table caption {
     padding-bottom: 4px;
     padding-top: 4px;
     caption-side:bottom;
@@ -92,16 +86,16 @@ table.categorization-table {
     text-align:left;
 }
 
-.unstructured-text-table-row {
+div.unstructured-text-main-container .unstructured-text-table-row {
     border-bottom: 1px solid #dddddd;
 }
 
-.unstructured-text-raw-text-table {
+div.unstructured-text-main-container .unstructured-text-raw-text-table {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.unstructured-text-raw-text-table th {
+div.unstructured-text-main-container .unstructured-text-raw-text-table th {
     border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     padding: 3px;
@@ -109,15 +103,15 @@ table.categorization-table {
     font-weight: normal;
 }
 
-.unstructured-text-raw-text-table td {
+div.unstructured-text-main-container .unstructured-text-raw-text-table td {
     padding: 3px;
     font-size: 11px;
 }
 
-.unstructured-text-raw-text-table td:nth-child(1) {
+div.unstructured-text-main-container .unstructured-text-raw-text-table td:nth-child(1) {
     width: 50px;
 }
 
-table.unstructured-text-raw-text-table {
+div.unstructured-text-main-container table.unstructured-text-raw-text-table {
     border-bottom: 2px solid #dddddd;
 }
