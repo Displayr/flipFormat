@@ -197,3 +197,8 @@ decimalToBase <- function(x, base = 38)
     out
 }
 
+
+generateRandomString <- function(digits = 10)
+{
+    paste0(sample(possible.chars, digits, replace = TRUE), collapse = "")
+}
