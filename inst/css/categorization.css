@@ -86,16 +86,16 @@ div.unstructured-text-main-container .categorization-table caption {
     text-align:left;
 }
 
-div.unstructured-text-main-container .unstructured-text-table-row {
+div.unstructured-text-main-container .table-row {
     border-bottom: 1px solid #dddddd;
 }
 
-div.unstructured-text-main-container .unstructured-text-raw-text-table {
+div.unstructured-text-main-container .raw-text-table {
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-div.unstructured-text-main-container .unstructured-text-raw-text-table th {
+div.unstructured-text-main-container .raw-text-table th {
     border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     padding: 3px;
@@ -103,15 +103,15 @@ div.unstructured-text-main-container .unstructured-text-raw-text-table th {
     font-weight: normal;
 }
 
-div.unstructured-text-main-container .unstructured-text-raw-text-table td {
+div.unstructured-text-main-container .raw-text-table td {
     padding: 3px;
     font-size: 11px;
 }
 
-div.unstructured-text-main-container .unstructured-text-raw-text-table td:nth-child(1) {
+div.unstructured-text-main-container .raw-text-table td:nth-child(1) {
     width: 50px;
 }
 
-div.unstructured-text-main-container table.unstructured-text-raw-text-table {
+div.unstructured-text-main-container table.raw-text-table {
     border-bottom: 2px solid #dddddd;
 }

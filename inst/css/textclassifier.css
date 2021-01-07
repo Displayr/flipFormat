@@ -14,23 +14,19 @@ width: 0;
 }
 
 div.unstructured-text-main-container .text-classifier-table td:nth-of-type(2) {
-width: 21%;
+max-width: 21%;
 }
 
 div.unstructured-text-main-container .text-classifier-table td:nth-of-type(3) {
-width: 13%;
+max-width: 13%;
 }
 
 div.unstructured-text-main-container .text-classifier-table td:nth-of-type(4) {
-width: 13%;
+max-width: 13%;
 }
 
 div.unstructured-text-main-container .text-classifier-table td:nth-of-type(5) {
-width: 13%;
-}
-
-div.unstructured-text-main-container .text-classifier-table td:nth-of-type(6) {
-width: 40%;
+max-width: 13%;
 }
 
 div.unstructured-text-main-container .classifier-validation-table {

@@ -38,8 +38,6 @@ CreateTextAnalysisWidget <- function(raw.and.normalized.text,
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
-    # addCss("table.css", cata)
-    # addCss("details.css", cata)
     addCss("textanalysis.css", cata)
 
     stylefile <- createTempFile()
