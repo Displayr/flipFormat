@@ -55,13 +55,13 @@
 .choice-modelling-design-main-container th {
     text-align: center;
     /* margin: 25px; */
-    font-size: 90%;
+    font-size: 13px;
     /* border-bottom: 2px solid #3E7DCC; */
 }
 
 .choice-modelling-design-main-container td {
     text-align: center;
-    font-size: 90%;
+    font-size: 13px;
     /* margin: 5px; */
 }
 
@@ -96,7 +96,7 @@ table.cmd-table-pairwise td:nth-child(1){
 .cmd-summary-pairwise{
     margin-left: 10px;
     /* font-weight: lighter; */
-    font-size: 90%;
+    font-size: 13px;
 }
 
 /************************* End Pairwise table ***********************/
