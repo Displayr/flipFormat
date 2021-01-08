@@ -285,7 +285,7 @@ CreateCustomTable = function(x,
                         footer.font.weight = "normal",
                         footer.font.style = "normal",
                         col.header.classes = "",
-                        row.header.classes = "",
+                        row.header.classes = NULL,
                         col.classes = list(),
                         row.classes = list(),
                         banded.rows = FALSE,
@@ -386,28 +386,33 @@ CreateCustomTable = function(x,
     # Setup html file
     tfile <- createTempFile()
     cata <- createCata(tfile)
+    # Create unique class name for parent div container
+    container.name <- paste0("custom-table-container-", generateRandomString())
+    container.selector.name <- paste0(".", container.name)
     cata("<style>\n")
-    cata(".main-container{ background: transparent; height: 100%; overflow-x: hidden; overflow-y:",
-         if (!is.null(row.height)) "auto" else "hidden", "}\n")
+    cata(container.selector.name, "{ background: transparent; line-height: normal; white-space: normal; height: 100%; overflow-x: hidden; overflow-y: ",
+         if (!is.null(row.height)) "auto" else "hidden", "; }\n", sep = "")
+    container.selector.name <- paste0("div", container.selector.name)
     if (is.numeric(border.row.gap))
         border.row.gap <- paste0(border.row.gap, "px")
     if (is.numeric(border.column.gap))
         border.column.gap <- paste0(border.column.gap, "px")
-    cata("table { table-layout: fixed; border-collapse: ",
+    cata(container.selector.name, "table { table-layout: fixed; border-collapse: ",
          if (border.collapse) "collapse; " else "separate; ",
          "border-spacing: ", border.column.gap, border.row.gap, ";",
          "position: relative; width: 100%; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
-         "white=space:nowrap; cellspacing:'0'; cellpadding:'0'; }\n")
+         "cellspacing:'0'; cellpadding:'0'; ",
+         "white-space: normal; line-height: normal; }\n")
 
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
     # to allow for multiple sticky rows
-    cata("th { position: -webkit-sticky; position: sticky; top: 0px; overflow: ", overflow, "; ")
+    cata(container.selector.name, "th { position: -webkit-sticky; position: sticky; top: 0px; overflow: ", overflow, "; ")
     if (resizable)
         cata("resize: both; ")
     cata("}\n")
-    cata("td { overflow: ", overflow, "; ")
+    cata(container.selector.name, "td { overflow: ", overflow, "; ")
     if (sum(nchar(row.height)) > 0)
         cata("height:", row.height, "; ")
     cata("}\n")
@@ -429,15 +434,15 @@ CreateCustomTable = function(x,
     }
 
     # Set up styles for each cell - vector/matrix values automatically recycled
-    cell.styles <- addCSSclass(cata, "celldefault", paste0(cell.fill,
-        "; ", if (sum(nchar(row.height)) > 0) paste0("height: ", row.height, "; ") else "",
+    cell.styles <- addCSSclass(cata, "celldefault",
+        paste0(cell.fill, "; ", if (sum(nchar(row.height)) > 0) paste0("height: ", row.height, "; ") else "",
         if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
         "; color:", cell.font.color, "; text-align: ", cell.align.horizontal,
         "; vertical-align: ", cell.align.vertical, ";"), nrows, ncols,
-        position = top.position)
+        position = top.position, parent.stem = container.name)
 
     # Row/column classes overrides other attributes (except coloring based on significance)
     for (cc in row.classes)
@@ -451,13 +456,13 @@ CreateCustomTable = function(x,
     if (show.row.headers)
     {
         row.header.styles <- addCSSclass(cata, "rowheaderdefault", paste0("background: ", row.header.fill,
-            if (override.borders) "" else paste0("; border: ", row.header.border.width,
-            "px solid ", row.header.border.color),
+            if (override.borders) "" else paste0("; border: ", row.header.border.width, "px solid ", row.header.border.color),
             ";", getPaddingCSS(tolower(row.header.align.horizontal), row.header.pad),
             "; font-size: ", row.header.font.size, font.unit, "; font-style: ", row.header.font.style,
             "; font-weight: ", row.header.font.weight, "; font-family: ", row.header.font.family,
             "; color:", row.header.font.color, "; text-align: ", row.header.align.horizontal,
-            "; vertical-align: ", row.header.align.vertical, ";"), nrows, position = top.position)
+            "; vertical-align: ", row.header.align.vertical, ";"), nrows, position = top.position,
+            parent.stem = container.name)
         if (!is.null(row.header.classes))
             row.header.styles <- paste(row.header.styles, row.header.classes)
         content <- cbind(rownames(x), content)
@@ -491,7 +496,8 @@ CreateCustomTable = function(x,
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
             "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
             "; color:", row.span.font.color, "; text-align: ", row.span.align.horizontal,
-            "; vertical-align: ", row.span.align.vertical, ";"), nrows, position = top.position)
+            "; vertical-align: ", row.span.align.vertical, ";"), nrows, position = top.position,
+            parent.stem = container.name)
         for (i in 1:length(row.spans))
             if (!is.null(row.spans[[i]]$class))
                 row.span.styles[i] <- paste(row.span.styles[i], row.spans[[i]]$class)
@@ -521,21 +527,23 @@ CreateCustomTable = function(x,
             "; font-size: ", col.header.font.size, font.unit, "; font-style: ", col.header.font.style,
             "; font-weight: ", col.header.font.weight, "; font-family: ", col.header.font.family,
             "; color:", col.header.font.color, "; text-align: ", col.header.align.horizontal,
-            "; vertical-align: ", col.header.align.vertical, ";"), ncols)
+            "; vertical-align: ", col.header.align.vertical, ";"), ncols,
+            parent.stem = container.name)
         if (!is.null(col.header.classes))
             col.header.styles <- paste(col.header.styles, col.header.classes)
         col.labels <- colnames(x)
 
         if (show.row.headers)
         {
-            corner.styles <- addCSSclass(cata, "cornerdefault", paste0("background: ", corner.fill,
-                if (override.borders) "" else paste0("; border: ", corner.border.width,
-                "px solid ", corner.border.color),
+            corner.styles <- addCSSclass(cata, "cornerdefault",
+                paste0("background: ", corner.fill,
+                if (override.borders) "" else paste0("; border: ", corner.border.width, "px solid ", corner.border.color),
                 ";", getPaddingCSS(tolower(corner.align.horizontal), corner.pad),
                 "; font-size: ", corner.font.size, font.unit, "; font-style: ", corner.font.style,
                 "; font-weight: ", corner.font.weight, "; font-family: ", corner.font.family,
                 "; color:", corner.font.color, "; text-align: ", corner.align.horizontal,
-                "; vertical-align: ", corner.align.vertical, ";"))
+                "; vertical-align: ", corner.align.vertical, ";"),
+                parent.stem = container.name)
             if (sum(nchar(corner.class)) > 0)
                 corner.styles <- paste(corner.styles, corner.class)
             col.header.styles <- c(corner.styles[1], col.header.styles)
@@ -567,7 +575,8 @@ CreateCustomTable = function(x,
             "; font-size: ", col.span.font.size, font.unit, "; font-style: ", col.span.font.style,
             "; font-weight: ", col.span.font.weight, "; font-family: ", col.span.font.family,
             "; color:", col.span.font.color, "; text-align: ", col.span.align.horizontal,
-            "; vertical-align: ", col.span.align.vertical, ";"), ncols, position = top.position)
+            "; vertical-align: ", col.span.align.vertical, ";"), ncols, position = top.position,
+            parent.stem = container.name)
         for (i in 1:length(col.spans))
             if (!is.null(col.spans[[i]]$class))
                 col.span.styles[i] <- paste(col.span.styles[i], col.spans[[i]]$class)
@@ -581,10 +590,10 @@ CreateCustomTable = function(x,
 
     # Row/Column banding
     if (banded.rows)
-        cata('tbody tr:nth-child(odd){background-color:', banded.odd.fill,
+        cata(container.selector.name, 'tbody tr:nth-child(odd){background-color:', banded.odd.fill,
                 ';} tr:nth-child(even){background-color:', banded.even.fill, ';}')
     if (banded.cols)
-        cata('tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
+        cata(container.selector.name, 'tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
              ';} td:nth-child(even){background-color:', banded.even.fill, ';}')
 
     # Other CSS
@@ -594,7 +603,7 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"", container.name, "\">", sep = "")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",
@@ -697,7 +706,7 @@ getPaddingCSS <- function(align, pad)
     return(res)
 }
 
-addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, position = NULL)
+addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, position = NULL, parent.stem = NULL)
 {
     if (length(class.css) < 1)
         return(NULL)
@@ -712,7 +721,8 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
     # The number of classes created is the length of class.css
     # recycling occurs if needed inside CreateCustomTable
     class.names <- paste0(class.stem, 1:n)
-    tmp.css <- paste0(".", class.names, "{ ", class.css, " }")
+    css.selectors <- if (!is.null(parent.stem)) paste0("div.", parent.stem, " .", class.names) else paste0(".", class.names)
+    tmp.css <- paste0(css.selectors, "{ ", class.css, " }")
 
     # Add class definition to CSS file
     cata(paste(tmp.css, collapse = "\n"))
