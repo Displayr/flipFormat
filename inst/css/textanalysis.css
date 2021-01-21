@@ -1,6 +1,6 @@
 /* CSS for text analysis outputs in Q and Displayr */
 
-.main-container {
+.text-analysis-main-container {
     box-sizing: border-box;
     position:absolute;
     left:0;
@@ -9,44 +9,112 @@
     bottom:0;
     display: flex;
     flex-direction: column;
+    background: white;
+    line-height: normal;
+    white-space: normal;
 }
 
-.panel-container {
+.text-analysis-main-container table {
+    color: #303A3F;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    border-collapse: collapse;
+    text-align: center;
+    border-spacing: 0;
+}
+
+.text-analysis-main-container th {
+    background: white;
+    font-weight: bold;
+    color: #3E7DCC;
+    min-width: 24px;
+    min-height: 24px;
+    padding: 5px;
+    vertical-align: middle;
+}
+
+.text-analysis-main-container td {
+    min-width: 30px;
+}
+
+.text-analysis-main-container tr:nth-child(even) td { background: #F2F5FA; }
+
+/* Cells in odd rows (1,3,5...) are another (excludes header cells)*/
+.text-analysis-main-container tr:nth-child(odd) td { background: #E5E8EE; }
+
+.text-analysis-main-container summary {
+    /* border-bottom: 3px solid #151A1C; */
+    background: #F2F5FA;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 16px;
+    margin-top: 10px;
+    user-select: none;
+    /* margin-bottom: 10px; */
+}
+
+@supports (-ms-ime-align:auto) {
+  .text-analysis-main-container .summary, .text-analysis-main-container .details {
+      /* border-bottom: 3px solid #151A1C; */
+      /* background: #F2F5FA; */
+      /* font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif; */
+      /* color: #151A1C; */
+      /* font-size: 15px; */
+      /* margin-top: 10px; */
+      /* margin-bottom: 10px; */
+      display: block;
+  }
+}
+
+.text-analysis-main-container details summary::-webkit-details-marker{
+    color: #3E7DCC;
+    margin-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.text-analysis-main-container summary:hover {
+    cursor:pointer;
+}
+
+.displayr-sub-details {
+  font-size: 14px;
+}
+
+
+.text-analysis-panel-container {
     display: flex;
     flex: 0 10000 auto;
     overflow: auto;
 }
 
-details + .panel-container {
+details + .text-analysis-panel-container {
     min-height: 0;
     max-height: 0;
 }
 
-details[open] + .panel-container {
+details[open] + .text-analysis-panel-container {
     min-height: calc(40vh - 2em);
     max-height: inherit;
 }
 
-.panel {
+.text-analysis-panel {
     padding: 0.25em;
     overflow: auto;
 }
 
-.text-panel {
+.text-analysis-text-panel {
     flex: 1 1 60%;
 }
 
-.ngrams-panel {
+.text-analysis-ngrams-panel {
     flex: 1 1 auto;
     resize: horizontal;
     max-width: calc(50vw);
 }
 
-.diagnostics-panel {
+.text-analysis-diagnostics-panel {
     flex: 1 1 100%;
 }
 
-.footer-container {
+.text-analysis-footer-container {
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     line-height: 1.42857143;
     color: #777;
@@ -58,13 +126,13 @@ details[open] + .panel-container {
     padding-bottom: 0.5em;
 }
 
-.raw-replacement {
+.text-analysis-raw-replacement {
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
 }
 
-.split-text {
+.text-analysis-split-text {
     background-color: #FFFF55;
     border: 2px #FFFF55;
     border-style: solid solid solid solid;
@@ -91,53 +159,53 @@ details[open] + .panel-container {
     text-align:left;
 }
 
-.raw-text-table td {
+.text-analysis-raw-text-table td {
     text-align: left;
 }
 
-.categories-table td:nth-child(n+2) {
+.text-analysis-categories-table td:nth-child(n+2) {
     text-align: center; white-space: nowrap;
 }
 
-.categories-table th {
+.text-analysis-categories-table th {
     text-align: left;
 }
 
-.categories-table th:nth-child(n+2) {
+.text-analysis-categories-table th:nth-child(n+2) {
     text-align: center;
 }
 
-.raw-text-table td {
+.text-analysis-raw-text-table td {
     text-align: left;
 }
-.raw-text-table th {
+.text-analysis-raw-text-table th {
     text-align: left;
 }
-.raw-text-table td:nth-last-child(n+3) {
+.text-analysis-raw-text-table td:nth-last-child(n+3) {
     text-align: center; white-space: nowrap;
 }
-.raw-text-table th:nth-last-child(n+3) {
+.text-analysis-raw-text-table th:nth-last-child(n+3) {
     text-align: center;
 }
 
 
-.low-freq-table td:nth-of-type(2) {
+.text-analysis-low-freq-table td:nth-of-type(2) {
     white-space: nowrap;
 }
 
-.low-freq-table td:nth-of-type(3) {
+.text-analysis-low-freq-table td:nth-of-type(3) {
     white-space: nowrap;
 }
 
-.raw-cases-table td:nth-of-type(1) {
+.text-analysis-raw-cases-table td:nth-of-type(1) {
     white-space: nowrap;
 }
 
-.raw-cases-table td:nth-of-type(2) {
+.text-analysis-raw-cases-table td:nth-of-type(2) {
     white-space: nowrap;
 }
 
-.variable-name {
+.text-analysis-variable-name {
     display: block;
     margin: 10px 15px 0 15px;
     color: #3E7DCC;
@@ -145,30 +213,30 @@ details[open] + .panel-container {
     font-size: 18px;
 }
 
-.diagnostics-table {
+.text-analysis-diagnostics-table {
     font-size: 12px;
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 20px;
 }
 
-.diagnostics-table td {
+.text-analysis-diagnostics-table td {
     padding-left: 5px;
     padding-right: 5px;
     word-break: break-word; /* only break words in cells not table headers */
     hyphens: auto;
 }
 
-.diagnostics-block {
+.text-analysis-diagnostics-block {
     display: flex;
     border-bottom: solid 1px #BBB;
 }
 
-.diagnostics-group {
+.text-analysis-diagnostics-group {
     padding-top: 10px;
 }
 
-.diagnostics-message {
+.text-analysis-diagnostics-message {
     font-size: 12px;
     margin-left: 10px;
     margin-right: 10px;
@@ -177,18 +245,18 @@ details[open] + .panel-container {
     color: #444;
 }
 
-.footer-container {
+.text-analysis-footer-container {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     overflow: auto;
 }
 
-.footer-spacing {
+.text-analysis-footer-spacing {
     flex-grow: 1;
 }
 
-.footer {
+.text-analysis-footer {
     max-height: 6em;
     overflow: auto;
 }

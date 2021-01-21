@@ -1,39 +1,40 @@
 /* CSS for text classifier output in Q and Displayr */
 
-.text-classfier-table caption {
+div.unstructured-text-main-container .text-classifier-table caption {
     margin-bottom: 0;
 }
 
-.auto-categorization-table td:nth-of-type(1) {
-width: calc(0vw);
+div.unstructured-text-main-container .text-classifier-table {
+    white-space: normal;
+    line-height: normal;
 }
 
-.auto-categorization-table td:nth-of-type(2) {
-width: calc(25vw);
+div.unstructured-text-main-container .text-classifier-table td:nth-of-type(1) {
+width: 0;
 }
 
-.auto-categorization-table td:nth-of-type(3) {
-width: calc(13vw);
+div.unstructured-text-main-container .text-classifier-table td:nth-of-type(2) {
+max-width: 21%;
 }
 
-.auto-categorization-table td:nth-of-type(4) {
-width: calc(13vw);
+div.unstructured-text-main-container .text-classifier-table td:nth-of-type(3) {
+max-width: 13%;
 }
 
-.auto-categorization-table td:nth-of-type(5) {
-width: calc(13vw);
+div.unstructured-text-main-container .text-classifier-table td:nth-of-type(4) {
+max-width: 13%;
 }
 
-.auto-categorization-table td:nth-of-type(6) {
-width: calc(36vw);
+div.unstructured-text-main-container .text-classifier-table td:nth-of-type(5) {
+max-width: 13%;
 }
 
-.classifier-validation-table {
+div.unstructured-text-main-container .classifier-validation-table {
 display: flex;
     justify-content: center;
 }
 
-.classifier-validation-table table {
+div.unstructured-text-main-container .classifier-validation-table table {
 border-top: 2px solid #dddddd;
     border-bottom: 2px solid #dddddd;
     font-size: 11px;
@@ -41,7 +42,7 @@ border-top: 2px solid #dddddd;
     font-style:italic;
 }
 
-.classifier-validation-table th {
+div.unstructured-text-main-container .classifier-validation-table th {
 font-weight: normal;
     border-bottom: 1px solid #dddddd;
     padding: 3px;

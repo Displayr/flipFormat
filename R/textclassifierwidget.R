@@ -33,7 +33,7 @@ TextClassifierWidget <- function(observed.counts,
     addCss("categorization.css", cata)
     addCss("textclassifier.css", cata)
 
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"unstructured-text-main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
@@ -95,7 +95,7 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
     missing.text <- text.raw.by.categorization$`NA`
 
     # Create table
-    cata("<table class=\"categorization-table text-classfier-table\"><thead>",
+    cata("<table class=\"categorization-table text-classifier-table\"><thead>",
          "<th></th><th>Category</th><th>Observed (n)</th><th>Predicted (n)</th><th>Accuracy (n)</n><th>Example</th>",
          "</thead><tbody>")
     for (i in seq(categories))
@@ -111,7 +111,7 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
         if (!is.na(examples[i]))
         {
             cata("<details class=\"details raw-text-category-details\">")
-            cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+            cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
                  "<span>", t[i, 6], "</span></summary>")
 
             text.raw.cat <- text.raw.by.categorization[[i]]
@@ -135,7 +135,7 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
         cata("<tr class=\"raw-text-row\"><td></td><td>Missing cases</td><td></td><td><td></td><td>")
 
         cata("<details class=\"details raw-text-category-details\">")
-        cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+        cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
              "<span>", missing.text[1], "</span></summary>")
 
         t <- cbind(which(missing), missing.text)

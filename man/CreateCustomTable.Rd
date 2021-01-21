@@ -114,7 +114,7 @@ CreateCustomTable(
   footer.font.weight = "normal",
   footer.font.style = "normal",
   col.header.classes = "",
-  row.header.classes = "",
+  row.header.classes = NULL,
   col.classes = list(),
   row.classes = list(),
   banded.rows = FALSE,

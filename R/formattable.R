@@ -244,7 +244,7 @@ createTable <- function(x, col.names, formatters, title, subtitle, footer, no.wr
         formatters = formatters,
         table.attr = paste0(
             'class = "table table-condensed"',
-            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%;"',
+            'style = "margin:0; border-bottom: 2px solid; border-top: 2px solid; font-size:90%; line-height: normal;"',
             sep = " "
         ),
         align = col.names.alignment,

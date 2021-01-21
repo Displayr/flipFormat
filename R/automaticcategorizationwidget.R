@@ -28,7 +28,7 @@ AutomaticCategorizationWidget <- function(sizes,
     addCss("categorization.css", cata)
     addCss("automaticcategorization.css", cata)
 
-    cata("<div class=\"main-container\">")
+    cata("<div class=\"unstructured-text-main-container\">")
 
     cata("<h1>", htmlText(title), "</h1>")
 
@@ -78,7 +78,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
          "</thead><tbody>")
     for (i in seq(categories))
     {
-        cata("<tr class=\"table-row\">")
+        cata("<tr class=\"unstructured-text-table-row\">")
         cata(paste0("<td>", t[i, 1], "</td>"))
         cata(paste0("<td>", t[i, 2], "</td>"))
         cata(paste0("<td>", t[i, 3], "</td>"))
@@ -88,7 +88,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
         if (!is.na(examples[i]))
         {
             cata("<details class=\"details raw-text-category-details\">")
-            cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+            cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
                  "<span>", t[i, 4], "</span></summary>")
 
             text.raw.cat <- text.raw.by.categorization[[i]]
@@ -113,7 +113,7 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
         cata("<tr class=\"raw-text-row\"><td></td><td>Missing cases</td><td></td><td>")
 
         cata("<details class=\"details raw-text-category-details\">")
-        cata("<summary class=\"summary sub-details raw-text-category-summary\">",
+        cata("<summary class=\"summary displayr-sub-details raw-text-category-summary\">",
              "<span>", missing.text[1], "</span></summary>")
 
         t <- cbind(which(missing), missing.text)
