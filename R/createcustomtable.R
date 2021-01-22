@@ -309,6 +309,7 @@ CreateCustomTable = function(x,
 {
     # Check input
     x <- tidyMatrixValues(x, transpose, row.header.labels, col.header.labels)
+    stat <- attr(x, "statistic")
     nrows <- nrow(x)
     ncols <- ncol(x)
     if (is.null(colnames(x)))
@@ -321,7 +322,9 @@ CreateCustomTable = function(x,
         num.header.rows <- nrows - 1
 
     # Format table contents
-    if (format.type == "Automatic" && any(grepl("%)?$", attr(x, "statistic"))))
+    if (isTRUE(grepl("%", stat)))
+        x <- x/100
+    if (format.type == "Automatic" && any(grepl("%)?$", stat)))
         format.type <- "Percentage"
 
     content <- if (!is.numeric(x))                   x
@@ -666,6 +669,17 @@ CreateCustomTable = function(x,
 
 tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
 {
+    stat <- attr(x, "statistic")
+    ndim <- length(dim(x))
+
+    # extract primary statistic from higher dimensions if x is a QTable
+    if (is.null(stat) && all(c("questions", "name") %in% names(attributes)))
+        stat <- dimnames(x)[[ndim]][1]
+    if (ndim == 3)
+        x <- x[,,1]
+    if (ndim == 4)
+        x <- x[,,1,1]
+
     x <- as.matrix(x)
     if (transpose)
         x <- t(x)
@@ -688,6 +702,7 @@ tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
         new.labels[1:tmp.len] <- col.header.labels[1:tmp.len]
         colnames(x) <- new.labels
     }
+    attr(x, "statistic") <- stat
     return(x)
 }
 
