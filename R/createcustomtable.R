@@ -601,7 +601,7 @@ CreateCustomTable = function(x,
 
     # Other CSS
     if (use.predefined.css)
-        cata("\n", predefinedCSS(), "\n")
+        cata("\n", predefinedCSS(container.selector.name), "\n")
     cata("\n", circle.css, "\n")
     cata("\n", custom.css, "\n")
 
