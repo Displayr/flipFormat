@@ -158,7 +158,7 @@ table.cmd-table-pairwise td:nth-child(1){
     cursor:pointer;
 }
 
-.displayr-sub-details {
+details .displayr-sub-details {
   font-size: 14px;
 }
 
