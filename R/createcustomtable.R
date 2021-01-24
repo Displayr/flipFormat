@@ -752,39 +752,40 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
 
 
 
-predefinedCSS <- function()
+predefinedCSS <- function(container.selector.name)
 {
-"
-    .rh {
+    do.call(sprintf, as.list(c("
+    %s .rh {
         text-align:left;
         font-weight: bold;
         }
-    .rhclean {
+    %s .rhclean {
         text-align:left;
         }
-    .simpleheader {
+    %s .simpleheader {
         background: #DCDCDC;
         font-weight: bold;
         }
-    .simpleheaderclean {
+    %s .simpleheaderclean {
         background: #DCDCDC;
         font-weight: normal;
         }
-    .nsline {
+    %s .nsline {
         font-style: italic;
         font-size: 9pt;
         white-space:nowrap;
         display: block;}
-    .subjourneyHeader{
+    %s .subjourneyHeader{
         font-style: bold;
         border-bottom: 1px black solid;
         }
-    .subjourneySubHeader{
+    %s .subjourneySubHeader{
         font-style: bold;
         border-top: 1px grey solid;
         border-bottom: 1px grey solid;
         }
-    .white {background-color:white;}
-    .spacer {background: white;color: white;border: none;overflow:hidden;}
-"
+    %s .white {background-color:white;}
+    %s .spacer {background: white;color: white;border: none;overflow:hidden;}
+", rep(container.selector.name, 9))))
+    
 }
