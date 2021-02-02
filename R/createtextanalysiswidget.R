@@ -1053,7 +1053,7 @@ createWidgetFromFile <- function(tfile)
     cat("", fill = TRUE, file = tfile, append = TRUE)
 
     html <- paste(readLines(tfile), collapse = "\n")
-    rhtmlMetro::Box(html, text.as.html = TRUE)
+    rhtmlMetro::Box(html, text.as.html = TRUE, as.iframe = FALSE)
 }
 
 #' Extract the transformed text from the transformed tokens.

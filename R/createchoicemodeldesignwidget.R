@@ -91,7 +91,8 @@ CreateChoiceModelDesignWidget <- function(x,
     html <- paste(readLines(tfile), collapse = "\n")
     out <- rhtmlMetro::Box(html, text.as.html = TRUE,
                     font.family = "Circular, Arial, sans-serif",
-                    font.size = 8)
+                    font.size = 8,
+                    as.iframe = FALSE)
 
     attr(out, "ChartData") <- x$labeled.design
     return(out)

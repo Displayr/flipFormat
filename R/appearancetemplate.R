@@ -85,5 +85,6 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
 
     Box(html, text.as.html = TRUE,
                         font.family = "Circular, Arial, sans-serif",
-                        font.size = 8)
+                        font.size = 8,
+                        as.iframe = FALSE)
 }
