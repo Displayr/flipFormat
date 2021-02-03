@@ -165,3 +165,29 @@ test_that("DS-3053: Test CreateTransformedText function", {
     expect_equal(flipFormat:::decodeNumericText(LETTERS[1:3]), LETTERS[1:3])
 })
 
+
+test_that("iframeless Box is equivalent", {
+    basic.code <- paste0("<h1>Foo</h1>",
+                         "<h2>bar</h2>",
+                         "<span style='color:red'>This is some red content.</span>", collapse = "")
+    iframe.box <- rhtmlMetro::Box(basic.code, text.as.html = TRUE)
+    iframeless.box <- boxIframeless(basic.code, text.as.html = TRUE)
+    expect_true(attr(iframeless.box, "can-run-in-root-dom"))
+    expect_null(attr(iframe.box, "can-run-in-root-dom"))
+    attr(iframeless.box, "can-run-in-root-dom") <- NULL
+    expect_equal(iframeless.box, iframe.box)
+    # Same tests but toggling the options used in Box
+    iframe.box.raw <- rhtmlMetro::Box(basic.code, text.as.html = FALSE)
+    iframeless.box.raw <- boxIframeless(basic.code, text.as.html = FALSE)
+    expect_true(attr(iframeless.box.raw, "can-run-in-root-dom"))
+    expect_null(attr(iframe.box.raw, "can-run-in-root-dom"))
+    attr(iframeless.box.raw, "can-run-in-root-dom") <- NULL
+    expect_equal(iframeless.box.raw, iframe.box.raw)
+    ## Blue background
+    iframe.box.blue <- rhtmlMetro::Box(basic.code, text.as.html = FALSE, background.color = "blue")
+    iframeless.box.blue <- boxIframeless(basic.code, text.as.html = FALSE, background.color = "blue")
+    expect_true(attr(iframeless.box.blue, "can-run-in-root-dom"))
+    expect_null(attr(iframe.box.blue, "can-run-in-root-dom"))
+    attr(iframeless.box.blue, "can-run-in-root-dom") <- NULL
+    expect_equal(iframeless.box.blue, iframe.box.blue)
+})

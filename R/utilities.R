@@ -202,3 +202,11 @@ generateRandomString <- function(digits = 10)
 {
     paste0(sample(possible.chars, digits, replace = TRUE), collapse = "")
 }
+
+#' @importFrom rhtmlMetro Box
+boxIframeless <- function(...)
+{
+    w <- Box(...)
+    attr(w, "can-run-in-root-dom") <- TRUE
+    w
+}
