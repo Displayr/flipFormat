@@ -20,7 +20,6 @@
 #' @importFrom knitr kable
 #' @importFrom htmltools tagList tags includeCSS browsable
 #' @importFrom htmlwidgets onRender
-#' @importFrom rhtmlMetro Box
 CreateChoiceModelDesignWidget <- function(x,
                                           css = NULL,
                                           nsmall = 3,
@@ -89,9 +88,9 @@ CreateChoiceModelDesignWidget <- function(x,
     cata("</div>", fill = TRUE)
 
     html <- paste(readLines(tfile), collapse = "\n")
-    out <- rhtmlMetro::Box(html, text.as.html = TRUE,
-                    font.family = "Circular, Arial, sans-serif",
-                    font.size = 8)
+    out <- boxIframeless(html, text.as.html = TRUE,
+                         font.family = "Circular, Arial, sans-serif",
+                         font.size = 8)
 
     attr(out, "ChartData") <- x$labeled.design
     return(out)

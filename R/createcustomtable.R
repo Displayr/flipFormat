@@ -658,10 +658,9 @@ CreateCustomTable = function(x,
     cata("</table>\n")
     cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
-    out <- rhtmlMetro::Box(html, text.as.html = TRUE,
-                    font.family = "Circular, Arial, sans-serif",
-                    font.size = 8)
-
+    out <- boxIframeless(html, text.as.html = TRUE,
+                         font.family = "Circular, Arial, sans-serif",
+                         font.size = 8)
     attr(out, "ChartData") <- x
     return(out)
 }
@@ -787,5 +786,5 @@ predefinedCSS <- function(container.selector.name)
     %s .white {background-color:white;}
     %s .spacer {background: white;color: white;border: none;overflow:hidden;}
 ", rep(container.selector.name, 9))))
-    
+
 }

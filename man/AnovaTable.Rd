@@ -7,7 +7,7 @@
 AnovaTable(anova, footer, title = "", subtitle = "", p.cutoff = 0.05)
 }
 \arguments{
-\item{anova}{An Anova table of Regresssion.}
+\item{anova}{An Anova table of Regression.}
 
 \item{footer}{Text to place in the footer of the table.}
 

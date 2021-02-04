@@ -83,7 +83,8 @@ ShowTemplateOptions <- function(colors = NULL, brand.colors = NULL,
     }
     html <- paste0(html, '</div>\n')
 
-    Box(html, text.as.html = TRUE,
-                        font.family = "Circular, Arial, sans-serif",
-                        font.size = 8)
+    boxIframeless(html, text.as.html = TRUE,
+                  font.family = "Circular, Arial, sans-serif",
+                  font.size = 8,
+                  as.iframe = FALSE)
 }
