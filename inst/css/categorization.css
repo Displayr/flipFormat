@@ -17,10 +17,10 @@ div.unstructured-text-main-container h1 {
 
 div.unstructured-text-main-container .raw-text-category-details {
     margin-bottom: 5px;
-    margin-left: 16px;
 }
 
 div.unstructured-text-main-container .raw-text-category-summary {
+    display: list-item;
     font-size: 13px;
     margin-bottom: 5px;
     color: #333333;
@@ -41,9 +41,11 @@ div.unstructured-text-main-container .raw-text-category-summary:focus {
 
 div.unstructured-text-main-container .raw-text-category-summary::-webkit-details-marker{
     color: #bbbbbb;
-    margin-left: -15px;
 }
 
+div.unstructured-text-main-container .raw-text-category-summary::marker{
+    color: #bbbbbb;
+}
 div.unstructured-text-main-container th.categorization-table {
     font-weight: bold;
     text-align: left;
