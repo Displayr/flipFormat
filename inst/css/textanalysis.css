@@ -43,13 +43,14 @@
 
 .text-analysis-main-container summary {
     /* border-bottom: 3px solid #151A1C; */
+    display: list-item;
     background: #F2F5FA;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     color: #151A1C;
     font-size: 16px;
     margin-top: 10px;
     user-select: none;
-    /* margin-bottom: 10px; */
+    padding-left: 10px; /* so doesnt overlap with displayr resize tool */
 }
 
 @supports (-ms-ime-align:auto) {
@@ -67,7 +68,10 @@
 
 .text-analysis-main-container details summary::-webkit-details-marker{
     color: #3E7DCC;
-    margin-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.text-analysis-main-container details summary::marker{
+    color: #3E7DCC;
 }
 
 .text-analysis-main-container summary:hover {
