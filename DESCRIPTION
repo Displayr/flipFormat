@@ -1,13 +1,14 @@
 Package: flipFormat
 Type: Package
 Title: Formatting of R outputs
-Version: 1.7.10
+Version: 1.7.11
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Formatting to be used in print statements and other outputs. E.g.,
     number formatting, formatting of tables.
 License: GPL-3
 LazyData: TRUE
+Depends: R (>= 3.5.0)
 Imports:
     colorspace,
     DT,

@@ -23,10 +23,11 @@ div.entity-extraction-main-container .footer {
 
 div.entity-extraction-main-container .entity-details {
     margin-bottom: 5px;
-    margin-left: 16px;
+    margin-left: 10px;
 }
 
 .entity-summary {
+    display: list-item;
     font-size: 13px;
     margin-bottom: 5px;
     color: #333333;
@@ -35,6 +36,10 @@ div.entity-extraction-main-container .entity-details {
     -khtml-user-select: none; /* Konqueror HTML */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.entity-summary::marker {
+    color: #bbbbbb;
 }
 
 .entity-summary:focus {
@@ -47,7 +52,6 @@ div.entity-extraction-main-container .entity-details {
 
 .entity-summary::-webkit-details-marker{
     color: #bbbbbb;
-    margin-left: -15px;
 }
 
 div.entity-extraction-main-container table {
@@ -68,7 +72,7 @@ div.entity-extraction-main-container .entity-extraction-table th {
 
 div.entity-extraction-main-container .entity-extraction-table td {
     padding-top: 8px;
-    padding-left: 8px;
+    padding-left: 0px;
     padding-right: 8px;
     padding-bottom: 5px;
     font-size: 13px;
