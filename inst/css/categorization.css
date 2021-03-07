@@ -17,6 +17,8 @@ div.unstructured-text-main-container h1 {
 
 div.unstructured-text-main-container .raw-text-category-details {
     margin-bottom: 5px;
+    text-indent: -1em;
+    padding-left: 1em;
 }
 
 div.unstructured-text-main-container .raw-text-category-summary {
@@ -95,6 +97,7 @@ div.unstructured-text-main-container .table-row {
 div.unstructured-text-main-container .raw-text-table {
     margin-top: 10px;
     margin-bottom: 10px;
+    padding-left: 1em;
 }
 
 div.unstructured-text-main-container .raw-text-table th {
