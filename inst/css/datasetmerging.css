@@ -1,0 +1,111 @@
+.data-set-merging-main-container {
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    white-space: normal;
+    line-height: normal;
+}
+
+.data-set-merging-title {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 20px;
+    color: #3E7DCC;
+    font-weight: 500;
+}
+
+.data-set-merging-subtitle {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    color: #3E7DCC;
+    font-weight: 500;
+}
+
+.data-set-merging-details {
+    margin-bottom: 5px;
+}
+
+.data-set-merging-summary {
+    display: list-item;
+    background: #F2F2F2;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 16px;
+    margin-top: 10px;
+    user-select: none;
+    padding-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.data-set-merging-summary-highlight {
+    background: #DCE9ff;
+}
+
+.data-set-merging-summary::-webkit-details-marker{
+    color: #666666;
+}
+
+.data-set-merging-summary-highlight::-webkit-details-marker{
+    color: #3E7DCC;
+}
+
+.data-set-merging-summary:hover {
+    cursor:pointer;
+}
+
+.data-set-merging-summary:focus {
+    outline: none;
+}
+
+.data-set-merging-table {
+    font-size: 13px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    color: #303A3F;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    border-collapse: collapse;
+    text-align: center;
+    border-spacing: 0;
+}
+
+.data-set-merging-table th {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align:center;
+}
+
+.data-set-merging-table td {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align:center;
+}
+
+.data-set-merging-table th:nth-of-type(1) {
+    text-align:left;
+}
+
+.data-set-merging-table td:nth-of-type(1) {
+    text-align:left;
+}
+
+.data-set-merging-table tr:nth-child(odd) td {
+    background: #E5E5E5;
+}
+
+.data-set-merging-table tr:nth-child(even) td {
+    background: #F2F2F2;
+}
+
+.data-set-merging-table tr.data-set-merging-row-highlight td {
+    background: #DCE9FF;
+}
+
+.data-set-merging-table tr td.data-set-merging-cell-highlight {
+    background: #DCE9FF;
+}
+
