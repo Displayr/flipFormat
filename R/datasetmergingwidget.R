@@ -54,6 +54,9 @@ DataSetMergingWidget <- function(variable.metadata,
                     "-"
             }, character(1))
 
+            is.highlighted <- length(unique(input.var.names)) > 1 ||
+                              length(unique(input.var.labels)) > 1
+
             categories <- merged.variable.metadata$variable.categories[[i]]
             if (!is.null(categories))
             {
@@ -73,8 +76,7 @@ DataSetMergingWidget <- function(variable.metadata,
                 }
 
                 # Highlight if names or categories are different
-                is.highlighted <- length(unique(input.var.names)) > 1 ||
-                                  length(unique(input.var.labels)) > 1 ||
+                is.highlighted <- is.highlighted ||
                                   any(apply(categories.table, 1, function(row) length(unique(row))) > 1)
             }
         }
