@@ -2,7 +2,8 @@
 DataSetMergingWidget <- function(variable.metadata,
                                  merged.variable.metadata,
                                  merge.map,
-                                 merged.data.set.name)
+                                 merged.data.set.name,
+                                 omitted.variables)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -38,7 +39,20 @@ DataSetMergingWidget <- function(variable.metadata,
                 match(merge.map$input.names[i, j], variable.metadata$variable.names[[j]])
             }, integer(1))
 
-            is.highlighted <- any(is.na(input.var.ind))
+            input.var.names <- vapply(merge.map$input.names[i, ], function(nm) {
+                if (!is.na(nm))
+                    nm
+                else
+                    "-"
+            }, character(1))
+
+            input.var.labels <- vapply(seq_len(n.data.sets), function(j) {
+                ind <- input.var.ind[j]
+                if (!is.na(ind))
+                    variable.metadata$variable.labels[[j]][ind]
+                else
+                    "-"
+            }, character(1))
 
             categories <- merged.variable.metadata$variable.categories[[i]]
             if (!is.null(categories))
@@ -57,7 +71,10 @@ DataSetMergingWidget <- function(variable.metadata,
                             categories.table[j, k] <- input.categories[ind]
                     }
                 }
-                is.highlighted <- is.highlighted ||
+
+                # Highlight if names or categories are different
+                is.highlighted <- length(unique(input.var.names)) > 1 ||
+                                  length(unique(input.var.labels)) > 1 ||
                                   any(apply(categories.table, 1, function(row) length(unique(row))) > 1)
             }
         }
@@ -76,20 +93,6 @@ DataSetMergingWidget <- function(variable.metadata,
 
         if (var.name != "mergesrc")
         {
-            input.var.names <- vapply(merge.map$input.names[i, ], function(nm) {
-                if (!is.na(nm))
-                    nm
-                else
-                    "[no match found]"
-            }, character(1))
-            input.var.labels <- vapply(seq_len(n.data.sets), function(j) {
-                ind <- input.var.ind[j]
-                if (!is.na(ind))
-                    variable.metadata$variable.labels[[j]][ind]
-                else
-                    "[no match found]"
-            }, character(1))
-
             # Variable name and label table
             cata("<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
                  "<th>Data set</th><th>Variable name</th><th>Variable label</th></thead><tbody>")
@@ -100,16 +103,23 @@ DataSetMergingWidget <- function(variable.metadata,
 
             for (j in seq_len(n.data.sets))
             {
-                tr.class <- if (is.na(input.var.ind[j]))
-                    "data-set-merging-row-highlight"
+                name.cell.class <- if (input.var.names[j] != var.name)
+                    "data-set-merging-cell-highlight"
+                else
+                    ""
+
+                label.cell.class <- if (input.var.labels[j] != var.label)
+                    "data-set-merging-cell-highlight"
                 else
                     ""
 
                 rows.html <- paste0(rows.html,
-                                    "<tr class=\"", tr.class,"\"><td>",
+                                    "<tr><td>",
                                     htmlText(variable.metadata$data.set.names[j]),
-                                    "</td><td>", htmlText(input.var.names[j]),
-                                    "</td><td>", htmlText(input.var.labels[j]), "</td></tr>")
+                                    "</td><td class=\"", name.cell.class,"\">",
+                                    htmlText(input.var.names[j]),
+                                    "</td><td class=\"", label.cell.class,"\">",
+                                    htmlText(input.var.labels[j]), "</td></tr>")
             }
 
             cata(rows.html, "</tbody></table>")
@@ -160,8 +170,30 @@ DataSetMergingWidget <- function(variable.metadata,
         cata("</details>")
     }
 
-    # Additional table showing omitted variables and short explanation why
-    # the variable was omitted
+    n.omitted <- vapply(omitted.variables, length, integer(1))
+    if (any(n.omitted > 0))
+    {
+        # Additional tables showing omitted variables
+        cata("<div class=\"data-set-merging-omitted\">",
+             "<div class=\"data-set-merging-title\">",
+             "Omitted variables", "</div>")
+
+        for (i in which(n.omitted > 0))
+            cata("<div class=\"data-set-merging-subtitle\">",
+                 htmlText(paste0(variable.metadata$data.set.names[i], ":")),
+                 "</div><table class=\"data-set-merging-table data-set-merging-table-omitted\"><thead>",
+                 "<th>Variable name</th><th>Variable label</th></thead><tbody>",
+                 paste0(vapply(seq_len(n.omitted[i]), function(j) {
+                     nm <- omitted.variables[[i]][j]
+                     ind <- match(nm, variable.metadata$variable.names[[i]])
+                     lbl <- variable.metadata$variable.labels[[i]][ind]
+                     paste0("<tr><td>", htmlText(nm),
+                            "</td><td>", htmlText(lbl), "</td></tr>")
+                 }, character(1)), collapse = ""), "</tbody></table></div>")
+    }
+    else
+        cata("<div class=\"data-set-merging-omitted\">",
+             "<div class=\"data-set-merging-title\">Omitted variables: none</div></div>")
 
     cata("</div>") # close data-set-merging-main-container
 

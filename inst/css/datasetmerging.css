@@ -15,6 +15,7 @@
     font-size: 20px;
     color: #3E7DCC;
     font-weight: 500;
+    padding-bottom: 5px;
 }
 
 .data-set-merging-subtitle {
@@ -23,6 +24,8 @@
     font-size: 16px;
     color: #3E7DCC;
     font-weight: 500;
+    padding-left: 10px;
+    padding-top: 5px;
 }
 
 .data-set-merging-details {
@@ -35,7 +38,8 @@
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     color: #151A1C;
     font-size: 16px;
-    margin-top: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     user-select: none;
     padding-left: 10px; /* so doesnt overlap with displayr resize tool */
 }
@@ -65,7 +69,7 @@
     margin-left: 10px;
     margin-right: 10px;
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: #303A3F;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     border-collapse: collapse;
@@ -101,11 +105,14 @@
     background: #F2F2F2;
 }
 
-.data-set-merging-table tr.data-set-merging-row-highlight td {
-    background: #DCE9FF;
-}
-
 .data-set-merging-table tr td.data-set-merging-cell-highlight {
     background: #DCE9FF;
 }
 
+.data-set-merging-table-omitted {
+    margin-top: 5px;
+}
+
+.data-set-merging-omitted {
+    padding-top: 10px;
+}
