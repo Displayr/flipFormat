@@ -166,7 +166,20 @@ DataSetMergingWidget <- function(variable.metadata,
         }
         else
         {
-            "<span>Description of mergesrc here</span>"
+            # Categories table
+            categories <- merged.variable.metadata$variable.categories[[i]]
+            cata("<table class=\"data-set-merging-table data-set-merging-category-table\">",
+                 "<thead><th>Category</th><th>",
+                 htmlText(merged.data.set.name), "</th>",
+                 "</thead><tbody>")
+
+            rows.html <- ""
+
+            for (j in seq_len(length(categories)))
+                rows.html <- paste0(rows.html, "<tr><td>",
+                                    htmlText(names(categories)[j]),
+                                    "</td><td>", categories[j], "</td></tr>")
+            cata(rows.html, "</tbody></table>")
         }
 
         cata("</details>")
