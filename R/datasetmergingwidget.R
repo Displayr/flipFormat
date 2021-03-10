@@ -10,11 +10,10 @@ DataSetMergingWidget <- function(variable.metadata,
 
     addCss("datasetmerging.css", cata)
 
-    cata("<div class=\"data-set-merging-main-container\">")
-
-    cata("<div class=\"data-set-merging-title\">",
-         htmlText(merged.data.set.name),
-         "</div>")
+    html <- paste0("<div class=\"data-set-merging-main-container\">",
+                   "<div class=\"data-set-merging-title\">",
+                   htmlText(merged.data.set.name),
+                   "</div>")
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
@@ -28,6 +27,7 @@ DataSetMergingWidget <- function(variable.metadata,
 
     n.vars <- merged.variable.metadata$n.variables
     n.data.sets <- variable.metadata$n.data.sets
+
     for (i in seq_len(n.vars))
     {
         var.name <- merged.variable.metadata$variable.names[i]
@@ -88,20 +88,22 @@ DataSetMergingWidget <- function(variable.metadata,
         else
             "summary data-set-merging-summary"
 
-        cata("<details class=\"details data-set-merging-details\">")
-        cata("<summary class=\"", summary.classes, "\"><span>",
-             paste0(htmlText(var.name), ": ", htmlText(var.label)),
-             "</span></summary>")
+        html <- paste0(html, "<details class=\"details data-set-merging-details\">",
+                       "<summary class=\"", summary.classes, "\"><span>",
+                       htmlText(var.name), ": ", htmlText(var.label),
+                       "</span></summary>")
 
         if (var.name != "mergesrc")
         {
             # Variable name and label table
-            cata("<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
+            html <- paste0(html, "<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
                  "<th>Data set</th><th>Variable name</th><th>Variable label</th></thead><tbody>")
-            rows.html <- paste0("<tr><td>", htmlText(merged.data.set.name),
-                                "</td><td>", htmlText(var.name),
-                                "</td><td>", htmlText(var.label),
-                                "</td></tr>")
+
+            html <- paste0(html,
+                           "<tr><td>", htmlText(merged.data.set.name),
+                           "</td><td>", htmlText(var.name),
+                           "</td><td>", htmlText(var.label),
+                           "</td></tr>")
 
             for (j in seq_len(n.data.sets))
             {
@@ -115,86 +117,82 @@ DataSetMergingWidget <- function(variable.metadata,
                 else
                     ""
 
-                rows.html <- paste0(rows.html,
-                                    "<tr><td>",
-                                    htmlText(variable.metadata$data.set.names[j]),
-                                    "</td><td class=\"", name.cell.class,"\">",
-                                    htmlText(input.var.names[j]),
-                                    "</td><td class=\"", label.cell.class,"\">",
-                                    htmlText(input.var.labels[j]), "</td></tr>")
+                html <- paste0(html,
+                               "<tr><td>",
+                               htmlText(variable.metadata$data.set.names[j]),
+                               "</td><td class=\"", name.cell.class,"\">",
+                               htmlText(input.var.names[j]),
+                               "</td><td class=\"", label.cell.class,"\">",
+                               htmlText(input.var.labels[j]), "</td></tr>")
             }
 
-            cata(rows.html, "</tbody></table>")
+            html <- paste0(html, "</tbody></table>")
 
             # Categories table
             categories <- merged.variable.metadata$variable.categories[[i]]
             if (!is.null(categories))
             {
-                cata("<table class=\"data-set-merging-table data-set-merging-category-table\">",
+                html <- paste0(html, "<table class=\"data-set-merging-table data-set-merging-category-table\">",
                      "<thead><th>Category</th><th>",
                      htmlText(merged.data.set.name), "</th>",
                      paste0(paste0("<th>", htmlText(variable.metadata$data.set.names), "</th>"), collapse = ""),
                      "</thead><tbody>")
 
-                rows.html <- ""
-
                 for (j in seq_len(length(categories)))
                 {
-                    rows.html <- paste0(rows.html, "<tr><td>",
+                    html <- paste0(html, "<tr><td>",
                                         htmlText(names(categories)[j]),
                                         "</td><td>", categories[j], "</td>")
 
                     for (k in seq_len(n.data.sets))
                     {
-                        rows.html <- if (!is.na(categories.table[j, k]))
+                        html <- if (!is.na(categories.table[j, k]))
                         {
                             cell.class <- if (categories.table[j, k] != categories[j])
                                 "data-set-merging-cell-highlight"
                             else
                                 ""
 
-                            paste0(rows.html, "<td class=\"", cell.class, "\">",
+                            paste0(html, "<td class=\"", cell.class, "\">",
                                    categories.table[j, k], "</td>")
                         }
                         else
-                            paste0(rows.html, "<td class=\"data-set-merging-cell-highlight\">-</td>")
+                            paste0(html, "<td class=\"data-set-merging-cell-highlight\">-</td>")
                     }
-                    rows.html <- paste0(rows.html, "</tr>")
+                    html <- paste0(html, "</tr>")
                 }
-                cata(rows.html, "</tbody></table>")
+                html <- paste0(html, "</tbody></table>")
             }
         }
         else
         {
             # Categories table
             categories <- merged.variable.metadata$variable.categories[[i]]
-            cata("<table class=\"data-set-merging-table data-set-merging-category-table\">",
+            html <- paste0(html, "<table class=\"data-set-merging-table data-set-merging-category-table\">",
                  "<thead><th>Category</th><th>",
                  htmlText(merged.data.set.name), "</th>",
                  "</thead><tbody>")
 
-            rows.html <- ""
-
             for (j in seq_len(length(categories)))
-                rows.html <- paste0(rows.html, "<tr><td>",
-                                    htmlText(names(categories)[j]),
-                                    "</td><td>", categories[j], "</td></tr>")
-            cata(rows.html, "</tbody></table>")
+                html <- paste0(html, "<tr><td>",
+                               htmlText(names(categories)[j]),
+                               "</td><td>", categories[j], "</td></tr>")
+            html <- paste0(html, "</tbody></table>")
         }
 
-        cata("</details>")
+        html <- paste0(html, "</details>")
     }
 
     n.omitted <- vapply(omitted.variables, length, integer(1))
     if (any(n.omitted > 0))
     {
         # Additional tables showing omitted variables
-        cata("<div class=\"data-set-merging-omitted\">",
+        html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
              "<div class=\"data-set-merging-title\">",
              "Omitted variables", "</div>")
 
         for (i in which(n.omitted > 0))
-            cata("<div class=\"data-set-merging-subtitle\">",
+            html <- paste0(html, "<div class=\"data-set-merging-subtitle\">",
                  htmlText(paste0(variable.metadata$data.set.names[i], ":")),
                  "</div><table class=\"data-set-merging-table data-set-merging-table-omitted\"><thead>",
                  "<th>Variable name</th><th>Variable label</th></thead><tbody>",
@@ -207,10 +205,11 @@ DataSetMergingWidget <- function(variable.metadata,
                  }, character(1)), collapse = ""), "</tbody></table></div>")
     }
     else
-        cata("<div class=\"data-set-merging-omitted\">",
-             "<div class=\"data-set-merging-title\">Omitted variables: none</div></div>")
+        html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
+                       "<div class=\"data-set-merging-title\">Omitted variables: none</div></div>")
 
-    cata("</div>") # close data-set-merging-main-container
+    html <- paste0(html, "</div>") # close data-set-merging-main-container
+    cata(html)
 
     createWidgetFromFile(tfile)
 }
