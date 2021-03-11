@@ -27,6 +27,7 @@ DataSetMergingWidget <- function(variable.metadata,
 
     n.vars <- merged.variable.metadata$n.variables
     n.data.sets <- variable.metadata$n.data.sets
+    num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
 
     for (i in seq_len(n.vars))
     {
@@ -88,8 +89,12 @@ DataSetMergingWidget <- function(variable.metadata,
         else
             "summary data-set-merging-summary"
 
+
+
         html <- paste0(html, "<details class=\"details data-set-merging-details\">",
-                       "<summary class=\"", summary.classes, "\"><span>",
+                       "<summary class=\"", summary.classes, "\">",
+                       "<span class=\"data-set-merging-var-num\" style=\"width:",
+                       num.span.width, "px\">", i, ".</span><span>",
                        htmlText(var.name), ": ", htmlText(var.label),
                        "</span></summary>")
 

@@ -50,6 +50,8 @@
 
 .data-set-merging-summary::-webkit-details-marker{
     color: #666666;
+    float: left;
+    padding-top: 3px;
 }
 
 .data-set-merging-summary-highlight::-webkit-details-marker{
@@ -116,3 +118,9 @@
 .data-set-merging-omitted {
     padding-top: 10px;
 }
+
+.data-set-merging-var-num {
+    float: left;
+}
+
+
