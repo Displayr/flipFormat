@@ -218,6 +218,17 @@ DataSetMergingWidget <- function(variable.metadata,
         html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
                        "<div class=\"data-set-merging-title\">Omitted variables: none</div></div>")
 
+    html <- paste0(html, "<div class=\"data-set-merging-title\">",
+                   "Note:", "</div>")
+    dedup <- merge.map$deduplicated.names
+    for (i in seq_len(nrow(dedup)))
+    {
+        html <- paste0(html, "<div>Variable <b>", dedup[i, 1], "</b> renamed to <b>",
+                       dedup[i, 2], "</b> as variables could not be merged due to ",
+                       "conflicting data types.</div>")
+    }
+
+
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
 
