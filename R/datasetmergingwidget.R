@@ -229,8 +229,44 @@ DataSetMergingWidget <- function(variable.metadata,
     }
 
 
+    converted.text.var <- convertedTextVariables(variable.metadata,
+                                                 merged.variable.metadata,
+                                                 merge.map)
+    for (i in seq_len(nrow(converted.text.var)))
+    {
+        r <- converted.text.var[i, ]
+        html <- paste0(html, "<div>Variable <b>", r[1], "</b> from data set ",
+                       r[2]," has been converted from ", r[3], " to ", r[4], ".</div>")
+    }
+
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
 
     createWidgetFromFile(tfile)
+}
+
+convertedTextVariables <- function(variable.metadata, merged.variable.metadata, merge.map)
+{
+    n.var <- length(merge.map$merged.names)
+    n.data.sets <- variable.metadata$n.data.sets
+    result <- matrix(nrow = 0, ncol = 4)
+    for (i in seq_len(n.var))
+    {
+        merged.type <- merged.variable.metadata$variable.types[i]
+        for (j in seq_len(n.data.sets))
+        {
+            if (is.na(merge.map$input.names[i, j]))
+                next
+
+            ind <- which(variable.metadata$variable.names[[j]] == merge.map$input.names[i, j])
+            t <- variable.metadata$variable.types[[j]][ind]
+            if ((t == "Text" || t == "Numeric") && t != merged.type)
+            {
+                result <- rbind(result, c(merge.map$input.names[i, j],
+                                          variable.metadata$data.set.names[j],
+                                          t, merged.type))
+            }
+        }
+    }
+    result
 }
