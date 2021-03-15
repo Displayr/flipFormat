@@ -93,7 +93,7 @@ DataSetMergingWidget <- function(variable.metadata,
 
 
         html.row <- ""
-        html.row <- paste0(html.row, "<details class=\"details data-set-merging-details\">",
+        html.row <- paste0(html.row, "<div id=\"goto", i, "\"><details class=\"details data-set-merging-details\">",
                        "<summary class=\"", summary.classes, "\">",
                        "<span class=\"data-set-merging-var-num\" style=\"width:",
                        num.span.width, "px\">", i, ".</span><span>",
@@ -238,6 +238,8 @@ DataSetMergingWidget <- function(variable.metadata,
         html <- paste0(html, "<div>Variable <b>", r[1], "</b> from data set ",
                        r[2]," has been converted from ", r[3], " to ", r[4], ".</div>")
     }
+
+    html <- paste0(html, "<a onclick=\"var x = document.getElementsByTagName('details');x[0].setAttribute('open', 'true')\" href=\"#goto1\">link</a>")
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
