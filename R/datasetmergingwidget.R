@@ -29,9 +29,6 @@ DataSetMergingWidget <- function(variable.metadata,
     n.data.sets <- variable.metadata$n.data.sets
     num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
 
-    set.seed(NULL)
-    unique.id <- paste0(sample(c(letters, LETTERS, 0:9), 6), collapse = "")
-
     html.vars <- rep(NA_character_, n.vars)
 
     for (i in seq_len(n.vars))
@@ -94,6 +91,10 @@ DataSetMergingWidget <- function(variable.metadata,
         else
             "summary data-set-merging-summary"
 
+        name.and.label <- if (nchar(var.label) > 0)
+            paste0(htmlText(var.name), ": ", htmlText(var.label))
+        else
+            htmlText(var.name)
 
         html.row <- ""
         html.row <- paste0(html.row,
@@ -102,8 +103,7 @@ DataSetMergingWidget <- function(variable.metadata,
                            "<summary class=\"", summary.classes, "\">",
                            "<span class=\"data-set-merging-var-num\" style=\"width:",
                            num.span.width, "px\">", i, ".</span><span>",
-                           htmlText(var.name), ": ", htmlText(var.label),
-                           "</span></summary>")
+                           name.and.label, "</span></summary>")
 
         if (var.name != "mergesrc")
         {
@@ -113,7 +113,9 @@ DataSetMergingWidget <- function(variable.metadata,
             else if (t == "Duration")
                 t <- "Date/Time"
 
-            html.row <- paste0(html.row, "<div class=\"data-set-merging-type\">Type: ", t, "</div>")
+            html.row <- paste0(html.row,
+                               "<div class=\"data-set-merging-type\"><b>Type:</b> ",
+                               t, "</div>")
 
             # Variable name and label table
             html.row <- paste0(html.row, "<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
@@ -237,8 +239,8 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(dedup)))
     {
         ind <- match(dedup[i, 2], merged.variable.metadata$variable.names)
-        html <- paste0(html, "<div>Variable <a href=\"#data-set-merging-", unique.id, "-", ind, "\"><b>",
-                       dedup[i, 2], "</b></a> was created as the variables named <b>",
+        html <- paste0(html, "<div>Variable <b>",
+                       dedup[i, 2], "</b> (", ind, ") was created as the variables named <b>",
                        dedup[i, 1], "</b> could not be merged due to incompatible variable types.</div>")
     }
 
@@ -249,8 +251,7 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.text.var)))
     {
         r <- converted.text.var[i, ]
-        html <- paste0(html, "<div>Variable <a href=\"#data-set-merging-", unique.id, "-", r[5],
-                       "\"><b>", r[1], "</b></a> from <i>",
+        html <- paste0(html, "<div>Variable <b>", r[1], "</b> (", r[5], ") from <i>",
                        r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
     }
 
