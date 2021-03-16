@@ -137,3 +137,23 @@
     font-size: 13px;
     color: #303A3F;
 }
+
+.data-set-merging-indicator {
+    float: left;
+    width: 15px;
+    height: 15px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border-width: 1px;
+    border-color: #3F3F3F;
+    border-style: solid;
+}
+
+.data-set-merging-indicator-fill {
+    background-color: #666666;
+}
+
+.data-set-merging-indicator-container {
+    margin-right: 10px;
+    float: left;
+}

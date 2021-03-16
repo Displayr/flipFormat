@@ -101,8 +101,24 @@ DataSetMergingWidget <- function(variable.metadata,
                            "<details class=\"details data-set-merging-details\">",
                            "<summary class=\"", summary.classes, "\">",
                            "<span class=\"data-set-merging-var-num\" style=\"width:",
-                           num.span.width, "px\">", i, ".</span><span>",
-                           name.and.label, "</span></summary>")
+                           num.span.width, "px\">", i, ".</span>")
+
+        indicators <- if (var.name != "mergesrc")
+        {
+            vapply(seq_len(n.data.sets), function(j) {
+                if (input.var.names[j] != "-")
+                    "<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\">&#8193;</span>"
+                else
+                    "<span class=\"data-set-merging-indicator\">&#8193;</span>"
+            }, character(1))
+        }
+        else
+            rep("<span class=\"data-set-merging-indicator\">&#8193;</span>", n.data.sets)
+
+        html.row <- paste0(html.row, "<span class=\"data-set-merging-indicator-container\">",
+                           paste0(indicators, collapse = ""), "</span>", name.and.label,
+                           "</summary>")
+
 
         if (var.name != "mergesrc")
         {
@@ -239,7 +255,7 @@ DataSetMergingWidget <- function(variable.metadata,
     {
         ind <- match(dedup[i, 2], merged.variable.metadata$variable.names)
         html <- paste0(html, "<div>Variable <b>",
-                       dedup[i, 2], "</b> (", ind, ") was created as the variables named <b>",
+                       dedup[i, 2], "</b> (", ind, ") was created because the variables named <b>",
                        dedup[i, 1], "</b> could not be merged due to incompatible variable types.</div>")
     }
 
