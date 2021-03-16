@@ -157,3 +157,10 @@
     margin-right: 10px;
     float: left;
 }
+
+.data-set-merging-indicator-mergesrc {
+    float: left;
+    width: 15px;
+    margin-left: 4px;
+    margin-right: 4px;
+}

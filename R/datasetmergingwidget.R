@@ -113,7 +113,7 @@ DataSetMergingWidget <- function(variable.metadata,
             }, character(1))
         }
         else
-            rep("<span class=\"data-set-merging-indicator\">&#8193;</span>", n.data.sets)
+            rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>", n.data.sets)
 
         html.row <- paste0(html.row, "<span class=\"data-set-merging-indicator-container\">",
                            paste0(indicators, collapse = ""), "</span>", name.and.label,
