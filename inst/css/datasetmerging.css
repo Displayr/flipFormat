@@ -54,7 +54,17 @@
     padding-top: 3px;
 }
 
+.data-set-merging-summary::marker{
+    color: #666666;
+    float: left;
+    padding-top: 3px;
+}
+
 .data-set-merging-summary-highlight::-webkit-details-marker{
+    color: #3E7DCC;
+}
+
+.data-set-merging-summary-highlight::marker{
     color: #3E7DCC;
 }
 

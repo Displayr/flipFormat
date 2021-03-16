@@ -240,12 +240,10 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.text.var)))
     {
         r <- converted.text.var[i, ]
-        html <- paste0(html, "<div>Variable <a onclick=\"var x = document.getElementsByTagName('details');x[0].setAttribute('open', 'true')\" href=\"#data-set-merging-", unique.id, "-", r[5],
-                       "\">", r[1], "</a> from data set ",
-                       r[2]," has been converted from ", r[3], " to ", r[4], ".</div>")
+        html <- paste0(html, "<div>Variable <a href=\"#data-set-merging-", unique.id, "-", r[5],
+                       "\">", r[1], "</a> from <i>",
+                       r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
     }
-
-    # html <- paste0(html, "<a onclick=\"var x = document.getElementsByTagName('details');x[0].setAttribute('open', 'true')\" href=\"#goto1\">link</a>")
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
@@ -261,6 +259,8 @@ convertedTextVariables <- function(variable.metadata, merged.variable.metadata, 
     for (i in seq_len(n.var))
     {
         merged.type <- merged.variable.metadata$variable.types[i]
+        if (merged.type == "Categorical with string values")
+            merged.type <- "Categorical"
         for (j in seq_len(n.data.sets))
         {
             if (is.na(merge.map$input.names[i, j]))
