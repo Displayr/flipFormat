@@ -29,6 +29,9 @@ DataSetMergingWidget <- function(variable.metadata,
     n.data.sets <- variable.metadata$n.data.sets
     num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
 
+    set.seed(NULL)
+    unique.id <- paste0(sample(c(letters, LETTERS, 0:9), 6), collapse = "")
+
     html.vars <- rep(NA_character_, n.vars)
 
     for (i in seq_len(n.vars))
@@ -93,12 +96,14 @@ DataSetMergingWidget <- function(variable.metadata,
 
 
         html.row <- ""
-        html.row <- paste0(html.row, "<div id=\"goto", i, "\"></div><details class=\"details data-set-merging-details\">",
-                       "<summary class=\"", summary.classes, "\">",
-                       "<span class=\"data-set-merging-var-num\" style=\"width:",
-                       num.span.width, "px\">", i, ".</span><span>",
-                       htmlText(var.name), ": ", htmlText(var.label),
-                       "</span></summary>")
+        html.row <- paste0(html.row,
+                           "<div id=\"data-set-merging-", unique.id, "-", i,
+                           "\"></div><details class=\"details data-set-merging-details\">",
+                           "<summary class=\"", summary.classes, "\">",
+                           "<span class=\"data-set-merging-var-num\" style=\"width:",
+                           num.span.width, "px\">", i, ".</span><span>",
+                           htmlText(var.name), ": ", htmlText(var.label),
+                           "</span></summary>")
 
         if (var.name != "mergesrc")
         {
@@ -235,7 +240,8 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.text.var)))
     {
         r <- converted.text.var[i, ]
-        html <- paste0(html, "<div>Variable <b>", r[1], "</b> from data set ",
+        html <- paste0(html, "<div>Variable <a onclick=\"var x = document.getElementsByTagName('details');x[0].setAttribute('open', 'true')\" href=\"#data-set-merging-", unique.id, "-", r[5],
+                       "\">", r[1], "</a> from data set ",
                        r[2]," has been converted from ", r[3], " to ", r[4], ".</div>")
     }
 
@@ -251,7 +257,7 @@ convertedTextVariables <- function(variable.metadata, merged.variable.metadata, 
 {
     n.var <- length(merge.map$merged.names)
     n.data.sets <- variable.metadata$n.data.sets
-    result <- matrix(nrow = 0, ncol = 4)
+    result <- matrix(nrow = 0, ncol = 5)
     for (i in seq_len(n.var))
     {
         merged.type <- merged.variable.metadata$variable.types[i]
@@ -266,7 +272,7 @@ convertedTextVariables <- function(variable.metadata, merged.variable.metadata, 
             {
                 result <- rbind(result, c(merge.map$input.names[i, j],
                                           variable.metadata$data.set.names[j],
-                                          t, merged.type))
+                                          t, merged.type, i))
             }
         }
     }
