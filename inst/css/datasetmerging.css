@@ -50,13 +50,11 @@
 
 .data-set-merging-summary::-webkit-details-marker{
     color: #666666;
-    float: left;
     padding-top: 3px;
 }
 
 .data-set-merging-summary::marker{
     color: #666666;
-    float: left;
     padding-top: 3px;
 }
 
@@ -133,4 +131,10 @@
     float: left;
 }
 
-
+.data-set-merging-type {
+    padding-top: 10px;
+    padding-left: 12px;
+    font-weight: bold;
+    font-size: 13px;
+    color: #303A3F;
+}

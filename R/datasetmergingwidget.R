@@ -107,13 +107,21 @@ DataSetMergingWidget <- function(variable.metadata,
 
         if (var.name != "mergesrc")
         {
+            t <- merged.variable.metadata$variable.types[i]
+            if (t == "Categorical with string values")
+                t <- "Categorical"
+            else if (t == "Duration")
+                t <- "Date/Time"
+
+            html.row <- paste0(html.row, "<div class=\"data-set-merging-type\">Type: ", t, "</div>")
+
             # Variable name and label table
             html.row <- paste0(html.row, "<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
                  "<th>Data set</th><th>Variable name</th><th>Variable label</th></thead><tbody>")
 
             html.row <- paste0(html.row,
-                           "<tr><td>", htmlText(merged.data.set.name),
-                           "</td><td>", htmlText(var.name),
+                           "<tr><td><i>", htmlText(merged.data.set.name),
+                           "</i></td><td>", htmlText(var.name),
                            "</td><td>", htmlText(var.label),
                            "</td></tr>")
 
@@ -228,9 +236,10 @@ DataSetMergingWidget <- function(variable.metadata,
     dedup <- merge.map$deduplicated.names
     for (i in seq_len(nrow(dedup)))
     {
-        html <- paste0(html, "<div>Variable <b>", dedup[i, 1], "</b> renamed to <b>",
-                       dedup[i, 2], "</b> as variables could not be merged due to ",
-                       "conflicting data types.</div>")
+        ind <- match(dedup[i, 2], merged.variable.metadata$variable.names)
+        html <- paste0(html, "<div>Variable <a href=\"#data-set-merging-", unique.id, "-", ind, "\"><b>",
+                       dedup[i, 2], "</b></a> was created as the variables named <b>",
+                       dedup[i, 1], "</b> could not be merged due to incompatible variable types.</div>")
     }
 
 
@@ -241,7 +250,7 @@ DataSetMergingWidget <- function(variable.metadata,
     {
         r <- converted.text.var[i, ]
         html <- paste0(html, "<div>Variable <a href=\"#data-set-merging-", unique.id, "-", r[5],
-                       "\">", r[1], "</a> from <i>",
+                       "\"><b>", r[1], "</b></a> from <i>",
                        r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
     }
 
