@@ -98,8 +98,7 @@ DataSetMergingWidget <- function(variable.metadata,
 
         html.row <- ""
         html.row <- paste0(html.row,
-                           "<div id=\"data-set-merging-", unique.id, "-", i,
-                           "\"></div><details class=\"details data-set-merging-details\">",
+                           "<details class=\"details data-set-merging-details\">",
                            "<summary class=\"", summary.classes, "\">",
                            "<span class=\"data-set-merging-var-num\" style=\"width:",
                            num.span.width, "px\">", i, ".</span><span>",
