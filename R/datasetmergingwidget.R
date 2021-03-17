@@ -80,9 +80,16 @@ DataSetMergingWidget <- function(variable.metadata,
             "summary data-set-merging-summary"
 
         name.and.label <- if (nchar(var.label) > 0)
-            paste0(htmlText(var.name), ": ", htmlText(var.label))
+        {
+            if (substr(var.label, 1, nchar(var.name) + 1) == paste0(var.name, ":") ||
+                var.name == var.label)
+                htmlText(var.label)
+            else
+                paste0(htmlText(var.name), ": ", htmlText(var.label))
+        }
         else
             htmlText(var.name)
+
 
         html.row <- ""
         html.row <- paste0(html.row,
@@ -230,7 +237,8 @@ DataSetMergingWidget <- function(variable.metadata,
                      lbl <- variable.metadata$variable.labels[[i]][ind]
                      paste0("<tr><td>", htmlText(nm),
                             "</td><td>", htmlText(lbl), "</td></tr>")
-                 }, character(1)), collapse = ""), "</tbody></table></div>")
+                 }, character(1)), collapse = ""), "</tbody></table>")
+        html <- paste0(html, "</div>")
     }
     else
         html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
@@ -290,3 +298,6 @@ convertedVariables <- function(variable.metadata, merged.variable.metadata, merg
     }
     result
 }
+
+# show variable type
+# hover info for category table
