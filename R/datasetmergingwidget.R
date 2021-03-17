@@ -3,7 +3,8 @@ DataSetMergingWidget <- function(variable.metadata,
                                  merged.variable.metadata,
                                  merge.map,
                                  merged.data.set.name,
-                                 omitted.variables)
+                                 omitted.variables,
+                                 input.category.values)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -63,24 +64,11 @@ DataSetMergingWidget <- function(variable.metadata,
             categories <- merged.variable.metadata$variable.categories[[i]]
             if (!is.null(categories))
             {
-                categories.table <- matrix(NA_integer_,
-                                           nrow = length(categories),
-                                           ncol = n.data.sets)
-                for (j in seq_len(length(categories)))
-                {
-                    for (k in seq_len(n.data.sets))
-                    {
-                        input.categories <- variable.metadata$variable.categories[[k]][[input.var.ind[k]]]
-                        ind <- match(names(categories)[j],
-                                     names(input.categories))
-                        if (!is.na(ind))
-                            categories.table[j, k] <- input.categories[ind]
-                    }
-                }
-
-                # Highlight if names or categories are different
+                # Highlight if any category values are different
                 is.highlighted <- is.highlighted ||
-                                  any(apply(categories.table, 1, function(row) length(unique(row))) > 1)
+                                  any(vapply(seq_along(categories), function(j) {
+                                      any(categories[j] != input.category.values[[i]][j, ])
+                                  }, logical(1)))
             }
         }
         else
@@ -166,7 +154,6 @@ DataSetMergingWidget <- function(variable.metadata,
             html.row <- paste0(html.row, "</tbody></table>")
 
             # Categories table
-            categories <- merged.variable.metadata$variable.categories[[i]]
             if (!is.null(categories))
             {
                 html.row <- paste0(html.row, "<table class=\"data-set-merging-table data-set-merging-category-table\">",
@@ -175,6 +162,7 @@ DataSetMergingWidget <- function(variable.metadata,
                      paste0(paste0("<th>", htmlText(variable.metadata$data.set.names), "</th>"), collapse = ""),
                      "</thead><tbody>")
 
+                categories.table <- input.category.values[[i]]
                 for (j in seq_len(length(categories)))
                 {
                     html.row <- paste0(html.row, "<tr><td>",
@@ -201,7 +189,7 @@ DataSetMergingWidget <- function(variable.metadata,
                 html.row <- paste0(html.row, "</tbody></table>")
             }
         }
-        else
+        else # mergesrc variable
         {
             # Categories table
             categories <- merged.variable.metadata$variable.categories[[i]]
@@ -260,12 +248,11 @@ DataSetMergingWidget <- function(variable.metadata,
     }
 
 
-    converted.text.var <- convertedTextVariables(variable.metadata,
-                                                 merged.variable.metadata,
-                                                 merge.map)
-    for (i in seq_len(nrow(converted.text.var)))
+    converted.var <- convertedVariables(variable.metadata,
+                                        merged.variable.metadata, merge.map)
+    for (i in seq_len(nrow(converted.var)))
     {
-        r <- converted.text.var[i, ]
+        r <- converted.var[i, ]
         html <- paste0(html, "<div>Variable <b>", r[1], "</b> (", r[5], ") from <i>",
                        r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
     }
@@ -276,7 +263,7 @@ DataSetMergingWidget <- function(variable.metadata,
     createWidgetFromFile(tfile)
 }
 
-convertedTextVariables <- function(variable.metadata, merged.variable.metadata, merge.map)
+convertedVariables <- function(variable.metadata, merged.variable.metadata, merge.map)
 {
     n.var <- length(merge.map$merged.names)
     n.data.sets <- variable.metadata$n.data.sets
