@@ -58,6 +58,14 @@ DataSetMergingWidget <- function(variable.metadata,
                     "-"
             }, character(1))
 
+            input.var.types <- vapply(seq_len(n.data.sets), function(j) {
+                ind <- input.var.ind[j]
+                if (!is.na(ind))
+                    variableTypeConverter(variable.metadata$variable.types[[j]][ind])
+                else
+                    "-"
+            }, character(1))
+
             is.highlighted <- length(unique(input.var.names)) > 1 ||
                               length(unique(input.var.labels)) > 1
 
@@ -117,24 +125,17 @@ DataSetMergingWidget <- function(variable.metadata,
 
         if (var.name != "mergesrc")
         {
-            t <- merged.variable.metadata$variable.types[i]
-            if (t == "Categorical with string values")
-                t <- "Categorical"
-            else if (t == "Duration")
-                t <- "Date/Time"
-
-            html.row <- paste0(html.row,
-                               "<div class=\"data-set-merging-type\"><b>Type:</b> ",
-                               t, "</div>")
+            t <- variableTypeConverter(merged.variable.metadata$variable.types[i])
 
             # Variable name and label table
             html.row <- paste0(html.row, "<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
-                 "<th>Data set</th><th>Variable name</th><th>Variable label</th></thead><tbody>")
+                 "<th>Data set</th><th>Variable name</th><th>Variable label</th><th>Variable type</th></thead><tbody>")
 
             html.row <- paste0(html.row,
-                           "<tr><td><i>", htmlText(merged.data.set.name),
-                           "</i></td><td>", htmlText(var.name),
+                           "<tr><td>", htmlText(merged.data.set.name),
+                           "</td><td>", htmlText(var.name),
                            "</td><td>", htmlText(var.label),
+                           "</td><td>", htmlText(t),
                            "</td></tr>")
 
             for (j in seq_len(n.data.sets))
@@ -155,7 +156,10 @@ DataSetMergingWidget <- function(variable.metadata,
                                "</td><td class=\"", name.cell.class,"\">",
                                htmlText(input.var.names[j]),
                                "</td><td class=\"", label.cell.class,"\">",
-                               htmlText(input.var.labels[j]), "</td></tr>")
+                               htmlText(input.var.labels[j]),
+                               "</td><td class=\"", label.cell.class,"\">",
+                               htmlText(input.var.types[j]),
+                               "</td></tr>")
             }
 
             html.row <- paste0(html.row, "</tbody></table>")
@@ -299,5 +303,15 @@ convertedVariables <- function(variable.metadata, merged.variable.metadata, merg
     result
 }
 
-# show variable type
+# Convert from internal types to user-facing types
+variableTypeConverter <- function(variable.type)
+{
+    if (variable.type == "Categorical with string values")
+        "Categorical"
+    else if (variable.type == "Duration")
+        "Date/Time"
+    else
+        variable.type
+}
+
 # hover info for category table
