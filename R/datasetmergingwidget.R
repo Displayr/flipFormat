@@ -140,15 +140,34 @@ DataSetMergingWidget <- function(variable.metadata,
 
     html <- paste0(html, "<div class=\"data-set-merging-title\">",
                    "Note:", "</div>")
-    dedup <- merge.map$deduplicated.names
-    for (i in seq_len(nrow(dedup)))
-    {
-        ind <- match(dedup[i, 2], merged.variable.metadata$variable.names)
-        html <- paste0(html, "<div>Variable <b>",
-                       dedup[i, 2], "</b> (", ind, ") was created because the variables named <b>",
-                       dedup[i, 1], "</b> could not be merged due to incompatible variable types.</div>")
-    }
 
+    unmatched.names <- merge.map$unmatched.names
+    unmatched.names.renamed <- merge.map$unmatched.names.renamed
+
+    for (i in seq_len(nrow(unmatched.names)))
+    {
+        nms <- unmatched.names[i, ]
+        nms <- nms[!is.na(nms)]
+        nms.str <- paste0(paste0("<b>", nms, "</b>"), collapse = ", ")
+
+        note.html <- paste0("<div>The variables ", nms.str,
+                            " could not be merged due to incompatible ",
+                            "variable types.")
+
+        renamed <- unmatched.names.renamed[[i]]
+        if (!is.null(renamed))
+        {
+            renamed.str <- paste0(paste0("<b>", renamed, "</b>"), collapse = ", ")
+            note.html <- paste0(note.html, " The following variable",
+                                ngettext(length(renamed), "", "s"),
+                                " had to be created to avoid conflicting names: ",
+                                renamed.str, "</div>")
+        }
+        else
+            note.html <- paste0(note.html, "</div>")
+
+        html <- paste0(html, note.html)
+    }
 
     converted.var <- convertedVariables(variable.metadata,
                                         merged.variable.metadata, merge.map)
@@ -175,6 +194,7 @@ convertedVariables <- function(variable.metadata, merged.variable.metadata, merg
         merged.type <- merged.variable.metadata$variable.types[i]
         if (merged.type == "Categorical with string values")
             merged.type <- "Categorical"
+
         for (j in seq_len(n.data.sets))
         {
             if (is.na(merge.map$input.names[i, j]))
@@ -183,11 +203,9 @@ convertedVariables <- function(variable.metadata, merged.variable.metadata, merg
             ind <- which(variable.metadata$variable.names[[j]] == merge.map$input.names[i, j])
             t <- variable.metadata$variable.types[[j]][ind]
             if ((t == "Text" || t == "Numeric") && t != merged.type)
-            {
                 result <- rbind(result, c(merge.map$input.names[i, j],
                                           variable.metadata$data.set.names[j],
                                           t, merged.type, i))
-            }
         }
     }
     result
