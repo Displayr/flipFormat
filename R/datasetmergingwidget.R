@@ -149,7 +149,7 @@ DataSetMergingWidget <- function(variable.metadata,
         nms <- unmatched.names[i, ]
         ind <- which(!is.na(nms))
         nms <- nms[!is.na(nms)]
-        nms.str <- paste0(paste0("<b>", nms, "</b>"), collapse = ", ")
+        nms.str <- paste0(paste0("<b>", nms, "</b> (data set ", ind, ")"), collapse = ", ")
 
         note.html <- paste0("<div>The variables ", nms.str,
                             " could not be merged due to incompatible ",
@@ -160,7 +160,7 @@ DataSetMergingWidget <- function(variable.metadata,
         {
             var.ind <- vapply(renamed, match, integer(1),
                               merged.variable.metadata$variable.names)
-            renamed.str <- paste0(paste0("<b>", renamed, "</b> (data set ", ind, ")"), collapse = ", ")
+            renamed.str <- paste0(paste0("<b>", renamed, "</b>"), collapse = ", ")
             note.html <- paste0(note.html, " Variable",
                                 ngettext(length(renamed), " ", "s "),
                                 paste0(var.ind, collapse = ", "),
@@ -178,7 +178,7 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.var)))
     {
         r <- converted.var[i, ]
-        html <- paste0(html, "<div>Variable ", r[5], "(<b>", r[1], "</b>) from data set ",
+        html <- paste0(html, "<div>Variable ", r[5], " (<b>", r[1], "</b>) from data set ",
                        r[2]," converted from ", r[3], " to ", r[4], ".</div>")
     }
 
