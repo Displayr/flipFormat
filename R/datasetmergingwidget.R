@@ -147,6 +147,7 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(unmatched.names)))
     {
         nms <- unmatched.names[i, ]
+        ind <- which(!is.na(nms))
         nms <- nms[!is.na(nms)]
         nms.str <- paste0(paste0("<b>", nms, "</b>"), collapse = ", ")
 
@@ -157,7 +158,7 @@ DataSetMergingWidget <- function(variable.metadata,
         renamed <- unmatched.names.renamed[[i]]
         if (!is.null(renamed))
         {
-            renamed.str <- paste0(paste0("<b>", renamed, "</b>"), collapse = ", ")
+            renamed.str <- paste0(paste0("<b>", renamed, "</b> (data set ", ind, ")"), collapse = ", ")
             note.html <- paste0(note.html, " The following variable",
                                 ngettext(length(renamed), "", "s"),
                                 " had to be created to avoid conflicting names: ",
@@ -174,7 +175,7 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.var)))
     {
         r <- converted.var[i, ]
-        html <- paste0(html, "<div>Variable <b>", r[1], "</b> (", r[5], ") from <i>",
+        html <- paste0(html, "<div>Variable <b>", r[1], "</b> (#", r[5], ") from <i>",
                        r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
     }
 
