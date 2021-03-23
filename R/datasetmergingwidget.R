@@ -158,11 +158,14 @@ DataSetMergingWidget <- function(variable.metadata,
         renamed <- unmatched.names.renamed[[i]]
         if (!is.null(renamed))
         {
+            var.ind <- vapply(renamed, match, integer(1),
+                              merged.variable.metadata$variable.names)
             renamed.str <- paste0(paste0("<b>", renamed, "</b> (data set ", ind, ")"), collapse = ", ")
-            note.html <- paste0(note.html, " The following variable",
-                                ngettext(length(renamed), "", "s"),
+            note.html <- paste0(note.html, " Variable",
+                                ngettext(length(renamed), " ", "s "),
+                                paste0(var.ind, collapse = ", "),
                                 " had to be created to avoid conflicting names: ",
-                                renamed.str, "</div>")
+                                renamed.str, ".</div>")
         }
         else
             note.html <- paste0(note.html, "</div>")
@@ -175,8 +178,8 @@ DataSetMergingWidget <- function(variable.metadata,
     for (i in seq_len(nrow(converted.var)))
     {
         r <- converted.var[i, ]
-        html <- paste0(html, "<div>Variable <b>", r[1], "</b> (#", r[5], ") from <i>",
-                       r[2],"</i> converted from ", r[3], " to ", r[4], ".</div>")
+        html <- paste0(html, "<div>Variable ", r[5], "(<b>", r[1], "</b>) from data set ",
+                       r[2]," converted from ", r[3], " to ", r[4], ".</div>")
     }
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
@@ -205,8 +208,7 @@ convertedVariables <- function(variable.metadata, merged.variable.metadata, merg
             t <- variable.metadata$variable.types[[j]][ind]
             if ((t == "Text" || t == "Numeric") && t != merged.type)
                 result <- rbind(result, c(merge.map$input.names[i, j],
-                                          variable.metadata$data.set.names[j],
-                                          t, merged.type, i))
+                                          j, t, merged.type, i))
         }
     }
     result
