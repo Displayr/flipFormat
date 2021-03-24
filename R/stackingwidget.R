@@ -54,7 +54,9 @@ StackingWidget <- function(input.data.set.metadata,
 
     unstackable.ind <- attr(stacking.groups, "unstackable.ind")
     unstackable.names <- lapply(unstackable.ind, function(ind) {
-        input.variable.names[removeNA(stacking.groups[ind, ])]
+        group.ind <- stacking.groups[ind, ]
+        group.ind <- group.ind[!is.na(group.ind)]
+        input.variable.names[group.ind]
     })
     for (nms in unstackable.names)
         html <- paste0(html, "<div>The following variables could not be ",
