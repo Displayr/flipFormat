@@ -5,7 +5,7 @@ StackingWidget <- function(input.data.set.metadata,
                            stacked.indices,
                            stacked.data.set.name)
 {
-    n.stacked <- dim(stacking.array)[2]
+    n.stacked <- ncol(stacking.groups)
     n.vars <- stacked.data.set.metadata$n.vars
     input.variable.names <- input.data.set.metadata$variable.names
     input.variable.labels <- input.data.set.metadata$variable.labels
