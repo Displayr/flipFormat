@@ -6,7 +6,7 @@ StackingWidget <- function(input.data.set.metadata,
                            stacked.data.set.name)
 {
     n.stacked <- ncol(stacking.groups)
-    n.vars <- stacked.data.set.metadata$n.vars
+    n.vars <- stacked.data.set.metadata$n.variables
     input.variable.names <- input.data.set.metadata$variable.names
     input.variable.labels <- input.data.set.metadata$variable.labels
 
