@@ -1,0 +1,65 @@
+.stacking-main-container {
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    white-space: normal;
+    line-height: normal;
+}
+
+.stacking-row {
+    background: #F2F2F2;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+.stacking-details {
+    margin-bottom: 5px;
+}
+
+.stacking-summary {
+    display: list-item;
+    background: #DCE9ff;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    user-select: none;
+    padding-left: 10px; /* so doesnt overlap with displayr resize tool */
+}
+
+.stacking-table {
+    font-size: 13px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    color: #303A3F;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    border-collapse: collapse;
+    text-align: left;
+    border-spacing: 0;
+}
+
+.stacking-table th {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.stacking-table td {
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: left;
+    background: #F2F2F2;
+    min-width: 50px;
+}
+

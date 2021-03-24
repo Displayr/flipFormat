@@ -164,7 +164,7 @@ DataSetMergingWidget <- function(variable.metadata,
             note.html <- paste0(note.html, " Variable",
                                 ngettext(length(renamed), " ", "s "),
                                 paste0(var.ind, collapse = ", "),
-                                " had to be created to avoid conflicting names: ",
+                                " was created to avoid conflicting names: ",
                                 renamed.str, ".</div>")
         }
         else
@@ -374,7 +374,7 @@ categoriesTable <- function(merged.categories, merged.data.set.name,
                 {
                     is.summary.highlighted <- TRUE
                     paste0(result, "<td title=\"From ",
-                           input.var.types[[k]][input.var.ind[k]],
+                           tolower(input.var.types[[k]][input.var.ind[k]]),
                            " variable\" class=\"data-set-merging-cell-highlight\">",
                            htmlText(val), "</td>")
                 }
