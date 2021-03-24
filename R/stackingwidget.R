@@ -1,7 +1,8 @@
 #' @export
 StackingWidget <- function(stacked.variable.names,
                            stacked.variable.labels,
-                           stacking.array)
+                           stacking.array,
+                           stacked.indices)
 {
     n.stacked <- dim(stacking.array)[2]
     n.vars <- length(stacked.variable.names)
@@ -18,12 +19,14 @@ StackingWidget <- function(stacked.variable.names,
     {
         row.title <- paste0(stacked.variable.names[i], ": ",
                             stacked.variable.labels[i])
-        if (length(unique(stacking.array[i, , 1])) == 1)
+        if (!(i %in% stacked.indices))
         {
             html.row <- paste0("<div class=\"stacking-row\">", row.title, "</div>")
         }
         else
         {
+            ind <- match(i, stacked.indices)
+
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"stacking-summary\">",
                                row.title, "</summary>",
@@ -31,12 +34,12 @@ StackingWidget <- function(stacked.variable.names,
                                "<th></th><th>Name</th><th>Label</th>")
 
             html.row <- paste0(html.row, paste0(vapply(seq_len(n.stacked), function(j) {
-                if (is.na(stacking.array[i, j, 1]))
+                if (is.na(stacking.array[ind, j, 1]))
                     paste0("<tr><td>Observation ", j, "</td><td></td><td></td></tr>")
                 else
                     paste0("<tr><td>Observation ", j, "</td><td>",
-                           stacking.array[i, j, 1], "</td><td>",
-                           stacking.array[i, j, 2], "</td></tr>")
+                           stacking.array[ind, j, 1], "</td><td>",
+                           stacking.array[ind, j, 2], "</td></tr>")
             }, character(1)), collapse = ""))
 
             html.row <- paste0(html.row, "</table></details>")
