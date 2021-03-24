@@ -9,6 +9,15 @@
     line-height: normal;
 }
 
+.stacking-title {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 20px;
+    color: #3E7DCC;
+    font-weight: 500;
+    padding-bottom: 5px;
+}
+
 .stacking-row {
     background: #F2F2F2;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
