@@ -1,7 +1,8 @@
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
-                           omitted.variables)
+                           omitted.variables,
+                           omitted.stacked.variables)
 {
     md <- stacked.data.set.metadata
 
@@ -48,10 +49,23 @@ StackingWidget <- function(stacked.data.set.metadata,
                ".</div>")
     }, character(1)), collapse = ""))
 
-    html <- paste0(html, "<div>The following variable",
-                   ngettext(length(omitted.variables), " has", "s have"),
-                   " been omitted from the stacked data set: ",
-                   paste0(omitted.variables, collapse = ", "), ".</div>")
+
+    if (length(omitted.stacked.variables) > 0)
+        html <- paste0(html, "<div>The following <b>stacked</b> variable",
+                       ngettext(length(omitted.stacked.variables), " has", "s have"),
+                       " been omitted from the stacked data set: ",
+                       paste0("<b>", omitted.stacked.variables, "</b>", collapse = ", "),
+                       ".</div>")
+
+    omitted.non.stacked.variables <- setdiff(omitted.variables,
+                                             omitted.stacked.variables)
+
+    if (length(omitted.non.stacked.variables) > 0)
+        html <- paste0(html, "<div>The following variable",
+                       ngettext(length(omitted.non.stacked.variables), " has", "s have"),
+                       " been omitted from the stacked data set: ",
+                       paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
+                       ".</div>")
 
     html <- paste0(html, "</div>")
 
