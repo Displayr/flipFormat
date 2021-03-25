@@ -67,7 +67,7 @@ stackingTable <- function(stacked.data.set.metadata, var.ind)
     stacking.input.var.labels <- md$stacking.input.variable.names[[var.ind]]
 
     table.html <- paste0(table.html,
-                         paste0(vapply(seq_along(stacking.group), function(j) {
+                         paste0(vapply(seq_along(stacking.input.var.names), function(j) {
         if (is.na(stacking.input.var.names[j]))
             paste0("<tr><td>Observation ", j, "</td><td></td><td></td></tr>")
         else
