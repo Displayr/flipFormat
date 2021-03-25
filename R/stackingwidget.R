@@ -74,9 +74,9 @@ StackingWidget <- function(input.data.set.metadata,
 stackingTable <- function(stacking.group, n.stacked, variable.names, variable.labels,
                           stacked.variable.name, stacked.variable.label)
 {
-    table.html <- paste0("<table class=\"stacking-table\">",
-                         "<th></th><th>Name</th><th>Label</th>",
-                         "<tr><td>Stacked</td><td>",
+    table.html <- paste0("<table class=\"stacking-table\"><thead>",
+                         "<th></th><th>Name</th><th>Label</th></thead>",
+                         "<tbody><tr><td>Stacked</td><td>",
                          htmlText(stacked.variable.name), "</td><td>",
                          htmlText(stacked.variable.label), "</td></tr>")
 
@@ -90,5 +90,5 @@ stackingTable <- function(stacking.group, n.stacked, variable.names, variable.la
                    htmlText(variable.labels[stacking.group[j]]), "</td></tr>")
     }, character(1)), collapse = ""))
 
-    paste0(table.html, "</table></details>")
+    paste0(table.html, "</tbody></table></details>")
 }
