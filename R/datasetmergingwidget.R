@@ -2,7 +2,6 @@
 DataSetMergingWidget <- function(input.data.set.metadata,
                                  merged.data.set.metadata,
                                  merge.map,
-                                 merged.data.set.name,
                                  omitted.variables,
                                  input.category.values)
 {
@@ -13,7 +12,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
 
     html <- paste0("<div class=\"data-set-merging-main-container\">",
                    "<div class=\"data-set-merging-title\">",
-                   htmlText(merged.data.set.name),
+                   htmlText(merged.data.set.metadata$data.set.name),
                    "</div>")
 
     # For each variable in the merged data set, create a collapsible container

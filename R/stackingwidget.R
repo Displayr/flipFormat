@@ -1,14 +1,10 @@
 #' @export
-StackingWidget <- function(input.data.set.metadata,
-                           stacked.data.set.metadata,
-                           stacking.groups,
-                           stacked.indices,
-                           stacked.data.set.name)
+StackingWidget <- function(stacked.data.set.metadata,
+                           unstackable.names)
 {
+    md <- stacked.data.set.metadata
+
     n.stacked <- ncol(stacking.groups)
-    n.vars <- stacked.data.set.metadata$n.variables
-    input.variable.names <- input.data.set.metadata$variable.names
-    input.variable.labels <- input.data.set.metadata$variable.labels
 
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -17,15 +13,14 @@ StackingWidget <- function(input.data.set.metadata,
 
     html <- paste0("<div class=\"stacking-main-container\">",
                    "<div class=\"stacking-title\">",
-                   htmlText(stacked.data.set.name), "</div>")
+                   htmlText(md$data.set.name),
+                   "</div>")
 
-    html.rows <- character(n.vars)
-    for (i in seq_len(n.vars))
+    html.rows <- character(md$n.variables)
+    for (i in seq_len(md$n.variables))
     {
-        stacked.variable.name <- stacked.data.set.metadata$variable.names[i]
-        stacked.variable.label <- stacked.data.set.metadata$variable.labels[i]
-        row.title <- paste0(stacked.variable.name, ": ",
-                            stacked.variable.label)
+        row.title <- paste0(md$variable.names[i], ": ",
+                            md$variable.labels[i])
         if (!(i %in% stacked.indices))
         {
             html.row <- paste0("<div class=\"stacking-row\">",
@@ -33,12 +28,7 @@ StackingWidget <- function(input.data.set.metadata,
         }
         else
         {
-            ind <- match(i, stacked.indices)
-            table.html <- stackingTable(stacking.groups[ind, ], n.stacked,
-                                        input.variable.names,
-                                        input.variable.labels,
-                                        stacked.variable.name,
-                                        stacked.variable.label)
+            table.html <- stackingTable(md, i)
 
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"stacking-summary\">",
@@ -52,12 +42,6 @@ StackingWidget <- function(input.data.set.metadata,
     html <- paste0(html, "<div class=\"stacking-title\">",
                    "Note:", "</div>")
 
-    unstackable.ind <- attr(stacking.groups, "unstackable.ind")
-    unstackable.names <- lapply(unstackable.ind, function(ind) {
-        group.ind <- stacking.groups[ind, ]
-        group.ind <- group.ind[!is.na(group.ind)]
-        input.variable.names[group.ind]
-    })
     for (nms in unstackable.names)
         html <- paste0(html, "<div>The following variables could not be ",
                        "stacked due to mismatching variable types or ",
@@ -71,23 +55,27 @@ StackingWidget <- function(input.data.set.metadata,
     createWidgetFromFile(tfile)
 }
 
-stackingTable <- function(stacking.group, n.stacked, variable.names, variable.labels,
-                          stacked.variable.name, stacked.variable.label)
+stackingTable <- function(stacked.data.set.metadata, var.ind)
 {
+    md <- stacked.data.set.metadata
+
     table.html <- paste0("<table class=\"stacking-table\"><thead>",
                          "<th></th><th>Name</th><th>Label</th></thead>",
                          "<tbody><tr><td>Stacked</td><td>",
-                         htmlText(stacked.variable.name), "</td><td>",
-                         htmlText(stacked.variable.label), "</td></tr>")
+                         htmlText(md$variable.names[var.ind]), "</td><td>",
+                         htmlText(md$variable.labels[var.ind]), "</td></tr>")
+
+    stacking.input.var.names <- md$stacking.input.variable.names[[var.ind]]
+    stacking.input.var.labels <- md$stacking.input.variable.names[[var.ind]]
 
     table.html <- paste0(table.html,
                          paste0(vapply(seq_along(stacking.group), function(j) {
-        if (is.na(stacking.group[j]))
+        if (is.na(stacking.input.var.names[j]))
             paste0("<tr><td>Observation ", j, "</td><td></td><td></td></tr>")
         else
             paste0("<tr><td>Observation ", j, "</td><td>",
-                   htmlText(variable.names[stacking.group[j]]), "</td><td>",
-                   htmlText(variable.labels[stacking.group[j]]), "</td></tr>")
+                   htmlText(stacking.input.var.names[j]), "</td><td>",
+                   htmlText(stacking.input.var.labels[j]), "</td></tr>")
     }, character(1)), collapse = ""))
 
     paste0(table.html, "</tbody></table></details>")
