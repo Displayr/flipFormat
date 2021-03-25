@@ -4,8 +4,6 @@ StackingWidget <- function(stacked.data.set.metadata,
 {
     md <- stacked.data.set.metadata
 
-    n.stacked <- ncol(stacking.groups)
-
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
@@ -21,7 +19,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     {
         row.title <- paste0(md$variable.names[i], ": ",
                             md$variable.labels[i])
-        if (!(i %in% stacked.indices))
+        if (!(md$is.stacked.variable[i]))
         {
             html.row <- paste0("<div class=\"stacking-row\">",
                                htmlText(row.title), "</div>")
