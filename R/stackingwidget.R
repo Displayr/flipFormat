@@ -64,7 +64,7 @@ stackingTable <- function(stacked.data.set.metadata, var.ind)
                          htmlText(md$variable.labels[var.ind]), "</td></tr>")
 
     stacking.input.var.names <- md$stacking.input.variable.names[[var.ind]]
-    stacking.input.var.labels <- md$stacking.input.variable.names[[var.ind]]
+    stacking.input.var.labels <- md$stacking.input.variable.labels[[var.ind]]
 
     table.html <- paste0(table.html,
                          paste0(vapply(seq_along(stacking.input.var.names), function(j) {
