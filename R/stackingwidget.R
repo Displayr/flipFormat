@@ -48,8 +48,9 @@ StackingWidget <- function(stacked.data.set.metadata,
                ".</div>")
     }, character(1)), collapse = ""))
 
-    html <- paste0(html, "<div>The following variables have been omitted ",
-                   "from the stacked data set: ",
+    html <- paste0(html, "<div>The following variable",
+                   ngettext(length(omitted.variables), " has", "s have"),
+                   " been omitted from the stacked data set: ",
                    paste0(omitted.variables, collapse = ", "), ".</div>")
 
     html <- paste0(html, "</div>")
