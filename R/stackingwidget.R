@@ -46,7 +46,7 @@ StackingWidget <- function(stacked.data.set.metadata,
                "stacked due to mismatching variable types or ",
                "categories: ", paste0("'", nms, "'", collapse = ", "),
                ".</div>")
-    }), collapse = ""))
+    }, character(1)), collapse = ""))
 
     html <- paste0(html, "<div>The following variables have been omitted ",
                    "from the stacked data set: ",
