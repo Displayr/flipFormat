@@ -1,6 +1,7 @@
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
-                           unstackable.names)
+                           unstackable.names,
+                           omitted.variables)
 {
     md <- stacked.data.set.metadata
 
@@ -40,11 +41,16 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0(html, "<div class=\"stacking-title\">",
                    "Note:", "</div>")
 
-    for (nms in unstackable.names)
-        html <- paste0(html, "<div>The following variables could not be ",
-                       "stacked due to mismatching variable types or ",
-                       "categories: ", paste0("'", nms, "'", collapse = ", "),
-                       ".</div>")
+    html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
+        paste0("<div>The following variables could not be ",
+               "stacked due to mismatching variable types or ",
+               "categories: ", paste0("'", nms, "'", collapse = ", "),
+               ".</div>")
+    }), collapse = ""))
+
+    html <- paste0(html, "<div>The following variables have been omitted ",
+                   "from the stacked data set: ",
+                   paste0(omitted.variables, collapse = ", "), ".</div>")
 
     html <- paste0(html, "</div>")
 
