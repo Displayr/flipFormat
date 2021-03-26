@@ -30,8 +30,13 @@ StackingWidget <- function(stacked.data.set.metadata,
         {
             table.html <- stackingTable(md, i)
 
+            summary.class <- if (md$is.manually.stacked[i])
+                "stacking-summary stacking-summary-manual"
+            else
+                "stacking-summary"
+
             html.row <- paste0("<details class=\"stacking-details\">",
-                               "<summary class=\"stacking-summary\">",
+                               "<summary class=\"", summary.class, "\">",
                                htmlText(row.title), "</summary>",
                                table.html, "</table></details>")
         }

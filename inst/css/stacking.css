@@ -44,6 +44,10 @@
     padding-left: 10px; /* so doesnt overlap with displayr resize tool */
 }
 
+.stacking-summary-manual {
+    background: #FFEFDC;
+}
+
 .stacking-table {
     font-size: 13px;
     margin: 20px 10px 20px 10px;
