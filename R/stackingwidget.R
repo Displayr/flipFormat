@@ -16,6 +16,8 @@ StackingWidget <- function(stacked.data.set.metadata,
                    htmlText(md$data.set.name),
                    "</div>")
 
+    num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
+
     html.rows <- character(md$n.variables)
     for (i in seq_len(md$n.variables))
     {
@@ -24,6 +26,8 @@ StackingWidget <- function(stacked.data.set.metadata,
         if (!(md$is.stacked.variable[i]))
         {
             html.row <- paste0("<div class=\"stacking-row\">",
+                               "<span class=\"stacking-var-num\" style=\"width:",
+                               num.span.width, "px\">", i, ".</span>",
                                htmlText(row.title), "</div>")
         }
         else
@@ -37,41 +41,48 @@ StackingWidget <- function(stacked.data.set.metadata,
 
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"", summary.class, "\">",
-                               htmlText(row.title), "</summary>",
+                               "<span class=\"stacking-var-num\" style=\"width:",
+                               num.span.width, "px\">", i, ".</span>",
+                               htmlText(row.title),
+                               "</summary>",
                                table.html, "</table></details>")
         }
         html.rows[i] <- html.row
     }
     html <- paste0(html, paste0(html.rows, collapse = ""))
 
-    html <- paste0(html, "<div class=\"stacking-title\">",
-                   "Note:", "</div>")
+    if (length(unstackable.names) > 0 ||
+        length(omitted.variables) > 0)
+    {
 
-    html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
-        paste0("<div>The following variables could not be ",
-               "stacked due to mismatching variable types or ",
-               "categories: ", paste0("'", nms, "'", collapse = ", "),
-               ".</div>")
-    }, character(1)), collapse = ""))
+        html <- paste0(html, "<div class=\"stacking-title\">",
+                       "Note:", "</div>")
+
+        html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
+            paste0("<div>The following variables could not be ",
+                   "stacked due to mismatching variable types or ",
+                   "categories: ", paste0("'", nms, "'", collapse = ", "),
+                   ".</div>")
+        }, character(1)), collapse = ""))
 
 
-    if (length(omitted.stacked.variables) > 0)
-        html <- paste0(html, "<div>The following <b>stacked</b> variable",
-                       ngettext(length(omitted.stacked.variables), " has", "s have"),
-                       " been omitted from the stacked data set: ",
-                       paste0("<b>", omitted.stacked.variables, "</b>", collapse = ", "),
-                       ".</div>")
+        if (length(omitted.stacked.variables) > 0)
+            html <- paste0(html, "<div>The following <b>stacked</b> variable",
+                           ngettext(length(omitted.stacked.variables), " has", "s have"),
+                           " been omitted from the stacked data set: ",
+                           paste0("<b>", omitted.stacked.variables, "</b>", collapse = ", "),
+                           ".</div>")
 
-    omitted.non.stacked.variables <- setdiff(omitted.variables,
-                                             omitted.stacked.variables)
+        omitted.non.stacked.variables <- setdiff(omitted.variables,
+                                                 omitted.stacked.variables)
 
-    if (length(omitted.non.stacked.variables) > 0)
-        html <- paste0(html, "<div>The following variable",
-                       ngettext(length(omitted.non.stacked.variables), " has", "s have"),
-                       " been omitted from the stacked data set: ",
-                       paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
-                       ".</div>")
-
+        if (length(omitted.non.stacked.variables) > 0)
+            html <- paste0(html, "<div>The following variable",
+                           ngettext(length(omitted.non.stacked.variables), " has", "s have"),
+                           " been omitted from the stacked data set: ",
+                           paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
+                           ".</div>")
+    }
     html <- paste0(html, "</div>")
 
     cata(html)

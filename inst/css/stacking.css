@@ -18,6 +18,24 @@
     padding-bottom: 5px;
 }
 
+.common-label-stacking-subtitle {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    color: #151A1C;
+    padding-bottom: 5px;
+    background: #DCE9ff
+}
+
+.manual-stacking-subtitle {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    color: #151A1C;
+    padding-bottom: 5px;
+    background: #FFDCF7
+}
+
 .stacking-row {
     background: #F2F2F2;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
@@ -46,6 +64,10 @@
 
 .stacking-summary-manual {
     background: #FFDCF7;
+}
+
+.stacking-var-num {
+    float: left;
 }
 
 .stacking-table {
