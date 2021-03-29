@@ -1,5 +1,16 @@
 context("DataSetMergingWidget")
 
-StackingWidget(result$stacked.variable.names,
-               result$stacked.variable.labels,
-               result$stacking.array)
+findInstDirFile <- function(file)
+{
+    file.path(system.file("testdata", package = "flipFormat", mustWork = TRUE),
+              file)
+}
+
+load(findInstDirFile("stacking.output.rda"))
+
+test_that("stacking widget", {
+    StackingWidget(stacking.output$stacked.data.set.metadata,
+                   c("Last Resp", "Q3"),
+                   stacking.output$omitted.variables,
+                   stacking.output$omitted.stacked.variables)
+})
