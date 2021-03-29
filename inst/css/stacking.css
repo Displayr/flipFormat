@@ -18,22 +18,12 @@
     padding-bottom: 5px;
 }
 
-.common-label-stacking-subtitle {
+.stacking-subtitle {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    color: #151A1C;
+    font-size: 16px;
+    color: #3E7DCC;
     padding-bottom: 5px;
-    background: #DCE9ff
-}
-
-.manual-stacking-subtitle {
-    text-align: left;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    color: #151A1C;
-    padding-bottom: 5px;
-    background: #FFDCF7
 }
 
 .stacking-row {

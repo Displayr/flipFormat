@@ -14,7 +14,13 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0("<div class=\"stacking-main-container\">",
                    "<div class=\"stacking-title\">",
                    htmlText(md$data.set.name),
-                   "</div>")
+                   "</div><div class=\"stacking-subtitle\">",
+                   md$n.variables,
+                   " variables, ",
+                   sum(md$is.stacked.variable) - sum(md$is.manually.stacked.variable, na.rm = TRUE),
+                   " variables stacked using common labels, ",
+                   sum(md$is.manually.stacked.variable, na.rm = TRUE),
+                   " manually stacked variables")
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
