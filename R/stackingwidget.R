@@ -1,3 +1,13 @@
+#' @title Stacking Output Widget
+#' @description Stacking widget shown in output for \code{flipFormat::StackData}.
+#' @param stacked.data.set.metadata An object containing metadata for the
+#'   stacked data set.
+#' @param unstackable.names A list of character vectors of the names of
+#'   variables that could not be stacked due to mismatching types or
+#'   categories.
+#' @param omitted.variables A character vector of omitted variables.
+#' @param omitted.stacked.variables A character vector of omitted stacked
+#'   variables.
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
