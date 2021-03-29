@@ -51,15 +51,15 @@ StackingWidget <- function(stacked.data.set.metadata,
     }
     html <- paste0(html, paste0(html.rows, collapse = ""))
 
+    # Whether to show Note
     if (length(unstackable.names) > 0 ||
         length(omitted.variables) > 0)
     {
-
         html <- paste0(html, "<div class=\"stacking-title\">",
                        "Note:", "</div>")
 
         html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
-            paste0("<div>The following variables could not be ",
+            paste0("<div class=\"stacking-note\">The following variables could not be ",
                    "stacked due to mismatching variable types or ",
                    "categories: ", paste0("'", nms, "'", collapse = ", "),
                    ".</div>")
@@ -67,7 +67,7 @@ StackingWidget <- function(stacked.data.set.metadata,
 
 
         if (length(omitted.stacked.variables) > 0)
-            html <- paste0(html, "<div>The following <b>stacked</b> variable",
+            html <- paste0(html, "<div class=\"stacking-note\">The following <b>stacked</b> variable",
                            ngettext(length(omitted.stacked.variables), " has", "s have"),
                            " been omitted from the stacked data set: ",
                            paste0("<b>", omitted.stacked.variables, "</b>", collapse = ", "),
@@ -77,7 +77,7 @@ StackingWidget <- function(stacked.data.set.metadata,
                                                  omitted.stacked.variables)
 
         if (length(omitted.non.stacked.variables) > 0)
-            html <- paste0(html, "<div>The following variable",
+            html <- paste0(html, "<div class=\"stacking-note\">The following variable",
                            ngettext(length(omitted.non.stacked.variables), " has", "s have"),
                            " been omitted from the stacked data set: ",
                            paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),

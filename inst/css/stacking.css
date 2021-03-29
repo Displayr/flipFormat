@@ -98,3 +98,7 @@
 .stacking-table tr:nth-of-type(1) td {
     background: #DDDDDD;
 }
+
+.stacking-note {
+    padding-bottom: 5px;
+}
