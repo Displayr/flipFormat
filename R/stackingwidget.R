@@ -13,7 +13,8 @@ StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
                            omitted.variables,
                            omitted.stacked.variables,
-                           common.labels)
+                           common.labels,
+                           is.saved.to.cloud)
 {
     md <- stacked.data.set.metadata
 
@@ -24,9 +25,11 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     html <- paste0("<div class=\"stacking-main-container\">",
                    "<div class=\"stacking-title\">",
-                   htmlText(md$data.set.name),
-                   "</div><div class=\"stacking-subtitle\">",
-                   md$n.variables,
+                   htmlText(md$data.set.name), "</div>")
+    if (is.saved.to.cloud)
+        html <- paste0(html, "<div class=\"stacking-subtitle\">(saved to Displayr cloud drive)</div>")
+
+    html <- paste0(html, "<div class=\"stacking-subtitle\">", md$n.variables,
                    " variables, ",
                    sum(md$is.stacked.variable) - sum(md$is.manually.stacked.variable, na.rm = TRUE),
                    " variables stacked using common labels, ",
@@ -61,12 +64,17 @@ StackingWidget <- function(stacked.data.set.metadata,
             else
                 "stacking-summary"
 
+            description <- if (md$is.manually.stacked[i])
+                "<div class=\"stacking-description\">Manually stacked:</div>"
+            else
+                "<div class=\"stacking-description\">Stacked using common labels:</div>"
+
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"", summary.class, "\">",
                                "<span class=\"stacking-var-num\" style=\"width:",
                                num.span.width, "px\">", i, ".</span>",
                                htmlText(row.title),
-                               "</summary>",
+                               "</summary>", description,
                                table.html, "</table></details>")
         }
         html.rows[i] <- html.row
@@ -83,7 +91,7 @@ StackingWidget <- function(stacked.data.set.metadata,
 
         html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
             paste0("<div class=\"stacking-note\">The following variables could not be ",
-                   "stacked due to mismatching variable types or categories: ",
+                   "stacked using common labels due to mismatching variable types or categories: ",
                    paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
         }, character(1)), collapse = ""))
 

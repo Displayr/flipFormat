@@ -13,5 +13,6 @@ test_that("stacking widget", {
                    list(c("Last Resp", "Q3")),
                    stacking.output$omitted.variables,
                    stacking.output$omitted.stacked.variables,
-                   stacking.output$common.labels)
+                   stacking.output$common.labels,
+                   stacking.output$is.saved.to.cloud)
 })
