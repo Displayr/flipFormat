@@ -10,7 +10,8 @@ load(findInstDirFile("stacking.output.rda"))
 
 test_that("stacking widget", {
     StackingWidget(stacking.output$stacked.data.set.metadata,
-                   c("Last Resp", "Q3"),
+                   list(c("Last Resp", "Q3")),
                    stacking.output$omitted.variables,
-                   stacking.output$omitted.stacked.variables)
+                   stacking.output$omitted.stacked.variables,
+                   stacking.output$common.labels)
 })

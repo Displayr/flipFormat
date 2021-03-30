@@ -12,7 +12,8 @@
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
                            omitted.variables,
-                           omitted.stacked.variables)
+                           omitted.stacked.variables,
+                           common.labels)
 {
     md <- stacked.data.set.metadata
 
@@ -30,7 +31,12 @@ StackingWidget <- function(stacked.data.set.metadata,
                    sum(md$is.stacked.variable) - sum(md$is.manually.stacked.variable, na.rm = TRUE),
                    " variables stacked using common labels, ",
                    sum(md$is.manually.stacked.variable, na.rm = TRUE),
-                   " manually stacked variables")
+                   " manually stacked variables</div>")
+
+    if (!is.null(common.labels))
+        html <- paste0(html, "<div class=\"stacking-subtitle\">",
+                       "Common labels: ", paste0(htmlText(common.labels), collapse = ", "),
+                       "</div>")
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
@@ -71,14 +77,14 @@ StackingWidget <- function(stacked.data.set.metadata,
     if (length(unstackable.names) > 0 ||
         length(omitted.variables) > 0)
     {
-        html <- paste0(html, "<div class=\"stacking-title\">",
+        html <- paste0(html, "<div class=\"stacking-note-container\">",
+                       "<div class=\"stacking-title\">",
                        "Note:", "</div>")
 
         html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
             paste0("<div class=\"stacking-note\">The following variables could not be ",
-                   "stacked due to mismatching variable types or ",
-                   "categories: ", paste0("'", nms, "'", collapse = ", "),
-                   ".</div>")
+                   "stacked due to mismatching variable types or categories: ",
+                   paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
         }, character(1)), collapse = ""))
 
 
@@ -98,6 +104,7 @@ StackingWidget <- function(stacked.data.set.metadata,
                            " been omitted from the stacked data set: ",
                            paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
                            ".</div>")
+        html <- paste0(html, "</div>")
     }
     html <- paste0(html, "</div>")
 
