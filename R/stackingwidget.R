@@ -35,7 +35,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0(html, "<div class=\"stacking-subtitle\">", md$n.variables,
                    " variables, ",
                    sum(md$is.stacked.variable) - sum(md$is.manually.stacked.variable, na.rm = TRUE),
-                   " variables stacked using common labels, ",
+                   " stacked variables from common labels, ",
                    sum(md$is.manually.stacked.variable, na.rm = TRUE),
                    " manually stacked variables</div>")
 
