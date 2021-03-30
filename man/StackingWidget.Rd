@@ -8,7 +8,9 @@ StackingWidget(
   stacked.data.set.metadata,
   unstackable.names,
   omitted.variables,
-  omitted.stacked.variables
+  omitted.stacked.variables,
+  common.labels,
+  is.saved.to.cloud
 )
 }
 \arguments{
@@ -23,6 +25,11 @@ categories.}
 
 \item{omitted.stacked.variables}{A character vector of omitted stacked
 variables.}
+
+\item{common.labels}{The common labels used for stacking.}
+
+\item{is.saved.to.cloud}{Whether the stacked data set was saved to the
+Displayr cloud drive.}
 }
 \description{
 Stacking widget shown in output for \code{flipFormat::StackData}.

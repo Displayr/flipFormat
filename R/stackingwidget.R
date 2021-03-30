@@ -8,6 +8,9 @@
 #' @param omitted.variables A character vector of omitted variables.
 #' @param omitted.stacked.variables A character vector of omitted stacked
 #'   variables.
+#' @param common.labels The common labels used for stacking.
+#' @param is.saved.to.cloud Whether the stacked data set was saved to the
+#'   Displayr cloud drive.
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
