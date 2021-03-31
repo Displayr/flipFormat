@@ -19,7 +19,7 @@ stacked data set.}
 
 \item{unstackable.names}{A list of character vectors of the names of
 variables that could not be stacked due to mismatching types or
-categories.}
+value attributes.}
 
 \item{omitted.variables}{A character vector of omitted variables.}
 
