@@ -4,7 +4,7 @@
 #'   stacked data set.
 #' @param unstackable.names A list of character vectors of the names of
 #'   variables that could not be stacked due to mismatching types or
-#'   categories.
+#'   value attributes.
 #' @param omitted.variables A character vector of omitted variables.
 #' @param omitted.stacked.variables A character vector of omitted stacked
 #'   variables.
@@ -94,7 +94,7 @@ StackingWidget <- function(stacked.data.set.metadata,
 
         html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
             paste0("<div class=\"stacking-note\">The following variables could not be ",
-                   "stacked using common labels due to mismatching variable types or categories: ",
+                   "stacked using common labels due to mismatching variable types or value attributes: ",
                    paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
         }, character(1)), collapse = ""))
 
