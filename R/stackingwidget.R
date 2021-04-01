@@ -1,5 +1,5 @@
 #' @title Stacking Output Widget
-#' @description Stacking widget shown in output for \code{flipFormat::StackData}.
+#' @description Stacking widget shown in output for \code{flipData::StackData}.
 #' @param stacked.data.set.metadata An object containing metadata for the
 #'   stacked data set.
 #' @param unstackable.names A list of character vectors of the names of

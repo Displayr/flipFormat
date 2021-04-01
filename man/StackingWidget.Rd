@@ -32,5 +32,5 @@ variables.}
 Displayr cloud drive.}
 }
 \description{
-Stacking widget shown in output for \code{flipFormat::StackData}.
+Stacking widget shown in output for \code{flipData::StackData}.
 }
