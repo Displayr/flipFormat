@@ -21,11 +21,13 @@ Imports:
     sparkline,
     stringr,
     stringi,
-    rhtmlMetro (>= 1.0.2)
+    rhtmlMetro (>= 1.0.2),
+    flipChartTests
 Suggests:
     testthat,
-    flipExampleData,
+    flipExampleData
 Remotes:
+    Displayr/flipChartTests,
     Displayr/flipExampleData,
     Displayr/flipU,
     rstudio/DT@bf60e431578638ba56e227090af4e1aa5f9add55,
