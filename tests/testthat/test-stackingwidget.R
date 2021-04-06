@@ -11,10 +11,16 @@ findInstDirFile <- function(file)
 load(findInstDirFile("stacking.output.rda"))
 
 test_that("stacking widget", {
-    TestWidget(StackingWidget(stacking.output$stacked.data.set.metadata,
+    # TestWidget(StackingWidget(stacking.output$stacked.data.set.metadata,
+    #                list(c("Last Resp", "Q3")),
+    #                stacking.output$omitted.variables,
+    #                stacking.output$omitted.stacked.variables,
+    #                stacking.output$common.labels,
+    #                stacking.output$is.saved.to.cloud), "stacking-widget", height = 2500)
+    StackingWidget(stacking.output$stacked.data.set.metadata,
                    list(c("Last Resp", "Q3")),
                    stacking.output$omitted.variables,
                    stacking.output$omitted.stacked.variables,
                    stacking.output$common.labels,
-                   stacking.output$is.saved.to.cloud), "stacking-widget", height = 2500)
+                   stacking.output$is.saved.to.cloud)
 })
