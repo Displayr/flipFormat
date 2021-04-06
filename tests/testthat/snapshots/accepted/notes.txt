@@ -1,0 +1,2 @@
+This directory contains diff snapshots that do not match accepted ones
+It is useful to keep this file, as empty directories are deleted in git repositories

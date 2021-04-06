@@ -66,6 +66,15 @@ script:
   - if [ -d tests/testthat ]; then
     Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
     fi
+  # Prepare repository to push to github
+  - git config user.name travisCISnapshots
+  - git remote set-url origin "https://$WTOKEN@github.com/Displayr/flipFormat.git"
+  - git add tests/testthat/snapshots
+  - if [[ $(git status -s tests/testthat/snapshots) ]]; then git commit -m "Snapshots added from Travis build $TRAVIS_BUILD_NUMBER [ci skip]"; fi
+  # Reconnect repository to master branch - this must happen AFTER the commit
+  - git checkout -b temp
+  - git branch -f master temp
+  - git push origin master || true  #never report error code
 
 notifications:
   slack:
