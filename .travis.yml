@@ -73,8 +73,8 @@ script:
   - if [[ $(git status -s tests/testthat/snapshots) ]]; then git commit -m "Snapshots added from Travis build $TRAVIS_BUILD_NUMBER [ci skip]"; fi
   # Reconnect repository to master branch - this must happen AFTER the commit
   - git checkout -b temp
-  - git branch -f master temp
-  - git push origin master || true  #never report error code
+  - git branch -f $TRAVIS_BRANCH temp
+  - git push origin $TRAVIS_BRANCH || true  #never report error code
 
 notifications:
   slack:
