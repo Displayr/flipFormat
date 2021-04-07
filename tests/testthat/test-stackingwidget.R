@@ -18,6 +18,6 @@ test_that("stacking widget", {
                         stacking.output$omitted.stacked.variables,
                         stacking.output$common.labels,
                         stacking.output$is.saved.to.cloud)
-    expect_true(TestWidget2(widget, "stacking-widget", height = 2500))
+    expect_true(TestWidget(widget, "stacking-widget", height = 2500))
 })
 
