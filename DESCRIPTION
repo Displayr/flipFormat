@@ -10,6 +10,7 @@ License: GPL-3
 LazyData: TRUE
 Depends: R (>= 3.5.0)
 Imports:
+    chromote,
     colorspace,
     DT,
     flipU(>= 1.2.5),
@@ -23,7 +24,8 @@ Imports:
     stringr,
     stringi,
     rhtmlMetro (>= 1.0.2),
-    flipChartTests
+    flipChartTests,
+    visualTest
 Suggests:
     testthat,
     flipExampleData

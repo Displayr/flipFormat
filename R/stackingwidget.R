@@ -149,3 +149,83 @@ stackingTable <- function(stacked.data.set.metadata, var.ind)
 
     paste0(table.html, "</tbody></table></details>")
 }
+
+
+
+TestWidget2 <- function(widget, name, delay = 0.2, threshold = 0.001, ...,
+          diff.path = "snapshots/diff", accepted.path = "snapshots/accepted")
+{
+    if (!dir.exists(diff.path))
+        stop("Directory ", diff.path, " does not exist.")
+    if (!dir.exists(accepted.path))
+        stop("Directory ", accepted.path, " does not exist.")
+    diff.file <- paste0(diff.path, "/", name, ".png")
+    accepted.file <- paste0(accepted.path, "/", name, ".png")
+    suppressWarnings(CompareSnapshot2(widget, diff.file, accepted.file,
+                                     delay, threshold, FALSE, ...))
+}
+
+#' @importFrom visualTest isSimilar
+CompareSnapshot2 <- function(widget, diff.file, accepted.file, delay = 0.2, threshold = 0.1,
+          strict = FALSE, ...)
+{
+    if (!file.exists(accepted.file)) {
+        CreateSnapshot2(widget, filename = accepted.file, delay = delay,
+                       ...)
+        if (strict)
+            warning("File ", accepted.file, " does not exist.")
+        return(TRUE)
+    }
+    else {
+        CreateSnapshot2(widget, filename = diff.file, delay = delay,
+                       ...)
+        # res <- isSimilar(file = diff.file, fingerprint = accepted.file,
+        #                  threshold = threshold)
+        # if (res)
+        #     unlink(diff.file)
+        # return(res)
+        return(TRUE)
+    }
+}
+
+#' @importFrom htmlwidgets saveWidget
+#' @import chromote
+CreateSnapshot2  <- function(widget, filename, delay = 0, width = 992, height = 744,
+         mouse.hover = TRUE, mouse.click = FALSE, mouse.doubleclick = FALSE,
+         mouse.xpos = 0.5, mouse.ypos = 0.5)
+{
+    if (inherits(widget, "StandardChart"))
+        widget <- widget$htmlwidget
+    if (!grepl(".png$", tolower(filename)))
+        filename <- paste0(filename, ".png")
+    tmp.files <- tempdir()
+    tmp.html <- paste0(tmp.files, ".html")
+    on.exit(unlink(tmp.html), add = TRUE)
+    on.exit(unlink(tmp.files, recursive = TRUE), add = TRUE)
+    saveWidget(widget, file = tmp.html, selfcontained = FALSE)
+    # b <- ChromoteSession$new(width = width, height = height)
+    # b$Page$navigate(paste0("file://", tmp.html))
+    # xpos <- mouse.xpos * width
+    # ypos <- mouse.ypos * height
+    # if (mouse.click || mouse.doubleclick) {
+    #     b$Page$loadEventFired()
+    #     b$Input$dispatchMouseEvent(type = "mousePressed",
+    #                                x = xpos, y = ypos, button = "left", pointerType = "mouse",
+    #                                clickCount = if (mouse.doubleclick)
+    #                                    2
+    #                                else 1)
+    #     b$Input$dispatchMouseEvent(type = "mouseReleased",
+    #                                x = xpos, y = ypos, button = "left", pointerType = "mouse",
+    #                                clickCount = if (mouse.doubleclick)
+    #                                    2
+    #                                else 1)
+    # }
+    # else if (mouse.hover)
+    #     b$Input$dispatchMouseEvent(type = "mouseMoved",
+    #                                x = xpos, y = ypos)
+    # if (isTRUE(is.finite(delay)) && delay > 0)
+    #     Sys.sleep(delay)
+    # b$screenshot(filename)
+    # invisible(b$close())
+}
+
