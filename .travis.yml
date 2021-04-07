@@ -32,7 +32,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install libgit2-dev
   - rcode="options('testthat.progress.max_fails' = Inf); "
-  - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
+  - rcode+="tfile <- 'tfile'; capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="line.fail <- max(grep('FAIL', out)); "
   - rcode+="tmp <- unlist(strsplit(split='[[:space:]]+', out[line.fail])); "
   - rcode+="pos.fail <- grep('FAIL', tmp); n.fail <- as.numeric(tmp[pos.fail+1]); "
