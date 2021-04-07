@@ -202,7 +202,7 @@ CreateSnapshot2  <- function(widget, filename, delay = 0, width = 992, height = 
     tmp.html <- paste0(tmp.files, ".html")
     on.exit(unlink(tmp.html), add = TRUE)
     on.exit(unlink(tmp.files, recursive = TRUE), add = TRUE)
-    saveWidget(widget, file = tmp.html, selfcontained = FALSE)
+    # saveWidget(widget, file = tmp.html, selfcontained = FALSE)
     # b <- ChromoteSession$new(width = width, height = height)
     # b$Page$navigate(paste0("file://", tmp.html))
     # xpos <- mouse.xpos * width
