@@ -18,6 +18,7 @@ Imports:
     htmlwidgets,
     rmarkdown,
     knitr,
+    png,
     sparkline,
     stringr,
     stringi,
