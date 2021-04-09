@@ -51,7 +51,7 @@ StackingWidget <- function(stacked.data.set.metadata,
             {
                 common.labels <- common.labels.list[[i]]
                 html <- paste0(html, "<div class=\"stacking-subtitle\">",
-                               length(common.labels), " common labels ", i, ": ",
+                               length(common.labels), " common labels (set ", i, "): ",
                                paste0(htmlText(common.labels), collapse = ", "),
                                "</div>")
             }
