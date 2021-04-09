@@ -8,7 +8,7 @@
 #' @param omitted.variables A character vector of omitted variables.
 #' @param omitted.stacked.variables A character vector of omitted stacked
 #'   variables.
-#' @param common.labels The common labels used for stacking.
+#' @param common.labels.list A list of sets of common labels used for stacking.
 #' @param is.saved.to.cloud Whether the stacked data set was saved to the
 #'   Displayr cloud drive.
 #' @export
@@ -16,7 +16,7 @@ StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
                            omitted.variables,
                            omitted.stacked.variables,
-                           common.labels,
+                           common.labels.list,
                            is.saved.to.cloud)
 {
     md <- stacked.data.set.metadata
@@ -39,10 +39,23 @@ StackingWidget <- function(stacked.data.set.metadata,
                    sum(md$is.manually.stacked.variable, na.rm = TRUE),
                    " manually stacked variables</div>")
 
-    if (!is.null(common.labels))
-        html <- paste0(html, "<div class=\"stacking-subtitle\">",
-                       "Common labels: ", paste0(htmlText(common.labels), collapse = ", "),
-                       "</div>")
+    if (!is.null(common.labels.list))
+    {
+        if (length(common.labels.list) == 1)
+            html <- paste0(html, "<div class=\"stacking-subtitle\">",
+                           length(common.labels.list[[1]]), " common labels: ",
+                           paste0(htmlText(common.labels.list[[1]]), collapse = ", "),
+                           "</div>")
+        else
+            for (i in seq_along(common.labels.list))
+            {
+                common.labels <- common.labels.list[[i]]
+                html <- paste0(html, "<div class=\"stacking-subtitle\">",
+                               length(common.labels), " common labels ", i, ": ",
+                               paste0(htmlText(common.labels), collapse = ", "),
+                               "</div>")
+            }
+    }
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
@@ -103,8 +116,8 @@ StackingWidget <- function(stacked.data.set.metadata,
             html <- paste0(html, "<div class=\"stacking-note\">The following <b>stacked</b> variable",
                            ngettext(length(omitted.stacked.variables), " has", "s have"),
                            " been omitted from the stacked data set: ",
-                           paste0("<b>", omitted.stacked.variables, "</b>", collapse = ", "),
-                           ".</div>")
+                           paste0("<b>", htmlText(omitted.stacked.variables),
+                                  "</b>", collapse = ", "), ".</div>")
 
         omitted.non.stacked.variables <- setdiff(omitted.variables,
                                                  omitted.stacked.variables)

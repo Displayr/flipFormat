@@ -9,7 +9,7 @@ StackingWidget(
   unstackable.names,
   omitted.variables,
   omitted.stacked.variables,
-  common.labels,
+  common.labels.list,
   is.saved.to.cloud
 )
 }
@@ -26,7 +26,7 @@ value attributes.}
 \item{omitted.stacked.variables}{A character vector of omitted stacked
 variables.}
 
-\item{common.labels}{The common labels used for stacking.}
+\item{common.labels.list}{A list of sets of common labels used for stacking.}
 
 \item{is.saved.to.cloud}{Whether the stacked data set was saved to the
 Displayr cloud drive.}
