@@ -39,7 +39,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0(html, "<div class=\"stacking-subtitle\">", md$n.variables,
                    " variables, ",  n.stacked.vars, " stacked variables (",
                    n.common.lbl.stacked.vars, " stacked from common labels, ",
-                   n.manually.stacked.vars, " manually stacked)")
+                   n.manually.stacked.vars, " manually stacked)</div>")
 
     if (!is.null(common.labels.list))
     {
