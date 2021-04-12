@@ -32,12 +32,14 @@ StackingWidget <- function(stacked.data.set.metadata,
     if (is.saved.to.cloud)
         html <- paste0(html, "<div class=\"stacking-subtitle\">(saved to Displayr cloud drive)</div>")
 
+    n.stacked.vars <- sum(md$is.stacked.variable)
+    n.manually.stacked.vars <- sum(md$is.manually.stacked.variable, na.rm = TRUE)
+    n.common.lbl.stacked.vars <- n.stacked.vars - n.manually.stacked.vars
+
     html <- paste0(html, "<div class=\"stacking-subtitle\">", md$n.variables,
-                   " variables, ",
-                   sum(md$is.stacked.variable) - sum(md$is.manually.stacked.variable, na.rm = TRUE),
-                   " stacked variables from common labels, ",
-                   sum(md$is.manually.stacked.variable, na.rm = TRUE),
-                   " manually stacked variables</div>")
+                   " variables, ",  n.stacked.vars, " stacked variables (",
+                   n.common.lbl.stacked.vars, " stacked from common labels, ",
+                   n.manually.stacked.vars, " manually stacked)")
 
     if (!is.null(common.labels.list))
     {
