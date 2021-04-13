@@ -21,8 +21,8 @@
 .stacking-subtitle {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 16px;
-    color: #3E7DCC;
+    font-size: 14px;
+    color: #777777;
     padding-bottom: 5px;
 }
 
@@ -60,9 +60,16 @@
     float: left;
 }
 
+.stacking-description {
+    color: #151A1C;
+    font-size: 14px;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
 .stacking-table {
     font-size: 13px;
-    margin: 20px 10px 20px 10px;
+    margin: 10px 10px 20px 10px;
     color: #303A3F;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     border-collapse: collapse;
@@ -91,4 +98,9 @@
 
 .stacking-note {
     padding-bottom: 5px;
+    color: #777777;
+}
+
+.stacking-note-container {
+    padding-top: 15px;
 }
