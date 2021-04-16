@@ -16,6 +16,7 @@ Imports:
     formattable,
     htmltools,
     htmlwidgets,
+    janitor,
     rmarkdown,
     knitr,
     png,
