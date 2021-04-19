@@ -153,7 +153,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         nms.str <- paste0(paste0("<b>", htmlText(nms), "</b> (data set ",
                                  ind, ")"), collapse = ", ")
         note <- paste0("The variables ", nms.str,
-                       " could not be merged due to incompatible ",
+                       " could not all be merged due to incompatible ",
                        "variable types.")
 
         renamed.ind <- which(vapply(renamed.variables, function(renamed) {
@@ -167,7 +167,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             }, character(1))
             note <- paste0(note, " Variable",
                            ngettext(length(renamed.var.names), " ", "s "),
-                           paste0("'", htmlText(renamed.var.names), "'", collapse = ", "),
+                           paste0("<b>", htmlText(renamed.var.names), "</b>", collapse = ", "),
                            ngettext(length(renamed.var.names), " was", " were"),
                            " created to avoid conflicting names.")
             renamed.variables <- renamed.variables[-renamed.ind]
@@ -177,9 +177,9 @@ DataSetMergingWidget <- function(input.data.set.metadata,
 
     for (renamed in renamed.variables)
     {
-        note <- paste0("Variable '", htmlText(renamed$new.name),
-                       "' was created as the merged data set already contains ",
-                       "a variable called '", htmlText(renamed$old.name), "'.")
+        note <- paste0("Variable <b>", htmlText(renamed$new.name),
+                       "</b> was created as the merged data set already contains ",
+                       "a variable called <b>", htmlText(renamed$old.name), "</b>.")
         html <- paste0(html, "<div>", note, "</div>")
     }
 
