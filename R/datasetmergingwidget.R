@@ -157,7 +157,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                        "variable types.")
 
         renamed.ind <- which(vapply(renamed.variables, function(renamed) {
-            any(renamed$original.name == vars)
+            any(renamed$original.name == nms)
         }, logical(1)))
 
         if (length(renamed.ind) > 0)
