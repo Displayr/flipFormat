@@ -164,7 +164,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         {
             renamed.var.names <- vapply(renamed.ind, function(i) {
                 renamed.variables[[i]]$new.name
-            })
+            }, character(1))
             note <- paste0(note, " Variable",
                            ngettext(length(renamed.var.names), " ", "s "),
                            paste0("'", htmlText(renamed.var.names), "'", collapse = ", "),
