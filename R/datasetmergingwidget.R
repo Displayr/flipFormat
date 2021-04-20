@@ -153,7 +153,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         nms.str <- paste0(paste0("<b>", htmlText(nms), "</b> (data set ",
                                  ind, ")"), collapse = ", ")
         note <- paste0("The variables ", nms.str,
-                       " could not all be merged due to incompatible ",
+                       " could not be merged into one variable due to incompatible ",
                        "variable types.")
 
         renamed.ind <- which(vapply(renamed.variables, function(renamed) {
@@ -179,7 +179,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     {
         note <- paste0("Variable <b>", htmlText(renamed$new.name),
                        "</b> was created as the merged data set already contains ",
-                       "a variable called <b>", htmlText(renamed$old.name), "</b>.")
+                       "a variable called <b>", htmlText(renamed$original.name), "</b>.")
         html <- paste0(html, "<div>", note, "</div>")
     }
 
