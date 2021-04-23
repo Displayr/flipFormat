@@ -27,10 +27,6 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     if (is.saved.to.cloud)
         html <- paste0(html, "<div class=\"data-set-merging-subtitle\">(saved to Displayr cloud drive)</div>")
 
-    n.stacked.vars <- sum(md$is.stacked.variable)
-    n.manually.stacked.vars <- sum(md$is.manually.stacked.variable, na.rm = TRUE)
-    n.common.lbl.stacked.vars <- n.stacked.vars - n.manually.stacked.vars
-
     html <- paste0(html, "<div class=\"data-set-merging-subtitle\">",
                    merged.data.set.metadata$n.variables, " variables, ",
                    merged.data.set.metadata$n.cases, " cases</div>")
