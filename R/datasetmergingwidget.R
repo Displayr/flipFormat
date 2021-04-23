@@ -3,8 +3,15 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  merged.data.set.metadata,
                                  merge.map,
                                  omitted.variables,
-                                 input.category.values)
+                                 input.category.values,
+                                 is.saved.to.cloud)
 {
+    # TODO: index number after variable names in notes
+    # TODO: pink to indicate manually combined variables
+    # TODO: don't shade if variable absent from a data set, maybe also disable expansion
+    # TODO: Subtitle in output showing summary status?
+    # TODO: Remove data set names in output and show row lines, improve spacing between notes
+
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
@@ -16,6 +23,17 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                    "<div class=\"data-set-merging-title\">",
                    htmlText(merged.data.set.metadata$data.set.name),
                    "</div>")
+
+    if (is.saved.to.cloud)
+        html <- paste0(html, "<div class=\"data-set-merging-subtitle\">(saved to Displayr cloud drive)</div>")
+
+    n.stacked.vars <- sum(md$is.stacked.variable)
+    n.manually.stacked.vars <- sum(md$is.manually.stacked.variable, na.rm = TRUE)
+    n.common.lbl.stacked.vars <- n.stacked.vars - n.manually.stacked.vars
+
+    html <- paste0(html, "<div class=\"data-set-merging-subtitle\">",
+                   merged.data.set.metadata$n.variables, " variables, ",
+                   merged.data.set.metadata$n.cases, " cases</div>")
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
@@ -188,8 +206,9 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     for (i in seq_len(nrow(converted.var)))
     {
         r <- converted.var[i, ]
-        html <- paste0(html, "<div>Variable ", r[5], " (<b>", r[1], "</b>) from data set ",
-                       r[2]," converted from ", r[3], " to ", r[4], ".</div>")
+        html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b> from data set ",
+                       r[2]," converted from ", r[3], " to ", r[4],
+                       " (merged variable ", r[5], ").</div>")
     }
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
