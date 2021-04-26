@@ -6,7 +6,6 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  input.value.attributes,
                                  is.saved.to.cloud)
 {
-    # TODO: index number after variable names in notes
     # TODO: pink to indicate manually combined variables
     # TODO: don't shade if variable absent from a data set, maybe also disable expansion
     # TODO: Remove data set names in output and show row lines, improve spacing between notes
@@ -379,9 +378,9 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
             nms <- non.combinable.variables[i, ]
             ind <- which(!is.na(nms))
             nms <- nms[!is.na(nms)]
-            nms.str <- paste0(paste0("<b>", htmlText(nms), "</b> (data set ",
+            nms.str <- paste0(paste0("<b>", htmlText(unique(nms)), "</b> (data set ",
                                      ind, ")"), collapse = ", ")
-            note <- paste0("The variables ", nms.str,
+            note <- paste0("The variables named ", nms.str,
                            " could not be merged into one variable due to incompatible ",
                            "variable types.")
 
@@ -394,9 +393,14 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
                 renamed.var.names <- vapply(renamed.ind, function(i) {
                     renamed.variables[[i]]$new.name
                 }, character(1))
+                indices.in.merged.data.set <- vapply(renamed.var.names, match,
+                                                     integer(1),
+                                                     merged.data.set.metadata$variable.names)
                 note <- paste0(note, " Variable",
                                ngettext(length(renamed.var.names), " ", "s "),
-                               paste0("<b>", htmlText(renamed.var.names), "</b>", collapse = ", "),
+                               paste0("<b>", htmlText(renamed.var.names),
+                                      "</b>(", indices.in.merged.data.set, ")",
+                                      collapse = ", "),
                                ngettext(length(renamed.var.names), " was", " were"),
                                " created to avoid conflicting names.")
                 renamed.variables <- renamed.variables[-renamed.ind]
@@ -406,8 +410,10 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
 
         for (renamed in renamed.variables)
         {
+            ind <- match(renamed$new.name, merged.data.set.metadata$variable.names)
             note <- paste0("Variable <b>", htmlText(renamed$new.name),
-                           "</b> was created as the merged data set already contains ",
+                           "</b>(", ind, ") ",
+                           " was created as the merged data set already contains ",
                            "a variable called <b>", htmlText(renamed$original.name), "</b>.")
             html <- paste0(html, "<div>", note, "</div>")
         }
@@ -417,9 +423,9 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
         for (i in seq_len(nrow(converted.var)))
         {
             r <- converted.var[i, ]
-            html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b> from data set ",
-                           r[2]," converted from ", r[3], " to ", r[4],
-                           " (merged variable ", r[5], ").</div>")
+            html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b>(",
+                           r[5], ") from data set ", r[2]," converted from ",
+                           r[3], " to ", r[4], ".</div>")
         }
     }
     html
