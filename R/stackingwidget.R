@@ -69,8 +69,8 @@ StackingWidget <- function(stacked.data.set.metadata,
                             md$variable.labels[i])
         if (!(md$is.stacked.variable[i]))
         {
-            html.row <- paste0("<div class=\"stacking-row\">",
-                               "<span class=\"stacking-var-num\" style=\"width:",
+            html.row <- paste0("<div class=\"data-set-widget-row\">",
+                               "<span class=\"data-set-widget-var-num\" style=\"width:",
                                num.span.width, "px\">", i, ".</span>",
                                htmlText(row.title), "</div>")
         }
@@ -90,7 +90,7 @@ StackingWidget <- function(stacked.data.set.metadata,
 
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"", summary.class, "\">",
-                               "<span class=\"stacking-var-num\" style=\"width:",
+                               "<span class=\"data-set-widget-var-num\" style=\"width:",
                                num.span.width, "px\">", i, ".</span>",
                                htmlText(row.title),
                                "</summary>", description,

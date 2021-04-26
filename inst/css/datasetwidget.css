@@ -27,3 +27,17 @@
     color: #777777;
     padding-bottom: 5px;
 }
+
+.data-set-widget-row {
+    background: #F2F2F2;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #151A1C;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+.data-set-widget-var-num {
+    float: left;
+}

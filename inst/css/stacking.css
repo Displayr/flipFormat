@@ -1,13 +1,3 @@
-.stacking-row {
-    background: #F2F2F2;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    color: #151A1C;
-    font-size: 14px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-left: 10px;
-}
-
 .stacking-details {
     margin-bottom: 5px;
 }
@@ -26,10 +16,6 @@
 
 .stacking-summary-manual {
     background: #FFDCF7;
-}
-
-.stacking-var-num {
-    float: left;
 }
 
 .stacking-description {

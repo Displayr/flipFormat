@@ -99,27 +99,44 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                           attr(val.attr.table.html,
                                                "is.summary.highlighted")
             }
+
+            # Only create details summary (expandable info) if highlighted
+            # as it is not so interesting otherwise and this helps to reduce
+            # the widget size for large data sets
+            if (is.summary.highlighted)
+            {
+                # Create details summary last since it is easier to determine if it
+                # needs to be highlighted
+                html.summary <- variableSummary(var.name, var.label,
+                                                is.summary.highlighted,
+                                                num.span.width, n.data.sets,
+                                                input.var.names, i)
+                html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
+                                       html.summary, html.row, "</details>")
+            }
+            else
+            {
+                v.index.text <- variableIndexText(i, num.span.width)
+                indicators <- dataSetIndicators(input.var.names, n.data.sets)
+                name.and.label <- variableNameAndLabelText(var.name, var.label)
+                html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
+                                       v.index.text, indicators,
+                                       name.and.label, "</div>")
+            }
         }
         else # mergesrc variable
         {
-            html.row <- mergesrcValueAttributesTable(merged.val.attr)
-            is.summary.highlighted <- FALSE
-            input.var.names <- NULL
+            v.index.text <- variableIndexText(i, num.span.width)
+            indicator.spacing <- paste0(rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>",
+                                            n.data.sets), collapse = "")
+            html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
+                                   v.index.text, indicator.spacing,
+                                   variableNameAndLabelText(var.name, var.label),
+                                   "</div>")
         }
-
-        # Create details summary last since it is easier to determine if it
-        # needs to be highlighted
-        html.summary <- variableSummary(var.name, var.label,
-                                        is.summary.highlighted,
-                                        num.span.width, n.data.sets,
-                                        input.var.names, i)
-
-        html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
-                               html.summary, html.row, "</details>")
     }
 
     html <- paste0(html, paste0(html.vars, collapse = ""))
-
 
     html <- paste0(html, noteHtml(input.data.set.metadata,
                                   merged.data.set.metadata,
@@ -178,7 +195,40 @@ variableSummary <- function(var.name, var.label, is.summary.highlighted,
     else
         "summary data-set-merging-summary"
 
-    name.and.label <- if (nchar(var.label) > 0)
+    name.and.label <- variableNameAndLabelText(var.name, var.label)
+
+    v.index.text <- variableIndexText(variable.index, num.span.width)
+
+    indicators <- dataSetIndicators(input.var.names, n.data.sets)
+
+    paste0("<summary class=\"", summary.classes, "\">", v.index.text,
+           indicators, name.and.label, "</summary>")
+}
+
+variableIndexText <- function(variable.index, num.span.width)
+{
+    paste0("<span class=\"data-set-widget-var-num\" style=\"width:",
+           num.span.width, "px\">", variable.index, ".</span>")
+}
+
+# Filled and unfilled squares used to indicate if a variable is present in the
+# merged data set
+dataSetIndicators <- function(input.var.names, n.data.sets)
+{
+    indicators <- vapply(seq_len(n.data.sets), function(j) {
+            if (input.var.names[j] != "-")
+                "<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\">&#8193;</span>"
+            else
+                "<span class=\"data-set-merging-indicator\">&#8193;</span>"
+        }, character(1))
+
+    paste0("<span class=\"data-set-merging-indicator-container\">",
+           paste0(indicators, collapse = ""), "</span>")
+}
+
+variableNameAndLabelText <- function(var.name, var.label)
+{
+    if (nchar(var.label) > 0)
     {
         if (substr(var.label, 1, nchar(var.name) + 1) == paste0(var.name, ":") ||
             var.name == var.label)
@@ -188,26 +238,6 @@ variableSummary <- function(var.name, var.label, is.summary.highlighted,
     }
     else
         htmlText(var.name)
-
-    result <- paste0("<summary class=\"", summary.classes, "\">",
-                           "<span class=\"data-set-merging-var-num\" style=\"width:",
-                           num.span.width, "px\">", variable.index, ".</span>")
-
-    indicators <- if (var.name != "mergesrc")
-    {
-        vapply(seq_len(n.data.sets), function(j) {
-            if (input.var.names[j] != "-")
-                "<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\">&#8193;</span>"
-            else
-                "<span class=\"data-set-merging-indicator\">&#8193;</span>"
-        }, character(1))
-    }
-    else
-        rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>", n.data.sets)
-
-    paste0(result, "<span class=\"data-set-merging-indicator-container\">",
-           paste0(indicators, collapse = ""), "</span>", name.and.label,
-           "</summary>")
 }
 
 inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
@@ -228,7 +258,8 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
     is.summary.highlighted <- FALSE
     for (j in seq_len(n.data.sets))
     {
-        name.cell.class <- if (input.var.names[j] != var.name)
+        name.cell.class <- if (input.var.names[j] != "-" &&
+                               input.var.names[j] != var.name)
         {
             is.summary.highlighted <- TRUE
             "data-set-merging-cell-highlight"
@@ -236,7 +267,8 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
         else
             ""
 
-        label.cell.class <- if (input.var.labels[j] != var.label)
+        label.cell.class <- if (input.var.labels[j] != "-" &&
+                                input.var.labels[j] != var.label)
         {
             is.summary.highlighted <- TRUE
             "data-set-merging-cell-highlight"
@@ -244,7 +276,8 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
         else
             ""
 
-        type.cell.class <- if (input.var.types[j] != var.type)
+        type.cell.class <- if (input.var.types[j] != "-" &&
+                               input.var.types[j] != var.type)
         {
             is.summary.highlighted <- TRUE
             "data-set-merging-cell-highlight"
@@ -321,29 +354,13 @@ valueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
                 }
             }
             else # Missing value
-            {
-                is.summary.highlighted <- TRUE
-                paste0(result, "<td class=\"data-set-merging-cell-highlight\">-</td>")
-            }
+                paste0(result, "<td>-</td>")
         }
         result <- paste0(result, "</tr>")
     }
     result <- paste0(result, "</tbody></table>")
     attr(result, "is.summary.highlighted") <- is.summary.highlighted
     result
-}
-
-mergesrcValueAttributesTable <- function(merged.val.attr)
-{
-    result <- paste0("<table class=\"data-set-merging-table data-set-merging-val-attr-table\">",
-                     "<thead><th>Label</th><th>Value</th>",
-                     "</thead><tbody>")
-
-    for (j in seq_len(length(merged.val.attr)))
-        result <- paste0(result, "<tr><td>",
-                         htmlText(names(merged.val.attr)[j]),
-                         "</td><td>", merged.val.attr[j], "</td></tr>")
-    paste0(result, "</tbody></table>")
 }
 
 noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
