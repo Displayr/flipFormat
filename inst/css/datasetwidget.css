@@ -1,0 +1,29 @@
+/* Common css for stacking and data set merging widgets */
+
+.data-set-widget-main-container {
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    right: 0;
+    white-space: normal;
+    line-height: normal;
+}
+
+.data-set-widget-title {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 20px;
+    color: #3E7DCC;
+    font-weight: 500;
+    padding-bottom: 5px;
+}
+
+.data-set-widget-subtitle {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    color: #777777;
+    padding-bottom: 5px;
+}

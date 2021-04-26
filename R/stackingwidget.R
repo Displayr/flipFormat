@@ -24,19 +24,20 @@ StackingWidget <- function(stacked.data.set.metadata,
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
+    addCss("datasetwidget.css", cata)
     addCss("stacking.css", cata)
 
-    html <- paste0("<div class=\"stacking-main-container\">",
-                   "<div class=\"stacking-title\">",
+    html <- paste0("<div class=\"data-set-widget-main-container\">",
+                   "<div class=\"data-set-widget-title\">",
                    htmlText(md$data.set.name), "</div>")
     if (is.saved.to.cloud)
-        html <- paste0(html, "<div class=\"stacking-subtitle\">(saved to Displayr cloud drive)</div>")
+        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
 
     n.stacked.vars <- sum(md$is.stacked.variable)
     n.manually.stacked.vars <- sum(md$is.manually.stacked.variable, na.rm = TRUE)
     n.common.lbl.stacked.vars <- n.stacked.vars - n.manually.stacked.vars
 
-    html <- paste0(html, "<div class=\"stacking-subtitle\">", md$n.variables,
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">", md$n.variables,
                    " variables, ",  n.stacked.vars, " stacked variables (",
                    n.common.lbl.stacked.vars, " stacked from common labels, ",
                    n.manually.stacked.vars, " manually stacked)</div>")
@@ -44,7 +45,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     if (!is.null(common.labels.list))
     {
         if (length(common.labels.list) == 1)
-            html <- paste0(html, "<div class=\"stacking-subtitle\">",
+            html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                            length(common.labels.list[[1]]), " common labels: ",
                            paste0(htmlText(common.labels.list[[1]]), collapse = ", "),
                            "</div>")
@@ -52,7 +53,7 @@ StackingWidget <- function(stacked.data.set.metadata,
             for (i in seq_along(common.labels.list))
             {
                 common.labels <- common.labels.list[[i]]
-                html <- paste0(html, "<div class=\"stacking-subtitle\">",
+                html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                                length(common.labels), " common labels (set ", i, "): ",
                                paste0(htmlText(common.labels), collapse = ", "),
                                "</div>")
@@ -104,7 +105,7 @@ StackingWidget <- function(stacked.data.set.metadata,
         length(omitted.variables) > 0)
     {
         html <- paste0(html, "<div class=\"stacking-note-container\">",
-                       "<div class=\"stacking-title\">",
+                       "<div class=\"data-set-widget-title\">",
                        "Note:", "</div>")
 
         html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {

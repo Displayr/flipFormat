@@ -10,24 +10,23 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     # TODO: pink to indicate manually combined variables
     # TODO: don't shade if variable absent from a data set, maybe also disable expansion
     # TODO: Remove data set names in output and show row lines, improve spacing between notes
-    # TODO: Share css with stacking
-    # TODO: fix mergesrc table output
     # TODO: integrate omitted variables into notes
 
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
+    addCss("datasetwidget.css", cata)
     addCss("datasetmerging.css", cata)
 
-    html <- paste0("<div class=\"data-set-merging-main-container\">",
-                   "<div class=\"data-set-merging-title\">",
+    html <- paste0("<div class=\"data-set-widget-main-container\">",
+                   "<div class=\"data-set-widget-title\">",
                    htmlText(merged.data.set.metadata$data.set.name),
                    "</div>")
 
     if (is.saved.to.cloud)
-        html <- paste0(html, "<div class=\"data-set-merging-subtitle\">(saved to Displayr cloud drive)</div>")
+        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
 
-    html <- paste0(html, "<div class=\"data-set-merging-subtitle\">",
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                    merged.data.set.metadata$n.variables, " variables, ",
                    merged.data.set.metadata$n.cases, " cases</div>")
 
@@ -37,7 +36,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     # inexact matches, conflicting category labels and values, manually
     # specified matches).
     # The container will have a table showing the names and labels of the
-    # data sets and also a table showing the category values and labels of the
+    # data sets and also a table showing the values and value labels of the
     # data sets (if categorical). Highlighting will be used to indicate
     # irregularities in the table.
 
@@ -52,7 +51,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         var.name <- merged.data.set.metadata$variable.names[i]
         var.label <- merged.data.set.metadata$variable.labels[i]
         var.type <- variableTypeConverter(merged.data.set.metadata$variable.types[i])
-        merged.categories <- merged.data.set.metadata$variable.categories[[i]]
+        merged.val.attr <- merged.data.set.metadata$variable.value.attributes[[i]]
 
         if (var.name != "mergesrc")
         {
@@ -92,21 +91,21 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             is.summary.highlighted <- attr(variable.table.html,
                                            "is.summary.highlighted")
 
-            if (!is.null(merged.categories))
+            if (!is.null(merged.val.attr))
             {
-                categories.table.html <- categoriesTable(merged.categories,
-                                                         input.data.set.metadata,
-                                                         input.category.values[[i]],
-                                                         input.var.ind)
-                html.row <- paste0(html.row, categories.table.html)
+                val.attr.table.html <- ValueAttributesTable(merged.val.attr,
+                                                            input.data.set.metadata,
+                                                            input.category.values[[i]],
+                                                            input.var.ind)
+                html.row <- paste0(html.row, val.attr.table.html)
                 is.summary.highlighted <- is.summary.highlighted ||
-                                          attr(categories.table.html,
+                                          attr(val.attr.table.html,
                                                "is.summary.highlighted")
             }
         }
         else # mergesrc variable
         {
-            html.row <- mergesrcCategoriesTable(merged.categories)
+            html.row <- mergesrcValueAttributesTable(merged.val.attr)
             is.summary.highlighted <- FALSE
             input.var.names <- NULL
         }
@@ -129,7 +128,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     {
         # Additional tables showing omitted variables
         html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
-             "<div class=\"data-set-merging-title\">",
+             "<div class=\"data-set-widget-title\">",
              "Omitted variables", "</div>")
 
         for (i in which(n.omitted > 0))
@@ -148,9 +147,9 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     }
     else
         html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
-                       "<div class=\"data-set-merging-title\">Omitted variables: none</div></div>")
+                       "<div class=\"data-set-widget-title\">Omitted variables: none</div></div>")
 
-    html <- paste0(html, "<div class=\"data-set-merging-title\">",
+    html <- paste0(html, "<div class=\"data-set-widget-title\">",
                    "Note:", "</div>")
 
     non.combinable.variables <- merge.map$non.combinable.variables
@@ -347,38 +346,38 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
     result
 }
 
-categoriesTable <- function(merged.categories, input.data.set.metadata,
-                            input.categories.list, input.var.ind)
+ValueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
+                                 input.val.attr.list, input.var.ind)
 {
     cat.types <- c("Categorical", "Categorical with string values")
     input.var.types <- input.data.set.metadata$variable.types
-    input.var.categories <- input.data.set.metadata$variable.categories
+    input.var.val.attr <- input.data.set.metadata$variable.categories
     n.data.sets <- input.data.set.metadata$n.data.sets
 
-    result <- paste0("<table class=\"data-set-merging-table data-set-merging-category-table\">",
+    result <- paste0("<table class=\"data-set-merging-table data-set-merging-val-attr-table\">",
                      "<thead><th colspan=2 style=\"text-align:center\">Merged data set</th>",
                      paste0(paste0("<th>Input data set ", seq_len(n.data.sets),
                                    "</th>"), collapse = ""), "</thead><tbody>")
 
     is.summary.highlighted <- FALSE
-    for (j in seq_len(length(merged.categories)))
+    for (j in seq_len(length(merged.val.attr)))
     {
         result <- paste0(result, "<tr><td>",
-                         htmlText(names(merged.categories)[j]),
-                         "</td><td>", htmlText(merged.categories[j]), "</td>")
+                         htmlText(names(merged.val.attr)[j]),
+                         "</td><td>", htmlText(merged.val.attr[j]), "</td>")
 
         for (k in seq_len(n.data.sets))
         {
-            result <- if (!is.na(input.categories.list[[k]][j]))
+            result <- if (!is.na(input.val.attr.list[[k]][j]))
             {
-                val <- input.categories.list[[k]][j]
+                val <- input.val.attr.list[[k]][j]
 
                 if (input.var.types[[k]][input.var.ind[k]] %in% cat.types)
                 {
-                    categories <- input.var.categories[[k]][[input.var.ind[k]]]
-                    lbl <- names(categories)[categories == input.categories.list[[k]][j]]
-                    cell.class <- if (input.categories.list[[k]][j] != merged.categories[j] ||
-                                      lbl != names(merged.categories)[j])
+                    val.attr <- input.var.val.attr[[k]][[input.var.ind[k]]]
+                    lbl <- names(val.attr)[val.attr == input.val.attr.list[[k]][j]]
+                    cell.class <- if (input.val.attr.list[[k]][j] != merged.val.attr[j] ||
+                                      lbl != names(merged.val.attr)[j])
                     {
                         is.summary.highlighted <- TRUE
                         "data-set-merging-cell-highlight"
@@ -412,16 +411,15 @@ categoriesTable <- function(merged.categories, input.data.set.metadata,
     result
 }
 
-mergesrcCategoriesTable <- function(merged.categories)
+mergesrcValueAttributesTable <- function(merged.val.attr)
 {
-    # Categories table
-    result <- paste0("<table class=\"data-set-merging-table data-set-merging-category-table\">",
-                     "<thead><th>???</th><th>???</th>",
+    result <- paste0("<table class=\"data-set-merging-table data-set-merging-val-attr-table\">",
+                     "<thead><th>Label</th><th>Value</th>",
                      "</thead><tbody>")
 
-    for (j in seq_len(length(merged.categories)))
+    for (j in seq_len(length(merged.val.attr)))
         result <- paste0(result, "<tr><td>",
-                         htmlText(names(merged.categories)[j]),
-                         "</td><td>", merged.categories[j], "</td></tr>")
+                         htmlText(names(merged.val.attr)[j]),
+                         "</td><td>", merged.val.attr[j], "</td></tr>")
     paste0(result, "</tbody></table>")
 }
