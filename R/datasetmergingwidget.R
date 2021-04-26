@@ -3,7 +3,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  merged.data.set.metadata,
                                  merge.map,
                                  omitted.variables,
-                                 input.category.values,
+                                 input.value.attributes,
                                  is.saved.to.cloud)
 {
     # TODO: index number after variable names in notes
@@ -95,7 +95,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             {
                 val.attr.table.html <- ValueAttributesTable(merged.val.attr,
                                                             input.data.set.metadata,
-                                                            input.category.values[[i]],
+                                                            input.value.attributes[[i]],
                                                             input.var.ind)
                 html.row <- paste0(html.row, val.attr.table.html)
                 is.summary.highlighted <- is.summary.highlighted ||
