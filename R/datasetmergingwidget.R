@@ -123,83 +123,75 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     html <- paste0(html, paste0(html.vars, collapse = ""))
 
     n.omitted <- vapply(omitted.variables, length, integer(1))
-    if (any(n.omitted > 0))
-    {
-        # Additional tables showing omitted variables
-        html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
-             "<div class=\"data-set-widget-title\">",
-             "Omitted variables", "</div>")
-
-        for (i in which(n.omitted > 0))
-            html <- paste0(html, "<div class=\"data-set-merging-subtitle\">",
-                 htmlText(paste0(input.data.set.metadata$data.set.names[i], ":")),
-                 "</div><table class=\"data-set-merging-table data-set-merging-table-omitted\"><thead>",
-                 "<th>Variable name</th><th>Variable label</th></thead><tbody>",
-                 paste0(vapply(seq_len(n.omitted[i]), function(j) {
-                     nm <- omitted.variables[[i]][j]
-                     ind <- match(nm, input.data.set.metadata$variable.names[[i]])
-                     lbl <- input.data.set.metadata$variable.labels[[i]][ind]
-                     paste0("<tr><td>", htmlText(nm),
-                            "</td><td>", htmlText(lbl), "</td></tr>")
-                 }, character(1)), collapse = ""), "</tbody></table>")
-        html <- paste0(html, "</div>")
-    }
-    else
-        html <- paste0(html, "<div class=\"data-set-merging-omitted\">",
-                       "<div class=\"data-set-widget-title\">Omitted variables: none</div></div>")
-
-    html <- paste0(html, "<div class=\"data-set-widget-title\">",
-                   "Note:", "</div>")
-
     non.combinable.variables <- merge.map$non.combinable.variables
     renamed.variables <- merge.map$renamed.variables
-
-    for (i in seq_len(nrow(non.combinable.variables)))
-    {
-        nms <- non.combinable.variables[i, ]
-        ind <- which(!is.na(nms))
-        nms <- nms[!is.na(nms)]
-        nms.str <- paste0(paste0("<b>", htmlText(nms), "</b> (data set ",
-                                 ind, ")"), collapse = ", ")
-        note <- paste0("The variables ", nms.str,
-                       " could not be merged into one variable due to incompatible ",
-                       "variable types.")
-
-        renamed.ind <- which(vapply(renamed.variables, function(renamed) {
-            any(renamed$original.name == nms)
-        }, logical(1)))
-
-        if (length(renamed.ind) > 0)
-        {
-            renamed.var.names <- vapply(renamed.ind, function(i) {
-                renamed.variables[[i]]$new.name
-            }, character(1))
-            note <- paste0(note, " Variable",
-                           ngettext(length(renamed.var.names), " ", "s "),
-                           paste0("<b>", htmlText(renamed.var.names), "</b>", collapse = ", "),
-                           ngettext(length(renamed.var.names), " was", " were"),
-                           " created to avoid conflicting names.")
-            renamed.variables <- renamed.variables[-renamed.ind]
-        }
-        html <- paste0(html, "<div>", note, "</div>")
-    }
-
-    for (renamed in renamed.variables)
-    {
-        note <- paste0("Variable <b>", htmlText(renamed$new.name),
-                       "</b> was created as the merged data set already contains ",
-                       "a variable called <b>", htmlText(renamed$original.name), "</b>.")
-        html <- paste0(html, "<div>", note, "</div>")
-    }
-
     converted.var <- convertedVariables(input.data.set.metadata,
                                         merged.data.set.metadata, merge.map)
-    for (i in seq_len(nrow(converted.var)))
+    if (any(n.omitted > 0) || nrow(non.combinable.variables) > 0 ||
+        length(renamed.variables) > 0 || nrow(converted.var) > 0)
     {
-        r <- converted.var[i, ]
-        html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b> from data set ",
-                       r[2]," converted from ", r[3], " to ", r[4],
-                       " (merged variable ", r[5], ").</div>")
+        html <- paste0(html, "<div class=\"data-set-widget-title\">",
+                       "Note:", "</div>")
+
+        for (i in which(n.omitted > 0))
+        {
+            omitted <- omitted.variables[[i]]
+            html <- paste0(html, "<div>The following variable",
+                           ngettext(length(omitted), "", "s"),
+                           " from data set ", i,
+                           ngettext(length(omitted), " was", " were"),
+                           " omitted: ",
+                           paste0("<b>", htmlText(omitted), "</b>",
+                                  collapse = ", "), ".</div>")
+        }
+
+        for (i in seq_len(nrow(non.combinable.variables)))
+        {
+            nms <- non.combinable.variables[i, ]
+            ind <- which(!is.na(nms))
+            nms <- nms[!is.na(nms)]
+            nms.str <- paste0(paste0("<b>", htmlText(nms), "</b> (data set ",
+                                     ind, ")"), collapse = ", ")
+            note <- paste0("The variables ", nms.str,
+                           " could not be merged into one variable due to incompatible ",
+                           "variable types.")
+
+            renamed.ind <- which(vapply(renamed.variables, function(renamed) {
+                any(renamed$original.name == nms)
+            }, logical(1)))
+
+            if (length(renamed.ind) > 0)
+            {
+                renamed.var.names <- vapply(renamed.ind, function(i) {
+                    renamed.variables[[i]]$new.name
+                }, character(1))
+                note <- paste0(note, " Variable",
+                               ngettext(length(renamed.var.names), " ", "s "),
+                               paste0("<b>", htmlText(renamed.var.names), "</b>", collapse = ", "),
+                               ngettext(length(renamed.var.names), " was", " were"),
+                               " created to avoid conflicting names.")
+                renamed.variables <- renamed.variables[-renamed.ind]
+            }
+            html <- paste0(html, "<div>", note, "</div>")
+        }
+
+        for (renamed in renamed.variables)
+        {
+            note <- paste0("Variable <b>", htmlText(renamed$new.name),
+                           "</b> was created as the merged data set already contains ",
+                           "a variable called <b>", htmlText(renamed$original.name), "</b>.")
+            html <- paste0(html, "<div>", note, "</div>")
+        }
+
+        converted.var <- convertedVariables(input.data.set.metadata,
+                                            merged.data.set.metadata, merge.map)
+        for (i in seq_len(nrow(converted.var)))
+        {
+            r <- converted.var[i, ]
+            html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b> from data set ",
+                           r[2]," converted from ", r[3], " to ", r[4],
+                           " (merged variable ", r[5], ").</div>")
+        }
     }
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
