@@ -33,8 +33,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
     # if there are any irregularities with the merge (e.g. missing variables,
-    # inexact matches, conflicting category labels and values, manually
-    # specified matches).
+    # inexact matches, conflicting values, manually specified matches).
     # The container will have a table showing the names and labels of the
     # data sets and also a table showing the values and value labels of the
     # data sets (if categorical). Highlighting will be used to indicate
@@ -351,7 +350,7 @@ ValueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
 {
     cat.types <- c("Categorical", "Categorical with string values")
     input.var.types <- input.data.set.metadata$variable.types
-    input.var.val.attr <- input.data.set.metadata$variable.categories
+    input.var.val.attr <- input.data.set.metadata$variable.value.attributes
     n.data.sets <- input.data.set.metadata$n.data.sets
 
     result <- paste0("<table class=\"data-set-merging-table data-set-merging-val-attr-table\">",
