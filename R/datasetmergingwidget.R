@@ -7,8 +7,6 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  is.saved.to.cloud)
 {
     # TODO: pink to indicate manually combined variables
-    # TODO: don't shade if variable absent from a data set, maybe also disable expansion
-    # TODO: Remove data set names in output and show row lines, improve spacing between notes
 
     tfile <- createTempFile()
     cata <- createCata(tfile)
