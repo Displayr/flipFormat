@@ -1,7 +1,8 @@
 #' @export
 DataSetMergingWidget <- function(input.data.set.metadata,
                                  merged.data.set.metadata,
-                                 merge.map,
+                                 matched.names,
+                                 merged.names,
                                  omitted.variables,
                                  input.value.attributes,
                                  is.saved.to.cloud)
@@ -51,10 +52,10 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         if (var.name != "mergesrc")
         {
             input.var.ind <- vapply(seq_len(n.data.sets), function(j) {
-                match(merge.map$input.names[i, j], input.data.set.metadata$variable.names[[j]])
+                match(matched.names[i, j], input.data.set.metadata$variable.names[[j]])
             }, integer(1))
 
-            input.var.names <- vapply(merge.map$input.names[i, ], function(nm) {
+            input.var.names <- vapply(matched.names[i, ], function(nm) {
                 if (!is.na(nm))
                     nm
                 else
@@ -138,7 +139,8 @@ DataSetMergingWidget <- function(input.data.set.metadata,
 
     html <- paste0(html, noteHtml(input.data.set.metadata,
                                   merged.data.set.metadata,
-                                  merge.map, omitted.variables))
+                                  matched.names, merged.names,
+                                  omitted.variables))
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
@@ -147,9 +149,9 @@ DataSetMergingWidget <- function(input.data.set.metadata,
 }
 
 convertedVariables <- function(input.data.set.metadata, merged.data.set.metadata,
-                               merge.map)
+                               matched.names, merged.names)
 {
-    n.var <- length(merge.map$merged.names)
+    n.var <- length(merged.names)
     n.data.sets <- input.data.set.metadata$n.data.sets
     result <- matrix(nrow = 0, ncol = 5)
     for (i in seq_len(n.var))
@@ -160,13 +162,13 @@ convertedVariables <- function(input.data.set.metadata, merged.data.set.metadata
 
         for (j in seq_len(n.data.sets))
         {
-            if (is.na(merge.map$input.names[i, j]))
+            if (is.na(matched.names[i, j]))
                 next
 
-            ind <- which(input.data.set.metadata$variable.names[[j]] == merge.map$input.names[i, j])
+            ind <- which(input.data.set.metadata$variable.names[[j]] == matched.names[i, j])
             t <- input.data.set.metadata$variable.types[[j]][ind]
             if ((t == "Text" || t == "Numeric") && t != merged.type)
-                result <- rbind(result, c(merge.map$input.names[i, j],
+                result <- rbind(result, c(matched.names[i, j],
                                           j, t, merged.type, i))
         }
     }
@@ -362,13 +364,14 @@ valueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
 }
 
 noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
-                      merge.map, omitted.variables)
+                      matched.names, merged.names, omitted.variables)
 {
     n.omitted <- vapply(omitted.variables, length, integer(1))
-    non.combinable.variables <- merge.map$non.combinable.variables
-    renamed.variables <- merge.map$renamed.variables
+    non.combinable.variables <- attr(matched.names, "non.combinable.variables")
+    renamed.variables <- attr(merged.names, "renamed.variables")
     converted.var <- convertedVariables(input.data.set.metadata,
-                                        merged.data.set.metadata, merge.map)
+                                        merged.data.set.metadata,
+                                        matched.names, merged.names)
     html <- ""
     if (any(n.omitted > 0) || nrow(non.combinable.variables) > 0 ||
         length(renamed.variables) > 0 || nrow(converted.var) > 0)
@@ -434,7 +437,8 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
         }
 
         converted.var <- convertedVariables(input.data.set.metadata,
-                                            merged.data.set.metadata, merge.map)
+                                            merged.data.set.metadata,
+                                            matched.names, merged.names)
         for (i in seq_len(nrow(converted.var)))
         {
             r <- converted.var[i, ]
