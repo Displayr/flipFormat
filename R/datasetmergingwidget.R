@@ -8,6 +8,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  is.saved.to.cloud)
 {
     # TODO: pink to indicate manually combined variables
+    # TODO: message in variable output if name changed (e.g. INCOME to INCOME_1) instead of just in notes
 
     tfile <- createTempFile()
     cata <- createCata(tfile)
