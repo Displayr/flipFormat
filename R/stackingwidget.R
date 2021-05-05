@@ -63,6 +63,10 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     output.var.limit <- 20000
     n.variables.to.show <- min(md$n.variables, output.var.limit)
+    if (md$n.variables > output.var.limit)
+        warning("Due to the large number of variables in output data set (",
+                md$n.variables, "), only the first ", output.var.limit,
+                " variables have been shown.")
 
     html.rows <- character(n.variables.to.show)
     for (i in seq_len(n.variables.to.show))
