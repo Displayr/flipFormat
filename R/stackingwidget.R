@@ -61,8 +61,11 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
-    html.rows <- character(md$n.variables)
-    for (i in seq_len(md$n.variables))
+    output.var.limit <- 20000
+    n.variables.to.show <- min(md$n.variables, output.var.limit)
+
+    html.rows <- character(n.variables.to.show)
+    for (i in seq_len(n.variables.to.show))
     {
         row.title <- paste0(md$variable.names[i], ": ",
                             md$variable.labels[i])
@@ -123,6 +126,12 @@ StackingWidget <- function(stacked.data.set.metadata,
 
         omitted.non.stacked.variables <- setdiff(omitted.variables,
                                                  omitted.stacked.variables)
+
+        output.omitted.var.limit <- 10000
+
+        if (length(omitted.non.stacked.variables) > output.omitted.var.limit)
+            omitted.non.stacked.variables <- c(omitted.non.stacked.variables[seq_len(output.omitted.var.limit)],
+                                               "...")
 
         if (length(omitted.non.stacked.variables) > 0)
             html <- paste0(html, "<div class=\"stacking-note\">The following variable",
