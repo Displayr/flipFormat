@@ -393,15 +393,16 @@ CreateCustomTable = function(x,
     container.name <- paste0("custom-table-container-", generateRandomString())
     container.selector.name <- paste0(".", container.name)
     cata("<style>\n")
-    cata(container.selector.name, "{ background: transparent; line-height: normal; white-space: normal; height: 100%; overflow-x: hidden; overflow-y: ",
-         if (!is.null(row.height)) "auto" else "hidden", "; }\n", sep = "")
-    container.selector.name <- paste0("div", container.selector.name)
+    #cata(container.selector.name, "{ background: transparent; line-height: normal; white-space: normal; height: 100%; overflow-x: hidden; overflow-y: ",
+    #     if (!is.null(row.height)) "auto" else "hidden", "; }\n", sep = "")
+    container.selector.name <- paste0(container.selector.name)
     if (is.numeric(border.row.gap))
         border.row.gap <- paste0(border.row.gap, "px")
     if (is.numeric(border.column.gap))
         border.column.gap <- paste0(border.column.gap, "px")
-    cata(container.selector.name, "table { table-layout: fixed; border-collapse: ",
+    cata(container.selector.name, "{ table-layout: fixed; border-collapse: ",
          if (border.collapse) "collapse; " else "separate; ",
+         #"width: 100%; height: 100%",
          "border-spacing: ", border.column.gap, border.row.gap, ";",
          "position: relative; width: 100%; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
@@ -607,11 +608,13 @@ CreateCustomTable = function(x,
 
     cata("</style>\n\n")
     #cata("<div class=\"", container.name, "\">", sep = "")
-    #table.height <- if (sum(nchar(row.height)) != 0) ""
-    #                else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
-    #cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",
+    table.height <- if (sum(nchar(row.height)) != 0) ""
+                    else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
+    #cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",    
     #     max(0, max(cell.border.width)), table.height))
-    cata("<table class=\"", container.name, "\">", sep = "")
+    #cata("<table class=\"", container.name, "\">", sep = "")
+    cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n", 
+        container.name, "100%", max(0, max(cell.border.width)), table.height))
     if (sum(nchar(col.widths)) > 0)
     {
         col.widths <- ConvertCommaSeparatedStringToVector(col.widths)
@@ -657,11 +660,12 @@ CreateCustomTable = function(x,
             '">', footer, '</th></tr>\n'))
     }
     cata("</table>\n")
-    cata("</div>\n")
+    #cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
     out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
+    #cat(html, "\n")
     attr(out, "ChartData") <- x
     return(out)
 }
@@ -736,7 +740,7 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
     # The number of classes created is the length of class.css
     # recycling occurs if needed inside CreateCustomTable
     class.names <- paste0(class.stem, 1:n)
-    css.selectors <- if (!is.null(parent.stem)) paste0("div.", parent.stem, " .", class.names) else paste0(".", class.names)
+    css.selectors <- if (!is.null(parent.stem)) paste0(".", parent.stem, " .", class.names) else paste0(".", class.names)
     tmp.css <- paste0(css.selectors, "{ ", class.css, " }")
 
     # Add class definition to CSS file
