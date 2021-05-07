@@ -403,6 +403,7 @@ CreateCustomTable = function(x,
     cata(container.selector.name, "{ table-layout: fixed; border-collapse: ",
          if (border.collapse) "collapse; " else "separate; ",
          #"width: 100%; height: 100%",
+         #"overflow-x: hidden; overflow-y: ", if (!is.null(row.height)) "auto" else "hidden", ";",
          "border-spacing: ", border.column.gap, border.row.gap, ";",
          "position: relative; width: 100%; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
@@ -607,7 +608,10 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
 
     cata("</style>\n\n")
-    #cata("<div class=\"", container.name, "\">", sep = "")
+
+    if (!is.null(row.height))
+        cata("<div style='overflow-y:auto; height: 100%;'>")
+    #    cata("<div class='", container.name, "' style='overflow-y:auto'>", sep = "")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     #cata(sprintf("<table style = 'width:calc(%s - %dpx)%s'>\n", "100%",    
@@ -638,6 +642,8 @@ CreateCustomTable = function(x,
         cell.html <- cell.html[-(1:num.header.rows),,drop = FALSE]
     }
     cata('</thead>')
+    if (!is.null(row.height))
+        cata('</div>')
     body.html <- paste0(sprintf('<tr>%s</tr>\n',
                     apply(cell.html, 1, paste0, collapse = '')), collapse='')
     cata(body.html)
