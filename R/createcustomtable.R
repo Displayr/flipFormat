@@ -393,7 +393,6 @@ CreateCustomTable = function(x,
     container.name <- paste0("custom-table-container-", generateRandomString())
     container.selector.name <- paste0(".", container.name)
     cata("<style>\n")
-    container.selector.name <- paste0(container.selector.name)
     if (is.numeric(border.row.gap))
         border.row.gap <- paste0(border.row.gap, "px")
     if (is.numeric(border.column.gap))
@@ -602,9 +601,11 @@ CreateCustomTable = function(x,
         cata("\n", predefinedCSS(container.selector.name), "\n")
     cata("\n", circle.css, "\n")
     cata("\n", custom.css, "\n")
-
     cata("</style>\n\n")
 
+    # Wrap table inside a div to allow scrolling (overflow=auto)
+    # when the number of rows is large and row-height is fixed. 
+    # But for automatically sized rows we remove div firefox does not like nested tables
     if (!is.null(row.height))
         cata("<div style='overflow-y:auto; height: 100%;'>")
     table.height <- if (sum(nchar(row.height)) != 0) ""
