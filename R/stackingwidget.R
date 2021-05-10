@@ -5,12 +5,17 @@
 #' @param unstackable.names A list of character vectors of the names of
 #'   variables that could not be stacked due to mismatching types or
 #'   value attributes.
+#' @param omitted.variables A character vector of omitted variables.
+#' @param omitted.stacked.variables A character vector of omitted stacked
+#'   variables.
 #' @param common.labels.list A list of sets of common labels used for stacking.
 #' @param is.saved.to.cloud Whether the stacked data set was saved to the
 #'   Displayr cloud drive.
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
+                           omitted.variables,
+                           omitted.stacked.variables,
                            common.labels.list,
                            is.saved.to.cloud)
 {
@@ -102,7 +107,8 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0(html, paste0(html.rows, collapse = ""))
 
     # Whether to show Note
-    if (length(unstackable.names) > 0)
+    if (length(unstackable.names) > 0 ||
+        length(omitted.variables) > 0)
     {
         html <- paste0(html, "<div class=\"stacking-note-container\">",
                        "<div class=\"stacking-title\">",
@@ -114,6 +120,29 @@ StackingWidget <- function(stacked.data.set.metadata,
                    paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
         }, character(1)), collapse = ""))
 
+
+        if (length(omitted.stacked.variables) > 0)
+            html <- paste0(html, "<div class=\"stacking-note\">The following <b>stacked</b> variable",
+                           ngettext(length(omitted.stacked.variables), " has", "s have"),
+                           " been omitted from the stacked data set: ",
+                           paste0("<b>", htmlText(omitted.stacked.variables),
+                                  "</b>", collapse = ", "), ".</div>")
+
+        omitted.non.stacked.variables <- setdiff(omitted.variables,
+                                                 omitted.stacked.variables)
+
+        output.omitted.var.limit <- 10000
+
+        if (length(omitted.non.stacked.variables) > output.omitted.var.limit)
+            omitted.non.stacked.variables <- c(omitted.non.stacked.variables[seq_len(output.omitted.var.limit)],
+                                               "...")
+
+        if (length(omitted.non.stacked.variables) > 0)
+            html <- paste0(html, "<div class=\"stacking-note\">The following variable",
+                           ngettext(length(omitted.non.stacked.variables), " has", "s have"),
+                           " been omitted from the stacked data set: ",
+                           paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
+                           ".</div>")
         html <- paste0(html, "</div>")
     }
     html <- paste0(html, "</div>")
