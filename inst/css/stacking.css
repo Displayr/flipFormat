@@ -60,6 +60,10 @@
     float: left;
 }
 
+.stacking-proportion {
+    float: left;
+}
+
 .stacking-description {
     color: #151A1C;
     font-size: 14px;

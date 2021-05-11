@@ -56,6 +56,15 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
+    ind <- match(FALSE, vapply(md$stacking.input.variable.names, is.null, logical(1)))
+    proportion.span.width <- if (!is.na(ind))
+    {
+        n.stacking <- length(md$stacking.input.variable.names[[ind]])
+        ceiling(log10(n.stacking + 1)) * 10 * 2 + 20
+    }
+    else
+        0
+
     output.var.limit <- 20000
     n.variables.to.show <- min(md$n.variables, output.var.limit)
     if (md$n.variables > output.var.limit)
@@ -68,12 +77,12 @@ StackingWidget <- function(stacked.data.set.metadata,
     {
         row.title <- paste0(md$variable.names[i], ": ",
                             md$variable.labels[i])
-        if (!(md$is.stacked.variable[i]))
+        if (!md$is.stacked.variable[i])
         {
             html.row <- paste0("<div class=\"stacking-row\">",
                                "<span class=\"stacking-var-num\" style=\"width:",
-                               num.span.width, "px\">", i, ".</span>",
-                               htmlText(row.title), "</div>")
+                               num.span.width + proportion.span.width, "px\">",
+                               i, ".</span>", htmlText(row.title), "</div>")
         }
         else
         {
@@ -89,10 +98,17 @@ StackingWidget <- function(stacked.data.set.metadata,
             else
                 "<div class=\"stacking-description\">Stacked using common labels:</div>"
 
+            prop.text <- paste0("(", sum(!is.na(md$stacking.input.variable.names[[i]])), "/",
+                                length(md$stacking.input.variable.names[[i]]), ")")
+
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"", summary.class, "\">",
                                "<span class=\"stacking-var-num\" style=\"width:",
                                num.span.width, "px\">", i, ".</span>",
+                               "<span class=\"stacking-proportion\" style=\"width:",
+                               proportion.span.width, "px\" ",
+                               "title=\"Proportion of non-missing observations\">",
+                               prop.text, "</span>",
                                htmlText(row.title),
                                "</summary>", description,
                                table.html, "</table></details>")
