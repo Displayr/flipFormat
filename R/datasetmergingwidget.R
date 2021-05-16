@@ -16,6 +16,8 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     addCss("datasetwidget.css", cata)
     addCss("datasetmerging.css", cata)
 
+    is.fuzzy.match <- attr(matched.names, "is.fuzzy.match")
+
     html <- paste0("<div class=\"data-set-widget-main-container\">",
                    "<div class=\"data-set-widget-title\">",
                    htmlText(merged.data.set.metadata$data.set.name),
@@ -83,6 +85,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                                       var.type, input.var.names,
                                                       input.var.labels,
                                                       input.var.types,
+                                                      is.fuzzy.match[i, ],
                                                       n.data.sets)
             html.row <- variable.table.html
             is.summary.highlighted <- attr(variable.table.html,
@@ -108,9 +111,9 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                 # Create details summary last since it is easier to determine if it
                 # needs to be highlighted
                 html.summary <- variableSummary(var.name, var.label,
-                                                is.summary.highlighted,
                                                 num.span.width, n.data.sets,
-                                                input.var.names, i)
+                                                input.var.names, i,
+                                                any(is.fuzzy.match[i, ]))
                 html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
                                        html.summary, html.row, "</details>")
             }
@@ -187,14 +190,14 @@ variableTypeConverter <- function(variable.type)
         variable.type
 }
 
-variableSummary <- function(var.name, var.label, is.summary.highlighted,
-                            num.span.width, n.data.sets, input.var.names,
-                            variable.index)
+variableSummary <- function(var.name, var.label, num.span.width, n.data.sets,
+                            input.var.names, variable.index,
+                            contains.fuzzy.match)
 {
-    summary.classes <- if (is.summary.highlighted)
-        "summary data-set-merging-summary data-set-merging-summary-highlight"
+    summary.classes <- if (contains.fuzzy.match)
+        "summary data-set-merging-summary data-set-merging-summary-fuzzy"
     else
-        "summary data-set-merging-summary"
+        "summary data-set-merging-summary data-set-merging-summary-highlight"
 
     name.and.label <- variableNameAndLabelText(var.name, var.label)
 
@@ -242,7 +245,8 @@ variableNameAndLabelText <- function(var.name, var.label)
 }
 
 inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
-                               input.var.labels, input.var.types, n.data.sets)
+                               input.var.labels, input.var.types,
+                               is.fuzzy.input.var, n.data.sets)
 {
     result <- paste0("<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
                      "<th>Data set</th><th>Variable name</th>",
@@ -259,11 +263,16 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
     is.summary.highlighted <- FALSE
     for (j in seq_len(n.data.sets))
     {
+        highlight.class <- if (is.fuzzy.input.var[j])
+            "data-set-merging-cell-fuzzy"
+        else
+            "data-set-merging-cell-highlight"
+
         name.cell.class <- if (input.var.names[j] != "-" &&
                                input.var.names[j] != var.name)
         {
             is.summary.highlighted <- TRUE
-            "data-set-merging-cell-highlight"
+            highlight.class
         }
         else
             ""
@@ -272,7 +281,7 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
                                 input.var.labels[j] != var.label)
         {
             is.summary.highlighted <- TRUE
-            "data-set-merging-cell-highlight"
+            highlight.class
         }
         else
             ""
@@ -281,7 +290,7 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
                                input.var.types[j] != var.type)
         {
             is.summary.highlighted <- TRUE
-            "data-set-merging-cell-highlight"
+            highlight.class
         }
         else
             ""
