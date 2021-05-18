@@ -335,6 +335,13 @@ CreateCustomTable = function(x,
         content[which(is.nan(x))] <- ""
     if (suppress.na)
         content[which(is.na(x) & !is.nan(x))] <- ""
+    if (is.character(x))
+    {
+        # wrap images in a div to preserve alignment
+        ind <- grepl("<img", x, fixed = TRUE)
+        if (any(ind))
+            content[ind] <- paste0("<div>", content[ind], "</div>")
+    }
 
     # Significance testing arrows/circles/fills
     if (!is.null(sig.change.arrows))
@@ -604,13 +611,13 @@ CreateCustomTable = function(x,
     cata("</style>\n\n")
 
     # Wrap table inside a div to allow scrolling (overflow=auto)
-    # when the number of rows is large and row-height is fixed. 
+    # when the number of rows is large and row-height is fixed.
     # But for automatically sized rows we remove div firefox does not like nested tables
     if (!is.null(row.height))
         cata("<div style='overflow-y:auto; height: 100%;'>")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
-    cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n", 
+    cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
         container.name, "100%", max(0, max(cell.border.width)), table.height))
     if (sum(nchar(col.widths)) > 0)
     {
