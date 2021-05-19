@@ -21,6 +21,15 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     addCss("stacking.css", cata)
 
+    if (length(md$variable.names) == 0)
+    {
+        html <- paste0("<div class=\"stacking-main-container\">",
+                       "<div class=\"stacking-title\">",
+                       "No stacking performed", "</div></div>")
+        cata(html)
+        createWidgetFromFile(tfile)
+    }
+
     html <- paste0("<div class=\"stacking-main-container\">",
                    "<div class=\"stacking-title\">",
                    htmlText(md$data.set.name), "</div>")
