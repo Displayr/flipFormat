@@ -27,7 +27,7 @@ StackingWidget <- function(stacked.data.set.metadata,
                        "<div class=\"stacking-title\">",
                        "No stacking performed", "</div></div>")
         cata(html)
-        createWidgetFromFile(tfile)
+        return(createWidgetFromFile(tfile))
     }
 
     html <- paste0("<div class=\"stacking-main-container\">",
