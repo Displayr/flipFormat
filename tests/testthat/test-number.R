@@ -25,6 +25,7 @@ test_that("Numbers", {
     expect_equal(FormatAsReal(3415466.54), "3,415,467")
     expect_equal(FormatAsReal(NA), "NA")
     expect_equal(FormatAsReal(NaN), "NaN")
+    expect_equal(FormatAsReal(1:4 + 0.5), c("1.5", "2.5", "3.5", "4.5"))
 })
 
 test_that("PValue", {

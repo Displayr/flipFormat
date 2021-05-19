@@ -5,17 +5,12 @@
 #' @param unstackable.names A list of character vectors of the names of
 #'   variables that could not be stacked due to mismatching types or
 #'   value attributes.
-#' @param omitted.variables A character vector of omitted variables.
-#' @param omitted.stacked.variables A character vector of omitted stacked
-#'   variables.
 #' @param common.labels.list A list of sets of common labels used for stacking.
 #' @param is.saved.to.cloud Whether the stacked data set was saved to the
 #'   Displayr cloud drive.
 #' @export
 StackingWidget <- function(stacked.data.set.metadata,
                            unstackable.names,
-                           omitted.variables,
-                           omitted.stacked.variables,
                            common.labels.list,
                            is.saved.to.cloud)
 {
@@ -27,8 +22,18 @@ StackingWidget <- function(stacked.data.set.metadata,
     addCss("datasetwidget.css", cata)
     addCss("stacking.css", cata)
 
-    html <- paste0("<div class=\"data-set-widget-main-container\">",
-                   "<div class=\"data-set-widget-title\">",
+    if (length(md$variable.names) == 0)
+    {
+        html <- paste0("<div class=\"stacking-main-container\">",
+                       "<div class=\"stacking-title\">",
+                       "No stacking was conducted", "</div></div>")
+        cata(html)
+        return(createWidgetFromFile(tfile))
+    }
+
+    html <- paste0("<div class=\"stacking-main-container\">",
+                   "<div class=\"stacking-title\">",
+
                    htmlText(md$data.set.name), "</div>")
     if (is.saved.to.cloud)
         html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
@@ -62,17 +67,33 @@ StackingWidget <- function(stacked.data.set.metadata,
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
-    html.rows <- character(md$n.variables)
-    for (i in seq_len(md$n.variables))
+    ind <- match(FALSE, vapply(md$stacking.input.variable.names, is.null, logical(1)))
+    proportion.span.width <- if (!is.na(ind))
+    {
+        n.stacking <- length(md$stacking.input.variable.names[[ind]])
+        ceiling(log10(n.stacking + 1)) * 10 * 2 + 20
+    }
+    else
+        0
+
+    output.var.limit <- 20000
+    n.variables.to.show <- min(md$n.variables, output.var.limit)
+    if (md$n.variables > output.var.limit)
+        warning("Due to the large number of variables in output data set (",
+                md$n.variables, "), only the first ", output.var.limit,
+                " variables have been shown.")
+
+    html.rows <- character(n.variables.to.show)
+    for (i in seq_len(n.variables.to.show))
     {
         row.title <- paste0(md$variable.names[i], ": ",
                             md$variable.labels[i])
-        if (!(md$is.stacked.variable[i]))
+        if (!md$is.stacked.variable[i])
         {
-            html.row <- paste0("<div class=\"data-set-widget-row\">",
-                               "<span class=\"data-set-widget-var-num\" style=\"width:",
-                               num.span.width, "px\">", i, ".</span>",
-                               htmlText(row.title), "</div>")
+            html.row <- paste0("<div class=\"stacking-row\">",
+                               "<span class=\"stacking-var-num\" style=\"width:",
+                               num.span.width + proportion.span.width, "px\">",
+                               i, ".</span>", htmlText(row.title), "</div>")
         }
         else
         {
@@ -88,10 +109,17 @@ StackingWidget <- function(stacked.data.set.metadata,
             else
                 "<div class=\"stacking-description\">Stacked using common labels:</div>"
 
+            prop.text <- paste0("(", sum(!is.na(md$stacking.input.variable.names[[i]])), "/",
+                                length(md$stacking.input.variable.names[[i]]), ")")
+
             html.row <- paste0("<details class=\"stacking-details\">",
                                "<summary class=\"", summary.class, "\">",
                                "<span class=\"data-set-widget-var-num\" style=\"width:",
                                num.span.width, "px\">", i, ".</span>",
+                               "<span class=\"stacking-proportion\" style=\"width:",
+                               proportion.span.width, "px\" ",
+                               "title=\"Proportion of non-missing observations\">",
+                               prop.text, "</span>",
                                htmlText(row.title),
                                "</summary>", description,
                                table.html, "</table></details>")
@@ -101,8 +129,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     html <- paste0(html, paste0(html.rows, collapse = ""))
 
     # Whether to show Note
-    if (length(unstackable.names) > 0 ||
-        length(omitted.variables) > 0)
+    if (length(unstackable.names) > 0)
     {
         html <- paste0(html, "<div class=\"stacking-note-container\">",
                        "<div class=\"data-set-widget-title\">",
@@ -114,23 +141,6 @@ StackingWidget <- function(stacked.data.set.metadata,
                    paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
         }, character(1)), collapse = ""))
 
-
-        if (length(omitted.stacked.variables) > 0)
-            html <- paste0(html, "<div class=\"stacking-note\">The following <b>stacked</b> variable",
-                           ngettext(length(omitted.stacked.variables), " has", "s have"),
-                           " been omitted from the stacked data set: ",
-                           paste0("<b>", htmlText(omitted.stacked.variables),
-                                  "</b>", collapse = ", "), ".</div>")
-
-        omitted.non.stacked.variables <- setdiff(omitted.variables,
-                                                 omitted.stacked.variables)
-
-        if (length(omitted.non.stacked.variables) > 0)
-            html <- paste0(html, "<div class=\"stacking-note\">The following variable",
-                           ngettext(length(omitted.non.stacked.variables), " has", "s have"),
-                           " been omitted from the stacked data set: ",
-                           paste0("<b>", omitted.non.stacked.variables, "</b>", collapse = ", "),
-                           ".</div>")
         html <- paste0(html, "</div>")
     }
     html <- paste0(html, "</div>")

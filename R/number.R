@@ -111,7 +111,7 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
 #' @export
 FormatWithDecimals <- function(x, decimal.places = 2)
 {
-    trimws(format(c(round(x, decimal.places), 0.123456789),
+    trimws(format(c(round_half_up(x, decimal.places), 0.123456789),
                   digits = decimal.places,
                   scientific = FALSE,
                   big.mark = ",")[1:length(x)])
@@ -122,9 +122,10 @@ FormatWithDecimals <- function(x, decimal.places = 2)
 #' @param decimals Number of decimal places to show.
 #' @param comma.for.thousands If TRUE, uses a comma when there are thousands.
 #' @description Taken in part from https://stackoverflow.com/a/12135122/1547926https://stackoverflow.com/a/12135122/1547926
+#' @importFrom janitor round_half_up
 specifyDecimal <- function(x, decimals = 2, comma.for.thousands = TRUE)
 {
-    x <- trimws(format(round(x, decimals),
+    x <- trimws(format(round_half_up(x, decimals),
                        nsmall = decimals,
                        big.mark = if(comma.for.thousands) "," else ""))
     return(x)
