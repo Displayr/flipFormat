@@ -25,7 +25,7 @@ StackingWidget <- function(stacked.data.set.metadata,
     {
         html <- paste0("<div class=\"stacking-main-container\">",
                        "<div class=\"stacking-title\">",
-                       "No stacking performed", "</div></div>")
+                       "No stacking was conducted", "</div></div>")
         cata(html)
         return(createWidgetFromFile(tfile))
     }
