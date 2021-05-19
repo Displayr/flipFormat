@@ -32,14 +32,6 @@
     padding-top: 3px;
 }
 
-.data-set-merging-summary-highlight::-webkit-details-marker{
-    color: #3E7DCC;
-}
-
-.data-set-merging-summary-highlight::marker{
-    color: #3E7DCC;
-}
-
 .data-set-merging-summary:hover {
     cursor:pointer;
 }
@@ -78,7 +70,6 @@
 .data-set-merging-val-attr-table td {
     cursor: default;
 }
-
 
 .data-set-merging-table th:nth-of-type(1) {
     text-align:left;
