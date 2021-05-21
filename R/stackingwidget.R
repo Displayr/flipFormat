@@ -23,7 +23,7 @@ StackingWidget <- function(input.data.set.metadata,
     addCss("datasetwidget.css", cata)
     addCss("stacking.css", cata)
 
-    html <- "<div class=\"stacking-main-container\">"
+    html <- "<div class=\"data-set-widget-main-container\">"
     html <- paste0(html, stackingTitleAndSubTitle(stacked.data.set.metadata,
                                                   common.labels.list,
                                                   is.saved.to.cloud))
@@ -44,10 +44,10 @@ stackingTitleAndSubTitle <- function(stacked.data.set.metadata,
     md <- stacked.data.set.metadata
 
     if (length(md$variable.names) == 0)
-        return(paste0("<div class=\"stacking-title\">",
+        return(paste0("<div class=\"data-set-widget-title\">",
                        "No stacking was conducted</div>"))
 
-    html <- paste0("<div class=\"stacking-title\">",
+    html <- paste0("<div class=\"data-set-widget-title\">",
                    htmlText(md$data.set.name), "</div>")
     if (is.saved.to.cloud)
         html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
@@ -114,8 +114,8 @@ stackedDataSetOutput <- function(stacked.data.set.metadata)
 
         if (!md$is.stacked.variable[i])
         {
-            html.row <- paste0("<div class=\"stacking-row\">",
-                               "<span class=\"stacking-var-num\" style=\"width:",
+            html.row <- paste0("<div class=\"data-set-widget-row\">",
+                               "<span class=\"data-set-widget-var-num\" style=\"width:",
                                num.span.width + proportion.span.width, "px\">",
                                i, ".</span>", row.title, "</div>")
         }
@@ -199,15 +199,15 @@ inputDataSetOutput <- function(input.data.set.metadata,
     {
         row.title <- variableNameAndLabelText(v.names[i],
                                               v.labels[i])
-        html.rows[i] <- paste0("<div class=\"stacking-row\">",
-                               "<span class=\"stacking-var-num\" style=\"width:",
+        html.rows[i] <- paste0("<div class=\"data-set-widget-row\">",
+                               "<span class=\"data-set-widget-var-num\" style=\"width:",
                                num.span.width, "px\">",
                                i, ".</span>", row.title, "</div>")
     }
 
     paste0("<details open=\"true\" class=\"stacking-input-details\">",
            "<summary class=\"stacking-input-summary\">",
-           "<span class=\"stacking-title\">",
+           "<span class=\"data-set-widget-title\">",
            "Input data set: ", htmlText(input.data.set.metadata$data.set.name),
            "</span></summary>", paste0(html.rows, collapse = ""), "</details>")
 }
@@ -218,7 +218,7 @@ noteOutput <- function(unstackable.names)
         return("")
 
     html <- paste0("<div class=\"stacking-note-container\">",
-                   "<div class=\"stacking-title\">",
+                   "<div class=\"data-set-widget-title\">",
                    "Note:", "</div>")
 
     html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {

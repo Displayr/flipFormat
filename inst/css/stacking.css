@@ -80,11 +80,3 @@
 .stacking-input-summary {
     user-select: none;
 }
-
-.stacking-input-title {
-    text-align: left;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 20px;
-    color: #3E7DCC;
-    font-weight: 500;
-}
