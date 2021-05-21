@@ -4,7 +4,7 @@
 
 .stacking-summary {
     display: list-item;
-    background: #DCE9ff;
+    background: #DCE9FF;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
     color: #151A1C;
     font-size: 14px;
@@ -69,4 +69,22 @@
 
 .stacking-note-container {
     padding-top: 15px;
+}
+
+.stacking-input-details {
+    padding-top: 15px;
+    font-size: 20px;
+    color: #3E7DCC;
+}
+
+.stacking-input-summary {
+    user-select: none;
+}
+
+.stacking-input-title {
+    text-align: left;
+    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 20px;
+    color: #3E7DCC;
+    font-weight: 500;
 }
