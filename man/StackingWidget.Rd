@@ -5,26 +5,23 @@
 \title{Stacking Output Widget}
 \usage{
 StackingWidget(
+  input.data.set.metadata,
   stacked.data.set.metadata,
   unstackable.names,
-  omitted.variables,
-  omitted.stacked.variables,
   common.labels.list,
   is.saved.to.cloud
 )
 }
 \arguments{
+\item{input.data.set.metadata}{An object containing metadata for the
+input data set.}
+
 \item{stacked.data.set.metadata}{An object containing metadata for the
 stacked data set.}
 
 \item{unstackable.names}{A list of character vectors of the names of
 variables that could not be stacked due to mismatching types or
 value attributes.}
-
-\item{omitted.variables}{A character vector of omitted variables.}
-
-\item{omitted.stacked.variables}{A character vector of omitted stacked
-variables.}
 
 \item{common.labels.list}{A list of sets of common labels used for stacking.}
 

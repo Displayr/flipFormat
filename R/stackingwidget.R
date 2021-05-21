@@ -1,5 +1,7 @@
 #' @title Stacking Output Widget
 #' @description Stacking widget shown in output for \code{flipData::StackData}.
+#' @param input.data.set.metadata An object containing metadata for the
+#'  input data set.
 #' @param stacked.data.set.metadata An object containing metadata for the
 #'   stacked data set.
 #' @param unstackable.names A list of character vectors of the names of
@@ -9,29 +11,41 @@
 #' @param is.saved.to.cloud Whether the stacked data set was saved to the
 #'   Displayr cloud drive.
 #' @export
-StackingWidget <- function(stacked.data.set.metadata,
+StackingWidget <- function(input.data.set.metadata,
+                           stacked.data.set.metadata,
                            unstackable.names,
                            common.labels.list,
                            is.saved.to.cloud)
 {
-    md <- stacked.data.set.metadata
-
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
     addCss("stacking.css", cata)
 
-    if (length(md$variable.names) == 0)
-    {
-        html <- paste0("<div class=\"stacking-main-container\">",
-                       "<div class=\"stacking-title\">",
-                       "No stacking was conducted", "</div></div>")
-        cata(html)
-        return(createWidgetFromFile(tfile))
-    }
+    html <- "<div class=\"stacking-main-container\">"
+    html <- paste0(html, stackingTitleAndSubTitle(stacked.data.set.metadata,
+                                                  common.labels.list,
+                                                  is.saved.to.cloud))
+    html <- paste0(html, stackedDataSetOutput(stacked.data.set.metadata))
+    html <- paste0(html, inputDataSetOutput(input.data.set.metadata))
+    html <- paste0(html, noteOutput(unstackable.names))
+    html <- paste0(html, "</div>")
 
-    html <- paste0("<div class=\"stacking-main-container\">",
-                   "<div class=\"stacking-title\">",
+    cata(html)
+
+    createWidgetFromFile(tfile)
+}
+
+stackingTitleAndSubTitle <- function(stacked.data.set.metadata,
+                                     common.labels.list, is.saved.to.cloud)
+{
+    md <- stacked.data.set.metadata
+
+    if (length(md$variable.names) == 0)
+        return(paste0("<div class=\"stacking-title\">",
+                       "No stacking was conducted</div>"))
+
+    html <- paste0("<div class=\"stacking-title\">",
                    htmlText(md$data.set.name), "</div>")
     if (is.saved.to.cloud)
         html <- paste0(html, "<div class=\"stacking-subtitle\">(saved to Displayr cloud drive)</div>")
@@ -62,6 +76,15 @@ StackingWidget <- function(stacked.data.set.metadata,
                                "</div>")
             }
     }
+    html
+}
+
+stackedDataSetOutput <- function(stacked.data.set.metadata)
+{
+    md <- stacked.data.set.metadata
+
+    if (length(md$variable.names) == 0)
+        return("")
 
     num.span.width <- ceiling(log10(md$n.variables + 1)) * 10 + 15
 
@@ -74,24 +97,25 @@ StackingWidget <- function(stacked.data.set.metadata,
     else
         0
 
-    output.var.limit <- 20000
+    output.var.limit <- 10000
     n.variables.to.show <- min(md$n.variables, output.var.limit)
     if (md$n.variables > output.var.limit)
-        warning("Due to the large number of variables in output data set (",
+        warning("Due to the large number of variables in the output data set (",
                 md$n.variables, "), only the first ", output.var.limit,
                 " variables have been shown.")
 
     html.rows <- character(n.variables.to.show)
     for (i in seq_len(n.variables.to.show))
     {
-        row.title <- paste0(md$variable.names[i], ": ",
-                            md$variable.labels[i])
+        row.title <- variableNameAndLabelText(md$variable.names[i],
+                                              md$variable.labels[i])
+
         if (!md$is.stacked.variable[i])
         {
             html.row <- paste0("<div class=\"stacking-row\">",
                                "<span class=\"stacking-var-num\" style=\"width:",
                                num.span.width + proportion.span.width, "px\">",
-                               i, ".</span>", htmlText(row.title), "</div>")
+                               i, ".</span>", row.title, "</div>")
         }
         else
         {
@@ -124,28 +148,7 @@ StackingWidget <- function(stacked.data.set.metadata,
         }
         html.rows[i] <- html.row
     }
-    html <- paste0(html, paste0(html.rows, collapse = ""))
-
-    # Whether to show Note
-    if (length(unstackable.names) > 0)
-    {
-        html <- paste0(html, "<div class=\"stacking-note-container\">",
-                       "<div class=\"stacking-title\">",
-                       "Note:", "</div>")
-
-        html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
-            paste0("<div class=\"stacking-note\">The following variables could not be ",
-                   "stacked using common labels due to mismatching variable types or value attributes: ",
-                   paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
-        }, character(1)), collapse = ""))
-
-        html <- paste0(html, "</div>")
-    }
-    html <- paste0(html, "</div>")
-
-    cata(html)
-
-    createWidgetFromFile(tfile)
+    paste0(html.rows, collapse = "")
 }
 
 stackingTable <- function(stacked.data.set.metadata, var.ind)
@@ -163,13 +166,76 @@ stackingTable <- function(stacked.data.set.metadata, var.ind)
 
     table.html <- paste0(table.html,
                          paste0(vapply(seq_along(stacking.input.var.names), function(j) {
-        if (is.na(stacking.input.var.names[j]))
-            paste0("<tr><td>Observation ", j, "</td><td></td><td></td></tr>")
-        else
-            paste0("<tr><td>Observation ", j, "</td><td>",
-                   htmlText(stacking.input.var.names[j]), "</td><td>",
-                   htmlText(stacking.input.var.labels[j]), "</td></tr>")
-    }, character(1)), collapse = ""))
+                             if (is.na(stacking.input.var.names[j]))
+                                 paste0("<tr><td>Observation ", j, "</td><td></td><td></td></tr>")
+                             else
+                                 paste0("<tr><td>Observation ", j, "</td><td>",
+                                        htmlText(stacking.input.var.names[j]), "</td><td>",
+                                        htmlText(stacking.input.var.labels[j]), "</td></tr>")
+                         }, character(1)), collapse = ""))
 
     paste0(table.html, "</tbody></table></details>")
+}
+
+inputDataSetOutput <- function(input.data.set.metadata)
+{
+    v.names <- input.data.set.metadata$variable.names
+    v.labels <- input.data.set.metadata$variable.labels
+    n.variables <- input.data.set.metadata$n.variables
+    input.var.limit <- 10000
+    n.variables.to.show <- min(n.variables, input.var.limit)
+    if (n.variables.to.show > n.variables)
+        warning("Due to the large number of variables in the input data set (",
+                md$n.variables, "), only the first ", input.var.limit,
+                " variables have been shown.")
+
+    num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
+
+    html.rows <- character(n.variables.to.show)
+    for (i in seq_len(n.variables.to.show))
+    {
+        row.title <- variableNameAndLabelText(v.names[i],
+                                              v.labels[i])
+        html.rows[i] <- paste0("<div class=\"stacking-row\">",
+                               "<span class=\"stacking-var-num\" style=\"width:",
+                               num.span.width, "px\">",
+                               i, ".</span>", row.title, "</div>")
+    }
+
+    paste0("<details class=\"stacking-input-details\"><summary>",
+           "<span class=\"stacking-title\">",
+           "Input data set: ", htmlText(input.data.set.metadata$data.set.name),
+           "</span></summary>", paste0(html.rows, collapse = ""), "</details>")
+}
+
+noteOutput <- function(unstackable.names)
+{
+    if(length(unstackable.names) == 0)
+        return("")
+
+    html <- paste0("<div class=\"stacking-note-container\">",
+                   "<div class=\"stacking-title\">",
+                   "Note:", "</div>")
+
+    html <- paste0(html, paste0(vapply(unstackable.names, function(nms) {
+        paste0("<div class=\"stacking-note\">The following variables could not be ",
+               "stacked using common labels due to mismatching variable types or value attributes: ",
+               paste0("<b>", nms, "</b>", collapse = ", "), ".</div>")
+    }, character(1)), collapse = ""))
+
+    paste0(html, "</div>")
+}
+
+variableNameAndLabelText <- function(var.name, var.label)
+{
+    if (nchar(var.label) > 0)
+    {
+        if (substr(var.label, 1, nchar(var.name) + 1) == paste0(var.name, ":") ||
+            var.name == var.label)
+            htmlText(var.label)
+        else
+            paste0(htmlText(var.name), ": ", htmlText(var.label))
+    }
+    else
+        htmlText(var.name)
 }
