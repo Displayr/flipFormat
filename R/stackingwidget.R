@@ -27,8 +27,9 @@ StackingWidget <- function(input.data.set.metadata,
                                                   common.labels.list,
                                                   is.saved.to.cloud))
     html <- paste0(html, stackedDataSetOutput(stacked.data.set.metadata))
-    html <- paste0(html, inputDataSetOutput(input.data.set.metadata))
     html <- paste0(html, noteOutput(unstackable.names))
+    html <- paste0(html, inputDataSetOutput(input.data.set.metadata,
+                                            stacked.data.set.metadata))
     html <- paste0(html, "</div>")
 
     cata(html)
@@ -177,7 +178,8 @@ stackingTable <- function(stacked.data.set.metadata, var.ind)
     paste0(table.html, "</tbody></table></details>")
 }
 
-inputDataSetOutput <- function(input.data.set.metadata)
+inputDataSetOutput <- function(input.data.set.metadata,
+                               stacked.data.set.metadata)
 {
     v.names <- input.data.set.metadata$variable.names
     v.labels <- input.data.set.metadata$variable.labels
@@ -202,7 +204,8 @@ inputDataSetOutput <- function(input.data.set.metadata)
                                i, ".</span>", row.title, "</div>")
     }
 
-    paste0("<details class=\"stacking-input-details\"><summary>",
+    paste0("<details open=\"true\" class=\"stacking-input-details\">",
+           "<summary class=\"stacking-input-summary\">",
            "<span class=\"stacking-title\">",
            "Input data set: ", htmlText(input.data.set.metadata$data.set.name),
            "</span></summary>", paste0(html.rows, collapse = ""), "</details>")

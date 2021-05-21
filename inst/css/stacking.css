@@ -115,6 +115,10 @@
     color: #3E7DCC;
 }
 
+.stacking-input-summary {
+    user-select: none;
+}
+
 .stacking-input-title {
     text-align: left;
     font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
