@@ -186,7 +186,7 @@ inputDataSetOutput <- function(input.data.set.metadata,
     n.variables <- input.data.set.metadata$n.variables
     input.var.limit <- 10000
     n.variables.to.show <- min(n.variables, input.var.limit)
-    if (n.variables.to.show > n.variables)
+    if (n.variables > input.var.limit)
         warning("Due to the large number of variables in the input data set (",
                 md$n.variables, "), only the first ", input.var.limit,
                 " variables have been shown.")
