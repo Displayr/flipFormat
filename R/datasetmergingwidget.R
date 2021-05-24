@@ -44,10 +44,8 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
 
     renamed.vars <- attr(merged.names, "renamed.variables")
-    renamed.vars.original.names <- vapply(renamed.vars, `$`, character(1),
-                                          "original.names")
-    renamed.vars.new.names <- vapply(renamed.vars, `$`, character(1),
-                                     "new.names")
+    renamed.vars.original.names <- vapply(renamed.vars, `$`, character(1), 1)
+    renamed.vars.new.names <- vapply(renamed.vars, `$`, character(1), 2)
 
     html.vars <- rep(NA_character_, n.vars)
 
