@@ -43,7 +43,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         matched.by.msg <- if (length(matched.by) == 1)
             paste0("Matched by ", matched.by)
         else
-            paste0(paste0(matched.by[-length(matched.by)], collapse = ", "),
+            paste0("Matched by ", paste0(matched.by[-length(matched.by)], collapse = ", "),
                    " and ", matched.by[length(matched.by)])
 
         html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
