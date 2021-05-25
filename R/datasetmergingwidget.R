@@ -345,7 +345,7 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
             input.var.types[j] != var.type)
         {
             is.summary.highlighted <- TRUE
-            type.cell.class <- highlight.class
+            type.cell.class <- "data-set-merging-cell-highlight"
         }
 
         matched.by <- "-"
