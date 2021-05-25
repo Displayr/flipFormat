@@ -450,13 +450,11 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
                       matched.names, merged.names, omitted.variables)
 {
     n.omitted <- vapply(omitted.variables, length, integer(1))
-    non.combinable.variables <- attr(matched.names, "non.combinable.variables")
     converted.var <- convertedVariables(input.data.set.metadata,
                                         merged.data.set.metadata,
                                         matched.names, merged.names)
     html <- ""
-    if (any(n.omitted > 0) || nrow(non.combinable.variables) > 0 ||
-        nrow(converted.var) > 0)
+    if (any(n.omitted > 0) || nrow(converted.var) > 0)
     {
         html <- paste0(html, "<div class=\"data-set-widget-title\">",
                        "Note:", "</div>")
@@ -471,19 +469,6 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
                            " omitted: ",
                            paste0("<b>", htmlText(omitted), "</b>",
                                   collapse = ", "), ".</div>")
-        }
-
-        for (i in seq_len(nrow(non.combinable.variables)))
-        {
-            nms <- non.combinable.variables[i, ]
-            ind <- which(!is.na(nms))
-            nms <- nms[!is.na(nms)]
-            nms.str <- paste0(paste0("<b>", htmlText(unique(nms)), "</b> (data set ",
-                                     ind, ")"), collapse = ", ")
-            note <- paste0("The variables named ", nms.str,
-                           " could not be merged into one variable due to incompatible ",
-                           "variable types.")
-            html <- paste0(html, "<div>", note, "</div>")
         }
 
         converted.var <- convertedVariables(input.data.set.metadata,
