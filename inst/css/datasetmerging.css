@@ -22,6 +22,10 @@
     background: #FFDDC5;
 }
 
+.data-set-merging-summary-manual {
+    background: #FFDCF7;
+}
+
 .data-set-merging-summary::-webkit-details-marker{
     color: #666666;
     padding-top: 3px;
@@ -97,6 +101,10 @@
 
 .data-set-merging-table tr td.data-set-merging-cell-fuzzy {
     background: #FFDDC5;
+}
+
+.data-set-merging-table tr td.data-set-merging-cell-manual {
+    background: #FFDCF7;
 }
 
 .data-set-merging-indicator {

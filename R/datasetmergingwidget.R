@@ -7,9 +7,6 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                  input.value.attributes,
                                  is.saved.to.cloud)
 {
-    # TODO: pink to indicate manually combined variables
-    # TODO: message in variable output if name changed (e.g. INCOME to INCOME_1) instead of just in notes
-
     tfile <- createTempFile()
     cata <- createCata(tfile)
 
@@ -17,6 +14,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     addCss("datasetmerging.css", cata)
 
     is.fuzzy.match <- attr(matched.names, "is.fuzzy.match")
+    vars.matched.by <- attr(matched.names, "matched.by")
 
     html <- paste0("<div class=\"data-set-widget-main-container\">",
                    "<div class=\"data-set-widget-title\">",
@@ -29,6 +27,28 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                    merged.data.set.metadata$n.variables, " variables, ",
                    merged.data.set.metadata$n.cases, " cases</div>")
+
+
+    match.parameters <- attr(matched.names, "match.parameters")
+    matched.by <- c()
+    if (match.parameters$match.by.variable.names)
+        matched.by <- c(matched.by, "variable names")
+    if (match.parameters$match.by.variable.labels)
+        matched.by <- c(matched.by, "variable labels")
+    if (match.parameters$match.by.value.labels)
+        matched.by <- c(matched.by, "value labels")
+
+    if (length(matched.by) > 0)
+    {
+        matched.by.msg <- if (length(matched.by) == 1)
+            paste0("Matched by ", matched.by)
+        else
+            paste0(paste0(matched.by[-length(matched.by)], collapse = ", "),
+                   " and ", matched.by[length(matched.by)])
+
+        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                       matched.by.msg, "</div>")
+    }
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
@@ -99,6 +119,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                                                       input.var.labels,
                                                       input.var.types,
                                                       is.fuzzy.match[i, ],
+                                                      vars.matched.by[i, ],
                                                       n.data.sets)
             html.row <- paste0(html.row, variable.table.html)
             is.summary.highlighted <- attr(variable.table.html,
@@ -123,10 +144,14 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             {
                 # Create details summary last since it is easier to determine if it
                 # needs to be highlighted
+                contains.fuzzy.match <- any(is.fuzzy.match[i, ])
+                contains.manual.match <- any(!is.na(vars.matched.by[i, ]) &&
+                                             vars.matched.by[i, ] == "Manual")
                 html.summary <- variableSummary(var.name, var.label,
                                                 num.span.width, n.data.sets,
                                                 input.var.names, i,
-                                                any(is.fuzzy.match[i, ]))
+                                                contains.fuzzy.match,
+                                                contains.manual.match)
                 html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
                                        html.summary, html.row, "</details>")
             }
@@ -205,9 +230,11 @@ variableTypeConverter <- function(variable.type)
 
 variableSummary <- function(var.name, var.label, num.span.width, n.data.sets,
                             input.var.names, variable.index,
-                            contains.fuzzy.match)
+                            contains.fuzzy.match, contains.manual.match)
 {
-    summary.classes <- if (contains.fuzzy.match)
+    summary.classes <- if (contains.manual.match)
+        "summary data-set-merging-summary data-set-merging-summary-manual"
+    else if (contains.fuzzy.match)
         "summary data-set-merging-summary data-set-merging-summary-fuzzy"
     else
         "summary data-set-merging-summary data-set-merging-summary-highlight"
@@ -259,54 +286,85 @@ variableNameAndLabelText <- function(var.name, var.label)
 
 inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
                                input.var.labels, input.var.types,
-                               is.fuzzy.input.var, n.data.sets)
+                               is.fuzzy.input.var, input.var.matched.by,
+                               n.data.sets)
 {
     result <- paste0("<table class=\"data-set-merging-table data-set-merging-variable-table\"><thead>",
                      "<th>Data set</th><th>Variable name</th>",
                      "<th>Variable label</th><th>Variable type</th>",
-                     "</thead><tbody>")
+                     "<th>Matched by</th></thead><tbody>")
 
     result <- paste0(result,
                      "<tr><td>Merged data set",
                      "</td><td>", htmlText(var.name),
                      "</td><td>", htmlText(var.label),
                      "</td><td>", htmlText(var.type),
-                     "</td></tr>")
+                     "</td><td></td></tr>")
 
     is.summary.highlighted <- FALSE
     for (j in seq_len(n.data.sets))
     {
-        highlight.class <- if (is.fuzzy.input.var[j])
-            "data-set-merging-cell-fuzzy"
-        else
-            "data-set-merging-cell-highlight"
+        is.manual <- !is.na(input.var.matched.by[j]) &&
+                     input.var.matched.by[j] == "Manual"
 
-        name.cell.class <- if (input.var.names[j] != "-" &&
-                               input.var.names[j] != var.name)
+        name.cell.class <- ""
+        if (is.manual)
+        {
+            name.cell.class <- "data-set-merging-cell-manual"
+            is.summary.highlighted <- TRUE
+        }
+        else if (is.fuzzy.input.var[j] &&
+                 input.var.matched.by[j] == "Variable name")
+        {
+            name.cell.class <- "data-set-merging-cell-fuzzy"
+            is.summary.highlighted <- TRUE
+        }
+        else if (input.var.names[j] != "-" &&
+                 input.var.names[j] != var.name)
+        {
+            name.cell.class <- "data-set-merging-cell-highlight"
+            is.summary.highlighted <- TRUE
+        }
+
+        label.cell.class <- ""
+        if (is.fuzzy.input.var[j] &&
+            input.var.matched.by[j] == "Variable label")
+        {
+            label.cell.class <- "data-set-merging-cell-fuzzy"
+            is.summary.highlighted <- TRUE
+        }
+        else if (input.var.labels[j] != "-" &&
+                 input.var.labels[j] != var.label)
+        {
+            label.cell.class <- "data-set-merging-cell-highlight"
+            is.summary.highlighted <- TRUE
+        }
+
+        type.cell.class <- ""
+        if (input.var.types[j] != "-" &&
+            input.var.types[j] != var.type)
         {
             is.summary.highlighted <- TRUE
-            highlight.class
+            type.cell.class <- highlight.class
         }
-        else
-            ""
 
-        label.cell.class <- if (input.var.labels[j] != "-" &&
-                                input.var.labels[j] != var.label)
+        matched.by <- "-"
+        matched.by.class <- ""
+        if (!is.na(input.var.matched.by[j]))
         {
-            is.summary.highlighted <- TRUE
-            highlight.class
+            if (is.manual)
+            {
+                matched.by <- "Variable name (manual match)"
+                matched.by.class <- "data-set-merging-cell-manual"
+            }
+            else if (is.fuzzy.input.var[j])
+            {
+                matched.by <- paste0(input.var.matched.by[j], " (fuzzy match)")
+                matched.by.class <- "data-set-merging-cell-fuzzy"
+            }
+            else
+                matched.by <- paste0(input.var.matched.by[j], " (exact match)")
         }
-        else
-            ""
-
-        type.cell.class <- if (input.var.types[j] != "-" &&
-                               input.var.types[j] != var.type)
-        {
-            is.summary.highlighted <- TRUE
-            highlight.class
-        }
-        else
-            ""
 
         result <- paste0(result,
                          "<tr><td>Input data set ", j,
@@ -316,6 +374,8 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
                          htmlText(input.var.labels[j]),
                          "</td><td class=\"", type.cell.class,"\">",
                          htmlText(input.var.types[j]),
+                         "</td><td class=\"", matched.by.class,"\">",
+                         matched.by,
                          "</td></tr>")
     }
 
