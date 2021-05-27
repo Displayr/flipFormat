@@ -28,27 +28,29 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                    merged.data.set.metadata$n.variables, " variables, ",
                    merged.data.set.metadata$n.cases, " cases</div>")
 
+    unique.matched.by <- unique(c(vars.matched.by))
 
-    match.parameters <- attr(matched.names, "match.parameters")
     matched.by <- c()
-    if (match.parameters$match.by.variable.names)
+    if ("Variable name" %in% unique.matched.by)
         matched.by <- c(matched.by, "variable names")
-    if (match.parameters$match.by.variable.labels)
+    if ("Variable label" %in% unique.matched.by)
         matched.by <- c(matched.by, "variable labels")
-    if (match.parameters$match.by.value.labels)
+    if ("Value label" %in% unique.matched.by)
         matched.by <- c(matched.by, "value labels")
 
-    if (length(matched.by) > 0)
-    {
-        matched.by.msg <- if (length(matched.by) == 1)
-            paste0("Matched by ", matched.by)
-        else
-            paste0("Matched by ", paste0(matched.by[-length(matched.by)], collapse = ", "),
-                   " and ", matched.by[length(matched.by)])
+    matched.by.msg <- if ("Manual" %in% unique.matched.by)
+        "Matched manually and by "
+    else
+        "Matched by "
 
-        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
-                       matched.by.msg, "</div>")
-    }
+    matched.by.msg <- if (length(matched.by) == 1)
+        paste0(matched.by.msg, matched.by)
+    else
+        paste0(matched.by.msg, paste0(matched.by[-length(matched.by)], collapse = ", "),
+               " and ", matched.by[length(matched.by)])
+
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                   matched.by.msg, "</div>")
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
