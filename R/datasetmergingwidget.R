@@ -147,8 +147,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                 # Create details summary last since it is easier to determine if it
                 # needs to be highlighted
                 contains.fuzzy.match <- any(is.fuzzy.match[i, ])
-                contains.manual.match <- any(!is.na(vars.matched.by[i, ]) &&
-                                             vars.matched.by[i, ] == "Manual")
+                contains.manual.match <- any(vars.matched.by[i, ] == "Manual")
                 html.summary <- variableSummary(var.name, var.label,
                                                 num.span.width, n.data.sets,
                                                 input.var.names, i,
