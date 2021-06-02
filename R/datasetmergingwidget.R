@@ -1,5 +1,26 @@
+#' @title Data Set Merging Output Widget
+#' @description Widget shown in output for \code{flipData::MergeDataSetsByCase}.
+#' @param input.data.sets.metadata An object containing metadata for the
+#'   input data set.
+#' @param merged.data.set.metadata An object containing metadata for the
+#'   merged data set.
+#' @param matched.names A matrix whose rows contain the names of the input
+#'   variables used to create the merged variables. This matrix also has the
+#'   attributes "is.fuzzy.match" and "matched.by" which are matrices indicating
+#'   whether the input variable was a fuzzy match and what they were matched by,
+#'   i.e., variable name, label or value label.
+#' @param merged.names A character vector of the names of the merged variables.
+#'   Also contains the attribute "renamed.variables" which contains the
+#'   merged variables that were renamed due to name conflicts and their
+#'   original names.
+#' @param omitted.variables A list where each element contains the names of the
+#'   variables omitted from a data set.
+#' @param input.value.attributes A list where each element contains the value
+#'   attributes of input categorical variables from a data set.
+#' @param is.saved.to.cloud Whether the merged data set was saved to the
+#'   Displayr cloud drive.
 #' @export
-DataSetMergingWidget <- function(input.data.set.metadata,
+DataSetMergingWidget <- function(input.data.sets.metadata,
                                  merged.data.set.metadata,
                                  matched.names,
                                  merged.names,
@@ -21,36 +42,8 @@ DataSetMergingWidget <- function(input.data.set.metadata,
                    htmlText(merged.data.set.metadata$data.set.name),
                    "</div>")
 
-    if (is.saved.to.cloud)
-        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
-
-    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
-                   merged.data.set.metadata$n.variables, " variables, ",
-                   merged.data.set.metadata$n.cases, " cases</div>")
-
-    unique.matched.by <- unique(c(vars.matched.by))
-
-    matched.by <- c()
-    if ("Variable name" %in% unique.matched.by)
-        matched.by <- c(matched.by, "variable names")
-    if ("Variable label" %in% unique.matched.by)
-        matched.by <- c(matched.by, "variable labels")
-    if ("Value label" %in% unique.matched.by)
-        matched.by <- c(matched.by, "value labels")
-
-    matched.by.msg <- if ("Manual" %in% unique.matched.by)
-        "Matched manually and by "
-    else
-        "Matched by "
-
-    matched.by.msg <- if (length(matched.by) == 1)
-        paste0(matched.by.msg, matched.by)
-    else
-        paste0(matched.by.msg, paste0(matched.by[-length(matched.by)], collapse = ", "),
-               " and ", matched.by[length(matched.by)])
-
-    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
-                   matched.by.msg, "</div>")
+    html <- paste0(html, mergingSubtitle(merged.data.set.metadata, vars.matched.by,
+                                         is.saved.to.cloud))
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
@@ -62,7 +55,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     # irregularities in the table.
 
     n.vars <- merged.data.set.metadata$n.variables
-    n.data.sets <- input.data.set.metadata$n.data.sets
+    n.data.sets <- input.data.sets.metadata$n.data.sets
     num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
 
     renamed.vars <- attr(merged.names, "renamed.variables")
@@ -81,7 +74,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
         if (var.name != "mergesrc")
         {
             input.var.ind <- vapply(seq_len(n.data.sets), function(j) {
-                match(matched.names[i, j], input.data.set.metadata$variable.names[[j]])
+                match(matched.names[i, j], input.data.sets.metadata$variable.names[[j]])
             }, integer(1))
 
             input.var.names <- vapply(matched.names[i, ], function(nm) {
@@ -94,7 +87,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             input.var.labels <- vapply(seq_len(n.data.sets), function(j) {
                 ind <- input.var.ind[j]
                 if (!is.na(ind))
-                    input.data.set.metadata$variable.labels[[j]][ind]
+                    input.data.sets.metadata$variable.labels[[j]][ind]
                 else
                     "-"
             }, character(1))
@@ -102,7 +95,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             input.var.types <- vapply(seq_len(n.data.sets), function(j) {
                 ind <- input.var.ind[j]
                 if (!is.na(ind))
-                    variableTypeConverter(input.data.set.metadata$variable.types[[j]][ind])
+                    variableTypeConverter(input.data.sets.metadata$variable.types[[j]][ind])
                 else
                     "-"
             }, character(1))
@@ -130,7 +123,7 @@ DataSetMergingWidget <- function(input.data.set.metadata,
             if (!is.null(merged.val.attr))
             {
                 val.attr.table.html <- valueAttributesTable(merged.val.attr,
-                                                            input.data.set.metadata,
+                                                            input.data.sets.metadata,
                                                             input.value.attributes[[i]],
                                                             input.var.ind)
                 html.row <- paste0(html.row, val.attr.table.html)
@@ -181,10 +174,10 @@ DataSetMergingWidget <- function(input.data.set.metadata,
 
     html <- paste0(html, paste0(html.vars, collapse = ""))
 
-    html <- paste0(html, noteHtml(input.data.set.metadata,
-                                  merged.data.set.metadata,
-                                  matched.names, merged.names,
-                                  omitted.variables))
+    html <- paste0(html, mergingNote(input.data.sets.metadata,
+                                     merged.data.set.metadata,
+                                     matched.names, merged.names,
+                                     omitted.variables))
 
     html <- paste0(html, "</div>") # close data-set-merging-main-container
     cata(html)
@@ -192,31 +185,52 @@ DataSetMergingWidget <- function(input.data.set.metadata,
     createWidgetFromFile(tfile)
 }
 
-convertedVariables <- function(input.data.set.metadata, merged.data.set.metadata,
-                               matched.names, merged.names)
+mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by, is.saved.to.cloud)
 {
-    n.var <- length(merged.names)
-    n.data.sets <- input.data.set.metadata$n.data.sets
-    result <- matrix(nrow = 0, ncol = 5)
-    for (i in seq_len(n.var))
-    {
-        merged.type <- merged.data.set.metadata$variable.types[i]
-        if (merged.type == "Categorical with string values")
-            merged.type <- "Categorical"
+    html <- ""
 
-        for (j in seq_len(n.data.sets))
-        {
-            if (is.na(matched.names[i, j]))
-                next
+    if (is.saved.to.cloud)
+        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">(saved to Displayr cloud drive)</div>")
 
-            ind <- which(input.data.set.metadata$variable.names[[j]] == matched.names[i, j])
-            t <- input.data.set.metadata$variable.types[[j]][ind]
-            if ((t == "Text" || t == "Numeric") && t != merged.type)
-                result <- rbind(result, c(matched.names[i, j],
-                                          j, t, merged.type, i))
-        }
-    }
-    result
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                   merged.data.set.metadata$n.variables, " variables, ",
+                   merged.data.set.metadata$n.cases, " cases</div>")
+
+    unique.matched.by <- unique(c(vars.matched.by))
+
+    matched.by <- c()
+    if ("Variable name" %in% unique.matched.by)
+        matched.by <- c(matched.by, "variable names")
+    if ("Variable label" %in% unique.matched.by)
+        matched.by <- c(matched.by, "variable labels")
+    if ("Value label" %in% unique.matched.by)
+        matched.by <- c(matched.by, "value labels")
+
+    matched.by.msg <- if ("Manual" %in% unique.matched.by)
+        "Matched manually and by "
+    else
+        "Matched by "
+
+    matched.by.msg <- if (length(matched.by) == 1)
+        paste0(matched.by.msg, matched.by)
+    else
+        paste0(matched.by.msg, paste0(matched.by[-length(matched.by)], collapse = ", "),
+               " and ", matched.by[length(matched.by)])
+
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                   matched.by.msg, "</div>")
+
+    html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                   "Legend: ",
+                   "<span class=\"data-set-widget-manual-shade\">",
+                   "&nbsp;Variables with manual match(es)&nbsp;</span>&nbsp;&nbsp;",
+                   "<span class=\"data-set-widget-fuzzy-shade\">",
+                   "&nbsp;Variables with fuzzy match(es)&nbsp;</span>&nbsp;&nbsp;",
+                   "<span class=\"data-set-widget-highlight-shade\">",
+                   "&nbsp;Variables with difference(s) between inputs&nbsp;</span>",
+                   "</div>")
+
+    html
 }
 
 # Convert from internal types to user-facing types
@@ -386,13 +400,13 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
     result
 }
 
-valueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
+valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
                                  input.val.attr.list, input.var.ind)
 {
     cat.types <- c("Categorical", "Categorical with string values")
-    input.var.types <- input.data.set.metadata$variable.types
-    input.var.val.attr <- input.data.set.metadata$variable.value.attributes
-    n.data.sets <- input.data.set.metadata$n.data.sets
+    input.var.types <- input.data.sets.metadata$variable.types
+    input.var.val.attr <- input.data.sets.metadata$variable.value.attributes
+    n.data.sets <- input.data.sets.metadata$n.data.sets
 
     result <- paste0("<table class=\"data-set-merging-table data-set-merging-val-attr-table\">",
                      "<thead><th colspan=2 style=\"text-align:center\">Merged data set</th>",
@@ -448,11 +462,11 @@ valueAttributesTable <- function(merged.val.attr, input.data.set.metadata,
     result
 }
 
-noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
+mergingNote <- function(input.data.sets.metadata, merged.data.set.metadata,
                       matched.names, merged.names, omitted.variables)
 {
     n.omitted <- vapply(omitted.variables, length, integer(1))
-    converted.var <- convertedVariables(input.data.set.metadata,
+    converted.var <- convertedVariables(input.data.sets.metadata,
                                         merged.data.set.metadata,
                                         matched.names, merged.names)
     html <- ""
@@ -473,7 +487,7 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
                                   collapse = ", "), ".</div>")
         }
 
-        converted.var <- convertedVariables(input.data.set.metadata,
+        converted.var <- convertedVariables(input.data.sets.metadata,
                                             merged.data.set.metadata,
                                             matched.names, merged.names)
         for (i in seq_len(nrow(converted.var)))
@@ -485,4 +499,31 @@ noteHtml <- function(input.data.set.metadata, merged.data.set.metadata,
         }
     }
     html
+}
+
+convertedVariables <- function(input.data.sets.metadata, merged.data.set.metadata,
+                               matched.names, merged.names)
+{
+    n.var <- length(merged.names)
+    n.data.sets <- input.data.sets.metadata$n.data.sets
+    result <- matrix(nrow = 0, ncol = 5)
+    for (i in seq_len(n.var))
+    {
+        merged.type <- merged.data.set.metadata$variable.types[i]
+        if (merged.type == "Categorical with string values")
+            merged.type <- "Categorical"
+
+        for (j in seq_len(n.data.sets))
+        {
+            if (is.na(matched.names[i, j]))
+                next
+
+            ind <- which(input.data.sets.metadata$variable.names[[j]] == matched.names[i, j])
+            t <- input.data.sets.metadata$variable.types[[j]][ind]
+            if ((t == "Text" || t == "Numeric") && t != merged.type)
+                result <- rbind(result, c(matched.names[i, j],
+                                          j, t, merged.type, i))
+        }
+    }
+    result
 }

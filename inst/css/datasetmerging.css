@@ -71,6 +71,16 @@
     min-width: 50px;
 }
 
+.data-set-merging-table tr {
+    border-width: 1px 0 0 0;
+    border-style: solid;
+    border-color: #C1C1C1;
+}
+
+.data-set-merging-table tr:nth-of-type(1) {
+    border-style: none;
+}
+
 .data-set-merging-val-attr-table td {
     cursor: default;
 }
@@ -132,4 +142,16 @@
     width: 14px;
     margin-left: 4px;
     margin-right: 4px;
+}
+
+.data-set-widget-highlight-shade {
+    background: #DCE9ff;
+}
+
+.data-set-widget-fuzzy-shade {
+    background: #FFDDC5;
+}
+
+.data-set-widget-manual-shade {
+    background: #FFDCF7;
 }
