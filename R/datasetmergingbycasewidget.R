@@ -1,4 +1,4 @@
-#' @title Data Set Merging Output Widget
+#' @title Widget Output for Data Set Merging By Case
 #' @description Widget shown in output for \code{flipData::MergeDataSetsByCase}.
 #' @param input.data.sets.metadata An object containing metadata for the
 #'   input data set.
@@ -20,13 +20,13 @@
 #' @param is.saved.to.cloud Whether the merged data set was saved to the
 #'   Displayr cloud drive.
 #' @export
-DataSetMergingWidget <- function(input.data.sets.metadata,
-                                 merged.data.set.metadata,
-                                 matched.names,
-                                 merged.names,
-                                 omitted.variables,
-                                 input.value.attributes,
-                                 is.saved.to.cloud)
+DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
+                                       merged.data.set.metadata,
+                                       matched.names,
+                                       merged.names,
+                                       omitted.variables,
+                                       input.value.attributes,
+                                       is.saved.to.cloud)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -172,20 +172,16 @@ DataSetMergingWidget <- function(input.data.sets.metadata,
         }
     }
 
-    html <- paste0(html, paste0(html.vars, collapse = ""))
-
-    html <- paste0(html, mergingNote(input.data.sets.metadata,
-                                     merged.data.set.metadata,
-                                     matched.names, merged.names,
-                                     omitted.variables))
-
-    html <- paste0(html, "</div>") # close data-set-merging-main-container
-    cata(html)
+    cata(paste0(html,
+                paste0(html.vars, collapse = ""),
+                mergingNote(omitted.variables),
+                "</div>")) # close data-set-merging-main-container
 
     createWidgetFromFile(tfile)
 }
 
-mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by, is.saved.to.cloud)
+mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
+                            is.saved.to.cloud)
 {
     html <- ""
 
@@ -462,15 +458,12 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
     result
 }
 
-mergingNote <- function(input.data.sets.metadata, merged.data.set.metadata,
-                      matched.names, merged.names, omitted.variables)
+mergingNote <- function(omitted.variables)
 {
     n.omitted <- vapply(omitted.variables, length, integer(1))
-    converted.var <- convertedVariables(input.data.sets.metadata,
-                                        merged.data.set.metadata,
-                                        matched.names, merged.names)
+
     html <- ""
-    if (any(n.omitted > 0) || nrow(converted.var) > 0)
+    if (any(n.omitted > 0))
     {
         html <- paste0(html, "<div class=\"data-set-widget-title\">",
                        "Note:", "</div>")
@@ -478,7 +471,8 @@ mergingNote <- function(input.data.sets.metadata, merged.data.set.metadata,
         for (i in which(n.omitted > 0))
         {
             omitted <- omitted.variables[[i]]
-            html <- paste0(html, "<div>The following variable",
+            html <- paste0(html, "<div class=\"data-set-widget-note\">",
+                           "The following variable",
                            ngettext(length(omitted), "", "s"),
                            " from data set ", i,
                            ngettext(length(omitted), " was", " were"),
@@ -486,44 +480,6 @@ mergingNote <- function(input.data.sets.metadata, merged.data.set.metadata,
                            paste0("<b>", htmlText(omitted), "</b>",
                                   collapse = ", "), ".</div>")
         }
-
-        converted.var <- convertedVariables(input.data.sets.metadata,
-                                            merged.data.set.metadata,
-                                            matched.names, merged.names)
-        for (i in seq_len(nrow(converted.var)))
-        {
-            r <- converted.var[i, ]
-            html <- paste0(html, "<div>Variable <b>", htmlText(r[1]), "</b>(",
-                           r[5], ") from data set ", r[2]," converted from ",
-                           r[3], " to ", r[4], ".</div>")
-        }
     }
     html
-}
-
-convertedVariables <- function(input.data.sets.metadata, merged.data.set.metadata,
-                               matched.names, merged.names)
-{
-    n.var <- length(merged.names)
-    n.data.sets <- input.data.sets.metadata$n.data.sets
-    result <- matrix(nrow = 0, ncol = 5)
-    for (i in seq_len(n.var))
-    {
-        merged.type <- merged.data.set.metadata$variable.types[i]
-        if (merged.type == "Categorical with string values")
-            merged.type <- "Categorical"
-
-        for (j in seq_len(n.data.sets))
-        {
-            if (is.na(matched.names[i, j]))
-                next
-
-            ind <- which(input.data.sets.metadata$variable.names[[j]] == matched.names[i, j])
-            t <- input.data.sets.metadata$variable.types[[j]][ind]
-            if ((t == "Text" || t == "Numeric") && t != merged.type)
-                result <- rbind(result, c(matched.names[i, j],
-                                          j, t, merged.type, i))
-        }
-    }
-    result
 }

@@ -41,3 +41,7 @@
 .data-set-widget-var-num {
     float: left;
 }
+
+.data-set-widget-note {
+    padding-bottom: 3px;
+}
