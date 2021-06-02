@@ -163,8 +163,9 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
         else # mergesrc variable
         {
             v.index.text <- variableIndexText(i, num.span.width)
-            indicator.spacing <- paste0(rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>",
-                                            n.data.sets), collapse = "")
+            indicator.spacing <- paste0("<span class=\"data-set-merging-indicator-container\">",
+                                        paste0(rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>",
+                                               n.data.sets), collapse = ""), "</span>")
             html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
                                    v.index.text, indicator.spacing,
                                    variableNameAndLabelText(var.name, var.label),
