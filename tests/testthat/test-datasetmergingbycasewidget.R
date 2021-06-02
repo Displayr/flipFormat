@@ -1,5 +1,8 @@
 context("DataSetMergingByCaseWidget")
 
+library(flipChartTests)
+library(png)
+
 findInstDirFile <- function(file)
 {
     file.path(system.file("testdata", package = "flipFormat", mustWork = TRUE),
