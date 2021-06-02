@@ -220,11 +220,11 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
     html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                    "Legend: ",
                    "<span class=\"data-set-widget-manual-shade\">",
-                   "&nbsp;Variables with manual match(es)&nbsp;</span>&nbsp;&nbsp;",
+                   "&nbsp;Manual&nbsp;match&nbsp;</span>&nbsp;&nbsp;",
                    "<span class=\"data-set-widget-fuzzy-shade\">",
-                   "&nbsp;Variables with fuzzy match(es)&nbsp;</span>&nbsp;&nbsp;",
+                   "&nbsp;Fuzzy&nbsp;match&nbsp;</span>&nbsp;&nbsp;",
                    "<span class=\"data-set-widget-highlight-shade\">",
-                   "&nbsp;Variables with difference(s) between inputs&nbsp;</span>",
+                   "&nbsp;Difference&nbsp;in&nbsp;inputs&nbsp;</span>",
                    "</div>")
 
     html
