@@ -274,9 +274,11 @@ dataSetIndicators <- function(input.var.names, n.data.sets)
 {
     indicators <- vapply(seq_len(n.data.sets), function(j) {
             if (input.var.names[j] != "-")
-                "<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\">&#8193;</span>"
+                paste0("<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\" title=\"Data set ",
+                       j, "\">&#8193;</span>")
             else
-                "<span class=\"data-set-merging-indicator\">&#8193;</span>"
+                paste0("<span class=\"data-set-merging-indicator\" title=\"Data set ",
+                       j, "\">&#8193;</span>")
         }, character(1))
 
     paste0("<span class=\"data-set-merging-indicator-container\">",
@@ -393,6 +395,7 @@ inputVariableTable <- function(var.name, var.label, var.type, input.var.names,
     }
 
     result <- paste0(result, "</tbody></table>")
+    result <- gsub(" class=\"\"", "", result, fixed = TRUE) # do this to reduce size of widget
     attr(result, "is.summary.highlighted") <- is.summary.highlighted
     result
 }
@@ -455,6 +458,7 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
         result <- paste0(result, "</tr>")
     }
     result <- paste0(result, "</tbody></table>")
+    result <- gsub(" class=\"\"", "", result, fixed = TRUE) # do this to reduce size of widget
     attr(result, "is.summary.highlighted") <- is.summary.highlighted
     result
 }
