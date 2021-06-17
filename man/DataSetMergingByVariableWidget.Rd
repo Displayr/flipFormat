@@ -7,7 +7,11 @@
 DataSetMergingByVariableWidget(
   input.data.sets.metadata,
   merged.data.set.metadata,
-  omitted.variables,
+  source.data.set.indices,
+  omitted.variable.names,
+  merged.id.variable.name,
+  id.variable.names,
+  example.id.values,
   is.saved.to.cloud
 )
 }
@@ -18,8 +22,8 @@ input data set.}
 \item{merged.data.set.metadata}{An object containing metadata for the
 merged data set.}
 
-\item{omitted.variables}{A list where each element contains the names of the
-variables omitted from a data set.}
+\item{omitted.variable.names}{A list where each element contains the names
+of the variables omitted from a data set.}
 
 \item{is.saved.to.cloud}{Whether the merged data set was saved to the
 Displayr cloud drive.}

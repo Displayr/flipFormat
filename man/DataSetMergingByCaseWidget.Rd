@@ -9,7 +9,7 @@ DataSetMergingByCaseWidget(
   merged.data.set.metadata,
   matched.names,
   merged.names,
-  omitted.variables,
+  omitted.variable.names,
   input.value.attributes,
   is.saved.to.cloud
 )
@@ -32,8 +32,8 @@ Also contains the attribute "renamed.variables" which contains the
 merged variables that were renamed due to name conflicts and their
 original names.}
 
-\item{omitted.variables}{A list where each element contains the names of the
-variables omitted from a data set.}
+\item{omitted.variable.names}{A list where each element contains the names
+of the variables omitted from a data set.}
 
 \item{input.value.attributes}{A list where each element contains the value
 attributes of input categorical variables from a data set.}
