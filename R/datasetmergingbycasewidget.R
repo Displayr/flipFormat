@@ -13,8 +13,8 @@
 #'   Also contains the attribute "renamed.variables" which contains the
 #'   merged variables that were renamed due to name conflicts and their
 #'   original names.
-#' @param omitted.variables A list where each element contains the names of the
-#'   variables omitted from a data set.
+#' @param omitted.variable.names A list where each element contains the names
+#'   of the variables omitted from a data set.
 #' @param input.value.attributes A list where each element contains the value
 #'   attributes of input categorical variables from a data set.
 #' @param is.saved.to.cloud Whether the merged data set was saved to the
@@ -24,7 +24,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        merged.data.set.metadata,
                                        matched.names,
                                        merged.names,
-                                       omitted.variables,
+                                       omitted.variable.names,
                                        input.value.attributes,
                                        is.saved.to.cloud)
 {
@@ -153,7 +153,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
             else
             {
                 v.index.text <- variableIndexText(i, num.span.width)
-                indicators <- dataSetIndicators(input.var.names, n.data.sets)
+                indicators <- dataSetIndicators(input.var.names == "-")
                 name.and.label <- variableNameAndLabelText(var.name, var.label)
                 html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
                                        v.index.text, indicators,
@@ -175,7 +175,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
 
     cata(paste0(html,
                 paste0(html.vars, collapse = ""),
-                mergingNote(omitted.variables),
+                mergingNote(omitted.variable.names),
                 "</div>")) # close data-set-merging-main-container
 
     createWidgetFromFile(tfile)
@@ -256,7 +256,7 @@ variableSummary <- function(var.name, var.label, num.span.width, n.data.sets,
 
     v.index.text <- variableIndexText(variable.index, num.span.width)
 
-    indicators <- dataSetIndicators(input.var.names, n.data.sets)
+    indicators <- dataSetIndicators(input.var.names == "-")
 
     paste0("<summary class=\"", summary.classes, "\">", v.index.text,
            indicators, name.and.label, "</summary>")
@@ -270,10 +270,10 @@ variableIndexText <- function(variable.index, num.span.width)
 
 # Filled and unfilled squares used to indicate if a variable is present in the
 # merged data set
-dataSetIndicators <- function(input.var.names, n.data.sets)
+dataSetIndicators <- function(indicator.states)
 {
-    indicators <- vapply(seq_len(n.data.sets), function(j) {
-            if (input.var.names[j] != "-")
+    indicators <- vapply(seq_along(indicator.states), function(j) {
+            if (indicator.states[j])
                 paste0("<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\" title=\"Data set ",
                        j, "\">&#8193;</span>")
             else
@@ -463,9 +463,9 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
     result
 }
 
-mergingNote <- function(omitted.variables)
+mergingNote <- function(omitted.variable.names)
 {
-    n.omitted <- vapply(omitted.variables, length, integer(1))
+    n.omitted <- vapply(omitted.variable.names, length, integer(1))
 
     html <- ""
     if (any(n.omitted > 0))
@@ -475,7 +475,7 @@ mergingNote <- function(omitted.variables)
 
         for (i in which(n.omitted > 0))
         {
-            omitted <- omitted.variables[[i]]
+            omitted <- omitted.variable.names[[i]]
             html <- paste0(html, "<div class=\"data-set-widget-note\">",
                            "The following variable",
                            ngettext(length(omitted), "", "s"),

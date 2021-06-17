@@ -26,6 +26,10 @@
     background: #FFDCF7;
 }
 
+.data-set-merging-summary-id {
+    background: #DCE9ff;
+}
+
 .data-set-merging-summary::-webkit-details-marker{
     color: #666666;
     padding-top: 3px;
@@ -158,4 +162,8 @@
 
 .data-set-widget-manual-shade {
     background: #FFDCF7;
+}
+
+.data-set-widget-id-shade {
+    background: #DCE9ff;
 }
