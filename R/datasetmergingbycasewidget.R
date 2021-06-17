@@ -13,7 +13,7 @@
 #'   Also contains the attribute "renamed.variables" which contains the
 #'   merged variables that were renamed due to name conflicts and their
 #'   original names.
-#' @param omitted.variables A list where each element contains the names of the
+#' @param omitted.variable.names A list where each element contains the names of the
 #'   variables omitted from a data set.
 #' @param input.value.attributes A list where each element contains the value
 #'   attributes of input categorical variables from a data set.
@@ -24,7 +24,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        merged.data.set.metadata,
                                        matched.names,
                                        merged.names,
-                                       omitted.variables,
+                                       omitted.variable.names,
                                        input.value.attributes,
                                        is.saved.to.cloud)
 {
@@ -175,7 +175,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
 
     cata(paste0(html,
                 paste0(html.vars, collapse = ""),
-                mergingNote(omitted.variables),
+                mergingNote(omitted.variable.names),
                 "</div>")) # close data-set-merging-main-container
 
     createWidgetFromFile(tfile)
@@ -463,9 +463,9 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
     result
 }
 
-mergingNote <- function(omitted.variables)
+mergingNote <- function(omitted.variable.names)
 {
-    n.omitted <- vapply(omitted.variables, length, integer(1))
+    n.omitted <- vapply(omitted.variable.names, length, integer(1))
 
     html <- ""
     if (any(n.omitted > 0))
@@ -475,7 +475,7 @@ mergingNote <- function(omitted.variables)
 
         for (i in which(n.omitted > 0))
         {
-            omitted <- omitted.variables[[i]]
+            omitted <- omitted.variable.names[[i]]
             html <- paste0(html, "<div class=\"data-set-widget-note\">",
                            "The following variable",
                            ngettext(length(omitted), "", "s"),
