@@ -103,7 +103,7 @@ idVariableTable <- function(id.variable.names,
     v.names <- input.data.sets.metadata$variable.names
     v.labels <- input.data.sets.metadata$variable.labels
 
-    result <- paste0("<table class=\"data-set-merging-table\"><thead>",
+    result <- paste0("<table class=\"data-set-merging-table data-set-merging-id-table\"><thead>",
                      "<th>Data set</th><th>ID variable name</th>",
                      "<th>ID variable label</th><th>Example value</th>",
                      "</thead><tbody>")

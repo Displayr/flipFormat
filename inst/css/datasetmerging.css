@@ -85,6 +85,10 @@
     border-style: none;
 }
 
+.data-set-merging-id-table tr {
+    border-style: none;
+}
+
 .data-set-merging-val-attr-table td {
     cursor: default;
 }
