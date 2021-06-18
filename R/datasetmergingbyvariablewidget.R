@@ -45,7 +45,8 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
         v.index.text <- variableIndexText(i, num.span.width)
         name.and.label <- variableNameAndLabelText(var.name, var.label)
 
-        if (var.name == merged.id.variable.name)
+        if (!is.null(merged.id.variable.name) &&
+            var.name == merged.id.variable.name)
         {
             id.var.table <- idVariableTable(id.variable.names,
                                             example.id.values,
