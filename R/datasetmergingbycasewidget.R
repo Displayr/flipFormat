@@ -55,16 +55,23 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
     # irregularities in the table.
 
     n.vars <- merged.data.set.metadata$n.variables
+    output.var.limit <- 10000
+    n.variables.to.show <- min(n.vars, output.var.limit)
+    if (n.vars > output.var.limit)
+        warning("Due to the large number of variables in the output data set (",
+                n.vars, "), only the first ", output.var.limit,
+                " variables have been shown.")
+
     n.data.sets <- input.data.sets.metadata$n.data.sets
-    num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
+    num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
 
     renamed.vars <- attr(merged.names, "renamed.variables")
     renamed.vars.original.names <- vapply(renamed.vars, `[[`, character(1), 1)
     renamed.vars.new.names <- vapply(renamed.vars, `[[`, character(1), 2)
 
-    html.vars <- rep(NA_character_, n.vars)
+    html.vars <- rep(NA_character_, n.variables.to.show)
 
-    for (i in seq_len(n.vars))
+    for (i in seq_len(n.variables.to.show))
     {
         var.name <- merged.data.set.metadata$variable.names[i]
         var.label <- merged.data.set.metadata$variable.labels[i]
