@@ -34,11 +34,19 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
                                                    !is.null(merged.id.variable.name)))
 
     n.vars <- merged.data.set.metadata$n.variables
-    num.span.width <- ceiling(log10(n.vars + 1)) * 10 + 15
-    html.vars <- rep(NA_character_, n.vars)
+    output.var.limit <- 10000
+    n.variables.to.show <- min(n.vars, output.var.limit)
+    if (n.vars > output.var.limit)
+        warning("Due to the large number of variables in the output data set (",
+                n.vars, "), only the first ", output.var.limit,
+                " variables have been shown.")
+
+
+    num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
+    html.vars <- rep(NA_character_, n.variables.to.show)
     n.data.sets <- input.data.sets.metadata$n.data.sets
 
-    for (i in seq_len(n.vars))
+    for (i in seq_len(n.variables.to.show))
     {
         var.name <- merged.data.set.metadata$variable.names[i]
         var.label <- merged.data.set.metadata$variable.labels[i]
