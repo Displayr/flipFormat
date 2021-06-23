@@ -17,16 +17,33 @@ DataSetMergingByVariableWidget(
 }
 \arguments{
 \item{input.data.sets.metadata}{An object containing metadata for the
-input data set.}
+input data set. See the function metadataFromDataSets in flipData for more
+information.}
 
 \item{merged.data.set.metadata}{An object containing metadata for the
-merged data set.}
+merged data set. See the function metadataFromDataSet in flipData for more
+information.}
 
-\item{omitted.variable.names}{A list where each element contains the names
-of the variables omitted from a data set.}
+\item{source.data.set.indices}{An integer vector corresponding to the
+variables in the merged data set. Each element contains the index of the
+input data set from which the variable originated.}
 
-\item{is.saved.to.cloud}{Whether the merged data set was saved to the
-Displayr cloud drive.}
+\item{omitted.variable.names}{A list whose elements correspond to the input
+data sets. Each element contains the names of variables from a data set
+that were omitted from the merged data set.}
+
+\item{merged.id.variable.name}{A character scalar of the name of the ID
+variable in the merged data set. It is NULL if there is no ID variable.}
+
+\item{id.variable.names}{A character vector corresponding to the input data
+sets. Each element is an ID variable name an input data set.}
+
+\item{example.id.values}{A character vector corresponding to the input data
+sets. Each element is an example ID value from an ID variable from an
+input data set.}
+
+\item{is.saved.to.cloud}{A logical scalar indicating whether the merged data
+set was saved to the Displayr cloud drive.}
 }
 \description{
 Widget shown in output for \code{flipData::MergeDataSetsByVariable}.
