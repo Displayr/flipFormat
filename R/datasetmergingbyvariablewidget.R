@@ -143,8 +143,8 @@ idVariableTable <- function(id.variable.names,
                             example.id.values,
                             input.data.sets.metadata)
 {
-    v.names <- input.data.sets.metadata$variable.names
-    v.labels <- input.data.sets.metadata$variable.labels
+    v.names.list <- input.data.sets.metadata$variable.names.list
+    v.labels.list <- input.data.sets.metadata$variable.labels.list
 
     result <- paste0("<table class=\"data-set-merging-table data-set-merging-id-table\"><thead>",
                      "<th>Data set</th><th>ID variable name</th>",
@@ -153,7 +153,7 @@ idVariableTable <- function(id.variable.names,
     for (i in seq_along(id.variable.names))
     {
         nm <- id.variable.names[i]
-        lbl <- v.labels[[i]][nm == v.names[[i]]]
+        lbl <- v.labels.list[[i]][nm == v.names.list[[i]]]
         result <- paste0(result, "<tr><td>", i, "</td><td>",
                          nm, "</td><td>", lbl, "</td><td>",
                          example.id.values[i], "</td></tr>")
