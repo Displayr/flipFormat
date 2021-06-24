@@ -9,9 +9,9 @@
 #' @param source.data.set.indices An integer vector corresponding to the
 #'   variables in the merged data set. Each element contains the index of the
 #'   input data set from which the variable originated.
-#' @param omitted.variable.names A list whose elements correspond to the input
-#'   data sets. Each element contains the names of variables from a data set
-#'   that were omitted from the merged data set.
+#' @param omitted.variable.names.list A list whose elements correspond to the
+#'   input data sets. Each element contains the names of variables from a data
+#'   set that were omitted from the merged data set.
 #' @param merged.id.variable.name A character scalar of the name of the ID
 #'   variable in the merged data set. It is NULL if there is no ID variable.
 #' @param id.variable.names A character vector corresponding to the input data
@@ -25,7 +25,7 @@
 DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
                                            merged.data.set.metadata,
                                            source.data.set.indices,
-                                           omitted.variable.names,
+                                           omitted.variable.names.list,
                                            merged.id.variable.name,
                                            id.variable.names,
                                            example.id.values,
@@ -89,7 +89,7 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
         }
     }
 
-    note.html <- mergingNote(omitted.variable.names)
+    note.html <- mergingNote(omitted.variable.names.list)
 
     cata(paste0("<div class=\"data-set-widget-main-container\">",
                 title.html,

@@ -8,7 +8,7 @@ DataSetMergingByVariableWidget(
   input.data.sets.metadata,
   merged.data.set.metadata,
   source.data.set.indices,
-  omitted.variable.names,
+  omitted.variable.names.list,
   merged.id.variable.name,
   id.variable.names,
   example.id.values,
@@ -17,26 +17,26 @@ DataSetMergingByVariableWidget(
 }
 \arguments{
 \item{input.data.sets.metadata}{An object containing metadata for the
-input data set. See the function metadataFromDataSets in flipData for more
-information.}
+input data set. See the function \code{metadataFromDataSets} in flipData
+for more information.}
 
 \item{merged.data.set.metadata}{An object containing metadata for the
-merged data set. See the function metadataFromDataSet in flipData for more
-information.}
+merged data set. See the function \code{metadataFromDataSet} in flipData
+for more information.}
 
 \item{source.data.set.indices}{An integer vector corresponding to the
 variables in the merged data set. Each element contains the index of the
 input data set from which the variable originated.}
 
-\item{omitted.variable.names}{A list whose elements correspond to the input
-data sets. Each element contains the names of variables from a data set
-that were omitted from the merged data set.}
+\item{omitted.variable.names.list}{A list whose elements correspond to the
+input data sets. Each element contains the names of variables from a data
+set that were omitted from the merged data set.}
 
 \item{merged.id.variable.name}{A character scalar of the name of the ID
 variable in the merged data set. It is NULL if there is no ID variable.}
 
 \item{id.variable.names}{A character vector corresponding to the input data
-sets. Each element is an ID variable name an input data set.}
+sets. Each element is an ID variable name from an input data set.}
 
 \item{example.id.values}{A character vector corresponding to the input data
 sets. Each element is an example ID value from an ID variable from an
