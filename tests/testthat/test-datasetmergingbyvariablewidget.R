@@ -1,4 +1,4 @@
-context("DataSetMergingByCaseWidget")
+context("DataSetMergingByVariableWidget")
 
 library(flipChartTests)
 library(png)

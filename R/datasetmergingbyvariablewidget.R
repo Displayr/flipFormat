@@ -62,7 +62,7 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
     {
         var.name <- merged.data.set.metadata$variable.names[i]
         var.label <- merged.data.set.metadata$variable.labels[i]
-        v.index.text <- variableIndexText(i, num.span.width)
+        v.index.text <- variableIndexSpan(i, num.span.width)
         name.and.label <- variableNameAndLabelText(var.name, var.label)
 
         if (!is.null(merged.id.variable.name) &&
@@ -71,7 +71,7 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
             id.var.table <- idVariableTable(id.variable.names,
                                             example.id.values,
                                             input.data.sets.metadata)
-            indicators <- dataSetIndicators(rep(TRUE, n.data.sets))
+            indicators <- dataSetIndicatorsSpan(rep(TRUE, n.data.sets))
             html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
                                    "<summary class=\"data-set-merging-summary data-set-merging-summary-id\">",
                                    v.index.text, indicators,
@@ -82,7 +82,7 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
         {
             indicator.states <- rep(FALSE, n.data.sets)
             indicator.states[source.data.set.indices[i]] <- TRUE
-            indicators <- dataSetIndicators(indicator.states)
+            indicators <- dataSetIndicatorsSpan(indicator.states)
             html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
                                    v.index.text, indicators, name.and.label,
                                    "</div>")
@@ -161,4 +161,86 @@ idVariableTable <- function(id.variable.names,
     result <- paste0(result, "</tbody></table>")
 
     result
+}
+
+#' @param omitted.variable.names.list See documentation for
+#'  omitted.variable.names.list in DataSetMergingByVariableWidget.
+#' @return Character scalar containing the HTML for the notes that are shown at
+#'  the bottom of the output. Currently only shows the omitted variables from
+#'  each data set.
+#' @noRd
+mergingNote <- function(omitted.variable.names.list)
+{
+    n.omitted <- vapply(omitted.variable.names.list, length, integer(1))
+
+    html <- ""
+    if (any(n.omitted > 0))
+    {
+        html <- paste0(html, "<div class=\"data-set-widget-title\">",
+                       "Note:", "</div>")
+
+        for (i in which(n.omitted > 0))
+        {
+            omitted <- omitted.variable.names.list[[i]]
+            html <- paste0(html, "<div class=\"data-set-widget-note\">",
+                           "The following variable",
+                           ngettext(length(omitted), "", "s"),
+                           " from data set ", i,
+                           ngettext(length(omitted), " was", " were"),
+                           " omitted: ",
+                           paste0("<b>", htmlText(omitted), "</b>",
+                                  collapse = ", "), ".</div>")
+        }
+    }
+    html
+}
+
+#' @param variable.index Integer scalar of the variable index to be shown.
+#' @param num.span.width Integer scalar of the width of the span in pixels.
+#' @return Character scalar containing a HTML span showing the variable index
+#'  with a predefined width.
+#' @noRd
+variableIndexSpan <- function(variable.index, num.span.width)
+{
+    paste0("<span class=\"data-set-widget-var-num\" style=\"width:",
+           num.span.width, "px\">", variable.index, ".</span>")
+}
+
+#' @param indicator.states Logical vector representing indicator states.
+#' @return Character scalar containing the HTML span which shows data set
+#'  indicators: filled and unfilled squares indicating whether a variable
+#'  contains input from an input data set.
+#' @noRd
+dataSetIndicatorsSpan <- function(indicator.states)
+{
+    indicators <- vapply(seq_along(indicator.states), function(j) {
+        if (indicator.states[j])
+            paste0("<span class=\"data-set-merging-indicator data-set-merging-indicator-fill\" title=\"Data set ",
+                   j, "\">&#8193;</span>")
+        else
+            paste0("<span class=\"data-set-merging-indicator\" title=\"Data set ",
+                   j, "\">&#8193;</span>")
+    }, character(1))
+
+    paste0("<span class=\"data-set-merging-indicator-container\">",
+           paste0(indicators, collapse = ""), "</span>")
+}
+
+#' @param var.name Character scalar of the variable name to display.
+#' @param var.label Character scalar of the variable label to display.
+#' @return Character scalar showing the variable name and label separated by a
+#'  colon. If the name and label are the same, only show one of them.
+#' @noRd
+variableNameAndLabelText <- function(var.name, var.label)
+{
+    if (nchar(var.label) > 0)
+    {
+        if (substr(var.label, 1, nchar(var.name) + 1) == paste0(var.name, ":") ||
+            var.name == var.label)
+            htmlText(var.label)
+        else
+            paste0(htmlText(var.name), ": ", htmlText(var.label))
+    }
+    else
+        htmlText(var.name)
 }
