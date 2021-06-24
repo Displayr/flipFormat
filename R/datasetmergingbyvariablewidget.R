@@ -58,11 +58,11 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
     html.vars <- rep(NA_character_, n.variables.to.show)
     n.data.sets <- input.data.sets.metadata$n.data.sets
 
-    for (i in seq_len(n.variables.to.show))
+    for (var.ind in seq_len(n.variables.to.show))
     {
-        var.name <- merged.data.set.metadata$variable.names[i]
-        var.label <- merged.data.set.metadata$variable.labels[i]
-        v.index.text <- variableIndexSpan(i, num.span.width)
+        var.name <- merged.data.set.metadata$variable.names[var.ind]
+        var.label <- merged.data.set.metadata$variable.labels[var.ind]
+        v.index.text <- variableIndexSpan(var.ind, num.span.width)
         name.and.label <- variableNameAndLabelText(var.name, var.label)
 
         if (!is.null(merged.id.variable.name) &&
@@ -72,20 +72,20 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
                                             example.id.values,
                                             input.data.sets.metadata)
             indicators <- dataSetIndicatorsSpan(rep(TRUE, n.data.sets))
-            html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
-                                   "<summary class=\"data-set-merging-summary data-set-merging-summary-id\">",
-                                   v.index.text, indicators,
-                                   name.and.label, "</summary>", id.var.table,
-                                   "</details>")
+            html.vars[var.ind] <- paste0("<details class=\"details data-set-merging-details\">",
+                                         "<summary class=\"data-set-merging-summary data-set-merging-summary-id\">",
+                                         v.index.text, indicators,
+                                         name.and.label, "</summary>", id.var.table,
+                                         "</details>")
         }
         else # Non-ID variable
         {
             indicator.states <- rep(FALSE, n.data.sets)
-            indicator.states[source.data.set.indices[i]] <- TRUE
+            indicator.states[source.data.set.indices[var.ind]] <- TRUE
             indicators <- dataSetIndicatorsSpan(indicator.states)
-            html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
-                                   v.index.text, indicators, name.and.label,
-                                   "</div>")
+            html.vars[var.ind] <- paste0("<div class=\"data-set-widget-row\">",
+                                         v.index.text, indicators, name.and.label,
+                                         "</div>")
         }
     }
 
