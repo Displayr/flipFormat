@@ -64,6 +64,7 @@ CreateAnalysisReportWidget <- function(x,
     ## browseURL(tfile)
     out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
+                         background.color = "White",
                          font.size = 8)
 
     attr(out, "ChartData") <- chart.data
