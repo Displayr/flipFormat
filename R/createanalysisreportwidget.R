@@ -14,7 +14,7 @@
 #' @seealso \code{\link[striprtf]{read_rtf}},\code{\link[rhtmlMetro]{Box}}
 #' @export
 #' @importFrom striprtf read_rtf
-CreateAnalysisDesignWidget <- function(x,
+CreateAnalysisReportWidget <- function(x,
                                           css = NULL,
                                           ...)
 {
