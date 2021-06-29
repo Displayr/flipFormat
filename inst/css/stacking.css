@@ -1,41 +1,3 @@
-.stacking-main-container {
-    overflow: auto;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    top: 0;
-    right: 0;
-    white-space: normal;
-    line-height: normal;
-}
-
-.stacking-title {
-    text-align: left;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 20px;
-    color: #3E7DCC;
-    font-weight: 500;
-    padding-bottom: 5px;
-}
-
-.stacking-subtitle {
-    text-align: left;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 14px;
-    color: #777777;
-    padding-bottom: 5px;
-}
-
-.stacking-row {
-    background: #F2F2F2;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    color: #151A1C;
-    font-size: 14px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-left: 10px;
-}
-
 .stacking-details {
     margin-bottom: 5px;
 }
@@ -117,12 +79,4 @@
 
 .stacking-input-summary {
     user-select: none;
-}
-
-.stacking-input-title {
-    text-align: left;
-    font-family: Circular, Circular-bold,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-size: 20px;
-    color: #3E7DCC;
-    font-weight: 500;
 }
