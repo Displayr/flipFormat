@@ -18,9 +18,10 @@
 #'   and "Manual" indicating what data was used to match an input variable or
 #'   if the variable was matched manually.
 #' @param merged.names A character vector of the names of the merged variables.
-#'   Also contains the attribute "renamed.variables" which is a list where each
-#'   element represents a merged variable that has been renamed. The element
-#'   is a list with character scalar elements 'original.name' and 'new.name'.
+#'   Also contains the attribute "renamed.variables" which is a character
+#'   matrix whose rows correspond to merged variables that have been renamed.
+#'   Each row has two elements containing the original and new name for the
+#'   variable.
 #' @param omitted.variable.names.list A list whose elements correspond to the
 #'   input data sets. Each element contains the names of variables from a data
 #'   set that were omitted from the merged data set.
@@ -79,8 +80,6 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
     num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
 
     renamed.vars <- attr(merged.names, "renamed.variables")
-    renamed.vars.original.names <- vapply(renamed.vars, `[[`, character(1), 1)
-    renamed.vars.new.names <- vapply(renamed.vars, `[[`, character(1), 2)
 
     html.vars <- rep(NA_character_, n.variables.to.show)
 
@@ -122,11 +121,11 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
 
             html.row <- ""
 
-            renamed.ind <- match(var.name, renamed.vars.new.names)
+            renamed.ind <- match(var.name, renamed.vars[, 2])
             if (!is.na(renamed.ind))
                 html.row <- paste0(html.row,
                                    "<span class=\"data-set-widget-subtitle\">Renamed from ",
-                                   htmlText(renamed.vars.original.names[renamed.ind]),
+                                   htmlText(renamed.vars[, 1]),
                                    "</span>")
 
             variable.table.html <- inputVariableTable(var.name, var.label,

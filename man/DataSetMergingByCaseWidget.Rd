@@ -36,9 +36,10 @@ and "Manual" indicating what data was used to match an input variable or
 if the variable was matched manually.}
 
 \item{merged.names}{A character vector of the names of the merged variables.
-Also contains the attribute "renamed.variables" which is a list where each
-element represents a merged variable that has been renamed. The element
-is a list with character scalar elements 'original.name' and 'new.name'.}
+Also contains the attribute "renamed.variables" which is a character
+matrix whose rows correspond to merged variables that have been renamed.
+Each row has two elements containing the original and new name for the
+variable.}
 
 \item{input.value.attributes}{A list whose elements correspond to the
 variables in the merged data set. Each element is another list whose
