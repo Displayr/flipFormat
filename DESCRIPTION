@@ -24,7 +24,8 @@ Imports:
     stringr,
     stringi,
     rhtmlMetro (>= 1.0.2),
-    flipChartTests
+    flipChartTests,
+    striprtf
 Suggests:
     testthat,
     flipExampleData
