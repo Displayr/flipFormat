@@ -16,30 +16,43 @@ DataSetMergingByCaseWidget(
 }
 \arguments{
 \item{input.data.sets.metadata}{An object containing metadata for the
-input data set.}
+input data set. See the function \code{metadataFromDataSets} in flipData
+for more information.}
 
 \item{merged.data.set.metadata}{An object containing metadata for the
-merged data set.}
+merged data set. See the function \code{metadataFromDataSet} in flipData
+for more information.}
 
-\item{matched.names}{A matrix whose rows contain the names of the input
-variables used to create the merged variables. This matrix also has the
-attributes "is.fuzzy.match" and "matched.by" which are matrices indicating
-whether the input variable was a fuzzy match and what they were matched by,
-i.e., variable name, label or value label.}
+\item{matched.names}{A character matrix whose rows correspond to the
+variables in the merged data set. The elements in each row correspond to
+the input data sets and contain the names of the variables from the input
+data sets that have been combined together to create a merged variable.
+This matrix also has the attributes "is.fuzzy.match" and "matched.by".
+is.fuzzy.match is a logical matrix of the same size as matched.names
+indicating if an input variable was matched using fuzzy matching.
+matched.by is a character matrix of the same size as matched.names
+containing the strings "Variable name", "Variable label", "Value label"
+and "Manual" indicating what data was used to match an input variable or
+if the variable was matched manually.}
 
 \item{merged.names}{A character vector of the names of the merged variables.
-Also contains the attribute "renamed.variables" which contains the
-merged variables that were renamed due to name conflicts and their
-original names.}
+Also contains the attribute "renamed.variables" which is a list where each
+element represents a merged variable that has been renamed. The element
+is a list with character scalar elements 'original.name' and 'new.name'.}
 
-\item{omitted.variable.names}{A list where each element contains the names of the
-variables omitted from a data set.}
+\item{input.value.attributes}{A list whose elements correspond to the
+variables in the merged data set. Each element is another list whose
+elements correspond to the input data sets, which each of these elements
+containing a named numeric vector representing the values and value labels
+of a categorical input variable. This is NULL if the input variable is
+not categorical.}
 
-\item{input.value.attributes}{A list where each element contains the value
-attributes of input categorical variables from a data set.}
+\item{is.saved.to.cloud}{A logical scalar indicating whether the merged data
+set was saved to the Displayr cloud drive.}
 
-\item{is.saved.to.cloud}{Whether the merged data set was saved to the
-Displayr cloud drive.}
+\item{omitted.variable.names.list}{A list whose elements correspond to the
+input data sets. Each element contains the names of variables from a data
+set that were omitted from the merged data set.}
 }
 \description{
 Widget shown in output for \code{flipData::MergeDataSetsByCase}.
