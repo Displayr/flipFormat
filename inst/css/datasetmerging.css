@@ -26,6 +26,10 @@
     background: #FFDCF7;
 }
 
+.data-set-merging-summary-id {
+    background: #DCE9ff;
+}
+
 .data-set-merging-summary::-webkit-details-marker{
     color: #666666;
     padding-top: 3px;
@@ -78,6 +82,10 @@
 }
 
 .data-set-merging-table tr:nth-of-type(1) {
+    border-style: none;
+}
+
+.data-set-merging-id-table tr {
     border-style: none;
 }
 
@@ -158,4 +166,8 @@
 
 .data-set-widget-manual-shade {
     background: #FFDCF7;
+}
+
+.data-set-widget-id-shade {
+    background: #DCE9ff;
 }
