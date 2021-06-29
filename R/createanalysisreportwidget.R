@@ -67,7 +67,7 @@ CreateAnalysisReportWidget <- function(x,
                          background.color = "White",
                          font.size = 8)
 
-    attr(out, "ChartData") <- chart.data
+    attr(out, "ChartData") <- convertReportVectorToMatrix(chart.data)
     return(out)
 }
 
@@ -114,4 +114,29 @@ addReport <- function(report, outputWriter)
     report[length(report)] <- paste0(report[length(report)], "\n")
     outputWriter(report)
     invisible()
+}
+
+#' Convert read_rtf output to character matrix
+#'
+#' @param report Character vector output from read_rtf
+#' @return A character matrix with any elements of \code{report}
+#' containing table rows converted from a single string to
+#' a character vector/row in the output. Elements of report that
+#' don't contain a table are left unchanged
+#' @noRd
+convertReportVectorToMatrix <- function(report)
+{
+    table.indices <- grep("^\\*\\|", report)
+    report[table.indices] <- sub("^\\*\\|", "", report[table.indices])
+    table.cells <- strsplit(report[table.indices], " | ", fixed = TRUE)
+    max.len <- max(vapply(table.cells, length, 1L))
+    out <- matrix("", length(report), max.len)
+    out[, 1] <- report
+    for (i in seq_along(table.indices))
+    {
+        row.idx <- table.indices[i]
+        row <- table.cells[[i]]
+        out[row.idx, seq_along(row)] <- row
+    }
+    return(out)
 }
