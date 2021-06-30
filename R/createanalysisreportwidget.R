@@ -130,7 +130,8 @@ convertReportVectorToMatrix <- function(report)
     report[table.indices] <- sub("^\\*\\|", "", report[table.indices])
     table.cells <- strsplit(report[table.indices], " | ", fixed = TRUE)
     max.len <- max(vapply(table.cells, length, 1L))
-    out <- matrix("", length(report), max.len)
+    out <- matrix("", length(report), max.len,
+                  dimnames = list(character(length(report)), character(max.len)))
     out[, 1] <- report
     for (i in seq_along(table.indices))
     {
