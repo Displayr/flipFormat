@@ -670,10 +670,22 @@ CreateCustomTable = function(x,
     out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
-    attr(out, "ChartData") <- x
+    attr(out, "ChartData") <- clean_html(x)
     return(out)
 }
 
+#' @importFrom xml2 xml_text read_xml
+clean_html <- function(x)
+{
+    if (!is.character(x))
+        return(x)
+
+    .strip_html <- function(x) xml_text(read_xml(x, as_html = TRUE))
+    if (is.matrix(x))
+        return(apply(x, c(1, 2), .strip_html))
+    else
+        return(sapply(x, .strip_html))
+}
 
 tidyMatrixValues <- function(x, transpose, row.header.labels, col.header.labels)
 {
