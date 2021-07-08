@@ -680,7 +680,7 @@ clean_html <- function(x)
     if (!is.character(x))
         return(x)
 
-    .strip_html <- function(x) xml_text(read_xml(charToRaw(x), as_html = TRUE))
+    .strip_html <- function(x) if (!nzchar(trimws(x))) x else xml_text(read_xml(charToRaw(x), as_html = TRUE))
     if (is.matrix(x))
         return(apply(x, c(1, 2), .strip_html))
     else
