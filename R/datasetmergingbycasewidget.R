@@ -38,7 +38,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        merged.data.set.metadata,
                                        matched.names,
                                        merged.names,
-                                       omitted.variable.names,
+                                       omitted.variable.names.list,
                                        input.value.attributes,
                                        is.saved.to.cloud)
 {
@@ -194,7 +194,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
 
     cata(paste0(html,
                 paste0(html.vars, collapse = ""),
-                mergingNote(omitted.variable.names),
+                mergingNote(omitted.variable.names.list),
                 "</div>")) # close data-set-merging-main-container
 
     createWidgetFromFile(tfile)
