@@ -22,7 +22,7 @@ CreateAnalysisReportWidget <- function(x,
 
     cata <- createCata(tfile)
     format1 <- function(x)
-        format(x, nsmall = nsmall, digits = digits)
+        format(x)
 
     ## Use same styling as our Choice Modeling - Experimental Design widghet
     addCss("analysisreport.css", cata)
