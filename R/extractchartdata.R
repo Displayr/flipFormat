@@ -15,6 +15,13 @@ ExtractChartData.default <- function(x)
     # Outputs from CChart with append.data = TRUE can return data
     if (!is.null(attr(x, "ChartData")))
        return(attr(x, "ChartData"))
-    else
-        return(x)
+    else if (is.data.frame(x))
+    {
+        for (i in NCOL(x))
+        {
+            if (inherits(x[[i]], "difftime"))
+                x[[i]] <- as.numeric(x[[i]])
+        }
+    }
+    return(x)
 }
