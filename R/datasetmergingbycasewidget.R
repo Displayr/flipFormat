@@ -39,7 +39,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        matched.names,
                                        merged.names,
                                        omitted.variable.names.list,
-                                       input.value.attributes,
+                                       input.value.attributes.list,
                                        is.saved.to.cloud)
 {
     tfile <- createTempFile()
@@ -143,7 +143,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
             {
                 val.attr.table.html <- valueAttributesTable(merged.val.attr,
                                                             input.data.sets.metadata,
-                                                            input.value.attributes[[i]],
+                                                            input.value.attributes.list[[i]],
                                                             input.var.ind)
                 html.row <- paste0(html.row, val.attr.table.html)
                 is.summary.highlighted <- is.summary.highlighted ||
