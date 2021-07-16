@@ -222,16 +222,28 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
     if ("Value label" %in% unique.matched.by)
         matched.by <- c(matched.by, "value labels")
 
-    matched.by.msg <- if ("Manual" %in% unique.matched.by)
-        "Matched manually and by "
+    if (length(matched.by) == 0)
+    {
+        matched.by.msg <- if ("Manual" %in% unique.matched.by)
+            "Matched manually"
+        else
+            "No matching performed"
+    }
     else
-        "Matched by "
+    {
+        matched.by.msg <- if ("Manual" %in% unique.matched.by)
+            "Matched manually and by "
+        else
+            "Matched by "
 
-    matched.by.msg <- if (length(matched.by) == 1)
-        paste0(matched.by.msg, matched.by)
-    else
-        paste0(matched.by.msg, paste0(matched.by[-length(matched.by)], collapse = ", "),
-               " and ", matched.by[length(matched.by)])
+        matched.by.msg <- if (length(matched.by) == 1)
+            paste0(matched.by.msg, matched.by)
+        else
+            paste0(matched.by.msg, paste0(matched.by[-length(matched.by)], collapse = ", "),
+                   " and ", matched.by[length(matched.by)])
+    }
+
+
 
     html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                    matched.by.msg, "</div>")
