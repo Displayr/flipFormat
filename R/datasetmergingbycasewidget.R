@@ -125,7 +125,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
             if (!is.na(renamed.ind))
                 html.row <- paste0(html.row,
                                    "<span class=\"data-set-widget-subtitle\">Renamed from ",
-                                   htmlText(renamed.vars[, 1]),
+                                   htmlText(renamed.vars[renamed.ind, 1]),
                                    "</span>")
 
             variable.table.html <- inputVariableTable(var.name, var.label,
