@@ -12,13 +12,18 @@ findInstDirFile <- function(file)
 load(findInstDirFile("merge.data.set.output.rda"))
 
 test_that("Data set merging by case widget", {
-    widget <- DataSetMergingByCaseWidget(merge.data.set.output$input.data.sets.metadata,
-                                         merge.data.set.output$merged.data.set.metadata,
-                                         merge.data.set.output$matched.names,
-                                         merge.data.set.output$merged.names,
-                                         merge.data.set.output$omitted.variable.names.list,
-                                         merge.data.set.output$input.value.attributes.list,
-                                         merge.data.set.output$is.saved.to.cloud)
-    expect_true(TestWidget(widget, "merging-by-case-widget", height = 800))
+    expect_error(widget <- DataSetMergingByCaseWidget(merge.data.set.output$input.data.sets.metadata,
+                                                      merge.data.set.output$merged.data.set.metadata,
+                                                      merge.data.set.output$matched.names,
+                                                      merge.data.set.output$merged.names,
+                                                      merge.data.set.output$omitted.variable.names.list,
+                                                      merge.data.set.output$input.value.attributes.list,
+                                                      merge.data.set.output$is.saved.to.cloud), NA)
+
+    if (identical(Sys.getenv("TRAVIS"), "true"))
+    {
+        print("Comparing snapshot on travis")
+        expect_true(TestWidget(widget, "merging-by-case-widget", height = 800))
+    }
 })
 

@@ -10,7 +10,7 @@ DataSetMergingByCaseWidget(
   matched.names,
   merged.names,
   omitted.variable.names.list,
-  input.value.attributes,
+  input.value.attributes.list,
   is.saved.to.cloud
 )
 }
@@ -45,15 +45,15 @@ variable.}
 input data sets. Each element contains the names of variables from a data
 set that were omitted from the merged data set.}
 
+\item{is.saved.to.cloud}{A logical scalar indicating whether the merged data
+set was saved to the Displayr cloud drive.}
+
 \item{input.value.attributes}{A list whose elements correspond to the
 variables in the merged data set. Each element is another list whose
 elements correspond to the input data sets, which each of these elements
 containing a named numeric vector representing the values and value labels
 of a categorical input variable. This is NULL if the input variable is
 not categorical.}
-
-\item{is.saved.to.cloud}{A logical scalar indicating whether the merged data
-set was saved to the Displayr cloud drive.}
 }
 \description{
 Widget shown in output for \code{flipData::MergeDataSetsByCase}.

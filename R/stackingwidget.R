@@ -189,7 +189,7 @@ inputDataSetOutput <- function(input.data.set.metadata,
     n.variables.to.show <- min(n.variables, input.var.limit)
     if (n.variables > input.var.limit)
         warning("Due to the large number of variables in the input data set (",
-                md$n.variables, "), only the first ", input.var.limit,
+                input.data.set.metadata$n.variables, "), only the first ", input.var.limit,
                 " variables have been shown.")
 
     num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
