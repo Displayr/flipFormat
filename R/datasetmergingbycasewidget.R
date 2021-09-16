@@ -25,7 +25,7 @@
 #' @param omitted.variable.names.list A list whose elements correspond to the
 #'   input data sets. Each element contains the names of variables from a data
 #'   set that were omitted from the merged data set.
-#' @param input.value.attributes A list whose elements correspond to the
+#' @param input.value.attributes.list A list whose elements correspond to the
 #'   variables in the merged data set. Each element is another list whose
 #'   elements correspond to the input data sets, which each of these elements
 #'   containing a named numeric vector representing the values and value labels
