@@ -12,7 +12,7 @@ Depends: R (>= 3.5.0)
 Imports:
     colorspace,
     DT,
-    flipU(>= 1.2.5),
+    flipU (>= 1.2.5),
     formattable,
     htmltools,
     htmlwidgets,
