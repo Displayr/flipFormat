@@ -22,19 +22,24 @@ group.size.without.outlier.removal <- group.size[1L, ]
 group.size.with.outlier.removal <- group.size
 
 test_that("Crosstab Interaction Table", {
-    widget <- CrosstabInteractionTable(coef = coef, coef.tstat = coef.tstat,
-                                       coef.pval = coef.pval,
-                                       group.size = group.size.without.outlier.removal,
-                                       footer = "footer here",
-                                       title = "Regression table",
-                                       subtitle = "subtitle here")
+    expect_error(widget.no.out <- CrosstabInteractionTable(coef = coef, coef.tstat = coef.tstat,
+                                                           coef.pval = coef.pval,
+                                                           group.size = group.size.without.outlier.removal,
+                                                           footer = "footer here",
+                                                           title = "Regression table",
+                                                           subtitle = "subtitle here"), NA)
 
-    expect_true(flipChartTests::TestWidget(widget, "crosstab-interaction-no-outlier-widget", height = 800))
-    widget <- CrosstabInteractionTable(coef = coef, coef.tstat = coef.tstat,
-                                       coef.pval = coef.pval,
-                                       group.size = group.size.with.outlier.removal,
-                                       footer = "footer here",
-                                       title = "Regression table",
-                                       subtitle = "subtitle here")
-    expect_true(flipChartTests::TestWidget(widget, "crosstab-interaction-outlier-widget", height = 800))
+    expect_error(widget.outlier <- CrosstabInteractionTable(coef = coef, coef.tstat = coef.tstat,
+                                                            coef.pval = coef.pval,
+                                                            group.size = group.size.with.outlier.removal,
+                                                            footer = "footer here",
+                                                            title = "Regression table",
+                                                            subtitle = "subtitle here"), NA)
+
+    if (identical(Sys.getenv("TRAVIS"), "true"))
+    {
+        print("Comparing snapshot on travis")
+        expect_true(flipChartTests::TestWidget(widget.no.out, "crosstab-interaction-no-outlier-widget", height = 800))
+        expect_true(flipChartTests::TestWidget(widget.outlier, "crosstab-interaction-outlier-widget", height = 800))
+    }
 })
