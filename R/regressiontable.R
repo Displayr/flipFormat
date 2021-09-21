@@ -46,6 +46,7 @@ RegressionTable <- function(coefficient.table,
 #' @param decimals Number of decimals reported for the regression coefficients.
 #' @param p.cutoff The alpha level for determining the significance of the coefficients.
 #' @importFrom formattable area
+#' @importFrom stats setNames
 #' @export
 CrosstabInteractionTable <- function(coef,
                             coef.tstat,
@@ -67,14 +68,20 @@ CrosstabInteractionTable <- function(coef,
     colnames(coef.tstat) <- sprintf("t%d", 1:k)
     colnames(coef.pval) <- sprintf("p%d", 1:k)
     coef.df <- data.frame(cbind(coef, coef.tstat, coef.pval), check.names = FALSE)
-    coef.df <- rbind(coef.df, n = c(group.size, rep(0, 2*k)))
-    columns.to.exclude <- as.list(structure(rep(FALSE, 2*k), names=c(colnames(coef.tstat), colnames(coef.pval))))
+    if (!is.null(dim(group.size)))
+        group.size <- cbind(group.size, array(0, dim = c(2, 2*k), dimnames = list(NULL, colnames(coef.df)[-(1:(k + 1L))])))
+    else
+        group.size <- rbind(n = c(group.size, setNames(rep(0, 2*k), names(coef.df)[-(1:(k + 1L))])))
+    coef.df <- rbind(coef.df, group.size)
+    columns.to.exclude <- as.list(structure(rep(FALSE, 2 * k), names=c(colnames(coef.tstat), colnames(coef.pval))))
 
     formatters <- list()
     for (i in 1:k)
         formatters[[coef.names[i]]] <- createStatisticFormatter(sprintf("t%d",i), sprintf("p%d", i), p.cutoff)
     formatters[["NET"]] <- formatter("span", x~FormatAsReal(x, decimals = decimals))
-    formatters[[ncol(coef.df)+1]] <- area(row=nrow(coef.df))~formatter("span", x~FormatAsReal(x, decimals = 0))
+    formatters[[ncol(coef.df) + 1L]] <- area(row=nrow(coef.df))~formatter("span", x~FormatAsReal(x, decimals = 0))
+    if (nrow(group.size) > 1L)
+        formatters[[length(formatters) + 1L]] <- area(row=nrow(coef.df) - 1L)~formatter("span", x~FormatAsReal(x, decimals = 0))
     formatters <- c(formatters, columns.to.exclude)
 
     createTable(coef.df, col.names=coef.names, formatters, title=title, subtitle=subtitle, footer=footer)

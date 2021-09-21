@@ -1,7 +1,7 @@
 Package: flipFormat
 Type: Package
 Title: Formatting of R outputs
-Version: 1.10.3
+Version: 1.10.4
 Author: Displayr <opensource@displayr.com>
 Maintainer: Displayr <opensource@displayr.com>
 Description: Formatting to be used in print statements and other outputs. E.g.,
@@ -19,17 +19,17 @@ Imports:
     janitor,
     rmarkdown,
     knitr,
-    png,
     sparkline,
     stringr,
     stringi,
     rhtmlMetro (>= 1.0.2),
-    flipChartTests,
     striprtf,
     xml2
 Suggests:
     testthat,
-    flipExampleData
+    flipChartTests,
+    flipExampleData,
+    png
 Remotes:
     Displayr/flipChartTests,
     Displayr/flipExampleData,
