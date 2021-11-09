@@ -61,7 +61,8 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
         }
         else
         {
-            result$variable.text <- paste("Regression:", reg.name)
+            if (any(nzchar(reg.name)))
+                result$variable.text <- paste("Regression:", reg.name)
             result$sample.description <- reg.sample.description
         }
     }
@@ -111,7 +112,7 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
 
     result$decimal.places <- decimal.places
 
-    class(result) <- "SignificanceTest"
+    class(result) <- c("SignificanceTest", "visualization-selector")
     return(result)
 }
 
