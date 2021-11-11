@@ -670,6 +670,7 @@ CreateCustomTable = function(x,
     out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
+    class(out) <- c(class(out), "visualization-selector")
     attr(out, "ChartData") <- clean_html(x)
     return(out)
 }

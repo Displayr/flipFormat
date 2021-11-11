@@ -102,7 +102,7 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
         result$statistic.name <- "Chi-square"
         result$degrees.of.freedom <- obj$Df
         result$p.value <- obj$p
-        result$variable.text <- paste("Regression:", reg.name)
+        result$variable.text <- if (any(nzchar(reg.name))) paste("Regression:", reg.name)
         result$sample.description <- reg.sample.description
     }
     else
