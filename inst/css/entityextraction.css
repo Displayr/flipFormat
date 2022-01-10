@@ -29,7 +29,6 @@ div.entity-extraction-main-container .entity-details {
 .entity-summary {
     display: list-item;
     font-size: 13px;
-    margin-bottom: 5px;
     color: #333333;
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
