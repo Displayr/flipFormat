@@ -339,7 +339,7 @@ CreateCustomTable = function(x,
     {
         # check image tags and remove and warn for invalid urls
         # wrap images in a div to preserve alignment
-        ind <- grepl("<img", x, fixed = TRUE)
+        ind <- grep("<img", x, fixed = TRUE)
         for (ii in ind)
             content[ii] <- checkImageTag(content[ii])
     }
