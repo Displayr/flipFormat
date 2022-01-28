@@ -49,7 +49,7 @@ DataTableWithRItemFormat <- function(dd,
     {
         warning("Table is too small to be printed as an HTML Data Table.")
         print.default(dd)
-        return
+        return ()
     }
 
 

@@ -337,10 +337,11 @@ CreateCustomTable = function(x,
         content[which(is.na(x) & !is.nan(x))] <- ""
     if (is.character(x))
     {
+        # check image tags and remove and warn for invalid urls
         # wrap images in a div to preserve alignment
-        ind <- grepl("<img", x, fixed = TRUE)
-        if (any(ind))
-            content[ind] <- paste0("<div>", content[ind], "</div>")
+        ind <- grep("<img", x, fixed = TRUE)
+        for (ii in ind)
+            content[ii] <- checkImageTag(content[ii])
     }
 
     # Significance testing arrows/circles/fills
