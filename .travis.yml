@@ -1,6 +1,6 @@
 language: r
 r:
-  - release
+  - devel
 dist: bionic
 cache: packages
 warnings_are_errors: false
@@ -32,7 +32,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install libgit2-dev
   - rcode="options('testthat.progress.max_fails' = Inf); "
-  - rcode+="tfile <- 'tfile'; capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
+  - rcode+="tfile <- tempfile(); capture.output(res<-devtools::test(), file = tfile); out <- readLines(tfile); cat(out, sep = '\n'); "
   - rcode+="line.fail <- max(grep('FAIL', out)); "
   - rcode+="tmp <- unlist(strsplit(split='[[:space:]]+', out[line.fail])); "
   - rcode+="pos.fail <- grep('FAIL', tmp); n.fail <- as.numeric(tmp[pos.fail+1]); "
@@ -58,6 +58,7 @@ r_packages:
 
 r_github_packages:
   - Displayr/flipDevTools
+  - Displayr/flipChartTests
   - Displayr/flipExampleData
 
 script:
@@ -66,15 +67,6 @@ script:
   - if [ -d tests/testthat ]; then
     Rscript --default-packages='datasets,utils,grDevices,graphics,stats,methods' -e "$rcode";
     fi
-  # Prepare repository to push to github
-  - git config user.name travisCISnapshots
-  - git remote set-url origin "https://$WTOKEN@github.com/Displayr/flipFormat.git"
-  - git add tests/testthat/snapshots
-  - if [[ $(git status -s tests/testthat/snapshots) ]]; then git commit -m "Snapshots added from Travis build $TRAVIS_BUILD_NUMBER [ci skip]"; fi
-  # Reconnect repository to master branch - this must happen AFTER the commit
-  - git checkout -b temp
-  - git branch -f $TRAVIS_BRANCH temp
-  - git push origin $TRAVIS_BRANCH || true  #never report error code
 
 notifications:
   slack:
