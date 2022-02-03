@@ -1,6 +1,14 @@
 #' @importFrom httr GET content
 checkImageTag <- function(text)
 {
+    if (grepl("src=[\"']{2}", text))
+    {
+        warning("Image tag contains blank source")
+        return("")
+    }
+    return(paste0("<div>", text, "</div>"))
+
+    #  Rest is ignored
     patt <- "<img src=([\"'])((?:\\\\?+.)*?)\\1>"
     mm <- regexpr(patt, text, perl = TRUE)
     if (mm < 0)
