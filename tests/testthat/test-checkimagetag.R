@@ -11,7 +11,11 @@ test_that("checkImageTag",
     expect_equal(nchar(res), 84)
 
     txt.empty <- "<img src=''>"
-    expect_warning(checkImageTag(txt.empty), "Table content contains an image tag with an invalid link")
+    expect_warning(checkImageTag(txt.empty), "Table content contains an image tag with an empty link")
+
+    txt.empty2 <- "<img src=\"\">"
+    expect_warning(checkImageTag(txt.empty2), "Table content contains an image tag with an empty link")
+
 
     txt.badlink <- "<img src='blah'>Some text"
     expect_warning(res <- checkImageTag(txt.badlink),
@@ -22,4 +26,6 @@ test_that("checkImageTag",
          <img src=https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png width='45' height='100'></a>"
     expect_error(res <- checkImageTag(txt.withattr), NA)
     expect_equal(res, paste0("<div>", txt.withattr, "</div>"))
+
+    txt.style <- "<img style='margin:0 auto;' width='50' src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png'>"
 })
