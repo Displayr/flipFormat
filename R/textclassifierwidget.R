@@ -64,12 +64,12 @@ textClassifierSummaryTable <- function(observed.counts, weighted.sizes, category
 {
     max.rows <- 3000
 
-    observed.n <- FormatAsReal(observed.counts, decimal.places = 0)
+    observed.n <- FormatAsReal(observed.counts, decimals = 0)
     predicted.n.text <- if (all(round(weighted.sizes) == weighted.sizes))
-        FormatAsReal(weighted.sizes, decimal.places = 0)
+        FormatAsReal(weighted.sizes, decimals = 0)
     else
-        FormatAsReal(weighted.sizes, decimal.places = 1)
-    category.n <- FormatAsReal(category.accuracy * observed.counts, decimal.places = 0)
+        FormatAsReal(weighted.sizes, decimals = 1)
+    category.n <- FormatAsReal(category.accuracy * observed.counts, decimals = 0)
     categories <- names(observed.counts)
     t <- matrix(NA, nrow = length(categories), ncol = 6)
     colnames(t) <- c("", "Category", "Observed (n)", "Predicted (n)", "Accuracy (n)", "Example")
