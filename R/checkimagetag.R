@@ -1,38 +1,38 @@
 #' @importFrom httr GET content
 checkImageTag <- function(text)
 {
-    if (grepl("src=[\"']{2}", text))
-    {
-        warning("Image tag contains blank source")
-        return("")
-    }
-    return(paste0("<div>", text, "</div>"))
-
-    #  Rest is ignored
-    patt <- "<img src=([\"'])((?:\\\\?+.)*?)\\1>"
-    mm <- regexpr(patt, text, perl = TRUE)
+    mm <- regexpr("<img [^>]+>", text, perl = TRUE)
     if (mm < 0)
     {
-        patt2 <- "<img src=([^>]+)>"
-        mm2 <- regexpr(patt2, text, perl = TRUE)
-        if (mm2 < 0)
-        {
-            warning("Table content contains an image tag with a syntax error which has been removed: ", text)
-            return("")
-        }
-        imgtag <- substr(text, mm2, mm2 + attr(mm2, "match.length") - 1)
-        imglink <- strsplit(substr(text, attr(mm2, "capture.start")[1], attr(mm2, "capture.start")[1] +
-                                       attr(mm2, "capture.length")[1] - 1), " ")[[1]][1]
-
-    } else
-    {
-        imgtag <- substr(text, mm, mm + attr(mm, "match.length") - 1)
-        imglink <- substr(text, attr(mm, "capture.start")[2], attr(mm, "capture.start")[2] + attr(mm, "capture.length")[2] - 1)
+        warning("Table content contains an image tag with a syntax error which has been removed: ", text)
+        return("")
     }
+    imgtag <- substr(text, mm, mm + attr(mm, "match.length") - 1)
+
+    mm2 <- regexpr("src=(\\S+)", imgtag, perl = TRUE)
+    if (mm2 < 0)
+    {
+        warning("Table content contains an image tag with a syntax error which has been removed: ", text)
+        return("")
+    }
+
+    imglink <- substr(imgtag, attr(mm2, "capture.start")[1],
+                      attr(mm2, "capture.start")[1] + attr(mm2, "capture.length") - 1)
+    imglink <- sub("\\s+", "", imglink)
+    imglink <- sub("^['\"]", "", imglink)
+    imglink <- sub(">$", "", imglink)
+    imglink <- sub("\\s+$", "", imglink)
+    imglink <- sub("['\"]$", "", imglink)
+    if (!nzchar(imglink))
+    {
+        warning("Table content contains an image tag with an empty link")
+        return(sub(imgtag, "", text, fixed = TRUE))
+    }
+
     response <- try(GET(imglink), silent = TRUE)
     if (inherits(response, "try-error") || response$status_code != 200)
     {
-        warning("Table content contains an image tag with an invalid link which has been removed: ", text)
+        warning("Table content contains an image tag with an invalid link which has been removed: ", imglink)
         return(sub(imgtag, "", text, fixed = TRUE))
     } else
     {
