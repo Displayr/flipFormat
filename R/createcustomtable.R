@@ -672,9 +672,25 @@ CreateCustomTable = function(x,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
     class(out) <- c(class(out), "visualization-selector")
-    attr(out, "ChartData") <- clean_html(x)
+    attr(out, "ChartData") <- prepareForExport(x, format.type)
     return(out)
 }
+
+prepareForExport <- function(x, format.type)
+{
+    if (format.type == "Percentage")
+    {
+        x <- x * 100
+        attr(x, "statistic") <- "%"
+        return(x)
+    }
+    else if (is.numeric(x))
+        return(x)
+    else
+        return(clean_html(x))
+
+}
+
 
 #' @importFrom xml2 xml_text read_xml
 clean_html <- function(x)
