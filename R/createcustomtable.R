@@ -159,7 +159,9 @@
 #' @param row.spans List of row spans to place left of the row headers: list(list(height=,label=,class=),
 #'  list(height=,label=,class=)
 #' @param custom.css Any custom CSS to add to the \code{<style>} header of the html
-#'  (e.g. defining nth-child logic or custom classes not included in the CSS function)
+#'  (e.g. defining nth-child logic or custom classes not included in the CSS function).
+#'  When this is used, the resulting widget is inclosed inside an iframe to avoid
+#'  affecting other widgets.
 #' @param use.predefined.css Logical; whether to include CSS definitions for classes
 #'  \code{rh, rhclean, simpleheader, simpleheaderclean, nsline, subjourneyHeader, subjourneySubHeader
 #'  white, spacer}. This is included for backwards compatibiliy but it is probably safer
@@ -668,7 +670,12 @@ CreateCustomTable = function(x,
     if (!is.null(row.height))
         cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
-    out <- boxIframeless(html, text.as.html = TRUE,
+    if (!any(nzchar(custom.css)))
+        out <- boxIframeless(html, text.as.html = TRUE,
+                         font.family = "Circular, Arial, sans-serif",
+                         font.size = 8)
+    else
+        out <- Box(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
     class(out) <- c(class(out), "visualization-selector")

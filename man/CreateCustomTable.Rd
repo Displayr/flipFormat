@@ -427,7 +427,9 @@ list(height=,label=,class=)}
 it is set to "hidden" but change to "visible" to show overflow text.}
 
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
-(e.g. defining nth-child logic or custom classes not included in the CSS function)}
+(e.g. defining nth-child logic or custom classes not included in the CSS function).
+When this is used, the resulting widget is inclosed inside an iframe to avoid
+affecting other widgets.}
 
 \item{use.predefined.css}{Logical; whether to include CSS definitions for classes
 \code{rh, rhclean, simpleheader, simpleheaderclean, nsline, subjourneyHeader, subjourneySubHeader
