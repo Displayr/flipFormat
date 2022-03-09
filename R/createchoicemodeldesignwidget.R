@@ -1,9 +1,9 @@
 #' Display choice model design output as an \code{htmlwidget}
 #'
 #' Creates a \code{htmlwidget} summary of diagnostic information for a
-#' choice model design output from \code{\link[flipChoice]{ChoiceModelDesign}}.
-#' @param x An object of class \code{\link[flipChoice]{ChoiceModelDesign}} output from
-#' \code{\link[flipChoice]{ChoiceModelDesign}}.
+#' choice model design output from \code{flipChoice::ChoiceModelDesign}.
+#' @param x An object of class \code{"ChoiceModelDesign"} output from
+#' \code{flipChoice::ChoiceModelDesign}.
 #' @param css Optional string giving the path to a file containing additional
 #' CSS to style the htmlwidget output.
 #' @param nsmall Integer; see \code{\link{format}}.
@@ -14,7 +14,7 @@
 #'     frequenices, pairwise frequencies, the labeled design, and
 #'     prior information. An attribute called \code{"ChartData"} also
 #'     contains the labeled design.
-#' @seealso \code{\link[flipChoice]{ChoiceModelDesign}},
+#' @seealso \code{ChoiceModelDesign} in package \code{flipChoice},
 #'     \code{\link[rhtmlMetro]{Box}}
 #' @export
 #' @importFrom knitr kable

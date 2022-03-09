@@ -7,8 +7,8 @@
 CreateChoiceModelDesignWidget(x, css = NULL, nsmall = 3, digits = 2, ...)
 }
 \arguments{
-\item{x}{An object of class \code{\link[flipChoice]{ChoiceModelDesign}} output from
-\code{\link[flipChoice]{ChoiceModelDesign}}.}
+\item{x}{An object of class \code{"ChoiceModelDesign"} output from
+\code{flipChoice::ChoiceModelDesign}.}
 
 \item{css}{Optional string giving the path to a file containing additional
 CSS to style the htmlwidget output.}
@@ -28,9 +28,9 @@ An \code{htmlwidget} containing diagnostic information for
 }
 \description{
 Creates a \code{htmlwidget} summary of diagnostic information for a
-choice model design output from \code{\link[flipChoice]{ChoiceModelDesign}}.
+choice model design output from \code{flipChoice::ChoiceModelDesign}.
 }
 \seealso{
-\code{\link[flipChoice]{ChoiceModelDesign}},
+\code{ChoiceModelDesign} in package \code{flipChoice},
     \code{\link[rhtmlMetro]{Box}}
 }
