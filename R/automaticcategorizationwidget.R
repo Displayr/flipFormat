@@ -52,9 +52,9 @@ autoCategorizationSummaryTable <- function(sizes, base.size,
     max.rows <- 1000
 
     n.text <- if (all(round(sizes) == sizes))
-        FormatWithDecimals(sizes, decimal.places = 0)
+        FormatAsReal(sizes, decimals = 0)
     else
-        FormatWithDecimals(sizes, decimal.places = 1)
+        FormatAsReal(sizes, decimals = 1)
     categories <- names(sizes)
     t <- matrix(NA, nrow = length(categories), ncol = 4)
     colnames(t) <- c("", "Category", "Size (n)", "Example")

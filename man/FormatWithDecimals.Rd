@@ -2,8 +2,8 @@
 % Please edit documentation in R/number.R
 \name{FormatWithDecimals}
 \alias{FormatWithDecimals}
-\title{This function is deprecated. Use FormatAsReal instead.
-Formats real numbers with a specified number of decimal places.}
+\title{This function is deprecated. Use FormatAsReal instead.  Formats
+real numbers with a specified number of decimal places.}
 \usage{
 FormatWithDecimals(x, decimal.places = 2)
 }
@@ -13,6 +13,10 @@ FormatWithDecimals(x, decimal.places = 2)
 \item{decimal.places}{Number of decimal places to show.}
 }
 \description{
-This function is deprecated. Use FormatAsReal instead.
-Formats real numbers with a specified number of decimal places.
+This function is deprecated. Use FormatAsReal instead.  Formats
+real numbers with a specified number of decimal places.
+}
+\note{
+Specifying \code{decimal.places} to be 0 is now an error for
+    R v4.2.0 and above.
 }

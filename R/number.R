@@ -104,13 +104,16 @@ FormatAsPValue <- function(p, p.cutoff = 0.05, max.decimals = 12)
     p.formatted
 }
 
-#' This function is deprecated. Use FormatAsReal instead.
-#' Formats real numbers with a specified number of decimal places.
+#' This function is deprecated. Use FormatAsReal instead.  Formats
+#' real numbers with a specified number of decimal places.
 #' @param x The number(s).
 #' @param decimal.places Number of decimal places to show.
+#' @note Specifying \code{decimal.places} to be 0 is now an error for
+#'     R v4.2.0 and above.
 #' @export
 FormatWithDecimals <- function(x, decimal.places = 2)
 {
+    .Deprecated("FormatAsReal", "flipFormat")
     trimws(format(c(round_half_up(x, decimal.places), 0.123456789),
                   digits = decimal.places,
                   scientific = FALSE,
