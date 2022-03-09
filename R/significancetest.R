@@ -43,7 +43,7 @@ SignificanceTest <- function(obj, test.name, vars = NULL, filter = NULL, weight 
     result$null.hypothesis <- nullHypothesis(obj, test.name)
     result$additional.footer <- ""
 
-    if (class(obj) == "htest")
+    if (inherits(obj, "htest"))
     {
         result$estimate <- unname(obj$estimate)
         result$estimate.name <- names(obj$estimate)
