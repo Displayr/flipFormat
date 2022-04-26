@@ -443,15 +443,16 @@ CreateCustomTable = function(x,
         }
     }
 
-    # Set up styles for each cell - vector/matrix values automatically recycled
+    # Set up styles for each cell
+    ncells <- nrows * ncols
     cell.styles <- addCSSclass(cata, "celldefault",
-        paste0(cell.fill, "; ", if (sum(nchar(row.height)) > 0) paste0("height: ", row.height, "; ") else "",
+        rep(paste0(cell.fill, "; ", if (sum(nchar(row.height)) > 0) paste0("height: ", row.height, "; ") else "",
         if (override.borders) "" else paste0("border: ", cell.border.width, "px solid ", cell.border.color),
         ";", getPaddingCSS(tolower(cell.align.horizontal), cell.pad),
         "; font-size: ", cell.font.size, font.unit, "; font-style: ", cell.font.style,
         "; font-weight: ", cell.font.weight, "; font-family: ", cell.font.family,
         "; color:", cell.font.color, "; text-align: ", cell.align.horizontal,
-        "; vertical-align: ", cell.align.vertical, ";"), nrows, ncols,
+        "; vertical-align: ", cell.align.vertical, ";"), length=ncells), nrows, ncols,
         position = top.position, parent.stem = container.name)
 
     # Row/column classes overrides other attributes (except coloring based on significance)
