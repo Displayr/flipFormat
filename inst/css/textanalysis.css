@@ -218,6 +218,7 @@ details[open] + .text-analysis-panel-container {
 }
 
 .text-analysis-diagnostics-table {
+    display: inline-block;
     font-size: 12px;
     margin-left: 10px;
     margin-right: 10px;
