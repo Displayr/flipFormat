@@ -121,18 +121,18 @@ addStatistics <- function(x, digits, nsmall, cata)
     cata(paste0("<b>Algorithm: </b>", x$design.algorithm, "</td>"))
     cata("<td style=\"text-align: left;\">")
     d.error.string.elements <- c("<b>D-error: </b>", format1(x$d.error))
-    if (!is.null(x$d.error.scaled.for.respondents)) {
+    if (!is.null(x$respondent.scaled.d.error)) {
         d.error.string.elements <- c(d.error.string.elements, 
-            " (with sample size: ", format1(x$d.error.scaled.for.respondents), ")")
+            " (with sample size: ", format1(x$respondent.scaled.d.error), ")")
     }
     cata(paste0(c(d.error.string.elements, "</td>")))
     if (!is.null(x$a.error))
     {
         cata("<td style=\"text-align: left;\">")
         a.error.string.elements <- c("<b>A-error: </b>", format1(x$a.error))
-        if (!is.null(x$a.error.scaled.for.respondents)) {
+        if (!is.null(x$respondent.scaled.a.error)) {
             a.error.string.elements <- c(a.error.string.elements, 
-                " (with sample size: ", format1(x$a.error.scaled.for.respondents), ")")
+                " (with sample size: ", format1(x$respondent.scaled.a.error), ")")
         } 
         cata(paste0(c(a.error.string.elements, "</td>") ))
     }
