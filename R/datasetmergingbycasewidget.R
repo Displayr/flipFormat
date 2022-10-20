@@ -138,7 +138,6 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
             html.row <- paste0(html.row, variable.table.html)
             is.summary.highlighted <- attr(variable.table.html,
                                            "is.summary.highlighted")
-
             if (!is.null(merged.val.attr))
             {
                 val.attr.table.html <- valueAttributesTable(merged.val.attr,
@@ -423,8 +422,9 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
                 if (input.var.types[[k]][input.var.ind[k]] %in% cat.types)
                 {
                     val.attr <- input.var.val.attr[[k]][[input.var.ind[k]]]
-                    lbl <- names(val.attr)[val.attr == input.val.attr.list[[k]][j]]
-                    cell.class <- if (input.val.attr.list[[k]][j] != merged.val.attr[j] ||
+                    lbl <- names(val.attr)[which(val.attr == input.val.attr.list[[k]][j])]
+                    cell.class <- if (is.na(merged.val.attr[j]) ||
+                                      input.val.attr.list[[k]][j] != merged.val.attr[j] ||
                                       lbl != names(merged.val.attr)[j])
                     {
                         is.summary.highlighted <- TRUE

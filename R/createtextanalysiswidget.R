@@ -411,7 +411,6 @@ addCss <- function(file.name, cata, in.css.folder = TRUE)
         system.file("css", file.name, package = "flipFormat")
     else
         file.name
-
     if (file.exists(file.path))
     {
         cata("<style>\n")
