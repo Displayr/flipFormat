@@ -423,7 +423,7 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
                 {
                     val.attr <- input.var.val.attr[[k]][[input.var.ind[k]]]
                     lbl <- names(val.attr)[which(val.attr == input.val.attr.list[[k]][j])]
-                    cell.class <- if (is.na(input.val.attr.list[[k]][j]) && !is.na(merged.val.attr[j]) ||
+                    cell.class <- if (is.na(merged.val.attr[j]) ||
                                       input.val.attr.list[[k]][j] != merged.val.attr[j] ||
                                       lbl != names(merged.val.attr)[j])
                     {
