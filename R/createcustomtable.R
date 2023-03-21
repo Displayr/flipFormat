@@ -334,9 +334,12 @@ CreateCustomTable = function(x,
                else                                  FormatAsReal(x, decimals = format.decimals)
     content <- matrix(paste0(cell.prefix, content, cell.suffix), nrows, ncols)
     if (suppress.nan)
-        content[which(is.nan(x))] <- ""
+        content[which(is.nan(x))] <- "<br>"
     if (suppress.na)
-        content[which(is.na(x) & !is.nan(x))] <- ""
+        content[which(is.na(x) & !is.nan(x))] <- "<br>"
+    ind.empty <- which(!nzchar(content))
+    if (any(ind.empty))
+        content[ind.empty] <- "<br>"
     if (is.character(x))
     {
         # check image tags and remove and warn for invalid urls
