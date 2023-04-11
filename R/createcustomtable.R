@@ -431,15 +431,15 @@ CreateCustomTable = function(x,
     cata("}\n")
 
     # supply units if none given (default px); however other units such as pt, em still valid
-    if (!is.na(suppressWarnings(as.numeric(col.header.height))))
+    if (!show.col.headers)
+        col.header.height <- "0px"
+    if (length(col.header.height) > 0 && !is.na(suppressWarnings(as.numeric(col.header.height))))
         col.header.height <- paste0(col.header.height, "px")
 
     # initialize positions for sticky header with scrollable table
     top.position <- NULL
     if (!is.null(row.height) && num.header.rows > 0)
     {
-        if (!show.col.headers)
-            col.header.height <- "0px"
         top.position <- sprintf("%s + %.0fpx", col.header.height, col.header.border.width)
         if (num.header.rows > 1)
         {
