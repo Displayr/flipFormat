@@ -169,15 +169,25 @@ idVariableTable <- function(id.variable.names,
 #'  the bottom of the output. Currently only shows the omitted variables from
 #'  each data set.
 #' @noRd
-mergingNote <- function(omitted.variable.names.list)
+mergingNote <- function(omitted.variable.names.list, page, n.vars,
+                        variables.per.page)
 {
+    has.truncation.warning <- is.na(page) && n.vars > variables.per.page
     n.omitted <- vapply(omitted.variable.names.list, length, integer(1))
 
     html <- ""
-    if (any(n.omitted > 0))
+    if (has.truncation.warning || any(n.omitted > 0))
     {
         html <- paste0(html, "<div class=\"data-set-widget-title\">",
                        "Note:", "</div>")
+
+        if (has.truncation.warning) {
+            html <- paste0(html, "<div class=\"data-set-widget-subtitle-warning\">",
+                           "Only the first ",
+                           variables.per.page, " variables are shown. ",
+                           'Click on "View Variables from Merged Data” in the Inputs tab to view the other variables',
+                           "</div>")
+        }
 
         for (i in which(n.omitted > 0))
         {
