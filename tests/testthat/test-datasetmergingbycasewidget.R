@@ -103,7 +103,7 @@ test_that("Too many variables to fit in a page", {
     if (identical(Sys.getenv("TRAVIS"), "true"))
     {
         print("Comparing snapshot on travis")
-        expect_true(TestWidget(widget, "merging-by-case-widget-page-2", height = 800))
+        expect_true(TestWidget(widget, "merging-by-case-widget-warning", height = 800))
     }
 })
 

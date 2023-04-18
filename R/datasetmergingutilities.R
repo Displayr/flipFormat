@@ -75,3 +75,12 @@ variableIndexSpanWidth <- function(page.var.ind)
 {
     ceiling(log10(max(page.var.ind) + 1)) * 10 + 15
 }
+
+#' @importFrom utils tail
+pageSubtitle <- function(n.vars, page, variables.per.page, page.var.ind)
+{
+
+    paste0("Page ", page, " of ", numberOfPages(n.vars, variables.per.page),
+           " (variables ", head(page.var.ind, 1), " to ",
+           tail(page.var.ind, 1), ")")
+}

@@ -272,14 +272,6 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
     html
 }
 
-pageSubtitle <- function(n.vars, page, variables.per.page, page.var.ind)
-{
-
-    paste0("Page ", page, " of ", numberOfPages(n.vars, variables.per.page),
-           " (variables ", head(page.var.ind, 1), " to ",
-           tail(page.var.ind, 1), ")")
-}
-
 # Convert from internal types to user-facing types
 variableTypeConverter <- function(variable.type)
 {

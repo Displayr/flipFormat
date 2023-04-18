@@ -47,16 +47,15 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
                          htmlText(merged.data.set.metadata$data.set.name),
                          "</div>")
 
+    n.vars <- merged.data.set.metadata$n.variables
+    page.var.ind <- variableIndicesInPage(n.vars, page, variables.per.page)
+
     subtitle.html <-  mergingByVariableSubtitle(merged.data.set.metadata,
                                                 is.saved.to.cloud,
                                                 !is.null(merged.id.variable.name),
                                                 n.vars, page,
                                                 variables.per.page,
                                                 page.var.ind)
-
-    n.vars <- merged.data.set.metadata$n.variables
-
-    page.var.ind <- variableIndicesInPage(n.vars, page, variables.per.page)
 
     num.span.width <- variableIndexSpanWidth(page.var.ind)
     html.vars <- rep(NA_character_, length(page.var.ind))
@@ -214,7 +213,7 @@ mergingNote <- function(omitted.variable.names.list, page, n.vars,
             html <- paste0(html, "<div class=\"data-set-widget-subtitle-warning\">",
                            "Only the first ",
                            variables.per.page, " variables are shown. ",
-                           'Click on "View Variables from Merged Data” in the Inputs tab to view the other variables',
+                           'Click on "View Variables from Merged Data" in the Inputs tab to view the other variables',
                            "</div>")
         }
 
