@@ -200,7 +200,7 @@ idVariableTable <- function(id.variable.names,
 mergingNote <- function(omitted.variable.names.list, page, n.vars,
                         variables.per.page)
 {
-    has.truncation.warning <- is.na(page) && n.vars > variables.per.page
+    has.truncation.warning <- is.null(page) && n.vars > variables.per.page
     n.omitted <- vapply(omitted.variable.names.list, length, integer(1))
 
     html <- ""
