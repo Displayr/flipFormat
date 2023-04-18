@@ -34,7 +34,7 @@ DataSetMergingByVariableWidget <- function(input.data.sets.metadata,
                                            id.variable.names,
                                            example.id.values,
                                            is.saved.to.cloud,
-                                           page = NA,
+                                           page = NULL,
                                            variables.per.page = 1000)
 {
     tfile <- createTempFile()
@@ -141,7 +141,7 @@ mergingByVariableSubtitle <- function(merged.data.set.metadata,
                        "Legend: <span class=\"data-set-widget-id-shade\">",
                        "&nbsp;ID&nbsp;variable&nbsp;</span></div>")
 
-    if (!is.na(page) && n.vars > variables.per.page) {
+    if (!is.null(page) && n.vars > variables.per.page) {
         page.subtitle <- pageSubtitle(n.vars, page, variables.per.page,
                                       page.var.ind)
         html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",

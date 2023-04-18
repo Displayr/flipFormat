@@ -45,7 +45,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        omitted.variable.names.list,
                                        input.value.attributes.list,
                                        is.saved.to.cloud,
-                                       page = NA,
+                                       page = NULL,
                                        variables.per.page = 1000)
 {
     tfile <- createTempFile()
@@ -262,7 +262,7 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
                    "&nbsp;Difference&nbsp;in&nbsp;inputs&nbsp;</span>",
                    "</div>")
 
-    if (!is.na(page) && n.vars > variables.per.page) {
+    if (!is.null(page) && n.vars > variables.per.page) {
         page.subtitle <- pageSubtitle(n.vars, page, variables.per.page,
                                       page.var.ind)
         html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",

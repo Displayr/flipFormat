@@ -50,7 +50,7 @@ variableNameAndLabelText <- function(var.name, var.label)
 
 variableIndicesInPage <- function(n.vars, page, variables.per.page)
 {
-    if (is.na(page)) {
+    if (is.null(page)) {
         seq_len(min(n.vars, variables.per.page))
     } else {
         n.pages <- numberOfPages(n.vars, variables.per.page)
