@@ -71,3 +71,39 @@ test_that("DS-4004: Handles NAs in label matching in valueAttributesTable", {
                                       value.atts.DS4004$input.val.attr.list,
                                       value.atts.DS4004$input.var.ind), NA)
 })
+
+test_that("Pagination", {
+    widget <- DataSetMergingByCaseWidget(merge.data.set.output$input.data.sets.metadata,
+                                         merge.data.set.output$merged.data.set.metadata,
+                                         merge.data.set.output$matched.names,
+                                         merge.data.set.output$merged.names,
+                                         merge.data.set.output$omitted.variable.names.list,
+                                         merge.data.set.output$input.value.attributes.list,
+                                         merge.data.set.output$is.saved.to.cloud,
+                                         page = 2,
+                                         variables.per.page = 10)
+
+    if (identical(Sys.getenv("TRAVIS"), "true"))
+    {
+        print("Comparing snapshot on travis")
+        expect_true(TestWidget(widget, "merging-by-case-widget-page-2", height = 800))
+    }
+})
+
+test_that("Too many variables to fit in a page", {
+    widget <- DataSetMergingByCaseWidget(merge.data.set.output$input.data.sets.metadata,
+                                         merge.data.set.output$merged.data.set.metadata,
+                                         merge.data.set.output$matched.names,
+                                         merge.data.set.output$merged.names,
+                                         merge.data.set.output$omitted.variable.names.list,
+                                         merge.data.set.output$input.value.attributes.list,
+                                         merge.data.set.output$is.saved.to.cloud,
+                                         variables.per.page = 10)
+
+    if (identical(Sys.getenv("TRAVIS"), "true"))
+    {
+        print("Comparing snapshot on travis")
+        expect_true(TestWidget(widget, "merging-by-case-widget-page-2", height = 800))
+    }
+})
+

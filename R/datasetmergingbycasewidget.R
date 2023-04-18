@@ -205,34 +205,6 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
     createWidgetFromFile(tfile)
 }
 
-variableIndicesInPage <- function(n.vars, page, variables.per.page)
-{
-    if (is.na(page)) {
-        seq_len(min(n.vars, variables.per.page))
-    } else {
-        n.pages <- numberOfPages(n.vars, variables.per.page)
-        if (page > n.pages) {
-            warning("The specified page number exceeds the number of pages. ",
-                    "The last page has been shown.")
-            n.pages
-        } else {
-            start.ind <- (page - 1) * variables.per.page + 1
-            end.ind <- min(n.vars, page * variables.per.page)
-            start.ind:end.ind
-        }
-    }
-}
-
-numberOfPages <- function(n.vars, variables.per.page)
-{
-    ceiling(n.vars / variables.per.page)
-}
-
-variableIndexSpanWidth <- function(page.var.ind)
-{
-    ceiling(log10(max(page.var.ind) + 1)) * 10 + 15
-}
-
 mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
                             is.saved.to.cloud, n.vars, page, variables.per.page,
                             page.var.ind)
