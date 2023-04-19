@@ -57,12 +57,11 @@ variableIndicesInPage <- function(n.vars, page, variables.per.page)
         if (page > n.pages) {
             warning("The specified page number exceeds the number of pages. ",
                     "The last page has been shown.")
-            n.pages
-        } else {
-            start.ind <- (page - 1) * variables.per.page + 1
-            end.ind <- min(n.vars, page * variables.per.page)
-            start.ind:end.ind
+            page <- n.pages
         }
+        start.ind <- (page - 1) * variables.per.page + 1
+        end.ind <- min(n.vars, page * variables.per.page)
+        start.ind:end.ind
     }
 }
 
@@ -79,8 +78,8 @@ variableIndexSpanWidth <- function(page.var.ind)
 #' @importFrom utils tail
 pageSubtitle <- function(n.vars, page, variables.per.page, page.var.ind)
 {
-
-    paste0("Page ", page, " of ", numberOfPages(n.vars, variables.per.page),
+    n.pages <- numberOfPages(n.vars, variables.per.page)
+    paste0("Page ", min(page, n.pages), " of ", n.pages,
            " (variables ", head(page.var.ind, 1), " to ",
            tail(page.var.ind, 1), ")")
 }
