@@ -76,7 +76,7 @@ mergingNote <- function(omitted.variable.names.list, page, n.vars,
             html <- paste0(html, "<div class=\"data-set-widget-subtitle-warning\">",
                            "Only the first ",
                            variables.per.page, " variables are shown. ",
-                           'Click on "View Variables from Combined Data" in the Inputs tab to view the other variables',
+                           'Click on "Variables from Combined Data" in the Inputs tab to view the other variables',
                            "</div>")
         }
 
