@@ -33,6 +33,10 @@
 #'   not categorical.
 #' @param is.saved.to.cloud A logical scalar indicating whether the merged data
 #'   set was saved to the Displayr cloud drive.
+#' @param page A numeric scalar of the page number. If not specified, the first
+#'   page is shown.
+#' @param variables.per.page A numeric scalar of the number of variables per
+#'   page.
 #' @export
 DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        merged.data.set.metadata,
@@ -40,7 +44,9 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                        merged.names,
                                        omitted.variable.names.list,
                                        input.value.attributes.list,
-                                       is.saved.to.cloud)
+                                       is.saved.to.cloud,
+                                       page = NULL,
+                                       variables.per.page = 1000)
 {
     tfile <- createTempFile()
     cata <- createCata(tfile)
@@ -51,13 +57,18 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
     is.fuzzy.match <- attr(matched.names, "is.fuzzy.match")
     vars.matched.by <- attr(matched.names, "matched.by")
 
+    n.vars <- merged.data.set.metadata$n.variables
+
+    page.var.ind <- variableIndicesInPage(n.vars, page, variables.per.page)
+
     html <- paste0("<div class=\"data-set-widget-main-container\">",
                    "<div class=\"data-set-widget-title\">",
                    htmlText(merged.data.set.metadata$data.set.name),
                    "</div>")
 
     html <- paste0(html, mergingSubtitle(merged.data.set.metadata, vars.matched.by,
-                                         is.saved.to.cloud))
+                                         is.saved.to.cloud, n.vars, page,
+                                         variables.per.page, page.var.ind))
 
     # For each variable in the merged data set, create a collapsible container
     # labeled with the variable name and label. The label will be highlighted
@@ -68,22 +79,15 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
     # data sets (if categorical). Highlighting will be used to indicate
     # irregularities in the table.
 
-    n.vars <- merged.data.set.metadata$n.variables
-    output.var.limit <- 10000
-    n.variables.to.show <- min(n.vars, output.var.limit)
-    if (n.vars > output.var.limit)
-        warning("Due to the large number of variables in the output data set (",
-                n.vars, "), only the first ", output.var.limit,
-                " variables have been shown.")
-
     n.data.sets <- input.data.sets.metadata$n.data.sets
-    num.span.width <- ceiling(log10(n.variables.to.show + 1)) * 10 + 15
+    num.span.width <- variableIndexSpanWidth(page.var.ind)
 
     renamed.vars <- attr(merged.names, "renamed.variables")
 
-    html.vars <- rep(NA_character_, n.variables.to.show)
+    html.vars <- rep(NA_character_, length(page.var.ind))
 
-    for (i in seq_len(n.variables.to.show))
+    k <- 1
+    for (i in page.var.ind)
     {
         var.name <- merged.data.set.metadata$variable.names[i]
         var.label <- merged.data.set.metadata$variable.labels[i]
@@ -165,7 +169,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                                                 input.var.names, i,
                                                 contains.fuzzy.match,
                                                 contains.manual.match)
-                html.vars[i] <- paste0("<details class=\"details data-set-merging-details\">",
+                html.vars[k] <- paste0("<details class=\"details data-set-merging-details\">",
                                        html.summary, html.row, "</details>")
             }
             else
@@ -173,7 +177,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
                 v.index.text <- variableIndexSpan(i, num.span.width)
                 indicators <- dataSetIndicatorsSpan(input.var.names != "-")
                 name.and.label <- variableNameAndLabelText(var.name, var.label)
-                html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
+                html.vars[k] <- paste0("<div class=\"data-set-widget-row\">",
                                        v.index.text, indicators,
                                        name.and.label, "</div>")
             }
@@ -184,23 +188,26 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
             indicator.spacing <- paste0("<span class=\"data-set-merging-indicator-container\">",
                                         paste0(rep("<span class=\"data-set-merging-indicator-mergesrc\">&#8193;</span>",
                                                n.data.sets), collapse = ""), "</span>")
-            html.vars[i] <- paste0("<div class=\"data-set-widget-row\">",
+            html.vars[k] <- paste0("<div class=\"data-set-widget-row\">",
                                    v.index.text, indicator.spacing,
                                    variableNameAndLabelText(var.name, var.label),
                                    "</div>")
         }
+        k <- k + 1
     }
 
     cata(paste0(html,
                 paste0(html.vars, collapse = ""),
-                mergingNote(omitted.variable.names.list),
+                mergingNote(omitted.variable.names.list, page, n.vars,
+                            variables.per.page),
                 "</div>")) # close data-set-merging-main-container
 
     createWidgetFromFile(tfile)
 }
 
 mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
-                            is.saved.to.cloud)
+                            is.saved.to.cloud, n.vars, page, variables.per.page,
+                            page.var.ind)
 {
     html <- ""
 
@@ -242,8 +249,6 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
                    " and ", matched.by[length(matched.by)])
     }
 
-
-
     html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
                    matched.by.msg, "</div>")
 
@@ -256,6 +261,13 @@ mergingSubtitle <- function(merged.data.set.metadata, vars.matched.by,
                    "<span class=\"data-set-widget-highlight-shade\">",
                    "&nbsp;Difference&nbsp;in&nbsp;inputs&nbsp;</span>",
                    "</div>")
+
+    if (!is.null(page) && n.vars > variables.per.page) {
+        page.subtitle <- pageSubtitle(n.vars, page, variables.per.page,
+                                      page.var.ind)
+        html <- paste0(html, "<div class=\"data-set-widget-subtitle\">",
+                       page.subtitle, "</div>")
+    }
 
     html
 }

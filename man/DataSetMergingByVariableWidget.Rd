@@ -12,7 +12,9 @@ DataSetMergingByVariableWidget(
   merged.id.variable.name,
   id.variable.names,
   example.id.values,
-  is.saved.to.cloud
+  is.saved.to.cloud,
+  page = NA,
+  variables.per.page = 1000
 )
 }
 \arguments{
@@ -44,6 +46,12 @@ input data set.}
 
 \item{is.saved.to.cloud}{A logical scalar indicating whether the merged data
 set was saved to the Displayr cloud drive.}
+
+\item{page}{A numeric scalar of the page number. If not specified, the first
+page is shown.}
+
+\item{variables.per.page}{A numeric scalar of the number of variables per
+page.}
 }
 \description{
 Widget shown in output for \code{flipData::MergeDataSetsByVariable}.
