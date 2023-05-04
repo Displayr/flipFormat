@@ -13,7 +13,7 @@ DataSetMergingByVariableWidget(
   id.variable.names,
   example.id.values,
   is.saved.to.cloud,
-  page = NA,
+  page = NULL,
   variables.per.page = 1000
 )
 }
