@@ -12,7 +12,7 @@ DataSetMergingByCaseWidget(
   omitted.variable.names.list,
   input.value.attributes.list,
   is.saved.to.cloud,
-  page = NA,
+  page = NULL,
   variables.per.page = 1000
 )
 }
