@@ -421,8 +421,9 @@ CreateCustomTable = function(x,
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
     # to allow for multiple sticky rows
-    cata(container.selector.name, "th { position: -webkit-sticky; position: sticky; top:", 
-        paste0(-col.header.border.width, "px;"), "overflow: ", overflow, "; ")
+    if (show.col.headers)
+        cata(container.selector.name, "th { position: -webkit-sticky; position: sticky; top:", 
+            paste0("-", 0 + col.header.border.width, "px;"), "overflow: ", overflow, "; ")
     if (resizable)
         cata("resize: both; ")
     cata("}\n")
