@@ -94,7 +94,7 @@ DataSetMergingByCaseWidget <- function(input.data.sets.metadata,
         var.type <- variableTypeConverter(merged.data.set.metadata$variable.types[i])
         merged.val.attr <- merged.data.set.metadata$variable.value.attributes[[i]]
 
-        if (i < n.vars) # not the mergesrc variable
+        if (!identical(names(var.label), "mergesrc"))
         {
             input.var.ind <- vapply(seq_len(n.data.sets), function(j) {
                 match(matched.names[i, j], input.data.sets.metadata$variable.names[[j]])
