@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/Displayr/flipFormat/badge.svg?branch=master)](https://coveralls.io/github/Displayr/flipFormat?branch=master)
 # flipFormat
 
-Formatting of R outputs
+Tools for summarizing various Advanced Analysis, Calculation, and Table outputs in Displayr as interactive htmlwidgets
 
 ## Installation
 
