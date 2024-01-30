@@ -18,6 +18,9 @@ parameters:
     type: enum
     enum: [nightly, rocker, machine]
     default: nightly
+  save-snapshots:
+    type: boolean
+    default: true    
 
 workflows:
   build-and-check-R-package:
@@ -26,9 +29,10 @@ workflows:
           executor: << pipeline.parameters.executor >>
           name: BuildAndCheckPackage
           context:
-            - r_packages
+            - rviz_packages
           remote-deps: << pipeline.parameters.remote-deps >>
           separate-test-job: false
+          save-snapshots: << pipeline.parameters.save-snapshots >>
       - r-packages/deploy-package:
           executor: << pipeline.parameters.executor >>
           requires:
