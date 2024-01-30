@@ -83,9 +83,9 @@ test_that("Pagination", {
                                          page = 2,
                                          variables.per.page = 10)
 
-    if (identical(Sys.getenv("TRAVIS"), "true"))
+    if (identical(Sys.getenv("CIRCLECI"), "true"))
     {
-        print("Comparing snapshot on travis")
+        print("Comparing snapshot on Circle-CI")
         expect_true(TestWidget(widget, "merging-by-case-widget-page-2", height = 800))
     }
 })
@@ -100,9 +100,9 @@ test_that("Too many variables to fit in a page", {
                                          merge.data.set.output$is.saved.to.cloud,
                                          variables.per.page = 10)
 
-    if (identical(Sys.getenv("TRAVIS"), "true"))
+    if (identical(Sys.getenv("CIRCLECI"), "true"))
     {
-        print("Comparing snapshot on travis")
+        print("Comparing snapshot on Circle-CI")
         expect_true(TestWidget(widget, "merging-by-case-widget-warning", height = 800))
     }
 })
