@@ -149,5 +149,5 @@ test_that("Too many variables to fit in a page", {
 
 test_that("DS-5301: Widget creation works if one input dataset already has a mergeSrc variable", 
 {
-    expect_error(print(merge.output.existing.mergesrc), NA)
+    expect_error(print(merge.output.existing.mergesrc)), NA)
 }
