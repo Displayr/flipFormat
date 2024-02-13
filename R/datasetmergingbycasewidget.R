@@ -424,11 +424,12 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
         result <- paste0(result, "<tr><td>",
                          htmlText(names(merged.val.attr)[j]),
                          "</td><td>", htmlText(merged.val.attr[j]), "</td>")
-
+        missing.from.all.data.sets <- TRUE
         for (k in seq_len(n.data.sets))
         {
             result <- if (!is.na(input.val.attr.list[[k]][j]))
             {
+                missing.from.all.data.sets <- FALSE
                 val <- input.val.attr.list[[k]][j]
 
                 if (input.var.types[[k]][input.var.ind[k]] %in% cat.types)
@@ -459,7 +460,11 @@ valueAttributesTable <- function(merged.val.attr, input.data.sets.metadata,
                 }
             }
             else # Missing value
+            {
+                if (!missing.from.all.data.sets)
+                    is.summary.highlighted <- TRUE
                 paste0(result, "<td>-</td>")
+            }
         }
         result <- paste0(result, "</tr>")
     }
