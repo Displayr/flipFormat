@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  r-packages: displayr/r-packages@dev:a6d0faec0ddb6ca0c1700fb8367659c8c0c10834
+  r-packages: displayr/r-packages@dev:404333bf47e42b7240716d76050f527dbc573fbd
 parameters:
   trigger-message:
     type: string
