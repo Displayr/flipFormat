@@ -112,7 +112,9 @@ test_that("DS-4004: Handles NAs in label matching in valueAttributesTable", {
                                       value.atts.DS4004$input.var.ind), NA)
 })
 
-test_that("Pagination", {
+test_that("Pagination and DS-4008", {
+    # DS-4008: Q4_B_2 and Q4_C_2 should be highlighted because the code 99 does not appear
+    ##  in all input data sets
     widget <- DataSetMergingByCaseWidget(merge.data.set.output$input.data.sets.metadata,
                                          merge.data.set.output$merged.data.set.metadata,
                                          merge.data.set.output$matched.names,
