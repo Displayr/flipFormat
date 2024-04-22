@@ -204,6 +204,8 @@ generateRandomString <- function(digits = 10)
 }
 
 #' @importFrom rhtmlMetro Box
+#' @export
+#' @noRd
 boxIframeless <- function(...)
 {
     w <- Box(...)

@@ -392,6 +392,8 @@ setAlpha <- function(col, alpha)
 }
 
 # refactor code in CreateChoiceModelDesignWidget
+#' @export
+#' @noRd
 createTempFile <- function()
 {
     tfile <- tempfile(fileext = ".html")
@@ -399,12 +401,16 @@ createTempFile <- function()
     tfile
 }
 
+#' @export
+#' @noRd
 createCata <- function(tfile)
 {
     cata <- function(...)
         cat(..., file = tfile, append = TRUE)
 }
 
+#' @export
+#' @noRd
 addCss <- function(file.name, cata, in.css.folder = TRUE)
 {
     file.path <- if (in.css.folder)
