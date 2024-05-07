@@ -12,6 +12,7 @@ Depends: R (>= 3.5.0)
 Imports:
     colorspace,
     DT,
+    flipTime,
     flipU (>= 1.2.5),
     formattable,
     htmltools,
@@ -25,6 +26,7 @@ Imports:
     stringi,
     rhtmlMetro (>= 1.0.2),
     striprtf,
+    verbs,
     xml2
 Suggests:
     testthat,

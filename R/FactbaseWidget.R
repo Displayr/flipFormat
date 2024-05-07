@@ -168,7 +168,7 @@ FactbaseUploadWidget <- function(factbase.token = "",
 
 # Given a data frame intended for factbase,
 # comute summary information for each column
-#' @importFrom  Sum
+#' @importFrom verbs Sum
 #' @importFrom stats complete.cases
 DataSummaryForFactbase <- function(df) {
     summaries <- lapply(df, SummarizeFactbaseVariable)
