@@ -26,7 +26,6 @@ Imports:
     stringi,
     rhtmlMetro (>= 1.0.2),
     striprtf,
-    verbs,
     xml2
 Suggests:
     testthat,
