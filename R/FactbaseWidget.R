@@ -12,6 +12,31 @@
 #'
 #' @return An HTMLwidget that shows summary details about the upload.
 #'
+#' @param factbase.token Undocumented
+#' @param mode Undocumented
+#' @param aggregation Undocumented
+#' @param time_aggregation Undocumented
+#' @param period_type Undocumented
+#' @param definition Undocumented
+#' @param hyperlink Undocumented
+#' @param owner Undocumented
+#' @param do.upload Undocumented
+#' @param selection.type Undocumented
+#' @param input.table Undocumented
+#' @param make.dummy.metric Undocumented
+#' @param metric.variables Undocumented
+#' @param metric.column.names Undocumented
+#' @param date.column.name Undocumented
+#' @param date.variable Undocumented
+#' @param dimension.column.names Undocumented
+#' @param dimension.variables Undocumented
+#' @param output.type Undocumented
+#' @param start.date Undocumented
+#' @param time.zone Undocumented
+#' @param update.period Undocumented
+#' @param update.frequency Undocumented
+#' @param us.format Undocumented
+#'
 #' @importFrom flipTime UpdateAt
 #' @importFrom flipTime UpdateEvery
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
