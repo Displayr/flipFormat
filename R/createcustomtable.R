@@ -516,7 +516,7 @@ CreateCustomTable = function(x,
             "; font-size: ", row.span.font.size, font.unit, "; font-style: ", row.span.font.style,
             "; font-weight: ", row.span.font.weight, "; font-family: ", row.span.font.family,
             "; color:", row.span.font.color, "; text-align: ", row.span.align.horizontal,
-            "; vertical-align: ", row.span.align.vertical, ";"), nrows, position = top.position,
+            "; vertical-align: ", row.span.align.vertical, ";"), length(row.span.lengths), position = top.position,
             parent.stem = container.name)
         for (i in 1:length(row.spans))
             if (!is.null(row.spans[[i]]$class))
@@ -595,7 +595,7 @@ CreateCustomTable = function(x,
             "; font-size: ", col.span.font.size, font.unit, "; font-style: ", col.span.font.style,
             "; font-weight: ", col.span.font.weight, "; font-family: ", col.span.font.family,
             "; color:", col.span.font.color, "; text-align: ", col.span.align.horizontal,
-            "; vertical-align: ", col.span.align.vertical, ";"), ncols, position = top.position,
+            "; vertical-align: ", col.span.align.vertical, ";"), length(col.span.lengths), position = top.position,
             parent.stem = container.name)
         for (i in 1:length(col.spans))
             if (!is.null(col.spans[[i]]$class))
