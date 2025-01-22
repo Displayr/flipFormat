@@ -381,7 +381,7 @@ CreateCustomTable = function(x,
         content <- matrix(sprintf('<div class="circle%s">%s</div>', sig.leader.circles, content), nrows, ncols)
     }
     if (!banded.rows && !banded.cols)
-        cell.fill <- matrix(paste("background:", cell.fill, ";"), nrows, ncols)
+        cell.fill <- matrix(rep(paste("background:", cell.fill, ";"), length = nrows * ncols), nrows, ncols)
     else
         cell.fill <- matrix("", nrows, ncols)
 
@@ -422,7 +422,7 @@ CreateCustomTable = function(x,
     # Both the height and position are defined inside cell.styles/row.header.styles
     # to allow for multiple sticky rows
     if (show.col.headers)
-        cata(container.selector.name, "th { position: -webkit-sticky; position: sticky; top:", 
+        cata(container.selector.name, "th { position: -webkit-sticky; position: sticky; top:",
             paste0("-", 0 + col.header.border.width, "px;"), "overflow: ", overflow, "; ")
     if (resizable)
         cata("resize: both; ")
@@ -782,7 +782,7 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
         return(NULL)
     if (!is.null(position))
     {
-        class.css <- matrix(class.css, nrow, ncol)
+        class.css <- matrix(rep(class.css, length = nrow * ncol), nrow, ncol)
         for (i in 1:length(position))
             class.css[i,] <- paste0("position: sticky; top: ", position[i], "; ", class.css[i,])
     }
@@ -802,7 +802,7 @@ addCSSclass <- function(cata, class.stem, class.css, nrow = 1, ncol = 1, positio
     if (ncol == 1)
         return(rep(class.names, length = nrow))
     else
-        return(matrix(class.names, nrow, ncol))
+        return(matrix(rep(class.names, length = nrow * ncol), nrow, ncol))
 }
 
 
