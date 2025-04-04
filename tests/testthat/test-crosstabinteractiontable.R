@@ -39,7 +39,7 @@ test_that("Crosstab Interaction Table", {
     if (identical(Sys.getenv("TRAVIS"), "true"))
     {
         print("Comparing snapshot on travis")
-        expect_true(flipChartTests::TestWidget(widget.no.out, "crosstab-interaction-no-outlier-widget", height = 800))
-        expect_true(flipChartTests::TestWidget(widget.outlier, "crosstab-interaction-outlier-widget", height = 800))
+        expect_true(flipSnapshotTestUtils::TestWidget(widget.no.out, "crosstab-interaction-no-outlier-widget", height = 800))
+        expect_true(flipSnapshotTestUtils::TestWidget(widget.outlier, "crosstab-interaction-outlier-widget", height = 800))
     }
 })

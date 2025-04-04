@@ -1,6 +1,6 @@
 context("DataSetMergingByCaseWidget")
 
-library(flipChartTests)
+library(flipSnapshotTestUtils)
 library(png)
 
 findInstDirFile <- function(file)
@@ -22,33 +22,33 @@ load(findInstDirFile("merge.data.set.output.rda"))
 ## haven::write_sav(df2, file2)
 ## result <- MergeDataSetsByCase(c(file1, file2), outfile)
 merge.output.existing.mergesrc <- structure(list(input.data.sets.metadata = list(variable.names.list = list(
-    file45c053d64f11.sav = c("x", "mergesrc"), file45c01f0a608f.sav = c("x", 
-    "z")), variable.labels.list = list(file45c053d64f11.sav = c(x = "", 
+    file45c053d64f11.sav = c("x", "mergesrc"), file45c01f0a608f.sav = c("x",
+    "z")), variable.labels.list = list(file45c053d64f11.sav = c(x = "",
 mergesrc = ""), file45c01f0a608f.sav = c(x = "", z = "")), variable.value.attributes.list = list(
-    file45c053d64f11.sav = list(x = NULL, mergesrc = c(a = 1, 
-    b = 2)), file45c01f0a608f.sav = list(x = NULL, z = NULL)), 
-    variable.types.list = list(file45c053d64f11.sav = c(x = "Numeric", 
-    mergesrc = "Categorical"), file45c01f0a608f.sav = c(x = "Numeric", 
-    z = "Text")), n.data.sets = 2L, n.cases = c(file45c053d64f11.sav = 2L, 
-    file45c01f0a608f.sav = 2L), data.set.names = c("file45c053d64f11.sav", 
+    file45c053d64f11.sav = list(x = NULL, mergesrc = c(a = 1,
+    b = 2)), file45c01f0a608f.sav = list(x = NULL, z = NULL)),
+    variable.types.list = list(file45c053d64f11.sav = c(x = "Numeric",
+    mergesrc = "Categorical"), file45c01f0a608f.sav = c(x = "Numeric",
+    z = "Text")), n.data.sets = 2L, n.cases = c(file45c053d64f11.sav = 2L,
+    file45c01f0a608f.sav = 2L), data.set.names = c("file45c053d64f11.sav",
     "file45c01f0a608f.sav")), merged.data.set.metadata = list(
-    variable.names = c("x", "mergesrc", "z"), variable.labels = c(x = "", 
+    variable.names = c("x", "mergesrc", "z"), variable.labels = c(x = "",
     mergesrc = "Source of cases", z = ""), variable.value.attributes = list(
-        x = NULL, mergesrc = structure(1:3, names = c("a", "b", 
-        "file45c01f0a608f.sav")), z = NULL), variable.types = c(x = "Numeric", 
-    mergesrc = "Categorical", z = "Text"), n.variables = 3L, 
-    n.cases = 4L, data.set.name = "foo.sav"), matched.names = structure(c("x", 
-"mergesrc", NA, "x", NA, "z"), dim = 3:2, is.fuzzy.match = structure(c(FALSE, 
-FALSE, FALSE, FALSE, FALSE, FALSE), dim = 3:2), matched.by = structure(c(NA, 
+        x = NULL, mergesrc = structure(1:3, names = c("a", "b",
+        "file45c01f0a608f.sav")), z = NULL), variable.types = c(x = "Numeric",
+    mergesrc = "Categorical", z = "Text"), n.variables = 3L,
+    n.cases = 4L, data.set.name = "foo.sav"), matched.names = structure(c("x",
+"mergesrc", NA, "x", NA, "z"), dim = 3:2, is.fuzzy.match = structure(c(FALSE,
+FALSE, FALSE, FALSE, FALSE, FALSE), dim = 3:2), matched.by = structure(c(NA,
 NA, NA, "Variable name", NA, NA), dim = 3:2), match.parameters = list(
-    auto.select.what.to.match.by = TRUE, match.by.variable.names = TRUE, 
-    match.by.variable.labels = FALSE, match.by.value.labels = TRUE, 
-    ignore.case = TRUE, ignore.non.alphanumeric = TRUE, min.match.percentage = 90, 
-    min.value.label.match.percentage = 90)), merged.names = structure(c("x", 
-"mergesrc", "z"), renamed.variables = structure(character(0), dim = c(0L, 
-2L), dimnames = list(NULL, c("Original name", "New name")))), 
-    omitted.variable.names.list = list(character(0), character(0)), 
-    input.value.attributes.list = list(x = NULL, mergesrc = NULL, 
+    auto.select.what.to.match.by = TRUE, match.by.variable.names = TRUE,
+    match.by.variable.labels = FALSE, match.by.value.labels = TRUE,
+    ignore.case = TRUE, ignore.non.alphanumeric = TRUE, min.match.percentage = 90,
+    min.value.label.match.percentage = 90)), merged.names = structure(c("x",
+"mergesrc", "z"), renamed.variables = structure(character(0), dim = c(0L,
+2L), dimnames = list(NULL, c("Original name", "New name")))),
+    omitted.variable.names.list = list(character(0), character(0)),
+    input.value.attributes.list = list(x = NULL, mergesrc = NULL,
         z = NULL), is.saved.to.cloud = FALSE), class = "MergeDataSetByCase")
 
 test_that("Data set merging by case widget", {
@@ -149,7 +149,7 @@ test_that("Too many variables to fit in a page", {
     }
 })
 
-test_that("DS-5301: Widget creation works if one input dataset already has a mergeSrc variable", 
+test_that("DS-5301: Widget creation works if one input dataset already has a mergeSrc variable",
 {
     expect_error(print(merge.output.existing.mergesrc), NA)
 })
