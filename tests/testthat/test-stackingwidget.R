@@ -1,6 +1,6 @@
 context("StackingWidget")
 
-library(flipChartTests)
+library(flipSnapshotTestUtils)
 library(png)
 
 findInstDirFile <- function(file)
