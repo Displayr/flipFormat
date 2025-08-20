@@ -24,12 +24,19 @@ MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.nam
     colnames(means) <- paste0("means", 1:k)
     colnames(zs) <- paste0("z", 1:k)
     colnames(ps) <- paste0("p", 1:k)
+    # Only colour cells if they are distinguishable. Find the means that have no variation.
+    # Use the machine precision as the threshold for no variation.
+    means.with.no.variation <- apply(means, 1L, var, na.rm = TRUE) < sqrt(.Machine[["double.eps"]])
+    if (any(means.with.no.variation, na.rm = TRUE)) {
+        zs[which(means.with.no.variation), ] <- 0
+    }
     # Putting all the tables into a single data.frame, as required by formattable.
     means <- as.data.frame(cbind(means, ps, rsquared = r.squared, pvalue = overall.p, zs))
     column.names <- c(column.names, "R-Squared", "<i>p</i>")
     formatters <- list()
-    for (i in 1:k)
+    for (i in 1:k) {
         formatters[[paste0("means", i)]] <- createStatisticFormatter(paste0("z", i), paste0("p", i), p.cutoff)
+    }
     formatters[["rsquared"]] <- createBarFormatter()
     formatters[["pvalue"]] <- createPFormatter(p.cutoff)
     # Removing unwanted variables (i.e., the variables that contain the p-values and z statistics)
