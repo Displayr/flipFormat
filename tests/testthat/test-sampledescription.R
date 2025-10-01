@@ -70,3 +70,18 @@ test_that("Missing value strings", {
 
 })
 
+
+test_that("RS-20042: Rounding not occuring for sample size", {
+    SampleDescription(
+        n.total = 24332L, n.subset = 1932L, n.estimation = 998L,
+        subset.label = "Current and Global Filter", weighted = TRUE,
+        weight.label = "Weight_RF: Weight_RF", missing = "Exclude cases with missing data"
+    ) |>
+        expect_equal(
+            paste0(
+                "n = 998 cases used in estimation of a total sample size of 1,932 (Current and Global Filter); ",
+                "data has been weighted (Weight_RF: Weight_RF); ",
+                "cases containing missing values have been excluded;"
+            )
+        )
+})
