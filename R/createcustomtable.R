@@ -616,6 +616,9 @@ CreateCustomTable = function(x,
         cata(container.selector.name, 'tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
              ';} td:nth-child(even){background-color:', banded.even.fill, ';}')
 
+    # Scrollbars (only visible if height or width is fixed)
+    cata("\ndiv { position: absolute; overflow-y: auto; overflow-x: auto; }")
+
     # Other CSS
     if (use.predefined.css)
         cata("\n", predefinedCSS(container.selector.name), "\n")
@@ -626,8 +629,8 @@ CreateCustomTable = function(x,
     # Wrap table inside a div to allow scrolling (overflow=auto)
     # when the number of rows is large and row-height is fixed.
     # But for automatically sized rows we remove div firefox does not like nested tables
-    if (!is.null(row.height))
-        cata("<div style='overflow-y:auto; height: 100%;'>")
+    #if (!is.null(row.height))
+    #    cata("<div style='overflow-y:auto; height: 100%;'>")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
