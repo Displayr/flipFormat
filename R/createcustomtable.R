@@ -626,11 +626,6 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
     cata("</style>\n\n")
 
-    # Wrap table inside a div to allow scrolling (overflow=auto)
-    # when the number of rows is large and row-height is fixed.
-    # But for automatically sized rows we remove div firefox does not like nested tables
-    #if (!is.null(row.height))
-    #    cata("<div style='overflow-y:auto; height: 100%;'>")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
