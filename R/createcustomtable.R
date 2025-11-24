@@ -632,7 +632,7 @@ CreateCustomTable = function(x,
         cata("\ndiv { position: absolute; overflow-y:", y.scroll, "; overflow-x:", x.scroll, "; }\n")
 
          # Adjust the px value to add desired space to the right of the last column for scroll
-         if (enable.x.scroll)
+         if (enable.y.scroll)
             cata("th:last-child, td:last-child { padding-right: 15px; }")
     }
 
