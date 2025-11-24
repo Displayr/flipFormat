@@ -170,6 +170,11 @@
 #' @param suppress.na whether to empty cells containing only NA
 #' @param overflow Determines behaviour of text that is too long to fit in the table cells. By default,
 #'  it is set to "hidden" but change to "visible" to show overflow text.
+#' @param enable.x.scroll If true, horizontal scrollbars are shown if the table is too wide.
+#'  Sometimes, these scrollbars can appear even when it doesn't seem necessary.
+#' @param enable.y.scroll If true, vertical scrollbar are shown. Mostly these would only be wanted
+#'  if the number of rows is large and the height of the rows are fixed. But sometimes when there is
+#'  a lot of text, the vertical scrollbars are also useful.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -618,7 +623,7 @@ CreateCustomTable = function(x,
         cata(container.selector.name, 'tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
              ';} td:nth-child(even){background-color:', banded.even.fill, ';}')
 
-    # Scrollbars (only visible if height or width is fixed)
+    # Scrollbars
     enable.scroll <- enable.x.scroll || enable.y.scroll
     if (enable.scroll)
     {
