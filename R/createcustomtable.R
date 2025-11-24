@@ -305,6 +305,8 @@ CreateCustomTable = function(x,
                         col.spans = NULL,
                         row.spans = NULL,
                         overflow = "hidden",
+                        enable.x.scroll = FALSE,
+                        enable.y.scroll = !is.null(row.height),
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -318,7 +320,7 @@ CreateCustomTable = function(x,
         show.col.headers <- FALSE
     if (is.null(rownames(x)))
         show.row.headers <- FALSE
-    if (is.null(row.height)) # all rows are stretched to fit height of window - no scrolling
+    if (!enable.y.scroll) # all rows are stretched to fit height of window - no scrolling
         num.header.rows <- 0
     if (num.header.rows >= nrows)
         num.header.rows <- nrows - 1
@@ -440,7 +442,7 @@ CreateCustomTable = function(x,
 
     # initialize positions for sticky header with scrollable table
     top.position <- NULL
-    if (!is.null(row.height) && num.header.rows > 0)
+    if (enable.y.scroll && num.header.rows > 0)
     {
         top.position <- sprintf("%s + %.0fpx", col.header.height, col.header.border.width)
         if (num.header.rows > 1)
@@ -617,7 +619,13 @@ CreateCustomTable = function(x,
              ';} td:nth-child(even){background-color:', banded.even.fill, ';}')
 
     # Scrollbars (only visible if height or width is fixed)
-    cata("\ndiv { position: absolute; overflow-y: auto; overflow-x: auto; }")
+    enable.scroll <- enable.x.scroll || enable.y.scroll
+    if (enable.scroll)
+    {
+        y.scroll <- if (enable.y.scroll) "auto" else "hidden"
+        x.scroll <- if (enable.x.scroll) "auto" else "hidden"
+        cata("\ndiv { position: absolute; overflow-y:", y.scroll, "; overflow-x:", x.scroll, "; }\n")
+    }
 
     # Other CSS
     if (use.predefined.css)
@@ -675,10 +683,8 @@ CreateCustomTable = function(x,
             '">', footer, '</th></tr>\n'))
     }
     cata("</table>\n")
-    if (!is.null(row.height))
-        cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
-    if (!any(nzchar(custom.css)))
+    if (enable.scroll || !any(nzchar(custom.css)))
         out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
