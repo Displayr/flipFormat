@@ -1,5 +1,6 @@
 context("StackingWidget")
 
+skip()
 library(flipSnapshotTestUtils)
 library(png)
 

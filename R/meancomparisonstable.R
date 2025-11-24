@@ -12,6 +12,7 @@
 #' @param subtitle Subtitle for the table.
 #' @param p.cutoff The alpha level used when formatting the p-value column.
 #' @references This is based on code written by Kenton Russell.
+#' @importFrom stats var
 #' @export
 MeanComparisonsTable <- function(means, zs, ps, r.squared, overall.p, column.names, footer, title = "", subtitle = "", p.cutoff = 0.05)
 {

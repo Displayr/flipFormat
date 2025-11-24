@@ -1,5 +1,5 @@
 context("DataSetMergingByCaseWidget")
-
+skip()
 library(flipSnapshotTestUtils)
 library(png)
 

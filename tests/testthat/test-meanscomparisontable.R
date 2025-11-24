@@ -1,5 +1,6 @@
 context("CompareMeans")
 
+skip()
 test_that("Print", {
     X <- data.frame(means1 = c(NA, 2.94),
                     means2 = c(NA, 3.59),

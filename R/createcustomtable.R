@@ -170,6 +170,11 @@
 #' @param suppress.na whether to empty cells containing only NA
 #' @param overflow Determines behaviour of text that is too long to fit in the table cells. By default,
 #'  it is set to "hidden" but change to "visible" to show overflow text.
+#' @param enable.x.scroll If true, horizontal scrollbars are shown if the table is too wide.
+#'  Sometimes, these scrollbars can appear even when it doesn't seem necessary.
+#' @param enable.y.scroll If true, vertical scrollbar are shown. Mostly these would only be wanted
+#'  if the number of rows is large and the height of the rows are fixed. But sometimes when there is
+#'  a lot of text, the vertical scrollbars are also useful.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -305,6 +310,8 @@ CreateCustomTable = function(x,
                         col.spans = NULL,
                         row.spans = NULL,
                         overflow = "hidden",
+                        enable.x.scroll = FALSE,
+                        enable.y.scroll = !is.null(row.height),
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -318,7 +325,7 @@ CreateCustomTable = function(x,
         show.col.headers <- FALSE
     if (is.null(rownames(x)))
         show.row.headers <- FALSE
-    if (is.null(row.height)) # all rows are stretched to fit height of window - no scrolling
+    if (!enable.y.scroll) # all rows are stretched to fit height of window - no scrolling
         num.header.rows <- 0
     if (num.header.rows >= nrows)
         num.header.rows <- nrows - 1
@@ -440,7 +447,7 @@ CreateCustomTable = function(x,
 
     # initialize positions for sticky header with scrollable table
     top.position <- NULL
-    if (!is.null(row.height) && num.header.rows > 0)
+    if (enable.y.scroll && num.header.rows > 0)
     {
         top.position <- sprintf("%s + %.0fpx", col.header.height, col.header.border.width)
         if (num.header.rows > 1)
@@ -616,6 +623,19 @@ CreateCustomTable = function(x,
         cata(container.selector.name, 'tbody td:nth-child(2n+3){background-color:', banded.odd.fill,
              ';} td:nth-child(even){background-color:', banded.even.fill, ';}')
 
+    # Scrollbars
+    enable.scroll <- enable.x.scroll || enable.y.scroll
+    if (enable.scroll)
+    {
+        y.scroll <- if (enable.y.scroll) "auto" else "hidden"
+        x.scroll <- if (enable.x.scroll) "auto" else "hidden"
+        cata("\ndiv { position: absolute; overflow-y:", y.scroll, "; overflow-x:", x.scroll, "; }\n")
+
+         # Adjust the px value to add desired space to the right of the last column for scroll
+         if (enable.y.scroll)
+            cata("th:last-child, td:last-child { padding-right: 15px; }")
+    }
+
     # Other CSS
     if (use.predefined.css)
         cata("\n", predefinedCSS(container.selector.name), "\n")
@@ -623,11 +643,6 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
     cata("</style>\n\n")
 
-    # Wrap table inside a div to allow scrolling (overflow=auto)
-    # when the number of rows is large and row-height is fixed.
-    # But for automatically sized rows we remove div firefox does not like nested tables
-    if (!is.null(row.height))
-        cata("<div style='overflow-y:auto; height: 100%;'>")
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
@@ -677,10 +692,8 @@ CreateCustomTable = function(x,
             '">', footer, '</th></tr>\n'))
     }
     cata("</table>\n")
-    if (!is.null(row.height))
-        cata("</div>\n")
     html <- paste(readLines(tfile), collapse = "\n")
-    if (!any(nzchar(custom.css)))
+    if (!enable.scroll && !any(nzchar(custom.css)))
         out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
