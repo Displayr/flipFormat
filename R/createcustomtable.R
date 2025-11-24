@@ -630,6 +630,10 @@ CreateCustomTable = function(x,
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
         cata("\ndiv { position: absolute; overflow-y:", y.scroll, "; overflow-x:", x.scroll, "; }\n")
+
+         # Adjust the px value to add desired space to the right of the last column for scroll
+         if (enable.x.scroll)
+            cata("th:last-child, td:last-child { padding-right: 15px; }")
     }
 
     # Other CSS
