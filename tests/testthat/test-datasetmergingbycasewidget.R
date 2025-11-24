@@ -1,5 +1,5 @@
 context("DataSetMergingByCaseWidget")
-skip_if_not_installed("flipSnapshotTestUtils")
+skip()
 library(flipSnapshotTestUtils)
 library(png)
 
