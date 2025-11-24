@@ -693,7 +693,7 @@ CreateCustomTable = function(x,
     }
     cata("</table>\n")
     html <- paste(readLines(tfile), collapse = "\n")
-    if (enable.scroll || !any(nzchar(custom.css)))
+    if (!enable.scroll && !any(nzchar(custom.css)))
         out <- boxIframeless(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
