@@ -16,7 +16,7 @@ A \code{character}.
 Replaces a list of given names, with any underlying labels, if they exist in the data.
 }
 \details{
-Strips out everything up to and including the last \$. E.g., replaces
+Strips out everything up to and including the last $. E.g., replaces
 \code{"foo$fog$x"} with \code{"x"}
 }
 \examples{

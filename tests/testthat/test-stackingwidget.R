@@ -1,5 +1,6 @@
 context("StackingWidget")
 
+skip_if_not_installed("flipSnapshotTestUtils")
 library(flipSnapshotTestUtils)
 library(png)
 

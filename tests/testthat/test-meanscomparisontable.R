@@ -50,5 +50,6 @@ test_that("Means with no variation are not shaded", {
     title <- "K-Means: 2 clusters"
     subtitle <- "Variance explained: 50%; Calinski-Harabasz: 804; Profiling: 1 significant (Age)"
     output <- MeanComparisonsTable(means, zs, ps, r.squared, overall.p, column.names, footer, title, subtitle)
+    skip_if_not_installed("flipSnapshotTestUtils")
     TestWidget(output, "means-no-variation-no-shading") |> expect_true()
 })
