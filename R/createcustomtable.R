@@ -316,6 +316,9 @@ CreateCustomTable = function(x,
                         use.predefined.css = TRUE,
                         resizable = FALSE)
 {
+    #if (inherits(x, "rhtmlMetro")) {
+    #    return(x)
+    #}
     # Check input
     x <- tidyMatrixValues(x, transpose, row.header.labels, col.header.labels)
     stat <- attr(x, "statistic")
