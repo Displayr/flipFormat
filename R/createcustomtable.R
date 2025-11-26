@@ -171,10 +171,13 @@
 #' @param overflow Determines behaviour of text that is too long to fit in the table cells. By default,
 #'  it is set to "hidden" but change to "visible" to show overflow text.
 #' @param enable.x.scroll If true, horizontal scrollbars are shown if the table is too wide.
-#'  Sometimes, these scrollbars can appear even when it doesn't seem necessary.
+#' By default turned off for backwards compatibility. 
 #' @param enable.y.scroll If true, vertical scrollbar are shown. Mostly these would only be wanted
 #'  if the number of rows is large and the height of the rows are fixed. But sometimes when there is
-#'  a lot of text, the vertical scrollbars are also useful.
+#'  a lot of text, the vertical scrollbars are also useful. By default only turned on when
+#'  the row height is specified for backwards compatibility.
+#' @param scrollbar.width The expected width of the scrollbars in pixels. We use this width to
+#'  avoid hiding the right-side of the table when the vertical scrollbar is shown.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -312,6 +315,7 @@ CreateCustomTable = function(x,
                         overflow = "hidden",
                         enable.x.scroll = FALSE,
                         enable.y.scroll = !is.null(row.height),
+                        scrollbar.width = 17,
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -633,8 +637,13 @@ CreateCustomTable = function(x,
              "; overflow-x:", x.scroll, "; }\n")
 
         # Adjust the px value to add desired space to the right of the last column for scroll
+        # Note that scrollbar.width is a parameter that can be changed by the user because
+        # the scrollbar width used to be fixed at 17 in Windows 10, but commonly varies between
+        # 12 to 20 pixels now. We use this instead of the scrollbar-gutter CSS property
+        # because we only want space added on the right of the table, and we also
+        # want to use the scrollbar.width to adjust the table width.
          if (enable.y.scroll)
-            cata("th:last-child, td:last-child { padding-right: 15px; }")
+            cata(sprintf("th:last-child, td:last-child { padding-right: %dpx; }", scrollbar.width))
     }
 
     # Other CSS
@@ -648,7 +657,7 @@ CreateCustomTable = function(x,
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
     table.width.offset <- max(0, max(cell.border.width))
     if (enable.y.scroll)
-        table.width.offset <- table.width.offset + 15
+        table.width.offset <- table.width.offset + scrollbar.width
     cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
         container.name, "100%", table.width.offset, table.height))
     if (sum(nchar(col.widths)) > 0)
