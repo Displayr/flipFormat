@@ -420,10 +420,10 @@ CreateCustomTable = function(x,
     cata(container.selector.name, "{ table-layout: fixed; border-collapse: ",
          if (border.collapse) "collapse; " else "separate; ",
          "border-spacing: ", border.column.gap, border.row.gap, ";",
-         "position: relative; width: 100%; ",
+         "position: relative; min-width: 100%; width: auto; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
          "cellspacing:'0'; cellpadding:'0'; ",
-         "white-space: normal; line-height: normal; }\n")
+         "white-space: no-wrap; line-height: normal; }\n")
 
     # Sticky only applies to <th> elements inside <thead> - i.e. column headers not row headers
     # Both the height and position are defined inside cell.styles/row.header.styles
@@ -631,7 +631,11 @@ CreateCustomTable = function(x,
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
         cata("\n", scroll.container.selector.name, "{ position: absolute; overflow-y:", y.scroll,
-             "; overflow-x:", x.scroll, "; scrollbar-gutter: stable both-edges; }\n")
+             "; overflow-x:", x.scroll, "; }\n")
+
+        # Adjust the px value to add desired space to the right of the last column for scroll
+         if (enable.y.scroll)
+            cata("th:last-child, td:last-child { padding-right: 15px; }")
     }
 
 
@@ -644,8 +648,11 @@ CreateCustomTable = function(x,
 
     table.height <- if (sum(nchar(row.height)) != 0) ""
                     else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
+    table.width.offset <- max(0, max(cell.border.width))
+    if (enable.y.scroll)
+        table.width.offset <- table.width.offset + 15
     cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
-        container.name, "100%", max(0, max(cell.border.width)), table.height))
+        container.name, "100%", table.width.offset, table.height))
     if (sum(nchar(col.widths)) > 0)
     {
         col.widths <- ConvertCommaSeparatedStringToVector(col.widths)
