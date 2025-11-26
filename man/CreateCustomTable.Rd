@@ -134,6 +134,7 @@ CreateCustomTable(
   overflow = "hidden",
   enable.x.scroll = FALSE,
   enable.y.scroll = !is.null(row.height),
+  scrollbar.width = 17,
   custom.css = "",
   use.predefined.css = TRUE,
   resizable = FALSE
@@ -429,11 +430,15 @@ list(height=,label=,class=)}
 it is set to "hidden" but change to "visible" to show overflow text.}
 
 \item{enable.x.scroll}{If true, horizontal scrollbars are shown if the table is too wide.
-Sometimes, these scrollbars can appear even when it doesn't seem necessary.}
+By default turned off for backwards compatibility.}
 
 \item{enable.y.scroll}{If true, vertical scrollbar are shown. Mostly these would only be wanted
 if the number of rows is large and the height of the rows are fixed. But sometimes when there is
-a lot of text, the vertical scrollbars are also useful.}
+a lot of text, the vertical scrollbars are also useful. By default only turned on when
+the row height is specified for backwards compatibility.}
+
+\item{scrollbar.width}{The expected width of the scrollbars in pixels. We use this width to
+avoid hiding the right-side of the table when the vertical scrollbar is shown.}
 
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function).
