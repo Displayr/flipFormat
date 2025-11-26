@@ -735,7 +735,7 @@ prepareForExport <- function(x, format.type)
 }
 
 
-#' @importFrom xml2 xml_text read_xml
+#' @importFrom xml2 xml_text read_html
 clean_html <- function(x)
 {
     if (!is.character(x))
