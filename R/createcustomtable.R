@@ -310,8 +310,8 @@ CreateCustomTable = function(x,
                         col.spans = NULL,
                         row.spans = NULL,
                         overflow = "hidden",
-                        enable.x.scroll = TRUE,
-                        enable.y.scroll = TRUE,
+                        enable.x.scroll = FALSE,
+                        enable.y.scroll = !is.null(row.height),
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -627,17 +627,15 @@ CreateCustomTable = function(x,
     enable.scroll <- enable.x.scroll || enable.y.scroll
     if (enable.scroll)
     {
-        scroll.container.selector.name <- "div#htmlwidget_container"
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
-        cata("\n", scroll.container.selector.name, "{ position: absolute; overflow-y:", y.scroll,
+        cata("\ndiv#htmlwidget_container { position: absolute; overflow-y:", y.scroll,
              "; overflow-x:", x.scroll, "; }\n")
 
         # Adjust the px value to add desired space to the right of the last column for scroll
          if (enable.y.scroll)
             cata("th:last-child, td:last-child { padding-right: 15px; }")
     }
-
 
     # Other CSS
     if (use.predefined.css)
@@ -707,7 +705,6 @@ CreateCustomTable = function(x,
         out <- Box(html, text.as.html = TRUE,
                          font.family = "Circular, Arial, sans-serif",
                          font.size = 8)
-
     class(out) <- c(class(out), "visualization-selector")
     attr(out, "ChartData") <- prepareForExport(x, format.type)
     return(out)
