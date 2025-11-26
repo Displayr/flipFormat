@@ -132,8 +132,8 @@ CreateCustomTable(
   col.spans = NULL,
   row.spans = NULL,
   overflow = "hidden",
-  enable.x.scroll = FALSE,
-  enable.y.scroll = !is.null(row.height),
+  enable.x.scroll = TRUE,
+  enable.y.scroll = TRUE,
   custom.css = "",
   use.predefined.css = TRUE,
   resizable = FALSE
