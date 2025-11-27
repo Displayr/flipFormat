@@ -23,3 +23,13 @@ test_that("Runs without column headers",
     expect_error(CreateCustomTable(x2, col.widths = '200px',
             col.header.border.width = NULL, border.color = "red"), NA)
 })
+
+test_that("Text data is exported correctly",
+{
+    txt <- c("50%&nbsp;&#8593;", "<b>xxx</b>", "X & Y",
+        "He asked me about the votes…Told him I didn’t know anything about it")
+    expect_error(res <- CreateCustomTable(txt), NA)
+    expect_equal(attr(res, "ChartData"), structure(c("50% ↑", "xxx", "X & Y",
+        "He asked me about the votes…Told him I didn’t know anything about it"),
+        dim = c(4L, 1L)))
+})

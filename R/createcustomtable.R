@@ -735,13 +735,13 @@ prepareForExport <- function(x, format.type)
 }
 
 
-#' @importFrom xml2 xml_text read_xml
+#' @importFrom xml2 xml_text read_html
 clean_html <- function(x)
 {
     if (!is.character(x))
         return(x)
 
-    .strip_html <- function(x) if (!nzchar(trimws(x))) x else xml_text(read_xml(charToRaw(x), as_html = TRUE))
+    .strip_html <- function(x) if (!nzchar(trimws(x))) x else xml_text(read_html(paste0("<x>", x, "</x>")))
     if (is.matrix(x))
         return(apply(x, c(1, 2), .strip_html))
     else
