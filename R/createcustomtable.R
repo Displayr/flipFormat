@@ -181,6 +181,8 @@
 #'  the row height is specified for backwards compatibility.
 #' @param scrollbar.width The expected width of the scrollbars in pixels. We use this width to
 #'  avoid hiding the right-side of the table when the vertical scrollbar is shown.
+#'  Note this parameter does not actually affect the appearance of the scrollbar which is
+#'  determined by the browser.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
