@@ -659,17 +659,13 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
     cata("</style>\n\n")
 
-    table.height.style <- if (any(nzchar(row.height))) NULL
-                          else paste0("height:calc(100% - ", rev(cell.border.width)[1], "px)")
+    table.height.style <- if (!any(nzchar(row.height))) paste0("height:calc(100% - ", rev(cell.border.width)[1], "px)")
 
     table.width.offset <- max(0, max(cell.border.width))
-    col.widths.vector <- NULL
-    if (any(nzchar(col.widths)))
-        col.widths.vector <- ConvertCommaSeparatedStringToVector(col.widths)
+    col.widths.vector <- if (!any(nzchar(col.widths))) ConvertCommaSeparatedStringToVector(col.widths)
     if (enable.y.scroll)
         table.width.offset <- table.width.offset + scrollbar.width
-    table.width.style <- if (!col.widths.fill.container || length(col.widths.vector) >= ncols + show.row.headers) NULL
-                         else paste0("width:calc(100% - ", table.width.offset, "px)")
+    table.width.style <- if (col.widths.fill.container && length(col.widths.vector) < ncols + show.row.headers)  paste0("width:calc(100% - ", table.width.offset, "px)")
     table.style <- paste(c(table.width.style, table.height.style), collapse = "; ")
     if (any(nzchar(table.style)))
         table.style = paste0(" style = '", table.style, "'")
