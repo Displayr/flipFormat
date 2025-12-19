@@ -15,6 +15,7 @@ CreateCustomTable(
   suppress.nan = TRUE,
   suppress.na = TRUE,
   transpose = FALSE,
+  col.widths.fill.container = TRUE,
   col.widths = if (is.null(rownames(x))) NULL else c("25\%"),
   row.height = NULL,
   col.header.height = "35px",
@@ -134,7 +135,7 @@ CreateCustomTable(
   overflow = "hidden",
   enable.x.scroll = FALSE,
   enable.y.scroll = !is.null(row.height),
-  scrollbar.width = 17,
+  scrollbar.width = 0,
   custom.css = "",
   use.predefined.css = TRUE,
   resizable = FALSE
@@ -166,6 +167,10 @@ Ignored if \code{x} is not numeric.}
 \item{suppress.na}{whether to empty cells containing only NA}
 
 \item{transpose}{Whether to switch rows and columns in \code{x}.}
+
+\item{col.widths.fill.container}{By default, the columns with unspecified widths are automatically
+sized to fill up the available space in the table, but this constraint may cause problems
+when text is long and horizontal scrollbars are shown.}
 
 \item{col.widths}{specify column widths in \% or px; Remaining width divided between remaining columns.}
 
@@ -438,7 +443,9 @@ a lot of text, the vertical scrollbars are also useful. By default only turned o
 the row height is specified for backwards compatibility.}
 
 \item{scrollbar.width}{The expected width of the scrollbars in pixels. We use this width to
-avoid hiding the right-side of the table when the vertical scrollbar is shown.}
+avoid hiding the right-side of the table when the vertical scrollbar is shown.
+Note this parameter does not actually affect the appearance of the scrollbar which is
+determined by the browser.}
 
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function).

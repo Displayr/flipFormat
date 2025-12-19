@@ -111,6 +111,9 @@
 #'  will cause column 3 to have class "bluefill".
 #' @param row.classes any specific row classes to apply.
 #' @param col.widths specify column widths in \% or px; Remaining width divided between remaining columns.
+#' @param col.widths.fill.container By default, the columns with unspecified widths are automatically
+#'    sized to fill up the available space in the table, but this constraint may cause problems
+#'    when text is long and horizontal scrollbars are shown.
 #' @param corner Contents of the corner cell, if row and column headers are used
 #' @param corner.class Class of the corner cell, if row and column headers are used
 #' @param corner.fill Background color of the corners in the table.
@@ -178,6 +181,8 @@
 #'  the row height is specified for backwards compatibility.
 #' @param scrollbar.width The expected width of the scrollbars in pixels. We use this width to
 #'  avoid hiding the right-side of the table when the vertical scrollbar is shown.
+#'  Note this parameter does not actually affect the appearance of the scrollbar which is
+#'  determined by the browser.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -196,6 +201,7 @@ CreateCustomTable = function(x,
                         suppress.nan = TRUE,
                         suppress.na = TRUE,
                         transpose = FALSE,
+                        col.widths.fill.container = TRUE,
                         col.widths = if (is.null(rownames(x))) NULL else c("25%"),
                         row.height = NULL,
                         col.header.height = "35px",
@@ -315,7 +321,7 @@ CreateCustomTable = function(x,
                         overflow = "hidden",
                         enable.x.scroll = FALSE,
                         enable.y.scroll = !is.null(row.height),
-                        scrollbar.width = 17,
+                        scrollbar.width = 0,
                         custom.css = '',
                         use.predefined.css = TRUE,
                         resizable = FALSE)
@@ -424,7 +430,7 @@ CreateCustomTable = function(x,
     cata(container.selector.name, "{ table-layout: fixed; border-collapse: ",
          if (border.collapse) "collapse; " else "separate; ",
          "border-spacing: ", border.column.gap, border.row.gap, ";",
-         "position: relative; min-width: 100%; width: auto; ",
+         "position: relative; ",
          "font-family: ", global.font.family, "; color: ", global.font.color, "; ",
          "cellspacing:'0'; cellpadding:'0'; ",
          "white-space: no-wrap; line-height: normal; }\n")
@@ -653,18 +659,20 @@ CreateCustomTable = function(x,
     cata("\n", custom.css, "\n")
     cata("</style>\n\n")
 
-    table.height <- if (sum(nchar(row.height)) != 0) ""
-                    else paste0("; height:calc(100% - ", rev(cell.border.width)[1], "px)")
+    table.height.style <- if (!any(nzchar(row.height))) paste0("height:calc(100% - ", rev(cell.border.width)[1], "px)")
+
     table.width.offset <- max(0, max(cell.border.width))
+    col.widths.vector <- if (!any(nzchar(col.widths))) ConvertCommaSeparatedStringToVector(col.widths)
     if (enable.y.scroll)
         table.width.offset <- table.width.offset + scrollbar.width
-    cata(sprintf("<table class = '%s' style = 'width:calc(%s - %dpx)%s'>\n",
-        container.name, "100%", table.width.offset, table.height))
-    if (sum(nchar(col.widths)) > 0)
-    {
-        col.widths <- ConvertCommaSeparatedStringToVector(col.widths)
-        cata(paste(paste("<col width='", col.widths, "'>\n"), collapse = ""))
-    }
+    table.width.style <- if (col.widths.fill.container && length(col.widths.vector) < ncols + show.row.headers)  paste0("width:calc(100% - ", table.width.offset, "px)")
+    table.style <- paste(c(table.width.style, table.height.style), collapse = "; ")
+    if (any(nzchar(table.style)))
+        table.style = paste0(" style = '", table.style, "'")
+
+    cata(sprintf("<table class = '%s'%s>\n", container.name, table.style))
+    if (any(nzchar(col.widths)))
+        cata(paste(paste("<col width='", col.widths.vector, "'>\n"), collapse = ""))
     cata('<thead>', col.span.html, header.html)
 
     # Build table
