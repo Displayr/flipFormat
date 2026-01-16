@@ -174,7 +174,7 @@
 #' @param overflow Determines behaviour of text that is too long to fit in the table cells. By default,
 #'  it is set to "hidden" but change to "visible" to show overflow text.
 #' @param enable.x.scroll If true, horizontal scrollbars are shown if the table is too wide.
-#' By default turned off for backwards compatibility. 
+#' By default turned off for backwards compatibility.
 #' @param enable.y.scroll If true, vertical scrollbar are shown. Mostly these would only be wanted
 #'  if the number of rows is large and the height of the rows are fixed. But sometimes when there is
 #'  a lot of text, the vertical scrollbars are also useful. By default only turned on when
@@ -665,8 +665,8 @@ CreateCustomTable = function(x,
     col.widths.vector <- if (any(nzchar(col.widths))) ConvertCommaSeparatedStringToVector(col.widths)
     if (enable.y.scroll)
         table.width.offset <- table.width.offset + scrollbar.width
-    table.width.style <- if (col.widths.fill.container && length(col.widths.vector) < ncols + show.row.headers)  paste0("width:calc(100% - ", table.width.offset, "px)")
-    
+    table.width.style <- if (col.widths.fill.container)  paste0("width:calc(100% - ", table.width.offset, "px)")
+
     table.style <- paste(c(table.width.style, table.height.style), collapse = "; ")
     if (any(nzchar(table.style)))
         table.style = paste0(" style = '", table.style, "'")
