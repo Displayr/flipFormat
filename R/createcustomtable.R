@@ -636,8 +636,9 @@ CreateCustomTable = function(x,
     {
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
-        cata("\ndiv#outer-table-container { width:100%; height:100%; overflow-y:", y.scroll,
-             "; overflow-x:", x.scroll, "; }\n")
+        # position:absolute seems required to make the scrollbars appear in Firefox
+        cata("\ndiv#outer-table-container { width:100%; height:100%; position:absolute; overflow-y:",
+            y.scroll, "; overflow-x:", x.scroll, "; }\n")
     }
 
     # Other CSS
