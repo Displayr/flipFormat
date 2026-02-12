@@ -639,7 +639,7 @@ CreateCustomTable = function(x,
     {
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
-        cata("\ndiv#htmlwidget_container { position: absolute; overflow-y:", y.scroll,
+        cata("\ndiv#table_container { width:100%; height:100%; overflow-y:", y.scroll,
              "; overflow-x:", x.scroll, "; }\n")
 
         # Adjust the px value to add desired space to the right of the last column for scroll
@@ -648,8 +648,8 @@ CreateCustomTable = function(x,
         # 12 to 20 pixels now. We use this instead of the scrollbar-gutter CSS property
         # because we only want space added on the right of the table, and we also
         # want to use the scrollbar.width to adjust the table width.
-         if (enable.y.scroll)
-            cata(sprintf("th:last-child, td:last-child { padding-right: %dpx; }", scrollbar.width))
+        #  if (enable.y.scroll)
+        #     cata(sprintf("th:last-child, td:last-child { padding-right: %dpx; }", scrollbar.width))
     }
 
     # Other CSS
@@ -663,14 +663,15 @@ CreateCustomTable = function(x,
 
     table.width.offset <- max(0, max(cell.border.width))
     col.widths.vector <- if (any(nzchar(col.widths))) ConvertCommaSeparatedStringToVector(col.widths)
-    if (enable.y.scroll)
-        table.width.offset <- table.width.offset + scrollbar.width
+    # if (enable.y.scroll)
+    #     table.width.offset <- table.width.offset + scrollbar.width
     table.width.style <- if (col.widths.fill.container)  paste0("width:calc(100% - ", table.width.offset, "px)")
 
     table.style <- paste(c(table.width.style, table.height.style), collapse = "; ")
     if (any(nzchar(table.style)))
         table.style = paste0(" style = '", table.style, "'")
 
+    cata("<div id='table_container'>\n")
     cata(sprintf("<table class = '%s'%s>\n", container.name, table.style))
     if (any(nzchar(col.widths)))
         cata(paste(paste("<col width='", col.widths.vector, "'>\n"), collapse = ""))
@@ -713,7 +714,8 @@ CreateCustomTable = function(x,
             '; vertical-align:', footer.align.vertical,
             '">', footer, '</th></tr>\n'))
     }
-    cata("</table>\n")
+    cata("</table>\n</div>\n")
+
     html <- paste(readLines(tfile), collapse = "\n")
     if (!enable.scroll && !any(nzchar(custom.css)))
         out <- boxIframeless(html, text.as.html = TRUE,
