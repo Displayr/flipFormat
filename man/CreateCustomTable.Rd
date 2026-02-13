@@ -442,10 +442,7 @@ if the number of rows is large and the height of the rows are fixed. But sometim
 a lot of text, the vertical scrollbars are also useful. By default only turned on when
 the row height is specified for backwards compatibility.}
 
-\item{scrollbar.width}{The expected width of the scrollbars in pixels. We use this width to
-avoid hiding the right-side of the table when the vertical scrollbar is shown.
-Note this parameter does not actually affect the appearance of the scrollbar which is
-determined by the browser.}
+\item{scrollbar.width}{No longer used. Do not set.}
 
 \item{custom.css}{Any custom CSS to add to the \code{<style>} header of the html
 (e.g. defining nth-child logic or custom classes not included in the CSS function).

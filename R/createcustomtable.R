@@ -179,10 +179,7 @@
 #'  if the number of rows is large and the height of the rows are fixed. But sometimes when there is
 #'  a lot of text, the vertical scrollbars are also useful. By default only turned on when
 #'  the row height is specified for backwards compatibility.
-#' @param scrollbar.width The expected width of the scrollbars in pixels. We use this width to
-#'  avoid hiding the right-side of the table when the vertical scrollbar is shown.
-#'  Note this parameter does not actually affect the appearance of the scrollbar which is
-#'  determined by the browser.
+#' @param scrollbar.width No longer used. Do not set.
 #' @param resizable Allow column widths to be resizeable by dragging with mouse.
 #' @importFrom flipU ConvertCommaSeparatedStringToVector
 #' @examples
@@ -639,17 +636,9 @@ CreateCustomTable = function(x,
     {
         y.scroll <- if (enable.y.scroll) "auto" else "hidden"
         x.scroll <- if (enable.x.scroll) "auto" else "hidden"
-        cata("\ndiv#htmlwidget_container { position: absolute; overflow-y:", y.scroll,
-             "; overflow-x:", x.scroll, "; }\n")
-
-        # Adjust the px value to add desired space to the right of the last column for scroll
-        # Note that scrollbar.width is a parameter that can be changed by the user because
-        # the scrollbar width used to be fixed at 17 in Windows 10, but commonly varies between
-        # 12 to 20 pixels now. We use this instead of the scrollbar-gutter CSS property
-        # because we only want space added on the right of the table, and we also
-        # want to use the scrollbar.width to adjust the table width.
-         if (enable.y.scroll)
-            cata(sprintf("th:last-child, td:last-child { padding-right: %dpx; }", scrollbar.width))
+        # position:absolute seems required to make the scrollbars appear in Firefox
+        cata("\ndiv#outer-table-container { position:absolute; overflow-y:", y.scroll,
+            "; overflow-x:", x.scroll, "; }\n")
     }
 
     # Other CSS
@@ -663,14 +652,13 @@ CreateCustomTable = function(x,
 
     table.width.offset <- max(0, max(cell.border.width))
     col.widths.vector <- if (any(nzchar(col.widths))) ConvertCommaSeparatedStringToVector(col.widths)
-    if (enable.y.scroll)
-        table.width.offset <- table.width.offset + scrollbar.width
     table.width.style <- if (col.widths.fill.container)  paste0("width:calc(100% - ", table.width.offset, "px)")
 
     table.style <- paste(c(table.width.style, table.height.style), collapse = "; ")
     if (any(nzchar(table.style)))
         table.style = paste0(" style = '", table.style, "'")
 
+    cata("<div id='outer-table-container' style='width:100%; height:100%;'>\n")
     cata(sprintf("<table class = '%s'%s>\n", container.name, table.style))
     if (any(nzchar(col.widths)))
         cata(paste(paste("<col width='", col.widths.vector, "'>\n"), collapse = ""))
@@ -713,7 +701,9 @@ CreateCustomTable = function(x,
             '; vertical-align:', footer.align.vertical,
             '">', footer, '</th></tr>\n'))
     }
-    cata("</table>\n")
+
+    cata("</table>\n</div>\n")
+
     html <- paste(readLines(tfile), collapse = "\n")
     if (!enable.scroll && !any(nzchar(custom.css)))
         out <- boxIframeless(html, text.as.html = TRUE,
