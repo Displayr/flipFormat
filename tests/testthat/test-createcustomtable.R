@@ -196,13 +196,16 @@ test_that("Multiple spacer.col indices produce spacer cells at those emission po
     expect_equal(length(ths), 4)
     expect_equal(ths[2], '<th class="spacer">X</th>')
     expect_equal(ths[4], '<th class="spacer">Z</th>')
-    expect_true(grepl('colheaderdefault', ths[1], fixed = TRUE))
-    expect_true(grepl('colheaderdefault', ths[3], fixed = TRUE))
+    expect_equal(ths[1], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(ths[3], '<th class="colheaderdefault1 ">Y</th>')
 })
 
 test_that("The spacer cell keeps its column label",
 {
     m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    # spacer.col = 3 (not the sibling blocks' 2) is required here: with columns
+    # W, X, Y, Z, index 3 is the one that lands on "Y", which is the label this
+    # test needs to demonstrate survives being turned into a spacer cell
     res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 3)
     h <- tableHtml(res)
     expect_true(grepl('<th class="spacer">Y</th>', h, fixed = TRUE))
@@ -239,6 +242,7 @@ test_that("show.col.headers = FALSE suppresses the whole header row and its CSS"
 {
     res <- CreateCustomTable(x2, show.col.headers = FALSE)
     h <- tableHtml(res)
+    # '<th class="' not a bare '<th': <thead> is always emitted, so a bare probe could never fail
     expect_false(grepl('<th class="', h, fixed = TRUE))
     expect_false(grepl('colheaderdefault', h, fixed = TRUE))
 })
@@ -255,6 +259,7 @@ test_that("Out-of-range spacer.col is pinned to its current (defective) behaviou
     h <- tableHtml(res)
     expect_equal(countOccurrences('class="NA"', h), 2)
     expect_true(grepl('<th class="spacer">Z</th>', h, fixed = TRUE))
+    expect_equal(countOccurrences("<th ", h), 6)
 })
 
 test_that("use.predefined.css = FALSE leaves the spacer header cell with no matching CSS rule",
