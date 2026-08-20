@@ -5,7 +5,7 @@ normWs <- function(s) trimws(gsub("\\s+", " ", s))
 countOccurrences <- function(pattern, s)
 {
     m <- gregexpr(pattern, s, fixed = TRUE)[[1]]
-    if (identical(m, -1L)) 0 else length(m)
+    if (m[1] == -1L) 0L else length(m)
 }
 
 xx <- structure(1:5, .Names = c("a", "b", "c", "d", "e"), statistic = "%")
@@ -98,8 +98,8 @@ test_that("All nine filled circle variants are emitted with the correct fill col
     for (i in seq_along(variants))
     {
         v <- variants[i]
-        # the trailing " {" is load-bearing: a bare ".circle2" also matches ".circle21",
-        # ".circle20" and ".circle2-1", so without it the occurrence count would be wrong
+        # kept consistent with the base-class assertions; the nine variant names do not
+        # collide with each other.
         expect_equal(countOccurrences(paste0(".", v, " {"), h), 1, info = v)
         expected <- paste0(".", v, " { border: ", borders[i], "; background-color:",
                             colors[i], ";", fmt, "}")
