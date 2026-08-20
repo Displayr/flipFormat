@@ -1,5 +1,13 @@
 context("CreateCustomTable")
 
+tableHtml <- function(res) res$x$text  # rhtmlMetro::Box stores the emitted HTML in the widget payload's text field
+normWs <- function(s) trimws(gsub("\\s+", " ", s))
+countOccurrences <- function(pattern, s)
+{
+    m <- gregexpr(pattern, s, fixed = TRUE)[[1]]
+    if (identical(m, -1L)) 0 else length(m)
+}
+
 xx <- structure(1:5, .Names = c("a", "b", "c", "d", "e"), statistic = "%")
 x2 <- matrix(1:12, 4, 3, dimnames = list(letters[1:4], c("X", "Y", "Z")))
 test_that("Percentage data",
@@ -36,18 +44,11 @@ test_that("Text data is exported correctly",
 
 # sig.leader.circles -----------------------------------------------------
 
-tableHtml <- function(res) res$x$text  # rhtmlMetro::Box stores the emitted HTML in the widget payload's text field
-normWs <- function(s) trimws(gsub("\\s+", " ", s))
-countOccurrences <- function(pattern, s)
-{
-    m <- gregexpr(pattern, s, fixed = TRUE)[[1]]
-    if (identical(m, -1L)) 0 else length(m)
-}
-
 test_that("No sig.leader.circles emits no circle CSS or divs",
 {
     res <- CreateCustomTable(x2)
     expect_false(grepl(".circle", tableHtml(res), fixed = TRUE))
+    expect_false(grepl('class="circle', tableHtml(res), fixed = TRUE))
 })
 
 test_that("Base circle classes are emitted when sig.leader.circles is supplied",
@@ -58,9 +59,19 @@ test_that("Base circle classes are emitted when sig.leader.circles is supplied",
     circles <- matrix(0, 4, 3)
     res <- CreateCustomTable(x2, sig.leader.circles = circles)
     h <- normWs(tableHtml(res))
-    expect_true(grepl(".circle2 { border: 2px solid rgb(120,120,120);", h, fixed = TRUE))
-    expect_true(grepl(".circle1 { border: 1px solid rgb(150,150,150);", h, fixed = TRUE))
-    expect_true(grepl(".circle0 { border: 0px solid rgb(0,0,0);", h, fixed = TRUE))
+    fmt <- "display: inline-block; line-height:35px; border-radius:35px; height: 35px; width:35px;"
+
+    # the trailing " {" is load-bearing: a bare ".circle2" also matches the filled
+    # variants ".circle21", ".circle20" and ".circle2-1", so without it the
+    # occurrence count would be wrong
+    expect_equal(countOccurrences(".circle2 {", h), 1)
+    expect_true(grepl(paste0(".circle2 { border: 2px solid rgb(120,120,120);", fmt, "}"), h, fixed = TRUE))
+
+    expect_equal(countOccurrences(".circle1 {", h), 1)
+    expect_true(grepl(paste0(".circle1 { border: 1px solid rgb(150,150,150);", fmt, "}"), h, fixed = TRUE))
+
+    expect_equal(countOccurrences(".circle0 {", h), 1)
+    expect_true(grepl(paste0(".circle0 { border: 0px solid rgb(0,0,0);", fmt, "}"), h, fixed = TRUE))
 })
 
 test_that("All nine filled circle variants are emitted with the correct fill colors",
@@ -102,7 +113,7 @@ test_that("Every data cell is wrapped in a circle div carrying its own code",
     circles <- matrix(c(2, 1, 0, 2), 2, 2)
     res <- CreateCustomTable(x22, sig.leader.circles = circles)
     h <- tableHtml(res)
-    expect_equal(countOccurrences('<div class="circle', h), 4)
+    expect_equal(countOccurrences('<div class="circle', h), prod(dim(x22)))
     expect_true(grepl('<div class="circle2">1</div>', h, fixed = TRUE))
     expect_true(grepl('<div class="circle1">2</div>', h, fixed = TRUE))
     expect_true(grepl('<div class="circle0">3</div>', h, fixed = TRUE))
@@ -121,15 +132,17 @@ test_that("Rendered cell text is preserved inside the circle div wrapping",
 
 test_that("Out-of-range codes pin the current (buggy) normalisation behaviour",
 {
-    # RS-21803: sig.leader.circles[!which(...)] <- 0 negates integer indices rather than
+    # sig.leader.circles[!which(...)] <- 0 negates integer indices rather than
     # inverting a logical mask, so out-of-range codes are not reset to 0 as documented.
-    # This test pins that behaviour deliberately, pending a fix.
+    # No defect ticket has been filed for this yet; this test pins that behaviour
+    # deliberately, pending a fix.
     x22 <- matrix(1:4, 2, 2, dimnames = list(c("a", "b"), c("X", "Y")))
     circles <- matrix(c(5, 1, -3, 2), 2, 2)
     res <- CreateCustomTable(x22, sig.leader.circles = circles)
     h <- tableHtml(res)
     expect_true(grepl('<div class="circle5">1</div>', h, fixed = TRUE))
     expect_true(grepl('<div class="circle-3">3</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circle1">2</div>', h, fixed = TRUE))
 })
 
 test_that("circle.size drives the emitted circle geometry",
