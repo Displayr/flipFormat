@@ -320,24 +320,39 @@ test_that("Spans are placed at the correct row offsets",
     expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">CC</td>', rows[4], fixed = TRUE))
 })
 
-test_that("A single rowspandefault CSS class is shared across all spans (production behaviour, not one class per span)",
+test_that("A single rowspandefault CSS class is shared across all spans when sticky positioning is off",
 {
-    # PRODUCTION BUG (reported, not fixed here): createcustomtable.R passes a scalar
-    # (non length-vectorised) CSS string into addCSSclass() for row.spans, unlike the
-    # cell/row-header blocks which explicitly rep() their string to the element count first.
-    # addCSSclass() derives the number of classes it creates from length(class.css), so it
-    # only ever creates ONE "rowspandefault1" class here, which every span's <td> then reuses -
-    # not "rowspandefault1..N" as the plan's method summary assumed. Pinning the actual
-    # behaviour; a defect should be filed separately against createcustomtable.R (row.spans block).
+    # NOT a production bug: addCSSclass() only expands class.css into a per-row/per-column
+    # matrix when its `position` argument is non-NULL (see addCSSclass() in
+    # createcustomtable.R). Here row.height/num.header.rows are not set, so top.position is
+    # NULL and the row-span block's scalar CSS string is never expanded - addCSSclass()
+    # derives its class count from length(class.css), so it creates a single
+    # "rowspandefault1" class that every span's <td> reuses. (The row-header block passes an
+    # equally unrepped scalar; it only ends up with one class per row because its call always
+    # supplies a non-NULL `position`.) On the sticky path (see the next test) each span DOES
+    # get its own "rowspandefaultN" class, matching the plan's expectation.
     spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
     res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
     h <- normWs(tableHtml(res))
     # trailing "{" anchors the declaration itself, distinct from the "rowspandefault1" token
-    # that also appears (twice more) inside every span's class attribute
+    # that also appears (three times, once in each span's class attribute)
     expect_equal(countOccurrences(".rowspandefault1{", h), 1)
     expect_equal(countOccurrences(".rowspandefault2{", h), 0)
     expect_equal(countOccurrences('class="rowspandefault1">', h), 3)
+})
+
+test_that("Each span gets its own rowspandefault CSS class when sticky positioning is on",
+{
+    # With row.height/num.header.rows set, top.position is non-NULL, so addCSSclass()
+    # expands the row-span CSS string into one class per span (rowspandefault1/2/3) instead
+    # of sharing a single class - the counterpart to the sticky-off case above.
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
+                    row.spans = spans)
+    h <- normWs(tableHtml(res))
+    expect_equal(countOccurrences(".rowspandefault3{", h), 1)
 })
 
 test_that("A per-span class is appended, not substituted",
@@ -366,23 +381,28 @@ test_that("Span styling arguments reach the rowspandefault CSS declaration",
     res <- CreateCustomTable(rowSpanMatrix, row.spans = spans, row.span.fill = "rgb(9,9,9)",
                     row.span.font.size = 21, row.span.align.horizontal = "right")
     h <- normWs(tableHtml(res))
-    expect_true(grepl("background: rgb(9,9,9)", h, fixed = TRUE))
-    expect_true(grepl("font-size: 21px", h, fixed = TRUE))
-    expect_true(grepl("text-align: right", h, fixed = TRUE))
+    # anchor to the rowspandefault1 declaration itself, not just anywhere in the document,
+    # so the assertions cannot be satisfied by an unrelated CSS rule
+    block <- regmatches(h, regexpr(".rowspandefault1[{][^}]*[}]", h))
+    expect_true(grepl("background: rgb(9,9,9)", block, fixed = TRUE))
+    expect_true(grepl("font-size: 21px", block, fixed = TRUE))
+    expect_true(grepl("text-align: right", block, fixed = TRUE))
 })
 
 test_that("row.spans prepends an extra header cell (ncol + 2 th cells)",
 {
     spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    # a distinct corner label lets ths[1] (row-span corner, always blank) and ths[2]
+    # (row-header corner, carries `corner`) be told apart even if their order were swapped
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans, corner = "RH")
     h <- tableHtml(res)
     thead <- sub("</thead>.*", "", h)
     ths <- regmatches(thead, gregexpr('<th class="[^"]*">[^<]*</th>', thead))[[1]]
     # 6 data columns + row-header corner + row-span corner
     expect_equal(length(ths), 8)
     expect_equal(ths[1], '<th class="cornerdefault1"></th>')
-    expect_equal(ths[2], '<th class="cornerdefault1"></th>')
+    expect_equal(ths[2], '<th class="cornerdefault1">RH</th>')
 })
 
 test_that("Adding row.spans increases (does not reduce) the emitted sticky-position count",
@@ -395,6 +415,9 @@ test_that("Adding row.spans increases (does not reduce) the emitted sticky-posit
     # class of its own, adding row.spans increases the total sticky count by 1 (for
     # num.header.rows = 1, the minimal combination) rather than decreasing it. Pinning
     # the actual, confirmed behaviour instead of the plan's assumption.
+    # NOTE: at num.header.rows = 1, top.position has length 1, so the rm.index pruning's
+    # `[-rm.index]` is a no-op regardless of span heights - this case does not exercise the
+    # pruning branch at all. See the num.header.rows = 2 case below for that.
     spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
     noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1)
@@ -403,6 +426,28 @@ test_that("Adding row.spans increases (does not reduce) the emitted sticky-posit
     countNoSpans <- countOccurrences("position: sticky", tableHtml(noSpans))
     countWithSpans <- countOccurrences("position: sticky", tableHtml(withSpans))
     expect_equal(countWithSpans, countNoSpans + 1)
+})
+
+test_that("The rm.index pruning branch is actually exercised at num.header.rows = 2",
+{
+    # At num.header.rows = 2, top.position has length 2, so rm.index pruning is only a
+    # no-op when no span's offset (height - 1) lands on index 2. A front-loaded span
+    # (heights 2, 1, 1) prunes index 2 out of top.position; a back-loaded span
+    # (heights 1, 1, 2) does not prune anything, since its offset lands past top.position's
+    # length. Confirmed counts: no spans -> 15, front-loaded (pruned) -> 16, back-loaded
+    # (not pruned) -> 17.
+    frontLoaded <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    backLoaded <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 2, label = "CC"))
+    noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2)
+    withFront <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
+                    row.spans = frontLoaded)
+    withBack <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
+                    row.spans = backLoaded)
+    expect_equal(countOccurrences("position: sticky", tableHtml(noSpans)), 15)
+    expect_equal(countOccurrences("position: sticky", tableHtml(withFront)), 16)
+    expect_equal(countOccurrences("position: sticky", tableHtml(withBack)), 17)
 })
 
 test_that("Span heights not summing to nrow are pinned to current (unvalidated) behaviour",
@@ -420,7 +465,39 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 
     # over-covering: a single span with a height greater than nrow completes without error;
-    # there is no bounds check in the j <- j + row.span.lengths[i] loop
+    # there is no bounds check in the j <- j + row.span.lengths[i] loop. Because there is
+    # only one span, row.span.html (length nrows) is fully written in a single assignment,
+    # so no misalignment occurs here - see the multi-span case below for that.
     overSpans <- list(list(height = 10, label = "AA"))
-    expect_error(CreateCustomTable(rowSpanMatrix, row.spans = overSpans), NA)
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = overSpans)
+    h <- tableHtml(res)
+    body <- sub(".*</thead>", "", h)
+    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    expect_equal(length(rows), 4)
+    expect_true(grepl('<tr><td rowspan="10" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
+})
+
+test_that("A multi-span over-cover misaligns the table and emits a cbind warning (genuine defect, not yet ticketed)",
+{
+    # Genuine production defect being pinned here, not the plan-authoring mistake above:
+    # when a span's height pushes `j` (in the `j <- j + row.span.lengths[i]` loop) past
+    # nrow, subsequent assignments to row.span.html[j] silently grow that vector beyond
+    # nrows. cbind(row.span.html, cell.html) then warns because row.span.html's length is
+    # no longer a multiple of cell.html's row count, and the emitted rows are misaligned
+    # (rows 3-4 below are missing their row-span <td> entirely, even though CC's span
+    # should have started around there). No ticket has been filed for this yet.
+    overSpans <- list(list(height = 1, label = "AA"), list(height = 10, label = "BB"),
+                  list(height = 3, label = "CC"))
+    expect_warning(
+        res <- CreateCustomTable(rowSpanMatrix, row.spans = overSpans),
+        "number of rows of result is not a multiple of vector length", fixed = TRUE
+    )
+    h <- tableHtml(res)
+    body <- sub(".*</thead>", "", h)
+    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    expect_equal(length(rows), 4)
+    expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
+    expect_true(grepl('<tr><td rowspan="10" class="rowspandefault1">BB</td>', rows[2], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[3], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
