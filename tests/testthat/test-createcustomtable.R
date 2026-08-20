@@ -327,9 +327,11 @@ test_that("A single rowspandefault CSS class is shared across all spans when sti
     # createcustomtable.R). Here row.height/num.header.rows are not set, so top.position is
     # NULL and the row-span block's scalar CSS string is never expanded - addCSSclass()
     # derives its class count from length(class.css), so it creates a single
-    # "rowspandefault1" class that every span's <td> reuses. (The row-header block passes an
-    # equally unrepped scalar; it only ends up with one class per row because its call always
-    # supplies a non-NULL `position`.) On the sticky path (see the next test) each span DOES
+    # "rowspandefault1" class that every span's <td> reuses. (The row-header block passes the
+    # same top.position variable as its own `position` argument; on this default path
+    # top.position is also NULL, so that block collapses to a single shared class too - it
+    # only ends up with one class per row when its call *does* supply a non-NULL `position`,
+    # i.e. on the sticky path.) On the sticky path (see the next test) each span DOES
     # get its own "rowspandefaultN" class, matching the plan's expectation.
     spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
@@ -352,7 +354,10 @@ test_that("Each span gets its own rowspandefault CSS class when sticky positioni
     res <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
                     row.spans = spans)
     h <- normWs(tableHtml(res))
+    expect_equal(countOccurrences(".rowspandefault1{", h), 1)
+    expect_equal(countOccurrences(".rowspandefault2{", h), 1)
     expect_equal(countOccurrences(".rowspandefault3{", h), 1)
+    expect_equal(countOccurrences(".rowspandefault4{", h), 0)
 })
 
 test_that("A per-span class is appended, not substituted",
@@ -434,20 +439,21 @@ test_that("The rm.index pruning branch is actually exercised at num.header.rows 
     # no-op when no span's offset (height - 1) lands on index 2. A front-loaded span
     # (heights 2, 1, 1) prunes index 2 out of top.position; a back-loaded span
     # (heights 1, 1, 2) does not prune anything, since its offset lands past top.position's
-    # length. Confirmed counts: no spans -> 15, front-loaded (pruned) -> 16, back-loaded
-    # (not pruned) -> 17.
+    # length. Confirmed counts: no spans -> noSpans, front-loaded (pruned) -> noSpans + 1,
+    # back-loaded (not pruned) -> noSpans + 2. Expressed relative to noSpans (rather than
+    # hardcoded absolutes) so an unrelated CSS addition elsewhere doesn't make this brittle.
     frontLoaded <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
     backLoaded <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 2, label = "CC"))
-    noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2)
+    resNoSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2)
     withFront <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
                     row.spans = frontLoaded)
     withBack <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
                     row.spans = backLoaded)
-    expect_equal(countOccurrences("position: sticky", tableHtml(noSpans)), 15)
-    expect_equal(countOccurrences("position: sticky", tableHtml(withFront)), 16)
-    expect_equal(countOccurrences("position: sticky", tableHtml(withBack)), 17)
+    noSpans <- countOccurrences("position: sticky", tableHtml(resNoSpans))
+    expect_equal(countOccurrences("position: sticky", tableHtml(withFront)), noSpans + 1)
+    expect_equal(countOccurrences("position: sticky", tableHtml(withBack)), noSpans + 2)
 })
 
 test_that("Span heights not summing to nrow are pinned to current (unvalidated) behaviour",
@@ -465,9 +471,11 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 
     # over-covering: a single span with a height greater than nrow completes without error;
-    # there is no bounds check in the j <- j + row.span.lengths[i] loop. Because there is
-    # only one span, row.span.html (length nrows) is fully written in a single assignment,
-    # so no misalignment occurs here - see the multi-span case below for that.
+    # there is no bounds check in the j <- j + row.span.lengths[i] loop, but with only one
+    # span the loop makes just one assignment (row.span.html[1] <- ...) before it ends, so
+    # `j` only overruns nrow AFTER that final (and only) span - row.span.html never grows
+    # beyond its original length and no misalignment occurs here. See the multi-span case
+    # below for what happens when a later span's assignment lands past the overrun.
     overSpans <- list(list(height = 10, label = "AA"))
     res <- CreateCustomTable(rowSpanMatrix, row.spans = overSpans)
     h <- tableHtml(res)
@@ -475,17 +483,22 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
     expect_equal(length(rows), 4)
     expect_true(grepl('<tr><td rowspan="10" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[2], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[3], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
 
-test_that("A multi-span over-cover misaligns the table and emits a cbind warning (genuine defect, not yet ticketed)",
+test_that("A multi-span over-cover silently drops the last span and leaks a cbind warning (genuine defect, not yet ticketed)",
 {
     # Genuine production defect being pinned here, not the plan-authoring mistake above:
     # when a span's height pushes `j` (in the `j <- j + row.span.lengths[i]` loop) past
-    # nrow, subsequent assignments to row.span.html[j] silently grow that vector beyond
-    # nrows. cbind(row.span.html, cell.html) then warns because row.span.html's length is
-    # no longer a multiple of cell.html's row count, and the emitted rows are misaligned
-    # (rows 3-4 below are missing their row-span <td> entirely, even though CC's span
-    # should have started around there). No ticket has been filed for this yet.
+    # nrow, the next assignment to row.span.html[j] silently grows that vector beyond
+    # nrows (here to length 12, for the height-1/10/3 spans below) - so CC's span is written
+    # past the end of the table and effectively discarded, rather than misaligning rows 3-4
+    # (rowspan is clamped to the remaining rows elsewhere, so the table shape itself stays
+    # correct). cbind(row.span.html, cell.html) then warns because the result's row count
+    # (4, taken from cell.html) is not a multiple of row.span.html's length (12). No ticket
+    # has been filed for this yet.
     overSpans <- list(list(height = 1, label = "AA"), list(height = 10, label = "BB"),
                   list(height = 3, label = "CC"))
     expect_warning(
