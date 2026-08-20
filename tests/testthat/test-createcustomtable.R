@@ -275,3 +275,152 @@ test_that("use.predefined.css = FALSE leaves the spacer header cell with no matc
     resDefault <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
     expect_true(grepl('.spacer {', tableHtml(resDefault), fixed = TRUE))
 })
+
+# row.spans --------------------------------------------------------------
+
+# the documented @examples matrix; heights in the tests below are chosen to sum to nrow (4)
+# unless the scenario is deliberately exercising mismatched heights
+rowSpanMatrix <- structure(1:24, .Dim = c(4L, 6L),
+    .Dimnames = list(c("a", "b", "c", "d"), c("A", "B", "C", "D", "E", "F")))
+
+test_that("Default emits no rowspan cells",
+{
+    res <- CreateCustomTable(x2)
+    expect_false(grepl("rowspan=", tableHtml(res), fixed = TRUE))
+})
+
+test_that("One rowspan cell per span, with the right heights and labels",
+{
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    # anchored with the trailing quote so rowspan="1" cannot match rowspan="10"-style values
+    expect_equal(countOccurrences('<td rowspan="2" class="rowspandefault1">', h), 1)
+    expect_equal(countOccurrences('<td rowspan="1" class="rowspandefault1">', h), 2)
+    expect_true(grepl('<td rowspan="2" class="rowspandefault1">AA</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">BB</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">CC</td>', h, fixed = TRUE))
+})
+
+test_that("Spans are placed at the correct row offsets",
+{
+    # heights of 2, 1, 1 mean AA's span covers rows 1-2 (leaving row 2 without its own span
+    # cell), BB opens row 3 and CC opens row 4 - pinning the j <- j + row.span.lengths[i] loop
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    body <- sub(".*</thead>", "", h)
+    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    expect_equal(length(rows), 4)
+    expect_true(grepl('<tr><td rowspan="2"', rows[1], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[2], fixed = TRUE))
+    expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">BB</td>', rows[3], fixed = TRUE))
+    expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">CC</td>', rows[4], fixed = TRUE))
+})
+
+test_that("A single rowspandefault CSS class is shared across all spans (production behaviour, not one class per span)",
+{
+    # PRODUCTION BUG (reported, not fixed here): createcustomtable.R passes a scalar
+    # (non length-vectorised) CSS string into addCSSclass() for row.spans, unlike the
+    # cell/row-header blocks which explicitly rep() their string to the element count first.
+    # addCSSclass() derives the number of classes it creates from length(class.css), so it
+    # only ever creates ONE "rowspandefault1" class here, which every span's <td> then reuses -
+    # not "rowspandefault1..N" as the plan's method summary assumed. Pinning the actual
+    # behaviour; a defect should be filed separately against createcustomtable.R (row.spans block).
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- normWs(tableHtml(res))
+    # trailing "{" anchors the declaration itself, distinct from the "rowspandefault1" token
+    # that also appears (twice more) inside every span's class attribute
+    expect_equal(countOccurrences(".rowspandefault1{", h), 1)
+    expect_equal(countOccurrences(".rowspandefault2{", h), 0)
+    expect_equal(countOccurrences('class="rowspandefault1">', h), 3)
+})
+
+test_that("A per-span class is appended, not substituted",
+{
+    spans <- list(list(height = 2, label = "AA", class = "bluefill"),
+                  list(height = 1, label = "BB"), list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    expect_true(grepl('<td rowspan="2" class="rowspandefault1 bluefill">AA</td>', h, fixed = TRUE))
+})
+
+test_that("A span without a class entry carries only the generated class",
+{
+    spans <- list(list(height = 2, label = "AA", class = "bluefill"),
+                  list(height = 1, label = "BB"), list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    # exact match (no trailing token/space) confirms nothing was appended for BB
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">BB</td>', h, fixed = TRUE))
+})
+
+test_that("Span styling arguments reach the rowspandefault CSS declaration",
+{
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans, row.span.fill = "rgb(9,9,9)",
+                    row.span.font.size = 21, row.span.align.horizontal = "right")
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("background: rgb(9,9,9)", h, fixed = TRUE))
+    expect_true(grepl("font-size: 21px", h, fixed = TRUE))
+    expect_true(grepl("text-align: right", h, fixed = TRUE))
+})
+
+test_that("row.spans prepends an extra header cell (ncol + 2 th cells)",
+{
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    thead <- sub("</thead>.*", "", h)
+    ths <- regmatches(thead, gregexpr('<th class="[^"]*">[^<]*</th>', thead))[[1]]
+    # 6 data columns + row-header corner + row-span corner
+    expect_equal(length(ths), 8)
+    expect_equal(ths[1], '<th class="cornerdefault1"></th>')
+    expect_equal(ths[2], '<th class="cornerdefault1"></th>')
+})
+
+test_that("Adding row.spans increases (does not reduce) the emitted sticky-position count",
+{
+    # PLAN DEVIATION: the plan expected the rm.index pruning at the top of the row.spans
+    # block to REDUCE the sticky-position count relative to the no-spans case. In practice
+    # that pruning only trims the top.position vector fed into the row-span column's OWN
+    # addCSSclass() call; the cell/row-header sticky counts (computed earlier in the
+    # function) are unaffected. Because the row-span column also gets a "position: sticky"
+    # class of its own, adding row.spans increases the total sticky count by 1 (for
+    # num.header.rows = 1, the minimal combination) rather than decreasing it. Pinning
+    # the actual, confirmed behaviour instead of the plan's assumption.
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1)
+    withSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
+                    row.spans = spans)
+    countNoSpans <- countOccurrences("position: sticky", tableHtml(noSpans))
+    countWithSpans <- countOccurrences("position: sticky", tableHtml(withSpans))
+    expect_equal(countWithSpans, countNoSpans + 1)
+})
+
+test_that("Span heights not summing to nrow are pinned to current (unvalidated) behaviour",
+{
+    # under-covering: heights sum to 2 against nrow = 4, so rows 3-4 simply get no span cell
+    spans <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"))
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    h <- tableHtml(res)
+    body <- sub(".*</thead>", "", h)
+    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    expect_equal(length(rows), 4)
+    expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
+    expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">BB</td>', rows[2], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[3], fixed = TRUE))
+    expect_false(grepl("rowspan", rows[4], fixed = TRUE))
+
+    # over-covering: a single span with a height greater than nrow completes without error;
+    # there is no bounds check in the j <- j + row.span.lengths[i] loop
+    overSpans <- list(list(height = 10, label = "AA"))
+    expect_error(CreateCustomTable(rowSpanMatrix, row.spans = overSpans), NA)
+})
