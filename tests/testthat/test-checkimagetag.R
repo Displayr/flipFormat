@@ -29,3 +29,57 @@ test_that("checkImageTag",
 
     txt.style <- "<img style='margin:0 auto;' width='50' src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png'>"
 })
+
+test_that("checkImageTag: style and width attributes preceding src are preserved, not stripped",
+{
+    txt.style <- "<img style='margin:0 auto;' width='50' src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png'>"
+    expect_error(res <- checkImageTag(txt.style), NA)
+    expect_warning(checkImageTag(txt.style), NA)
+    expect_equal(res, paste0("<div>", txt.style, "</div>"))
+})
+
+test_that("checkImageTag: src location is independent of attribute order",
+{
+    txt.order <- "<img src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png' style='margin:0 auto;' width='50'>"
+    expect_error(res <- checkImageTag(txt.order), NA)
+    expect_equal(res, paste0("<div>", txt.order, "</div>"))
+})
+
+test_that("checkImageTag: a double-quoted src is cleaned identically to a single-quoted src",
+{
+    txt.dq <- "<img style='margin:0 auto;' width='50' src=\"https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png\">"
+    expect_error(res <- checkImageTag(txt.dq), NA)
+    expect_equal(res, paste0("<div>", txt.dq, "</div>"))
+})
+
+test_that("checkImageTag: an unquoted bare src is cleaned identically",
+{
+    txt.unquoted <- "<img style='margin:0 auto;' width='50' src=https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png>"
+    expect_error(res <- checkImageTag(txt.unquoted), NA)
+    expect_equal(res, paste0("<div>", txt.unquoted, "</div>"))
+})
+
+test_that("checkImageTag: attributes with no src attribute at all warns with a syntax error and returns an empty string",
+{
+    txt.nosrc <- "<img style='margin:0 auto;' width='50'>"
+    expect_warning(res <- checkImageTag(txt.nosrc), "syntax error")
+    expect_equal(res, "")
+})
+
+test_that("checkImageTag: surrounding text is preserved, not just the image tag, on the success path",
+{
+    txt.style <- "<img style='margin:0 auto;' width='50' src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png'>"
+    txt.label <- paste0("Label ", txt.style)
+    expect_error(res <- checkImageTag(txt.label), NA)
+    expect_equal(res, paste0("<div>", txt.label, "</div>"))
+})
+
+test_that("checkImageTag: an attribute value containing the substring 'src=' before the real src warns of an invalid link rather than silently succeeding",
+{
+    # regexpr("src=(\\S+)", ...) is unanchored and matches the embedded "src=" inside
+    # "mysrc=x" before the real src attribute, producing a broken link; this is not
+    # asserted as correct behaviour, only that it is not silently treated as valid.
+    txt.decoy <- "<img alt='mysrc=x' src='https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png'>"
+    expect_warning(res <- checkImageTag(txt.decoy), "invalid link")
+    expect_false(identical(res, paste0("<div>", txt.decoy, "</div>")))
+})
