@@ -741,6 +741,8 @@ test_that("NULL rownames force-disable row headers even when show.row.headers = 
     res <- CreateCustomTable(m, show.row.headers = TRUE)
     h <- tableHtml(res)
     expect_false(grepl("rowheaderdefault", h, fixed = TRUE))
+    # positive control: the table still rendered a known body cell
+    expect_true(grepl(">1</td>", h, fixed = TRUE))
 })
 
 test_that("NULL colnames force-disable column headers even when show.col.headers = TRUE",
@@ -750,6 +752,8 @@ test_that("NULL colnames force-disable column headers even when show.col.headers
     res <- CreateCustomTable(m, show.col.headers = TRUE)
     h <- tableHtml(res)
     expect_false(grepl("colheaderdefault", h, fixed = TRUE))
+    # positive control: the table still rendered a known body cell
+    expect_true(grepl(">1</td>", h, fixed = TRUE))
 })
 
 test_that("cell.align.horizontal reaches text-align and the padding side in the celldefault rule",
@@ -791,7 +795,7 @@ test_that("font.unit is honoured in the emitted font-size declaration",
 {
     res <- CreateCustomTable(x2, font.size = 2, font.unit = "em")
     h <- normWs(tableHtml(res))
-    expect_true(grepl("font-size: 2em", h, fixed = TRUE))
+    expect_equal(countOccurrences("font-size: 2em", h), 15)
     expect_false(grepl("font-size: 2px", h, fixed = TRUE))
 })
 
@@ -840,6 +844,7 @@ test_that("col.classes applies to a whole data column, indexed against data colu
     {
         tds <- regmatches(row, gregexpr('<td class="[^"]*">', row))[[1]]
         # tds[1] is the row-header cell, tds[2:4] are data columns 1:3
+        expect_false(grepl("bluefill", tds[1], fixed = TRUE))
         expect_false(grepl("bluefill", tds[2], fixed = TRUE))
         expect_false(grepl("bluefill", tds[3], fixed = TRUE))
         expect_true(grepl("bluefill", tds[4], fixed = TRUE))
@@ -852,11 +857,14 @@ test_that("row.classes applies to a whole data row",
     h <- tableHtml(res)
     rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
     bodyRows <- rows[-1]
+    expect_equal(length(bodyRows), nrow(x2))
 
     row1Tds <- regmatches(bodyRows[1], gregexpr('<td class="[^"]*">', bodyRows[1]))[[1]]
+    expect_false(grepl("redfill", row1Tds[1], fixed = TRUE))
     expect_true(all(grepl("redfill", row1Tds[2:4], fixed = TRUE)))
 
     row2Tds <- regmatches(bodyRows[2], gregexpr('<td class="[^"]*">', bodyRows[2]))[[1]]
+    expect_false(grepl("redfill", row2Tds[1], fixed = TRUE))
     expect_false(any(grepl("redfill", row2Tds[2:4], fixed = TRUE)))
 })
 
@@ -887,23 +895,23 @@ test_that("col.classes/row.classes read ix/class positionally, so the element na
     resNamed <- CreateCustomTable(x2, col.classes = list(list(ix = 3, class = "bluefill")))
     resUnnamed <- CreateCustomTable(x2, col.classes = list(list(foo = 3, bar = "bluefill")))
 
-    # the random per-call container name means the documents differ byte-for-byte;
-    # compare only the column-3 body cells, which is what this scenario is about
-    extractCol3 <- function(h) regmatches(h, gregexpr('<td class="[^"]*">(9|10|11|12)</td>', h))[[1]]
-    col3Named <- extractCol3(tableHtml(resNamed))
-    col3Unnamed <- extractCol3(tableHtml(resUnnamed))
-    expect_length(col3Named, nrow(x2))
-    expect_identical(col3Named, col3Unnamed)
+    # the random per-call container name only appears before </thead>; the body markup
+    # after </thead> is stem-free, so comparing the whole body block is strictly stronger
+    # than comparing just the column-3 cells, at the same cost
+    bodyNamed <- sub(".*</thead>", "", tableHtml(resNamed))
+    bodyUnnamed <- sub(".*</thead>", "", tableHtml(resUnnamed))
+    expect_identical(bodyNamed, bodyUnnamed)
 })
 
-test_that("The cell.inline.styl typo means sig.change.fills styling is never prepended for the header row",
+test_that("sig.change.fills inline style is emitted only on the flagged body cell, never in <thead>",
 {
     # createcustomtable.R assigns 'cell.inline.styl <- rbind("", cell.inline.style)' (missing
-    # the letter 'e'); this writes to a variable that is never read again, so the header-row
-    # blank-style prepend it was meant to add to cell.inline.style is silently discarded. This
-    # is a confirmed defect (separate from this test-writing task) - pinned here as current,
-    # no-op behaviour: the inline style block is emitted exactly once, on the flagged data cell,
-    # never on a header cell.
+    # the letter 'e'). This is a dead store: 'cell.inline.styl' is never read again anywhere
+    # under R/, so the assignment has no effect on the emitted HTML. Renaming it to the
+    # apparently-intended 'cell.inline.style' does NOT fix anything - it makes the call error,
+    # because 'cell.styles' never gains a matching header row while 'cell.html' stays body-only
+    # (arguments cannot be recycled to the same length). So the correct disposition for the
+    # line is deletion, not renaming, and the current emitted output below is correct as-is.
     sig <- matrix(0, nrow(x2), ncol(x2))
     sig[1, 1] <- 1
     res <- CreateCustomTable(x2, sig.change.fills = sig, show.col.headers = TRUE)
