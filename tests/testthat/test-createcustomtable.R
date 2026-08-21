@@ -414,15 +414,22 @@ test_that("Adding row.spans increases (does not reduce) the emitted sticky-posit
 {
     # PLAN DEVIATION: the plan expected the rm.index pruning at the top of the row.spans
     # block to REDUCE the sticky-position count relative to the no-spans case. In practice
-    # that pruning only trims the top.position vector fed into the row-span column's OWN
-    # addCSSclass() call; the cell/row-header sticky counts (computed earlier in the
-    # function) are unaffected. Because the row-span column also gets a "position: sticky"
-    # class of its own, adding row.spans increases the total sticky count by 1 (for
-    # num.header.rows = 1, the minimal combination) rather than decreasing it. Pinning
-    # the actual, confirmed behaviour instead of the plan's assumption.
-    # NOTE: at num.header.rows = 1, top.position has length 1, so the rm.index pruning's
-    # `[-rm.index]` is a no-op regardless of span heights - this case does not exercise the
-    # pruning branch at all. See the num.header.rows = 2 case below for that.
+    # that pruning trims the top.position vector, which is reassigned and then also fed
+    # into the row-span column's OWN addCSSclass() call; the cell/row-header sticky counts
+    # (computed earlier in the function) are unaffected. (A table combining row.spans with
+    # col.spans would also see the col-span classes affected, since the later column-span
+    # block passes the same pruned top.position as its position argument.) Because the
+    # row-span column also gets a "position: sticky" class of its own, adding row.spans
+    # increases the total sticky count by 1 (for num.header.rows = 1, the minimal
+    # combination) rather than decreasing it. Pinning the actual, confirmed behaviour
+    # instead of the plan's assumption.
+    # NOTE: at num.header.rows = 1, top.position has length 1, so the emitted output is the
+    # same either way: for the heights used here (2, 1, 1) rm.index holds only out-of-range
+    # indices (>= 2), so `top.position[-rm.index]` is a no-op. If every span height were 1,
+    # rm.index would stay NULL and `top.position[-rm.index]` (i.e. `top.position[-NULL]`)
+    # would error rather than silently no-op - but that all-heights-1 combination is never
+    # exercised at num.header.rows = 1 by this test. See the num.header.rows = 2 case below
+    # for the pruning branch actually removing an index.
     spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"))
     noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1)
@@ -495,8 +502,10 @@ test_that("A multi-span over-cover silently drops the last span and leaks a cbin
     # nrow, the next assignment to row.span.html[j] silently grows that vector beyond
     # nrows (here to length 12, for the height-1/10/3 spans below) - so CC's span is written
     # past the end of the table and effectively discarded, rather than misaligning rows 3-4
-    # (rowspan is clamped to the remaining rows elsewhere, so the table shape itself stays
-    # correct). cbind(row.span.html, cell.html) then warns because the result's row count
+    # (the emitted rowspan attribute keeps its literal, oversized value - e.g. rowspan="10" -
+    # and it is the browser's HTML renderer, not this code, that clamps it to the remaining
+    # rows, so the table shape itself stays correct). cbind(row.span.html, cell.html) then
+    # warns because the result's row count
     # (4, taken from cell.html) is not a multiple of row.span.html's length (12). No ticket
     # has been filed for this yet.
     overSpans <- list(list(height = 1, label = "AA"), list(height = 10, label = "BB"),
