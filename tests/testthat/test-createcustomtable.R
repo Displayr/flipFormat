@@ -660,3 +660,258 @@ test_that("Row count does not change how many times the banding rule is emitted"
     expect_equal(countOccurrences("nth-child(odd)", tableHtml(res2)), 1)
     expect_equal(countOccurrences("nth-child(odd)", tableHtml(res7)), 1)
 })
+
+# header visibility and cell formatting ----------------------------------
+
+test_that("transpose swaps which labels become row vs column headers",
+{
+    m <- matrix(1:6, 2, 3, dimnames = list(c("r1", "r2"), c("c1", "c2", "c3")))
+    res <- CreateCustomTable(m, transpose = TRUE)
+    h <- normWs(tableHtml(res))
+
+    # the former row names (r1, r2) now form the column-header row
+    expect_true(grepl('<th class="colheaderdefault1 ">r1</th><th class="colheaderdefault1 ">r2</th>',
+                       h, fixed = TRUE))
+    # the former column names (c1, c2, c3) now form the row-header cells
+    expect_true(grepl('<td class="rowheaderdefault1">c1</td>', h, fixed = TRUE))
+    expect_true(grepl('<td class="rowheaderdefault1">c2</td>', h, fixed = TRUE))
+    expect_true(grepl('<td class="rowheaderdefault1">c3</td>', h, fixed = TRUE))
+})
+
+test_that("transpose changes the cell order to that of the original first column",
+{
+    m <- matrix(1:6, 2, 3, dimnames = list(c("r1", "r2"), c("c1", "c2", "c3")))
+    res <- CreateCustomTable(m, transpose = TRUE)
+    h <- tableHtml(res)
+
+    # original column c1 was r1=1, r2=2; after transpose this becomes the first body row
+    rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
+    firstBodyRow <- rows[2]  # rows[1] is the header row inside <thead>
+    expect_true(grepl(">1</td>", firstBodyRow, fixed = TRUE))
+    expect_true(grepl(">2</td>", firstBodyRow, fixed = TRUE))
+    expect_false(grepl(">5</td>", firstBodyRow, fixed = TRUE))
+})
+
+test_that("show.col.headers = FALSE emits no column-header <th> cell and no colheaderdefault CSS rule",
+{
+    # anchored on 'class="' so the surrounding <thead> tag (which also starts '<th')
+    # cannot produce a false positive
+    res <- CreateCustomTable(x2, show.col.headers = FALSE)
+    h <- tableHtml(res)
+    expect_false(grepl('<th class="', h, fixed = TRUE))
+    expect_false(grepl("colheaderdefault", h, fixed = TRUE))
+
+    # positive control: both are present when column headers are shown
+    resShown <- CreateCustomTable(x2)
+    hShown <- tableHtml(resShown)
+    expect_true(grepl('<th class="', hShown, fixed = TRUE))
+    expect_true(grepl("colheaderdefault", hShown, fixed = TRUE))
+})
+
+test_that("show.row.headers = FALSE drops the row-label column and the rowheaderdefault CSS rule",
+{
+    res <- CreateCustomTable(x2, show.row.headers = FALSE)
+    h <- tableHtml(res)
+    expect_false(grepl(">a</td>", h, fixed = TRUE))
+    expect_false(grepl("rowheaderdefault", h, fixed = TRUE))
+
+    # positive control: both are present when row headers are shown
+    resShown <- CreateCustomTable(x2)
+    hShown <- tableHtml(resShown)
+    expect_true(grepl(">a</td>", hShown, fixed = TRUE))
+    expect_true(grepl("rowheaderdefault", hShown, fixed = TRUE))
+})
+
+test_that("show.col.headers and show.row.headers both FALSE emits a bare data grid",
+{
+    res <- CreateCustomTable(x2, show.col.headers = FALSE, show.row.headers = FALSE)
+    h <- tableHtml(res)
+    expect_false(grepl('<th class="', h, fixed = TRUE))
+    expect_false(grepl(">a</td>", h, fixed = TRUE))
+
+    rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
+    firstBodyRow <- rows[1]
+    expect_equal(countOccurrences("<td", firstBodyRow), ncol(x2))
+})
+
+test_that("NULL rownames force-disable row headers even when show.row.headers = TRUE",
+{
+    m <- x2
+    rownames(m) <- NULL
+    res <- CreateCustomTable(m, show.row.headers = TRUE)
+    h <- tableHtml(res)
+    expect_false(grepl("rowheaderdefault", h, fixed = TRUE))
+})
+
+test_that("NULL colnames force-disable column headers even when show.col.headers = TRUE",
+{
+    m <- x2
+    colnames(m) <- NULL
+    res <- CreateCustomTable(m, show.col.headers = TRUE)
+    h <- tableHtml(res)
+    expect_false(grepl("colheaderdefault", h, fixed = TRUE))
+})
+
+test_that("cell.align.horizontal reaches text-align and the padding side in the celldefault rule",
+{
+    res <- CreateCustomTable(x2, cell.align.horizontal = "left")
+    h <- normWs(tableHtml(res))
+    rule <- regmatches(h, regexpr('\\.celldefault1\\{[^}]*\\}', h))
+    expect_length(rule, 1)
+    expect_equal(rule, paste0('.celldefault1{ background: #FFFFFF ;; border: 1px solid #FFFFFF;',
+        'padding-left:0px; font-size: 13px; font-style: normal; font-weight: normal; ',
+        'font-family: Arial; color:#2C2C2C; text-align: left; vertical-align: middle; }'))
+})
+
+test_that("font.size propagates to the celldefault, colheaderdefault and rowheaderdefault rules",
+{
+    res <- CreateCustomTable(x2, font.size = 21)
+    h <- normWs(tableHtml(res))
+
+    cellRule <- regmatches(h, regexpr('\\.celldefault1\\{[^}]*\\}', h))
+    expect_length(cellRule, 1)
+    expect_equal(cellRule, paste0('.celldefault1{ background: #FFFFFF ;; border: 1px solid #FFFFFF;;',
+        ' font-size: 21px; font-style: normal; font-weight: normal; font-family: Arial;',
+        ' color:#2C2C2C; text-align: center; vertical-align: middle; }'))
+
+    colHdrRule <- regmatches(h, regexpr('\\.colheaderdefault1\\{[^}]*\\}', h))
+    expect_length(colHdrRule, 1)
+    expect_equal(colHdrRule, paste0('.colheaderdefault1{ background: transparent; height: 35px; ;',
+        ' border: 1px solid #FFFFFF;; font-size: 21px; font-style: normal; font-weight: bold;',
+        ' font-family: Arial; color:#2C2C2C; text-align: center; vertical-align: middle; }'))
+
+    rowHdrRule <- regmatches(h, regexpr('\\.rowheaderdefault1\\{[^}]*\\}', h))
+    expect_length(rowHdrRule, 1)
+    expect_equal(rowHdrRule, paste0('.rowheaderdefault1{ background: transparent; border: 1px solid #FFFFFF;',
+        'padding-left:0px; font-size: 21px; font-style: normal; font-weight: bold; font-family: Arial;',
+        ' color:#2C2C2C; text-align: left; vertical-align: middle; }'))
+})
+
+test_that("font.unit is honoured in the emitted font-size declaration",
+{
+    res <- CreateCustomTable(x2, font.size = 2, font.unit = "em")
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("font-size: 2em", h, fixed = TRUE))
+    expect_false(grepl("font-size: 2px", h, fixed = TRUE))
+})
+
+test_that("An explicit cell.font.size overrides font.size for cells only",
+{
+    res <- CreateCustomTable(x2, font.size = 13, cell.font.size = 30)
+    h <- normWs(tableHtml(res))
+
+    cellRule <- regmatches(h, regexpr('\\.celldefault1\\{[^}]*\\}', h))
+    expect_length(cellRule, 1)
+    expect_true(grepl("font-size: 30px", cellRule, fixed = TRUE))
+
+    colHdrRule <- regmatches(h, regexpr('\\.colheaderdefault1\\{[^}]*\\}', h))
+    expect_length(colHdrRule, 1)
+    expect_true(grepl("font-size: 13px", colHdrRule, fixed = TRUE))
+})
+
+test_that("col.header.classes is appended to the generated colheaderdefault class",
+{
+    res <- CreateCustomTable(x2, col.header.classes = "myhdr")
+    h <- tableHtml(res)
+    thTags <- regmatches(h, gregexpr('<th class="[^"]*">[^<]*</th>', h))[[1]]
+    dataHeaders <- thTags[grepl("colheaderdefault", thTags, fixed = TRUE)]
+    expect_equal(length(dataHeaders), ncol(x2))
+    expect_true(all(grepl('colheaderdefault1 myhdr">', dataHeaders, fixed = TRUE)))
+})
+
+test_that("row.header.classes is appended to the generated rowheaderdefault class",
+{
+    res <- CreateCustomTable(x2, row.header.classes = "myrowhdr")
+    h <- tableHtml(res)
+    rowHdrTags <- regmatches(h, gregexpr('<td class="rowheaderdefault[^"]*">[a-d]</td>', h))[[1]]
+    expect_equal(length(rowHdrTags), nrow(x2))
+    expect_true(all(grepl('rowheaderdefault1 myrowhdr">', rowHdrTags, fixed = TRUE)))
+})
+
+test_that("col.classes applies to a whole data column, indexed against data columns only",
+{
+    res <- CreateCustomTable(x2, col.classes = list(list(ix = 3, class = "bluefill")),
+                              show.row.headers = TRUE)
+    h <- tableHtml(res)
+    rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
+    bodyRows <- rows[-1]
+    expect_equal(length(bodyRows), nrow(x2))
+    for (row in bodyRows)
+    {
+        tds <- regmatches(row, gregexpr('<td class="[^"]*">', row))[[1]]
+        # tds[1] is the row-header cell, tds[2:4] are data columns 1:3
+        expect_false(grepl("bluefill", tds[2], fixed = TRUE))
+        expect_false(grepl("bluefill", tds[3], fixed = TRUE))
+        expect_true(grepl("bluefill", tds[4], fixed = TRUE))
+    }
+})
+
+test_that("row.classes applies to a whole data row",
+{
+    res <- CreateCustomTable(x2, row.classes = list(list(ix = 1, class = "redfill")))
+    h <- tableHtml(res)
+    rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
+    bodyRows <- rows[-1]
+
+    row1Tds <- regmatches(bodyRows[1], gregexpr('<td class="[^"]*">', bodyRows[1]))[[1]]
+    expect_true(all(grepl("redfill", row1Tds[2:4], fixed = TRUE)))
+
+    row2Tds <- regmatches(bodyRows[2], gregexpr('<td class="[^"]*">', bodyRows[2]))[[1]]
+    expect_false(any(grepl("redfill", row2Tds[2:4], fixed = TRUE)))
+})
+
+test_that("col.classes and row.classes intersect on the shared cell",
+{
+    res <- CreateCustomTable(x2, col.classes = list(list(ix = 2, class = "bluefill")),
+                              row.classes = list(list(ix = 1, class = "redfill")))
+    h <- tableHtml(res)
+    rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
+    bodyRows <- rows[-1]
+
+    row1Tds <- regmatches(bodyRows[1], gregexpr('<td class="[^"]*">', bodyRows[1]))[[1]]
+    # data column 2 of row 1 carries both classes; columns 1 and 3 of row 1 carry only redfill
+    expect_true(grepl("redfill", row1Tds[2], fixed = TRUE))
+    expect_false(grepl("bluefill", row1Tds[2], fixed = TRUE))
+    expect_true(grepl("redfill", row1Tds[3], fixed = TRUE))
+    expect_true(grepl("bluefill", row1Tds[3], fixed = TRUE))
+    expect_true(grepl("redfill", row1Tds[4], fixed = TRUE))
+    expect_false(grepl("bluefill", row1Tds[4], fixed = TRUE))
+
+    row2Tds <- regmatches(bodyRows[2], gregexpr('<td class="[^"]*">', bodyRows[2]))[[1]]
+    expect_false(grepl("redfill", row2Tds[3], fixed = TRUE))
+    expect_true(grepl("bluefill", row2Tds[3], fixed = TRUE))
+})
+
+test_that("col.classes/row.classes read ix/class positionally, so the element names are cosmetic",
+{
+    resNamed <- CreateCustomTable(x2, col.classes = list(list(ix = 3, class = "bluefill")))
+    resUnnamed <- CreateCustomTable(x2, col.classes = list(list(foo = 3, bar = "bluefill")))
+
+    # the random per-call container name means the documents differ byte-for-byte;
+    # compare only the column-3 body cells, which is what this scenario is about
+    extractCol3 <- function(h) regmatches(h, gregexpr('<td class="[^"]*">(9|10|11|12)</td>', h))[[1]]
+    col3Named <- extractCol3(tableHtml(resNamed))
+    col3Unnamed <- extractCol3(tableHtml(resUnnamed))
+    expect_length(col3Named, nrow(x2))
+    expect_identical(col3Named, col3Unnamed)
+})
+
+test_that("The cell.inline.styl typo means sig.change.fills styling is never prepended for the header row",
+{
+    # createcustomtable.R assigns 'cell.inline.styl <- rbind("", cell.inline.style)' (missing
+    # the letter 'e'); this writes to a variable that is never read again, so the header-row
+    # blank-style prepend it was meant to add to cell.inline.style is silently discarded. This
+    # is a confirmed defect (separate from this test-writing task) - pinned here as current,
+    # no-op behaviour: the inline style block is emitted exactly once, on the flagged data cell,
+    # never on a header cell.
+    sig <- matrix(0, nrow(x2), ncol(x2))
+    sig[1, 1] <- 1
+    res <- CreateCustomTable(x2, sig.change.fills = sig, show.col.headers = TRUE)
+    h <- tableHtml(res)
+    expect_equal(countOccurrences("style='background:", h), 1)
+    expect_true(grepl("celldefault1\" style='background:rgb(195,255,199)'>1</td>", h, fixed = TRUE))
+
+    headerBlock <- regmatches(h, regexpr("<thead>.*?</thead>", h))
+    expect_length(headerBlock, 1)
+    expect_false(grepl("style=", headerBlock, fixed = TRUE))
+})
