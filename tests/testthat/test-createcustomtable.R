@@ -524,87 +524,6 @@ test_that("A multi-span over-cover silently drops the last span and leaks a cbin
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
 
-# banded.rows / banded.cols ------------------------------------------------
-
-test_that("Default emits no banding CSS",
-{
-    res <- CreateCustomTable(x2)
-    expect_false(grepl("nth-child", tableHtml(res), fixed = TRUE))
-})
-
-test_that("banded.rows = TRUE emits the odd/even row rule with default fills, including the unscoped even clause",
-{
-    # cata() joins its arguments with a space (its default cat() sep), so the emitted
-    # declaration has spaces around the fill value even though the source concatenates
-    # 'background-color:' and the fill value as adjacent cata() arguments; normWs
-    # collapses runs of whitespace to a single space rather than removing it, so those
-    # spaces remain in the string pinned below
-    res <- CreateCustomTable(x2, banded.rows = TRUE)
-    h <- normWs(tableHtml(res))
-    expect_true(grepl("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}", h, fixed = TRUE))
-    expect_true(grepl("tr:nth-child(even){background-color: rgb(245,245,245) ;}", h, fixed = TRUE))
-
-    # the odd rule is scoped to the container selector, but the even clause that follows
-    # it is not re-prefixed - pinning the confirmed selector-scoping gap
-    containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
-    expect_true(grepl(paste0(containerSel, " tbody tr:nth-child(odd)"), h, fixed = TRUE))
-    beforeEven <- substr(h, 1, regexpr("tr:nth-child(even)", h, fixed = TRUE) - 1)
-    afterOddRule <- sub(".*tr:nth-child\\(odd\\)\\{[^}]*\\}", "", beforeEven)
-    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
-})
-
-test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
-{
-    res <- CreateCustomTable(x2, banded.rows = TRUE,
-                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
-    h <- normWs(tableHtml(res))
-    expect_true(grepl("rgb(1,1,1)", h, fixed = TRUE))
-    expect_true(grepl("rgb(2,2,2)", h, fixed = TRUE))
-    expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
-    expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
-})
-
-test_that("banded.rows = TRUE drops the per-cell background from the celldefault CSS",
-{
-    resBanded <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = TRUE)
-    hBanded <- normWs(tableHtml(resBanded))
-    expect_false(grepl("background: rgb(3,3,3)", hBanded, fixed = TRUE))
-
-    # contrast: with banded.rows = FALSE (the only argument that differs), the same
-    # cell.fill value does reach the celldefault declaration
-    resFlat <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = FALSE)
-    hFlat <- normWs(tableHtml(resFlat))
-    expect_true(grepl("background: rgb(3,3,3)", hFlat, fixed = TRUE))
-})
-
-test_that("banded.cols = TRUE also suppresses the cell fill and emits the column rule verbatim",
-{
-    # pinning the literal 2n+3 / even selector pair as coded (see plan resolved question 1);
-    # not asserting a "corrected" odd/even split
-    res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
-    h <- normWs(tableHtml(res))
-    expect_true(grepl("tbody td:nth-child(2n+3){background-color:", h, fixed = TRUE))
-    expect_false(grepl("background: rgb(3,3,3)", h, fixed = TRUE))
-})
-
-test_that("banded.rows and banded.cols together emit both the row and column banding rules",
-{
-    res <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE)
-    h <- normWs(tableHtml(res))
-    expect_true(grepl("tr:nth-child(odd)", h, fixed = TRUE))
-    expect_true(grepl("td:nth-child(2n+3)", h, fixed = TRUE))
-})
-
-test_that("Row count does not change how many times the banding rule is emitted",
-{
-    m2 <- matrix(1:2, 2, 1, dimnames = list(c("a", "b"), "X"))
-    m7 <- matrix(1:7, 7, 1, dimnames = list(letters[1:7], "X"))
-    res2 <- CreateCustomTable(m2, banded.rows = TRUE)
-    res7 <- CreateCustomTable(m7, banded.rows = TRUE)
-    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res2)), 1)
-    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res7)), 1)
-})
-
 test_that("All-height-1 row.spans with sticky positioning errors on invalid unary -NULL (genuine unticketed defect)",
 {
     # Genuine production crash being pinned here (not yet ticketed): rm.index is only
@@ -640,4 +559,104 @@ test_that("All-height-1 row.spans with sticky positioning errors on invalid unar
             num.header.rows = 1),
         NA
     )
+})
+
+# banded.rows / banded.cols ------------------------------------------------
+
+test_that("Default emits no banding CSS",
+{
+    res <- CreateCustomTable(x2)
+    expect_false(grepl("nth-child", tableHtml(res), fixed = TRUE))
+})
+
+test_that("banded.rows = TRUE emits the odd/even row rule with default fills, including the unscoped even clause",
+{
+    # cata() joins its arguments with a space (its default cat() sep), so the emitted
+    # declaration has spaces around the fill value even though the source concatenates
+    # 'background-color:' and the fill value as adjacent cata() arguments; normWs
+    # collapses runs of whitespace to a single space rather than removing it, so those
+    # spaces remain in the string pinned below
+    res <- CreateCustomTable(x2, banded.rows = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}", h, fixed = TRUE))
+    expect_true(grepl("tr:nth-child(even){background-color: rgb(245,245,245) ;}", h, fixed = TRUE))
+
+    # the odd rule is scoped to the container selector, but the even clause that follows
+    # it is not re-prefixed - pinning the confirmed selector-scoping gap
+    containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
+    expect_length(containerSel, 1)
+    expect_true(grepl(paste0(containerSel, " tbody tr:nth-child(odd)"), h, fixed = TRUE))
+    beforeEven <- substr(h, 1, regexpr("tr:nth-child(even)", h, fixed = TRUE) - 1)
+    afterOddRule <- sub(".*tr:nth-child\\(odd\\)\\{[^}]*\\}", "", beforeEven)
+    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
+})
+
+test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
+{
+    res <- CreateCustomTable(x2, banded.rows = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("tbody tr:nth-child(odd){background-color: rgb(1,1,1) ;}", h, fixed = TRUE))
+    expect_true(grepl("tr:nth-child(even){background-color: rgb(2,2,2) ;}", h, fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
+})
+
+test_that("banded.rows = TRUE drops the per-cell background from the celldefault CSS",
+{
+    resBanded <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = TRUE)
+    hBanded <- normWs(tableHtml(resBanded))
+    expect_false(grepl("background: rgb(3,3,3) ;", hBanded, fixed = TRUE))
+
+    # contrast: with banded.rows = FALSE (the only argument that differs), the same
+    # cell.fill value does reach the celldefault declaration
+    resFlat <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = FALSE)
+    hFlat <- normWs(tableHtml(resFlat))
+    expect_true(grepl("background: rgb(3,3,3) ;", hFlat, fixed = TRUE))
+})
+
+test_that("banded.cols = TRUE also suppresses the cell fill and emits the full column rule verbatim",
+{
+    # pinning the whole emitted column rule, both the 2n+3 clause and its even-selector
+    # continuation with its own fill value (see plan resolved question 1). 2n+3 yields
+    # {3,5,7,...} (odd) and even yields {2,4,6,...} - these are disjoint, and with the
+    # row-header cell occupying nth-child(1), the data columns land on 2 (even), 3 (2n+3),
+    # 4 (even), i.e. a correctly alternating band that deliberately excludes the header
+    # column. This is not a defect; the row/col naming just doesn't match odd/even parity
+    # once the header column is accounted for. (One genuine gap this leaves untested: with
+    # show.row.headers = FALSE, column 1 falls into neither selector and is left unbanded -
+    # not asserted here.)
+    res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
+                             " td:nth-child(even){background-color: rgb(245,245,245) ;}"),
+                       h, fixed = TRUE))
+    expect_false(grepl("background: rgb(3,3,3) ;", h, fixed = TRUE))
+
+    # mirrors the row-banding scoping check above: the 2n+3 clause is scoped to the
+    # container selector, but the even clause that follows it is not re-prefixed
+    containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
+    expect_length(containerSel, 1)
+    expect_true(grepl(paste0(containerSel, " tbody td:nth-child(2n+3)"), h, fixed = TRUE))
+    beforeEven <- substr(h, 1, regexpr("td:nth-child(even)", h, fixed = TRUE) - 1)
+    afterOddRule <- sub(".*td:nth-child\\(2n[+]3\\)\\{[^}]*\\}", "", beforeEven)
+    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
+})
+
+test_that("banded.rows and banded.cols together emit both the row and column banding rules",
+{
+    res <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("tr:nth-child(odd)", h, fixed = TRUE))
+    expect_true(grepl("td:nth-child(2n+3)", h, fixed = TRUE))
+})
+
+test_that("Row count does not change how many times the banding rule is emitted",
+{
+    m2 <- matrix(1:2, 2, 1, dimnames = list(c("a", "b"), "X"))
+    m7 <- matrix(1:7, 7, 1, dimnames = list(letters[1:7], "X"))
+    res2 <- CreateCustomTable(m2, banded.rows = TRUE)
+    res7 <- CreateCustomTable(m7, banded.rows = TRUE)
+    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res2)), 1)
+    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res7)), 1)
 })
