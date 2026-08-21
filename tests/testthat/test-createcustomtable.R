@@ -926,3 +926,179 @@ test_that("sig.change.fills inline style is emitted only on the flagged body cel
     expect_length(headerBlock, 1)
     expect_false(grepl("style=", headerBlock, fixed = TRUE))
 })
+
+# col.widths and custom.css ------------------------------------------------
+
+test_that("A single col.widths value emits exactly one <col width> tag",
+{
+    res <- CreateCustomTable(x2, col.widths = '200px')
+    h <- normWs(tableHtml(res))
+    expect_equal(countOccurrences("<col ", h), 1)
+    expect_true(grepl("<col width=' 200px '>", h, fixed = TRUE))
+})
+
+test_that("A comma-separated col.widths string is split into one tag per width, in order",
+{
+    res <- CreateCustomTable(x2, col.widths = "20%, 30%, 50%")
+    h <- normWs(tableHtml(res))
+    tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
+    expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>", "<col width=' 50% '>"))
+})
+
+test_that("A character vector col.widths is accepted equivalently to the comma-separated string",
+{
+    resString <- CreateCustomTable(x2, col.widths = "20%, 30%, 50%")
+    resVector <- CreateCustomTable(x2, col.widths = c("20%", "30%", "50%"))
+    tagsString <- regmatches(normWs(tableHtml(resString)), gregexpr("<col[^>]*>", normWs(tableHtml(resString))))[[1]]
+    tagsVector <- regmatches(normWs(tableHtml(resVector)), gregexpr("<col[^>]*>", normWs(tableHtml(resVector))))[[1]]
+    expect_equal(tagsString, tagsVector)
+})
+
+test_that("col.widths = NULL on a matrix with no rownames emits no <col> tags",
+{
+    x2NoRownames <- x2
+    rownames(x2NoRownames) <- NULL
+    res <- CreateCustomTable(x2NoRownames, col.widths = NULL)
+    h <- tableHtml(res)
+    expect_false(grepl("<col ", h, fixed = TRUE))
+})
+
+test_that("The col.widths default is the row-header column's 25% width when rownames are present, and nothing when they are not",
+{
+    resWithRownames <- CreateCustomTable(x2)
+    hWith <- normWs(tableHtml(resWithRownames))
+    tags <- regmatches(hWith, gregexpr("<col[^>]*>", hWith))[[1]]
+    expect_equal(tags, "<col width=' 25% '>")
+
+    x2NoRownames <- x2
+    rownames(x2NoRownames) <- NULL
+    resNoRownames <- CreateCustomTable(x2NoRownames)
+    expect_false(grepl("<col ", tableHtml(resNoRownames), fixed = TRUE))
+})
+
+test_that("col.widths.fill.container = TRUE emits a calc() table width using the cell border offset",
+{
+    # cell.border.width = 5 (non-default) pins that the calc() offset is driven by this
+    # argument, not by the height-side calc() which reuses the same value and would
+    # otherwise make a default-offset assertion pass regardless of which mechanism produced it
+    res <- CreateCustomTable(x2, cell.border.width = 5, col.widths.fill.container = TRUE)
+    h <- normWs(tableHtml(res))
+    table <- regmatches(h, regexpr("<table[^>]*>", h))
+    expect_true(grepl("width:calc(100% - 5px)", table, fixed = TRUE))
+})
+
+test_that("col.widths.fill.container = FALSE omits the calc() table width",
+{
+    # only col.widths.fill.container differs from the TRUE case above
+    res <- CreateCustomTable(x2, cell.border.width = 5, col.widths.fill.container = FALSE)
+    h <- normWs(tableHtml(res))
+    table <- regmatches(h, regexpr("<table[^>]*>", h))
+    expect_false(grepl("width:calc(100% - 5px)", table, fixed = TRUE))
+    # positive control: the height-side calc() (which is not gated by this argument)
+    # remains, so the negative assertion above isn't vacuously true from mangled output
+    expect_true(grepl("height:calc(100% - 5px)", table, fixed = TRUE))
+})
+
+test_that("The existing smoke-tested col.widths call also emits its <col width> tag",
+{
+    expect_error(res <- CreateCustomTable(x2, col.widths = '200px',
+            col.header.border.width = NULL, border.color = "red"), NA)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("<col width=' 200px '>", h, fixed = TRUE))
+})
+
+test_that("Fewer col.widths entries than columns emits only the supplied tags, unpadded",
+{
+    # 2 widths for a 3-data-column matrix (plus row-header default would be a 3rd if
+    # present, but col.widths overrides that default entirely): confirmed current
+    # behaviour is no padding/redistribution of the remaining columns
+    res <- CreateCustomTable(x2, col.widths = c("20%", "30%"))
+    h <- normWs(tableHtml(res))
+    tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
+    expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>"))
+})
+
+test_that("More col.widths entries than columns emits every supplied tag, untruncated",
+{
+    x4 <- matrix(1:16, 4, 4, dimnames = list(letters[1:4], c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(x4, col.widths = c("20%", "30%", "10%", "10%", "5%"))
+    h <- normWs(tableHtml(res))
+    tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
+    expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>", "<col width=' 10% '>",
+        "<col width=' 10% '>", "<col width=' 5% '>"))
+})
+
+test_that("Custom CSS text reaches the emitted HTML verbatim",
+{
+    css <- "table { background-color:green }"
+    res <- CreateCustomTable(x2, custom.css = css)
+    expect_true(grepl(css, tableHtml(res), fixed = TRUE))
+})
+
+test_that("Default custom.css = '' emits no caller CSS alongside the iframeless host",
+{
+    res <- CreateCustomTable(x2)
+    expect_true(attr(res, "can-run-in-root-dom"))
+    expect_false(grepl("mytesttoken", tableHtml(res), fixed = TRUE))
+
+    # positive control: the same distinctive token IS present when supplied via custom.css,
+    # so the negative assertion above isn't vacuous
+    resWithCss <- CreateCustomTable(x2, custom.css = "table.mytesttoken { color:red }")
+    expect_true(grepl("mytesttoken", tableHtml(resWithCss), fixed = TRUE))
+})
+
+test_that("override.borders suppresses the border declaration only when both 'border' and 'nth-child' occur in custom.css",
+{
+    # the heuristic (createcustomtable.R) is a plain unanchored substring match on both
+    # tokens; cell.border.width/color are non-default so the declaration is distinctive
+    cssBoth <- "table.mycustom { border: 4px solid rgb(9,9,9); } .mycustom:nth-child(2) { color:red; }"
+    resBoth <- CreateCustomTable(x2, custom.css = cssBoth, cell.border.width = 4, cell.border.color = "red")
+    hBoth <- normWs(tableHtml(resBoth))
+    cellRuleBoth <- regmatches(hBoth, regexpr("\\.celldefault1\\{[^}]*\\}", hBoth))
+    expect_length(cellRuleBoth, 1)
+    expect_false(grepl("border: 4px solid red", cellRuleBoth, fixed = TRUE))
+
+    # "border-top" alone still counts as containing the literal substring "border", but
+    # with no "nth-child" anywhere the heuristic does not trip and the border declaration
+    # is emitted as normal - pinning the literal, unanchored substring match
+    cssBorderOnly <- "table.mycustom { border-top: 4px solid rgb(9,9,9); }"
+    resBorderOnly <- CreateCustomTable(x2, custom.css = cssBorderOnly, cell.border.width = 4, cell.border.color = "red")
+    hBorderOnly <- normWs(tableHtml(resBorderOnly))
+    cellRuleBorderOnly <- regmatches(hBorderOnly, regexpr("\\.celldefault1\\{[^}]*\\}", hBorderOnly))
+    expect_length(cellRuleBorderOnly, 1)
+    expect_true(grepl("border: 4px solid red", cellRuleBorderOnly, fixed = TRUE))
+})
+
+test_that("override.borders also suppresses the border declaration in colheaderdefault and rowheaderdefault",
+{
+    cssBoth <- "table.mycustom { border: 4px solid rgb(9,9,9); } .mycustom:nth-child(2) { color:red; }"
+    res <- CreateCustomTable(x2, custom.css = cssBoth, col.header.border.width = 4, col.header.border.color = "red",
+                row.header.border.width = 4, row.header.border.color = "red")
+    h <- normWs(tableHtml(res))
+
+    colHdrRule <- regmatches(h, regexpr("\\.colheaderdefault1\\{[^}]*\\}", h))
+    expect_length(colHdrRule, 1)
+    expect_false(grepl("border: 4px solid red", colHdrRule, fixed = TRUE))
+
+    rowHdrRule <- regmatches(h, regexpr("\\.rowheaderdefault1\\{[^}]*\\}", h))
+    expect_length(rowHdrRule, 1)
+    expect_false(grepl("border: 4px solid red", rowHdrRule, fixed = TRUE))
+
+    # positive control: the same border arguments DO reach these rules with no custom.css,
+    # so the negative assertions above are not vacuously true
+    resNoCss <- CreateCustomTable(x2, col.header.border.width = 4, col.header.border.color = "red",
+                row.header.border.width = 4, row.header.border.color = "red")
+    hNoCss <- normWs(tableHtml(resNoCss))
+    colHdrRuleNoCss <- regmatches(hNoCss, regexpr("\\.colheaderdefault1\\{[^}]*\\}", hNoCss))
+    expect_true(grepl("border: 4px solid red", colHdrRuleNoCss, fixed = TRUE))
+    rowHdrRuleNoCss <- regmatches(hNoCss, regexpr("\\.rowheaderdefault1\\{[^}]*\\}", hNoCss))
+    expect_true(grepl("border: 4px solid red", rowHdrRuleNoCss, fixed = TRUE))
+})
+
+test_that("Enabling scroll forces the plain Box host even with no custom.css",
+{
+    # row.height sets enable.y.scroll, which alone (custom.css still '') switches the
+    # widget host away from boxIframeless()
+    res <- CreateCustomTable(x2, row.height = "40px")
+    expect_equal(attr(res, "can-run-in-root-dom"), NULL)
+})
