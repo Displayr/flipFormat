@@ -671,7 +671,7 @@ test_that("transpose swaps which labels become row vs column headers",
 
     # the former row names (r1, r2) now form the column-header row
     expect_true(grepl('<th class="colheaderdefault1 ">r1</th><th class="colheaderdefault1 ">r2</th>',
-                       h, fixed = TRUE))
+                      h, fixed = TRUE))
     # the former column names (c1, c2, c3) now form the row-header cells
     expect_true(grepl('<td class="rowheaderdefault1">c1</td>', h, fixed = TRUE))
     expect_true(grepl('<td class="rowheaderdefault1">c2</td>', h, fixed = TRUE))
@@ -687,9 +687,8 @@ test_that("transpose changes the cell order to that of the original first column
     # original column c1 was r1=1, r2=2; after transpose this becomes the first body row
     rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
     firstBodyRow <- rows[2]  # rows[1] is the header row inside <thead>
-    expect_true(grepl(">1</td>", firstBodyRow, fixed = TRUE))
-    expect_true(grepl(">2</td>", firstBodyRow, fixed = TRUE))
-    expect_false(grepl(">5</td>", firstBodyRow, fixed = TRUE))
+    expect_equal(firstBodyRow,
+        '<tr><td class="rowheaderdefault1">c1</td><td class="celldefault1">1</td><td class="celldefault4">2</td></tr>')
 })
 
 test_that("show.col.headers = FALSE emits no column-header <th> cell and no colheaderdefault CSS rule",
@@ -731,7 +730,8 @@ test_that("show.col.headers and show.row.headers both FALSE emits a bare data gr
 
     rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
     firstBodyRow <- rows[1]
-    expect_equal(countOccurrences("<td", firstBodyRow), ncol(x2))
+    expect_equal(firstBodyRow,
+        '<tr><td class="celldefault1">1</td><td class="celldefault5">5</td><td class="celldefault9">9</td></tr>')
 })
 
 test_that("NULL rownames force-disable row headers even when show.row.headers = TRUE",
@@ -801,7 +801,7 @@ test_that("font.unit is honoured in the emitted font-size declaration",
 
 test_that("An explicit cell.font.size overrides font.size for cells only",
 {
-    res <- CreateCustomTable(x2, font.size = 13, cell.font.size = 30)
+    res <- CreateCustomTable(x2, font.size = 17, cell.font.size = 30)
     h <- normWs(tableHtml(res))
 
     cellRule <- regmatches(h, regexpr('\\.celldefault1\\{[^}]*\\}', h))
@@ -810,7 +810,7 @@ test_that("An explicit cell.font.size overrides font.size for cells only",
 
     colHdrRule <- regmatches(h, regexpr('\\.colheaderdefault1\\{[^}]*\\}', h))
     expect_length(colHdrRule, 1)
-    expect_true(grepl("font-size: 13px", colHdrRule, fixed = TRUE))
+    expect_true(grepl("font-size: 17px", colHdrRule, fixed = TRUE))
 })
 
 test_that("col.header.classes is appended to the generated colheaderdefault class",
@@ -875,6 +875,7 @@ test_that("col.classes and row.classes intersect on the shared cell",
     h <- tableHtml(res)
     rows <- regmatches(h, gregexpr("<tr>.*?</tr>", h))[[1]]
     bodyRows <- rows[-1]
+    expect_equal(length(bodyRows), nrow(x2))
 
     row1Tds <- regmatches(bodyRows[1], gregexpr('<td class="[^"]*">', bodyRows[1]))[[1]]
     # data column 2 of row 1 carries both classes; columns 1 and 3 of row 1 carry only redfill
@@ -901,6 +902,8 @@ test_that("col.classes/row.classes read ix/class positionally, so the element na
     bodyNamed <- sub(".*</thead>", "", tableHtml(resNamed))
     bodyUnnamed <- sub(".*</thead>", "", tableHtml(resUnnamed))
     expect_identical(bodyNamed, bodyUnnamed)
+    # positive control: col.classes actually took effect in both forms
+    expect_true(grepl("bluefill", bodyNamed, fixed = TRUE))
 })
 
 test_that("sig.change.fills inline style is emitted only on the flagged body cell, never in <thead>",
@@ -909,8 +912,8 @@ test_that("sig.change.fills inline style is emitted only on the flagged body cel
     # the letter 'e'). This is a dead store: 'cell.inline.styl' is never read again anywhere
     # under R/, so the assignment has no effect on the emitted HTML. Renaming it to the
     # apparently-intended 'cell.inline.style' does NOT fix anything - it makes the call error,
-    # because 'cell.styles' never gains a matching header row while 'cell.html' stays body-only
-    # (arguments cannot be recycled to the same length). So the correct disposition for the
+    # because 'cell.styles' never gains a matching header row (arguments cannot be recycled
+    # to the same length). So the correct disposition for the
     # line is deletion, not renaming, and the current emitted output below is correct as-is.
     sig <- matrix(0, nrow(x2), ncol(x2))
     sig[1, 1] <- 1
