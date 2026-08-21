@@ -523,3 +523,40 @@ test_that("A multi-span over-cover silently drops the last span and leaks a cbin
     expect_false(grepl("rowspan", rows[3], fixed = TRUE))
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
+
+test_that("All-height-1 row.spans with sticky positioning errors on invalid unary -NULL (genuine unticketed defect)",
+{
+    # Genuine production crash being pinned here (not yet ticketed): rm.index is only
+    # populated for spans taller than one row, so when EVERY span height is 1, rm.index
+    # stays NULL, and the pruning expression `top.position[-rm.index]` becomes
+    # `top.position[-NULL]`. In base R, unary minus on NULL is invalid ("invalid argument
+    # to unary operator"), so the function throws rather than returning the original
+    # top.position unchanged. This only happens when sticky positioning is also active
+    # (row.height set AND num.header.rows set), since top.position is only computed - and
+    # only fed into the row.spans pruning branch - in that case. If this defect is ever
+    # fixed, this expect_error should be changed to assert successful output instead.
+    allOnes <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"), list(height = 1, label = "DD"))
+    expect_error(
+        CreateCustomTable(rowSpanMatrix, row.spans = allOnes, row.height = "30px",
+            num.header.rows = 1),
+        "invalid argument to unary operator", fixed = TRUE
+    )
+
+    # Same all-height-1 spans without sticky positioning: top.position/rm.index pruning is
+    # never reached, so this succeeds - the crash is specific to the sticky combination,
+    # not to row.spans (or all-height-1 spans) in general.
+    expect_error(res <- CreateCustomTable(rowSpanMatrix, row.spans = allOnes), NA)
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">AA</td>', tableHtml(res),
+        fixed = TRUE))
+
+    # Mixed heights (2, 1, 1) with the same sticky args: rm.index is populated (the height-2
+    # span), so the pruning expression is a normal subscript, not `-NULL`, and this succeeds.
+    mixedHeights <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    expect_error(
+        CreateCustomTable(rowSpanMatrix, row.spans = mixedHeights, row.height = "30px",
+            num.header.rows = 1),
+        NA
+    )
+})
