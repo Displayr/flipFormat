@@ -578,8 +578,8 @@ test_that("banded.rows = TRUE emits the odd/even row rule with default fills, in
     # spaces remain in the string pinned below
     res <- CreateCustomTable(x2, banded.rows = TRUE)
     h <- normWs(tableHtml(res))
-    expect_true(grepl("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}", h, fixed = TRUE))
-    expect_true(grepl("tr:nth-child(even){background-color: rgb(245,245,245) ;}", h, fixed = TRUE))
+    expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}",
+                             " tr:nth-child(even){background-color: rgb(245,245,245) ;}"), h, fixed = TRUE))
 
     # the odd rule is scoped to the container selector, but the even clause that follows
     # it is not re-prefixed - pinning the confirmed selector-scoping gap
@@ -596,8 +596,8 @@ test_that("Custom banded.odd.fill and banded.even.fill values are used instead o
     res <- CreateCustomTable(x2, banded.rows = TRUE,
                 banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
     h <- normWs(tableHtml(res))
-    expect_true(grepl("tbody tr:nth-child(odd){background-color: rgb(1,1,1) ;}", h, fixed = TRUE))
-    expect_true(grepl("tr:nth-child(even){background-color: rgb(2,2,2) ;}", h, fixed = TRUE))
+    expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(1,1,1) ;}",
+                             " tr:nth-child(even){background-color: rgb(2,2,2) ;}"), h, fixed = TRUE))
     expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
     expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
 })
@@ -621,7 +621,7 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
     # continuation with its own fill value (see plan resolved question 1). 2n+3 yields
     # {3,5,7,...} (odd) and even yields {2,4,6,...} - these are disjoint, and with the
     # row-header cell occupying nth-child(1), the data columns land on 2 (even), 3 (2n+3),
-    # 4 (even), i.e. a correctly alternating band that deliberately excludes the header
+    # 4 (even), i.e. a correctly alternating band that excludes the header
     # column. This is not a defect; the row/col naming just doesn't match odd/even parity
     # once the header column is accounted for. (One genuine gap this leaves untested: with
     # show.row.headers = FALSE, column 1 falls into neither selector and is left unbanded -
