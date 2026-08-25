@@ -192,3 +192,203 @@ test_that("circle.size drives the emitted circle geometry",
     expect_false(grepl("line-height:35px", h, fixed = TRUE))
     expect_false(grepl("border-radius:35px", h, fixed = TRUE))
 })
+
+# spacer.col --------------------------------------------------------------
+
+# the complete predefined .spacer declaration (createcustomtable.R:868), pinned as one
+# exact string so that dropping or altering any single declaration fails rather than
+# merely checking the selector exists
+spacerRule <- ".spacer {background: white;color: white;border: none;overflow:hidden;}"
+
+test_that("Default emits no spacer class",
+{
+    res <- CreateCustomTable(x2)
+    expect_false(grepl('class="spacer"', tableHtml(res), fixed = TRUE))
+})
+
+test_that("A single spacer.col index produces exactly one spacer header cell",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    h <- tableHtml(res)
+    expect_equal(countOccurrences('<th class="spacer">', h), 1)
+    # the trailing space before the closing quote is load-bearing: col.header.styles is
+    # pasted with the (default empty-string) col.header.classes argument, so the three
+    # non-spacer headers carry "colheaderdefault1 " rather than "colheaderdefault1"
+    expect_equal(countOccurrences('class="colheaderdefault1 "', h), 3)
+})
+
+test_that("The spacer cell replaces, not augments, the default class",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    h <- tableHtml(res)
+    th <- regmatches(h, regexpr('<th class="[^"]*">X</th>', h))
+    expect_equal(th, '<th class="spacer">X</th>')
+})
+
+test_that("Multiple spacer.col indices produce spacer cells at those emission positions",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = c(2, 4))
+    h <- tableHtml(res)
+    ths <- regmatches(h, gregexpr('<th class="[^"]*">[^<]*</th>', h))[[1]]
+    expect_equal(length(ths), 4)
+    expect_equal(ths[2], '<th class="spacer">X</th>')
+    expect_equal(ths[4], '<th class="spacer">Z</th>')
+    expect_equal(ths[1], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(ths[3], '<th class="colheaderdefault1 ">Y</th>')
+})
+
+test_that("The spacer cell keeps its column label",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    # spacer.col = 3 (not the sibling blocks' 2) is required here: with columns
+    # W, X, Y, Z, index 3 is the one that lands on "Y", which is the label this
+    # test needs to demonstrate survives being turned into a spacer cell
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 3)
+    h <- tableHtml(res)
+    expect_true(grepl('<th class="spacer">Y</th>', h, fixed = TRUE))
+})
+
+test_that("Each leading corner cell shifts the spacer.col index by one",
+{
+    # spacer.col indexes emission position, not data column, and corner cells are prepended
+    # to col.header.styles before it is applied. corner.styles[1] is prepended once for
+    # show.row.headers (createcustomtable.R:583) and again for row.spans (:589), so the
+    # offset is +0, +1 or +2 depending on which of those are set - it is NOT a fixed +1.
+    # All three offsets are pinned below against the same spacer.col = 2.
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    ths <- function(res) regmatches(tableHtml(res),
+                gregexpr('<th class="[^"]*">[^<]*</th>', tableHtml(res)))[[1]]
+
+    # +0: no corner cells, so index 2 is the second data column
+    noCorner <- ths(CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2))
+    expect_equal(length(noCorner), 4)
+    expect_equal(noCorner[1], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(noCorner[2], '<th class="spacer">X</th>')
+
+    # +1: the row-header corner takes position 1, so index 2 lands on the FIRST data column
+    oneCorner <- ths(CreateCustomTable(m4, show.row.headers = TRUE, spacer.col = 2))
+    expect_equal(length(oneCorner), 5)
+    expect_equal(oneCorner[1], '<th class="cornerdefault1"></th>')
+    expect_equal(oneCorner[2], '<th class="spacer">W</th>')
+
+    # +2: with row.spans a second corner is prepended, so index 2 lands on that corner and
+    # every data column is left untouched - the spacer no longer marks a data column at all
+    twoCorners <- ths(CreateCustomTable(m4, show.row.headers = TRUE, spacer.col = 2,
+                        row.spans = list(list(height = 3, label = "G"))))
+    expect_equal(length(twoCorners), 6)
+    expect_equal(twoCorners[1], '<th class="cornerdefault1"></th>')
+    expect_equal(twoCorners[2], '<th class="spacer"></th>')
+    expect_equal(twoCorners[3], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(twoCorners[6], '<th class="colheaderdefault1 ">Z</th>')
+})
+
+test_that("col.header.fill reaches the colheaderdefault CSS rule",
+{
+    res <- CreateCustomTable(x2, col.header.fill = "rgb(1,2,3)")
+    h <- normWs(tableHtml(res))
+    expect_true(grepl('.colheaderdefault1{ background: rgb(1,2,3);', h, fixed = TRUE))
+})
+
+test_that("col.header.fill defaults to transparent",
+{
+    res <- CreateCustomTable(x2)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl('.colheaderdefault1{ background: transparent;', h, fixed = TRUE))
+})
+
+test_that("show.col.headers = FALSE suppresses the whole header row and its CSS",
+{
+    res <- CreateCustomTable(x2, show.col.headers = FALSE)
+    h <- tableHtml(res)
+    # '<th class="' not a bare '<th': <thead> is always emitted, so a bare probe could never fail
+    expect_false(grepl('<th class="', h, fixed = TRUE))
+    expect_false(grepl('colheaderdefault', h, fixed = TRUE))
+})
+
+test_that("spacer.col is silently ignored when show.col.headers is FALSE",
+{
+    # See RS-23589. The whole spacer.col application lives inside the `if (show.col.headers)`
+    # block (createcustomtable.R:592-593), so with the header row off the argument is dropped
+    # without warning or error. Pinned so that adding validation - or extending spacer.col
+    # to the body - becomes an explicit decision rather than a silent behaviour change.
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    expect_warning(res <- CreateCustomTable(m4, show.col.headers = FALSE, spacer.col = 2), NA)
+    h <- tableHtml(res)
+    expect_false(grepl('class="spacer"', h, fixed = TRUE))
+
+    # the predefined CSS block is emitted unconditionally, so the .spacer rule is still
+    # present with no cell using it. Asserting this separately keeps the negative above
+    # honest: it fails because no cell was marked, not because the stylesheet went missing.
+    expect_true(grepl(spacerRule, normWs(h), fixed = TRUE))
+
+    # the same call with headers on does mark a cell, confirming the negative flips
+    resHeaders <- CreateCustomTable(m4, show.col.headers = TRUE, show.row.headers = FALSE,
+                    spacer.col = 2)
+    expect_true(grepl('<th class="spacer">X</th>', tableHtml(resHeaders), fixed = TRUE))
+})
+
+test_that("Out-of-range spacer.col is pinned to its current (defective) behaviour",
+{
+    # See RS-23589, which carries both failure modes and the suggested bounds check.
+    # col.header.styles[spacer.col] <- "spacer" silently extends the header-style vector
+    # with NA for the skipped positions when spacer.col exceeds its length, and the
+    # subsequent sprintf() emits a literal class="NA" <th> rather than erroring or being
+    # a no-op. spacer.col = 6 is chosen (a multiple of the 3-column header vector) so the
+    # sprintf recycling itself does not error - this pins the NA-extension defect itself.
+    x2local <- matrix(1:12, 4, 3, dimnames = list(letters[1:4], c("X", "Y", "Z")))
+    res <- CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = 6)
+    h <- tableHtml(res)
+    expect_equal(countOccurrences('class="NA"', h), 2)
+    expect_true(grepl('<th class="spacer">Z</th>', h, fixed = TRUE))
+    expect_equal(countOccurrences("<th ", h), 6)
+
+    # spacer.col = 6 survives only because it is a multiple of the 3-column header vector.
+    # The off-by-one a caller would actually make - ncols + 1 - is a hard error from
+    # sprintf, whose message never mentions spacer.col. Pinned alongside the case above so
+    # that both consequences of the missing bounds check are covered, not just the benign one.
+    for (k in c(4, 5, 7))
+        expect_error(CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = k),
+            "arguments cannot be recycled to the same length", fixed = TRUE, info = k)
+
+    # in-range indices are unaffected, so the errors above are attributable to the
+    # out-of-range value rather than to spacer.col generally
+    expect_error(CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = 3), NA)
+})
+
+test_that("use.predefined.css = FALSE leaves the spacer header cell with no matching CSS rule",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2, use.predefined.css = FALSE)
+    h <- tableHtml(res)
+    expect_true(grepl('<th class="spacer">', h, fixed = TRUE))
+    expect_false(grepl('.spacer {', h, fixed = TRUE))
+
+    # confirm the negative assertion actually flips: with the default use.predefined.css = TRUE
+    # the same call does emit the rule - asserted in full, so this cannot be satisfied by a
+    # ".spacer {" selector whose declarations have been emptied or changed
+    resDefault <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    expect_true(grepl(spacerRule, normWs(tableHtml(resDefault)), fixed = TRUE))
+})
+
+test_that("The predefined spacer rule is emitted in full, once, scoped to the table container",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    h <- normWs(tableHtml(res))
+
+    # every declaration pinned, so removing or editing any one of background/color/border/
+    # overflow fails here rather than passing on selector presence alone
+    expect_true(grepl(spacerRule, h, fixed = TRUE))
+    expect_equal(countOccurrences(".spacer {", h), 1)
+
+    # the rule is namespaced under the generated container class rather than defined
+    # globally, which is what keeps it from leaking into the rest of the page. The
+    # container name is randomised per call, so match its shape rather than its value.
+    # Pairing this count with the total above proves the single ".spacer {" occurrence
+    # IS the container-scoped one, rather than a global rule sitting alongside it.
+    scoped <- regmatches(h, gregexpr("\\.custom-table-container-\\S+ \\.spacer \\{", h))[[1]]
+    expect_equal(length(scoped), 1)
+})
