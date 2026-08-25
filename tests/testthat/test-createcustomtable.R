@@ -8,6 +8,19 @@ countOccurrences <- function(pattern, s)
     if (m[1] == -1L) 0L else length(m)
 }
 
+# Any assertion that matches on the TEXT of a base-R condition must run under this.
+# Base R localises its messages, so e.g. "arguments cannot be recycled to the same length"
+# becomes "les arguments ne peuvent etre recycles a la meme taille" when LANGUAGE=fr, and a
+# fixed-string expect_error() then fails on any machine or CI runner with a non-English
+# LANGUAGE. Done by hand rather than with withr::with_envvar so no dependency is added.
+withEnglishMessages <- function(code)
+{
+    old <- Sys.getenv("LANGUAGE", unset = NA)
+    Sys.setenv(LANGUAGE = "en")
+    on.exit(if (is.na(old)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old))
+    force(code)
+}
+
 xx <- structure(1:5, .Names = c("a", "b", "c", "d", "e"), statistic = "%")
 x2 <- matrix(1:12, 4, 3, dimnames = list(letters[1:4], c("X", "Y", "Z")))
 test_that("Percentage data",
@@ -160,6 +173,11 @@ test_that("circle.size drives the emitted circle geometry",
 
 # spacer.col --------------------------------------------------------------
 
+# the complete predefined .spacer declaration (createcustomtable.R:868), pinned as one
+# exact string so that dropping or altering any single declaration fails rather than
+# merely checking the selector exists
+spacerRule <- ".spacer {background: white;color: white;border: none;overflow:hidden;}"
+
 test_that("Default emits no spacer class",
 {
     res <- CreateCustomTable(x2)
@@ -211,17 +229,38 @@ test_that("The spacer cell keeps its column label",
     expect_true(grepl('<th class="spacer">Y</th>', h, fixed = TRUE))
 })
 
-test_that("The corner cell shifts the spacer.col index when show.row.headers is TRUE",
+test_that("Each leading corner cell shifts the spacer.col index by one",
 {
+    # spacer.col indexes emission position, not data column, and corner cells are prepended
+    # to col.header.styles before it is applied. corner.styles[1] is prepended once for
+    # show.row.headers (createcustomtable.R:583) and again for row.spans (:589), so the
+    # offset is +0, +1 or +2 depending on which of those are set - it is NOT a fixed +1.
+    # All three offsets are pinned below against the same spacer.col = 2.
     m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
-    res <- CreateCustomTable(m4, show.row.headers = TRUE, spacer.col = 2)
-    h <- tableHtml(res)
-    ths <- regmatches(h, gregexpr('<th class="[^"]*">[^<]*</th>', h))[[1]]
-    expect_equal(length(ths), 5)
-    # the corner cell occupies emission position 1, so index 2 lands on the first
-    # data column ("W") rather than on the corner - pinning the index-shift contract
-    expect_equal(ths[1], '<th class="cornerdefault1"></th>')
-    expect_equal(ths[2], '<th class="spacer">W</th>')
+    ths <- function(res) regmatches(tableHtml(res),
+                gregexpr('<th class="[^"]*">[^<]*</th>', tableHtml(res)))[[1]]
+
+    # +0: no corner cells, so index 2 is the second data column
+    noCorner <- ths(CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2))
+    expect_equal(length(noCorner), 4)
+    expect_equal(noCorner[1], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(noCorner[2], '<th class="spacer">X</th>')
+
+    # +1: the row-header corner takes position 1, so index 2 lands on the FIRST data column
+    oneCorner <- ths(CreateCustomTable(m4, show.row.headers = TRUE, spacer.col = 2))
+    expect_equal(length(oneCorner), 5)
+    expect_equal(oneCorner[1], '<th class="cornerdefault1"></th>')
+    expect_equal(oneCorner[2], '<th class="spacer">W</th>')
+
+    # +2: with row.spans a second corner is prepended, so index 2 lands on that corner and
+    # every data column is left untouched - the spacer no longer marks a data column at all
+    twoCorners <- ths(CreateCustomTable(m4, show.row.headers = TRUE, spacer.col = 2,
+                        row.spans = list(list(height = 3, label = "G"))))
+    expect_equal(length(twoCorners), 6)
+    expect_equal(twoCorners[1], '<th class="cornerdefault1"></th>')
+    expect_equal(twoCorners[2], '<th class="spacer"></th>')
+    expect_equal(twoCorners[3], '<th class="colheaderdefault1 ">W</th>')
+    expect_equal(twoCorners[6], '<th class="colheaderdefault1 ">Z</th>')
 })
 
 test_that("col.header.fill reaches the colheaderdefault CSS rule",
@@ -247,19 +286,56 @@ test_that("show.col.headers = FALSE suppresses the whole header row and its CSS"
     expect_false(grepl('colheaderdefault', h, fixed = TRUE))
 })
 
+test_that("spacer.col is silently ignored when show.col.headers is FALSE",
+{
+    # See RS-23589. The whole spacer.col application lives inside the `if (show.col.headers)`
+    # block (createcustomtable.R:592-593), so with the header row off the argument is dropped
+    # without warning or error. Pinned so that adding validation - or extending spacer.col
+    # to the body - becomes an explicit decision rather than a silent behaviour change.
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    expect_warning(res <- CreateCustomTable(m4, show.col.headers = FALSE, spacer.col = 2), NA)
+    h <- tableHtml(res)
+    expect_false(grepl('class="spacer"', h, fixed = TRUE))
+
+    # the predefined CSS block is emitted unconditionally, so the .spacer rule is still
+    # present with no cell using it. Asserting this separately keeps the negative above
+    # honest: it fails because no cell was marked, not because the stylesheet went missing.
+    expect_true(grepl(spacerRule, normWs(h), fixed = TRUE))
+
+    # the same call with headers on does mark a cell, confirming the negative flips
+    resHeaders <- CreateCustomTable(m4, show.col.headers = TRUE, show.row.headers = FALSE,
+                    spacer.col = 2)
+    expect_true(grepl('<th class="spacer">X</th>', tableHtml(resHeaders), fixed = TRUE))
+})
+
 test_that("Out-of-range spacer.col is pinned to its current (defective) behaviour",
 {
+    # See RS-23589, which carries both failure modes and the suggested bounds check.
     # col.header.styles[spacer.col] <- "spacer" silently extends the header-style vector
     # with NA for the skipped positions when spacer.col exceeds its length, and the
     # subsequent sprintf() emits a literal class="NA" <th> rather than erroring or being
     # a no-op. spacer.col = 6 is chosen (a multiple of the 3-column header vector) so the
-    # sprintf recycling itself does not error - this pins the actual defect, not a crash.
+    # sprintf recycling itself does not error - this pins the NA-extension defect itself.
     x2local <- matrix(1:12, 4, 3, dimnames = list(letters[1:4], c("X", "Y", "Z")))
     res <- CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = 6)
     h <- tableHtml(res)
     expect_equal(countOccurrences('class="NA"', h), 2)
     expect_true(grepl('<th class="spacer">Z</th>', h, fixed = TRUE))
     expect_equal(countOccurrences("<th ", h), 6)
+
+    # spacer.col = 6 survives only because it is a multiple of the 3-column header vector.
+    # The off-by-one a caller would actually make - ncols + 1 - is a hard error from
+    # sprintf, whose message never mentions spacer.col. Pinned alongside the case above so
+    # that both consequences of the missing bounds check are covered, not just the benign one.
+    # matched under withEnglishMessages() because the sprintf message is localised by base R
+    for (k in c(4, 5, 7))
+        expect_error(withEnglishMessages(
+                CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = k)),
+            "arguments cannot be recycled to the same length", fixed = TRUE, info = k)
+
+    # in-range indices are unaffected, so the errors above are attributable to the
+    # out-of-range value rather than to spacer.col generally
+    expect_error(CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = 3), NA)
 })
 
 test_that("use.predefined.css = FALSE leaves the spacer header cell with no matching CSS rule",
@@ -271,9 +347,30 @@ test_that("use.predefined.css = FALSE leaves the spacer header cell with no matc
     expect_false(grepl('.spacer {', h, fixed = TRUE))
 
     # confirm the negative assertion actually flips: with the default use.predefined.css = TRUE
-    # the same call does emit the ".spacer {" rule
+    # the same call does emit the rule - asserted in full, so this cannot be satisfied by a
+    # ".spacer {" selector whose declarations have been emptied or changed
     resDefault <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
-    expect_true(grepl('.spacer {', tableHtml(resDefault), fixed = TRUE))
+    expect_true(grepl(spacerRule, normWs(tableHtml(resDefault)), fixed = TRUE))
+})
+
+test_that("The predefined spacer rule is emitted in full, once, scoped to the table container",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    h <- normWs(tableHtml(res))
+
+    # every declaration pinned, so removing or editing any one of background/color/border/
+    # overflow fails here rather than passing on selector presence alone
+    expect_true(grepl(spacerRule, h, fixed = TRUE))
+    expect_equal(countOccurrences(".spacer {", h), 1)
+
+    # the rule is namespaced under the generated container class rather than defined
+    # globally, which is what keeps it from leaking into the rest of the page. The
+    # container name is randomised per call, so match its shape rather than its value.
+    # Pairing this count with the total above proves the single ".spacer {" occurrence
+    # IS the container-scoped one, rather than a global rule sitting alongside it.
+    scoped <- regmatches(h, gregexpr("\\.custom-table-container-\\S+ \\.spacer \\{", h))[[1]]
+    expect_equal(length(scoped), 1)
 })
 
 # row.spans --------------------------------------------------------------
@@ -283,17 +380,28 @@ test_that("use.predefined.css = FALSE leaves the spacer header cell with no matc
 rowSpanMatrix <- structure(1:24, .Dim = c(4L, 6L),
     .Dimnames = list(c("a", "b", "c", "d"), c("A", "B", "C", "D", "E", "F")))
 
+# the spans from the documented @examples: heights sum to nrow(rowSpanMatrix) and the
+# leading height of 2 means rm.index is populated on the sticky path. Tests that need a
+# different shape (all heights 1, back-loaded, over-covering, ...) declare their own.
+rowSpans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                 list(height = 1, label = "CC"))
+
+# <tr> elements of the <tbody> / <thead> halves of an emitted table
+matchAll <- function(pattern, s) regmatches(s, gregexpr(pattern, s))[[1]]
+bodyRows <- function(h) matchAll("<tr>.*?</tr>", sub(".*</thead>", "", h))
+headRows <- function(h) matchAll("<tr>.*?</tr>", sub("</thead>.*", "", h))
+# the <th> cells of the column-header row, in document order
+theadThs <- function(h) matchAll('<th class="[^"]*">[^<]*</th>', sub("</thead>.*", "", h))
+
 test_that("Default emits no rowspan cells",
 {
-    res <- CreateCustomTable(x2)
+    res <- CreateCustomTable(rowSpanMatrix)
     expect_false(grepl("rowspan=", tableHtml(res), fixed = TRUE))
 })
 
 test_that("One rowspan cell per span, with the right heights and labels",
 {
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans)
     h <- tableHtml(res)
     # anchored with the trailing quote so rowspan="1" cannot match rowspan="10"-style values
     expect_equal(countOccurrences('<td rowspan="2" class="rowspandefault1">', h), 1)
@@ -307,12 +415,8 @@ test_that("Spans are placed at the correct row offsets",
 {
     # heights of 2, 1, 1 mean AA's span covers rows 1-2 (leaving row 2 without its own span
     # cell), BB opens row 3 and CC opens row 4 - pinning the j <- j + row.span.lengths[i] loop
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
-    h <- tableHtml(res)
-    body <- sub(".*</thead>", "", h)
-    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans)
+    rows <- bodyRows(tableHtml(res))
     expect_equal(length(rows), 4)
     expect_true(grepl('<tr><td rowspan="2"', rows[1], fixed = TRUE))
     expect_false(grepl("rowspan", rows[2], fixed = TRUE))
@@ -333,9 +437,7 @@ test_that("A single rowspandefault CSS class is shared across all spans when sti
     # only ends up with one class per row when its call *does* supply a non-NULL `position`,
     # i.e. on the sticky path.) On the sticky path (see the next test) each span DOES
     # get its own "rowspandefaultN" class, matching the plan's expectation.
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans)
     h <- normWs(tableHtml(res))
     # trailing "{" anchors the declaration itself, distinct from the "rowspandefault1" token
     # that also appears (three times, once in each span's class attribute)
@@ -349,46 +451,102 @@ test_that("Each span gets its own rowspandefault CSS class when sticky positioni
     # With row.height/num.header.rows set, top.position is non-NULL, so addCSSclass()
     # expands the row-span CSS string into one class per span (rowspandefault1/2/3) instead
     # of sharing a single class - the counterpart to the sticky-off case above.
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
     res <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
-                    row.spans = spans)
+                    row.spans = rowSpans)
     h <- normWs(tableHtml(res))
     expect_equal(countOccurrences(".rowspandefault1{", h), 1)
     expect_equal(countOccurrences(".rowspandefault2{", h), 1)
     expect_equal(countOccurrences(".rowspandefault3{", h), 1)
     expect_equal(countOccurrences(".rowspandefault4{", h), 0)
+
+    # emitting three rules is not the same as attaching them to three different cells:
+    # without these assertions a regression that stamped "rowspandefault1" on every span
+    # would still satisfy the counts above. Pin each span cell to its own class, in
+    # document order.
+    raw <- tableHtml(res)
+    cells <- regmatches(raw, gregexpr('<t[dh][^>]*rowspandefault[^>]*>[^<]*</t[dh]>', raw))[[1]]
+    expect_equal(length(cells), length(rowSpans))
+    # AA's cell is a <th>, not a <td>: num.header.rows = 1 promotes the first body row into
+    # <thead>, which changes the tag the span cell is emitted with. BB and CC stay in <tbody>.
+    # NOTE the rowspan="2" on that <th> does not render as written - see the dedicated test
+    # below, and RS-23591. It is asserted here as emitted output, not as correct output.
+    expect_equal(cells[1], '<th rowspan="2" class="rowspandefault1">AA</th>')
+    expect_equal(cells[2], '<td rowspan="1" class="rowspandefault2">BB</td>')
+    expect_equal(cells[3], '<td rowspan="1" class="rowspandefault3">CC</td>')
 })
 
-test_that("A per-span class is appended, not substituted",
+test_that("A span straddling num.header.rows loses a body cell (genuine defect, RS-23591)",
+{
+    # GENUINE DEFECT, pinned deliberately - see RS-23591.
+    # num.header.rows = 1 promotes the first body row into <thead>, so a span opening on that
+    # row is emitted as a <th> inside <thead> while keeping its full height in the rowspan
+    # attribute. Per the HTML table model a cell cannot span outside its row group, so the
+    # browser clamps it to the rows left in <thead> and the <tbody> rows it was meant to cover
+    # never receive a replacement cell. The result is a short first body row: every cell in it
+    # shifts one column left, silently, with no error or warning.
+    res <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
+                    row.spans = rowSpans)
+    h <- tableHtml(res)
+    cellsIn <- function(row) length(matchAll("<t[dh][ >]", row))
+
+    inHead <- headRows(h)
+    inBody <- bodyRows(h)
+
+    # the promoted row carries AA's span cell plus row header plus 6 data columns
+    expect_equal(cellsIn(inHead[length(inHead)]), 8)
+    expect_true(grepl('<th rowspan="2"', inHead[length(inHead)], fixed = TRUE))
+
+    # ...but AA's second row lands in <tbody>, which the rowspan cannot reach, so the first
+    # body row is one cell short while every later row is full width. This is the defect.
+    expect_equal(cellsIn(inBody[1]), 7)
+    expect_equal(cellsIn(inBody[2]), 8)
+    expect_equal(cellsIn(inBody[3]), 8)
+
+    # A short row is not by itself the defect: a multi-row span legitimately leaves the rows
+    # it COVERS without their own span cell. What makes this a defect is WHICH row is short.
+    # The same spans without num.header.rows leave row 2 short - the row AA actually covers:
+    bodyCounts <- function(res) unname(vapply(bodyRows(tableHtml(res)), cellsIn, integer(1)))
+    expect_equal(bodyCounts(CreateCustomTable(rowSpanMatrix, row.spans = rowSpans)),
+                 c(8L, 7L, 8L, 8L))
+
+    # ...whereas with the promotion the short row is the FIRST body row, which no span cell
+    # reaches, because AA's rowspan is stranded in <thead>.
+    expect_equal(bodyCounts(res), c(7L, 8L, 8L))
+
+    # A span contained wholly within <tbody> is fine even on the sticky path: heights
+    # (1, 2, 1) put BB's two-row span entirely in the body, so the short row is again the
+    # covered one. This bounds the defect to spans crossing the num.header.rows boundary
+    # rather than to row.spans plus sticky positioning at large.
+    contained <- list(list(height = 1, label = "AA"), list(height = 2, label = "BB"),
+                      list(height = 1, label = "CC"))
+    expect_equal(bodyCounts(CreateCustomTable(rowSpanMatrix, row.height = "30px",
+                    num.header.rows = 1, row.spans = contained)), c(8L, 7L, 8L))
+})
+
+test_that("A per-span class is appended, not substituted, and only where supplied",
 {
     spans <- list(list(height = 2, label = "AA", class = "bluefill"),
                   list(height = 1, label = "BB"), list(height = 1, label = "CC"))
     res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
     h <- tableHtml(res)
     expect_true(grepl('<td rowspan="2" class="rowspandefault1 bluefill">AA</td>', h, fixed = TRUE))
-})
-
-test_that("A span without a class entry carries only the generated class",
-{
-    spans <- list(list(height = 2, label = "AA", class = "bluefill"),
-                  list(height = 1, label = "BB"), list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
-    h <- tableHtml(res)
     # exact match (no trailing token/space) confirms nothing was appended for BB
     expect_true(grepl('<td rowspan="1" class="rowspandefault1">BB</td>', h, fixed = TRUE))
 })
 
 test_that("Span styling arguments reach the rowspandefault CSS declaration",
 {
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans, row.span.fill = "rgb(9,9,9)",
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans, row.span.fill = "rgb(9,9,9)",
                     row.span.font.size = 21, row.span.align.horizontal = "right")
     h <- normWs(tableHtml(res))
     # anchor to the rowspandefault1 declaration itself, not just anywhere in the document,
     # so the assertions cannot be satisfied by an unrelated CSS rule
-    block <- regmatches(h, regexpr(".rowspandefault1[{][^}]*[}]", h))
+    # no [[1]] here: regmatches(regexpr(...)) already returns a character vector, and
+    # subsetting it would turn a missing declaration into "subscript out of bounds" - the
+    # very masking this guard exists to prevent. Left as a vector so the length assertion
+    # below is the thing that fails, naming the real cause.
+    block <- regmatches(h, regexpr("[.]rowspandefault1[{][^}]*[}]", h))
+    expect_equal(length(block), 1)
     expect_true(grepl("background: rgb(9,9,9)", block, fixed = TRUE))
     expect_true(grepl("font-size: 21px", block, fixed = TRUE))
     expect_true(grepl("text-align: right", block, fixed = TRUE))
@@ -396,18 +554,68 @@ test_that("Span styling arguments reach the rowspandefault CSS declaration",
 
 test_that("row.spans prepends an extra header cell (ncol + 2 th cells)",
 {
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
     # a distinct corner label lets ths[1] (row-span corner, always blank) and ths[2]
     # (row-header corner, carries `corner`) be told apart even if their order were swapped
-    res <- CreateCustomTable(rowSpanMatrix, row.spans = spans, corner = "RH")
-    h <- tableHtml(res)
-    thead <- sub("</thead>.*", "", h)
-    ths <- regmatches(thead, gregexpr('<th class="[^"]*">[^<]*</th>', thead))[[1]]
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans, corner = "RH")
+    ths <- theadThs(tableHtml(res))
     # 6 data columns + row-header corner + row-span corner
     expect_equal(length(ths), 8)
     expect_equal(ths[1], '<th class="cornerdefault1"></th>')
     expect_equal(ths[2], '<th class="cornerdefault1">RH</th>')
+})
+
+test_that("row.spans shifts the spacer.col index by a second place",
+{
+    # spacer.col indexes emission position, and the row-span corner is prepended to
+    # col.header.styles (createcustomtable.R:589) BEFORE spacer.col is applied (:593). With
+    # show.row.headers also on there are two leading corner cells, so spacer.col = 2 marks
+    # the row-span corner rather than any data column. This is the two-place case of the
+    # index shift already pinned for show.row.headers alone; row.spans is what makes it
+    # reachable, so it belongs with the row-span coverage.
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans, corner = "RH", spacer.col = 2)
+    ths <- theadThs(tableHtml(res))
+    expect_equal(length(ths), 8)
+    expect_equal(ths[1], '<th class="cornerdefault1"></th>')
+    expect_equal(ths[2], '<th class="spacer">RH</th>')
+    # all six data columns are left untouched - the spacer marks no data column at all
+    expect_equal(ths[3], '<th class="colheaderdefault1 ">A</th>')
+    expect_equal(ths[8], '<th class="colheaderdefault1 ">F</th>')
+})
+
+test_that("row.spans with show.row.headers = FALSE errors on undefined corner.styles (genuine defect, RS-23585)",
+{
+    # GENUINE DEFECT, pinned deliberately - see RS-23585, which carries the verified fix.
+    # corner.styles is assigned only inside the
+    # `if (show.row.headers)` branch of the column-header block (createcustomtable.R:570-584),
+    # but the row-span branch immediately below it reads corner.styles[1] unconditionally
+    # (createcustomtable.R:587-590) to prepend the row-span corner cell. With row headers off
+    # and column headers on, the row-span branch therefore reads a variable that was never
+    # assigned. This is a public option combination - both arguments are documented and
+    # neither is deprecated - so it is a crash, not merely missing coverage.
+    # matched under withEnglishMessages() because base R localises "object '...' not found"
+    expect_error(withEnglishMessages(
+            CreateCustomTable(rowSpanMatrix, row.spans = rowSpans, show.row.headers = FALSE)),
+        "object 'corner.styles' not found", fixed = TRUE)
+
+    # the same crash is reachable without passing show.row.headers at all: a matrix with no
+    # rownames is coerced to show.row.headers = FALSE at createcustomtable.R:333-334, so an
+    # unnamed matrix plus row.spans is enough to hit it
+    noRowNames <- rowSpanMatrix
+    rownames(noRowNames) <- NULL
+    expect_error(withEnglishMessages(CreateCustomTable(noRowNames, row.spans = rowSpans)),
+        "object 'corner.styles' not found", fixed = TRUE)
+
+    # the trigger is specifically the column-header block: with column headers also off that
+    # block is skipped entirely, so corner.styles is never read and the spans emit normally.
+    # This bounds the defect to the header path rather than to show.row.headers = FALSE at large.
+    # Assigned outside expect_error() so that if the call ever does throw, the reported failure
+    # is that error rather than a downstream "object 'res' not found" from the lines below.
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = rowSpans,
+                    show.row.headers = FALSE, show.col.headers = FALSE)
+    h <- tableHtml(res)
+    expect_true(grepl('<td rowspan="2" class="rowspandefault1">AA</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">BB</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">CC</td>', h, fixed = TRUE))
 })
 
 test_that("Adding row.spans increases (does not reduce) the emitted sticky-position count",
@@ -430,11 +638,9 @@ test_that("Adding row.spans increases (does not reduce) the emitted sticky-posit
     # would error rather than silently no-op - but that all-heights-1 combination is never
     # exercised at num.header.rows = 1 by this test. See the num.header.rows = 2 case below
     # for the pruning branch actually removing an index.
-    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
     noSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1)
     withSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 1,
-                    row.spans = spans)
+                    row.spans = rowSpans)
     countNoSpans <- countOccurrences("position: sticky", tableHtml(noSpans))
     countWithSpans <- countOccurrences("position: sticky", tableHtml(withSpans))
     expect_equal(countWithSpans, countNoSpans + 1)
@@ -449,18 +655,32 @@ test_that("The rm.index pruning branch is actually exercised at num.header.rows 
     # length. Confirmed counts: no spans -> noSpans, front-loaded (pruned) -> noSpans + 1,
     # back-loaded (not pruned) -> noSpans + 2. Expressed relative to noSpans (rather than
     # hardcoded absolutes) so an unrelated CSS addition elsewhere doesn't make this brittle.
-    frontLoaded <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
+    # rowSpans is the front-loaded (2, 1, 1) shape; only the back-loaded one is local
     backLoaded <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 2, label = "CC"))
     resNoSpans <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2)
     withFront <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
-                    row.spans = frontLoaded)
+                    row.spans = rowSpans)
     withBack <- CreateCustomTable(rowSpanMatrix, row.height = "30px", num.header.rows = 2,
                     row.spans = backLoaded)
     noSpans <- countOccurrences("position: sticky", tableHtml(resNoSpans))
     expect_equal(countOccurrences("position: sticky", tableHtml(withFront)), noSpans + 1)
     expect_equal(countOccurrences("position: sticky", tableHtml(withBack)), noSpans + 2)
+
+    # the counts alone do not say WHICH index was pruned: `top.position[-1]` would also
+    # leave one entry and keep the front-loaded count at noSpans + 1. Pin the surviving
+    # value so a wrong-index regression is caught. num.header.rows = 2 gives
+    # top.position = c("calc(35px + 1px)", "calc(35px + 1px + 1px + 30px)"); pruning index 2
+    # leaves the first, which is what rowspandefault1 must carry.
+    spanRule <- function(res, n) matchAll(paste0("[.]rowspandefault", n, "[{][^}]*[}]"),
+        normWs(tableHtml(res)))
+    expect_true(grepl("position: sticky; top: calc(35px + 1px);", spanRule(withFront, 1),
+        fixed = TRUE))
+    # nothing was pruned in the back-loaded case, so both entries are still handed out
+    expect_true(grepl("position: sticky; top: calc(35px + 1px);", spanRule(withBack, 1),
+        fixed = TRUE))
+    expect_true(grepl("position: sticky; top: calc(35px + 1px + 1px + 30px);",
+        spanRule(withBack, 2), fixed = TRUE))
 })
 
 test_that("Span heights not summing to nrow are pinned to current (unvalidated) behaviour",
@@ -468,9 +688,7 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     # under-covering: heights sum to 2 against nrow = 4, so rows 3-4 simply get no span cell
     spans <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"))
     res <- CreateCustomTable(rowSpanMatrix, row.spans = spans)
-    h <- tableHtml(res)
-    body <- sub(".*</thead>", "", h)
-    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    rows <- bodyRows(tableHtml(res))
     expect_equal(length(rows), 4)
     expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
     expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">BB</td>', rows[2], fixed = TRUE))
@@ -485,9 +703,7 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     # below for what happens when a later span's assignment lands past the overrun.
     overSpans <- list(list(height = 10, label = "AA"))
     res <- CreateCustomTable(rowSpanMatrix, row.spans = overSpans)
-    h <- tableHtml(res)
-    body <- sub(".*</thead>", "", h)
-    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    rows <- bodyRows(tableHtml(res))
     expect_equal(length(rows), 4)
     expect_true(grepl('<tr><td rowspan="10" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
     expect_false(grepl("rowspan", rows[2], fixed = TRUE))
@@ -495,7 +711,7 @@ test_that("Span heights not summing to nrow are pinned to current (unvalidated) 
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
 
-test_that("A multi-span over-cover silently drops the last span and leaks a cbind warning (genuine defect, not yet ticketed)",
+test_that("A multi-span over-cover silently drops the last span and leaks a cbind warning (genuine defect, RS-23592)",
 {
     # Genuine production defect being pinned here, not the plan-authoring mistake above:
     # when a span's height pushes `j` (in the `j <- j + row.span.lengths[i]` loop) past
@@ -506,17 +722,16 @@ test_that("A multi-span over-cover silently drops the last span and leaks a cbin
     # and it is the browser's HTML renderer, not this code, that clamps it to the remaining
     # rows, so the table shape itself stays correct). cbind(row.span.html, cell.html) then
     # warns because the result's row count
-    # (4, taken from cell.html) is not a multiple of row.span.html's length (12). No ticket
-    # has been filed for this yet.
+    # (4, taken from cell.html) is not a multiple of row.span.html's length (12).
+    # See RS-23592.
     overSpans <- list(list(height = 1, label = "AA"), list(height = 10, label = "BB"),
                   list(height = 3, label = "CC"))
+    # matched under withEnglishMessages(): the cbind warning text is localised by base R
     expect_warning(
-        res <- CreateCustomTable(rowSpanMatrix, row.spans = overSpans),
+        res <- withEnglishMessages(CreateCustomTable(rowSpanMatrix, row.spans = overSpans)),
         "number of rows of result is not a multiple of vector length", fixed = TRUE
     )
-    h <- tableHtml(res)
-    body <- sub(".*</thead>", "", h)
-    rows <- regmatches(body, gregexpr("<tr>.*?</tr>", body))[[1]]
+    rows <- bodyRows(tableHtml(res))
     expect_equal(length(rows), 4)
     expect_true(grepl('<tr><td rowspan="1" class="rowspandefault1">AA</td>', rows[1], fixed = TRUE))
     expect_true(grepl('<tr><td rowspan="10" class="rowspandefault1">BB</td>', rows[2], fixed = TRUE))
@@ -524,9 +739,9 @@ test_that("A multi-span over-cover silently drops the last span and leaks a cbin
     expect_false(grepl("rowspan", rows[4], fixed = TRUE))
 })
 
-test_that("All-height-1 row.spans with sticky positioning errors on invalid unary -NULL (genuine unticketed defect)",
+test_that("All-height-1 row.spans with sticky positioning errors on invalid unary -NULL (genuine defect, RS-23593)",
 {
-    # Genuine production crash being pinned here (not yet ticketed): rm.index is only
+    # Genuine production crash being pinned here - see RS-23593: rm.index is only
     # populated for spans taller than one row, so when EVERY span height is 1, rm.index
     # stays NULL, and the pruning expression `top.position[-rm.index]` becomes
     # `top.position[-NULL]`. In base R, unary minus on NULL is invalid ("invalid argument
@@ -537,25 +752,25 @@ test_that("All-height-1 row.spans with sticky positioning errors on invalid unar
     # fixed, this expect_error should be changed to assert successful output instead.
     allOnes <- list(list(height = 1, label = "AA"), list(height = 1, label = "BB"),
                   list(height = 1, label = "CC"), list(height = 1, label = "DD"))
+    # matched under withEnglishMessages(): the unary-operator message is localised by base R
     expect_error(
-        CreateCustomTable(rowSpanMatrix, row.spans = allOnes, row.height = "30px",
-            num.header.rows = 1),
+        withEnglishMessages(CreateCustomTable(rowSpanMatrix, row.spans = allOnes,
+            row.height = "30px", num.header.rows = 1)),
         "invalid argument to unary operator", fixed = TRUE
     )
 
     # Same all-height-1 spans without sticky positioning: top.position/rm.index pruning is
     # never reached, so this succeeds - the crash is specific to the sticky combination,
-    # not to row.spans (or all-height-1 spans) in general.
-    expect_error(res <- CreateCustomTable(rowSpanMatrix, row.spans = allOnes), NA)
+    # not to row.spans (or all-height-1 spans) in general. Assigned outside expect_error()
+    # so a real failure here is reported as itself, not as "object 'res' not found" below.
+    res <- CreateCustomTable(rowSpanMatrix, row.spans = allOnes)
     expect_true(grepl('<td rowspan="1" class="rowspandefault1">AA</td>', tableHtml(res),
         fixed = TRUE))
 
     # Mixed heights (2, 1, 1) with the same sticky args: rm.index is populated (the height-2
     # span), so the pruning expression is a normal subscript, not `-NULL`, and this succeeds.
-    mixedHeights <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
-                  list(height = 1, label = "CC"))
     expect_error(
-        CreateCustomTable(rowSpanMatrix, row.spans = mixedHeights, row.height = "30px",
+        CreateCustomTable(rowSpanMatrix, row.spans = rowSpans, row.height = "30px",
             num.header.rows = 1),
         NA
     )
@@ -581,18 +796,21 @@ test_that("banded.rows = TRUE emits the odd/even row rule with default fills, in
     expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}",
                              " tr:nth-child(even){background-color: rgb(245,245,245) ;}"), h, fixed = TRUE))
 
-    # the odd rule is scoped to the container selector, but the even clause that follows
-    # it is not re-prefixed - pinning the confirmed selector-scoping gap
+    # the string pinned above runs from the odd selector straight through to the even one,
+    # so it already fails if anything - a container prefix included - is inserted between
+    # the two clauses; that is the confirmed selector-scoping gap - see RS-23594. What it does not cover
+    # is the prefix on the odd clause itself, so assert that separately
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
     expect_true(grepl(paste0(containerSel, " tbody tr:nth-child(odd)"), h, fixed = TRUE))
-    beforeEven <- substr(h, 1, regexpr("tr:nth-child(even)", h, fixed = TRUE) - 1)
-    afterOddRule <- sub(".*tr:nth-child\\(odd\\)\\{[^}]*\\}", "", beforeEven)
-    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
 })
 
 test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
 {
+    # banded.rows and banded.cols are separate cata() calls (createcustomtable.R:626-631)
+    # that each interpolate banded.odd.fill/banded.even.fill independently. Both are
+    # exercised with non-default values: covering only the row branch would leave the
+    # column branch free to hard-code the defaults without any test failing.
     res <- CreateCustomTable(x2, banded.rows = TRUE,
                 banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
     h <- normWs(tableHtml(res))
@@ -600,6 +818,25 @@ test_that("Custom banded.odd.fill and banded.even.fill values are used instead o
                              " tr:nth-child(even){background-color: rgb(2,2,2) ;}"), h, fixed = TRUE))
     expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
     expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
+
+    resCols <- CreateCustomTable(x2, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hCols <- normWs(tableHtml(resCols))
+    expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(1,1,1) ;}",
+                             " td:nth-child(even){background-color: rgb(2,2,2) ;}"), hCols,
+                      fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hCols, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hCols, fixed = TRUE))
+
+    # both arguments at once: each branch takes the same pair, so a regression that
+    # forwarded them in only one of the two rules is caught here as well
+    resBoth <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hBoth <- normWs(tableHtml(resBoth))
+    expect_true(grepl("tr:nth-child(odd){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_true(grepl("td:nth-child(2n+3){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hBoth, fixed = TRUE))
 })
 
 test_that("banded.rows = TRUE drops the per-cell background from the celldefault CSS",
@@ -623,9 +860,8 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
     # row-header cell occupying nth-child(1), the data columns land on 2 (even), 3 (2n+3),
     # 4 (even), i.e. a correctly alternating band that excludes the header
     # column. This is not a defect; the row/col naming just doesn't match odd/even parity
-    # once the header column is accounted for. (One genuine gap this leaves untested: with
-    # show.row.headers = FALSE, column 1 falls into neither selector and is left unbanded -
-    # not asserted here.)
+    # once the header column is accounted for. The case where it does go wrong -
+    # show.row.headers = FALSE - is pinned by the test below (RS-23595).
     res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
     h <- normWs(tableHtml(res))
     expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
@@ -633,14 +869,27 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
                        h, fixed = TRUE))
     expect_false(grepl("background: rgb(3,3,3) ;", h, fixed = TRUE))
 
-    # mirrors the row-banding scoping check above: the 2n+3 clause is scoped to the
-    # container selector, but the even clause that follows it is not re-prefixed
+    # mirrors the row-banding scoping check above (RS-23594): the contiguous string pinned
+    # above covers the missing prefix on the even clause, this covers the prefix on the 2n+3 one
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
     expect_true(grepl(paste0(containerSel, " tbody td:nth-child(2n+3)"), h, fixed = TRUE))
-    beforeEven <- substr(h, 1, regexpr("td:nth-child(even)", h, fixed = TRUE) - 1)
-    afterOddRule <- sub(".*td:nth-child\\(2n[+]3\\)\\{[^}]*\\}", "", beforeEven)
-    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
+})
+
+test_that("Column banding selectors do not adapt when row headers are hidden",
+{
+    # the 2n+3/even pair only alternates correctly because the row-header cell occupies
+    # nth-child(1). With show.row.headers = FALSE the data columns are 1, 2, 3, and column
+    # 1 matches neither selector, so the first column is left unbanded. The emitted rule is
+    # byte-identical either way, i.e. the selectors are not adjusted for the missing header
+    # column - see RS-23595, pinned so that a header-aware fix trips this test
+    rule <- paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
+                   " td:nth-child(even){background-color: rgb(245,245,245) ;}")
+    withHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE)))
+    noHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE,
+                                                    show.row.headers = FALSE)))
+    expect_true(grepl(rule, withHeaders, fixed = TRUE))
+    expect_true(grepl(rule, noHeaders, fixed = TRUE))
 })
 
 test_that("banded.rows and banded.cols together emit both the row and column banding rules",
