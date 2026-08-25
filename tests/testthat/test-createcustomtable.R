@@ -358,6 +358,19 @@ test_that("Each span gets its own rowspandefault CSS class when sticky positioni
     expect_equal(countOccurrences(".rowspandefault2{", h), 1)
     expect_equal(countOccurrences(".rowspandefault3{", h), 1)
     expect_equal(countOccurrences(".rowspandefault4{", h), 0)
+
+    # emitting three rules is not the same as attaching them to three different cells:
+    # without these assertions a regression that stamped "rowspandefault1" on every span
+    # would still satisfy the counts above. Pin each span cell to its own class, in
+    # document order.
+    raw <- tableHtml(res)
+    cells <- regmatches(raw, gregexpr('<t[dh][^>]*rowspandefault[^>]*>[^<]*</t[dh]>', raw))[[1]]
+    expect_equal(length(cells), length(spans))
+    # AA's cell is a <th>, not a <td>: num.header.rows = 1 promotes the first body row into
+    # <thead>, which changes the tag the span cell is emitted with. BB and CC stay in <tbody>.
+    expect_equal(cells[1], '<th rowspan="2" class="rowspandefault1">AA</th>')
+    expect_equal(cells[2], '<td rowspan="1" class="rowspandefault2">BB</td>')
+    expect_equal(cells[3], '<td rowspan="1" class="rowspandefault3">CC</td>')
 })
 
 test_that("A per-span class is appended, not substituted",
@@ -408,6 +421,40 @@ test_that("row.spans prepends an extra header cell (ncol + 2 th cells)",
     expect_equal(length(ths), 8)
     expect_equal(ths[1], '<th class="cornerdefault1"></th>')
     expect_equal(ths[2], '<th class="cornerdefault1">RH</th>')
+})
+
+test_that("row.spans with show.row.headers = FALSE errors on undefined corner.styles (genuine unticketed defect)",
+{
+    # GENUINE DEFECT, pinned deliberately - see RS-23585, which carries the verified fix.
+    # corner.styles is assigned only inside the
+    # `if (show.row.headers)` branch of the column-header block (createcustomtable.R:570-584),
+    # but the row-span branch immediately below it reads corner.styles[1] unconditionally
+    # (createcustomtable.R:587-590) to prepend the row-span corner cell. With row headers off
+    # and column headers on, the row-span branch therefore reads a variable that was never
+    # assigned. This is a public option combination - both arguments are documented and
+    # neither is deprecated - so it is a crash, not merely missing coverage.
+    spans <- list(list(height = 2, label = "AA"), list(height = 1, label = "BB"),
+                  list(height = 1, label = "CC"))
+    expect_error(CreateCustomTable(rowSpanMatrix, row.spans = spans, show.row.headers = FALSE),
+        "object 'corner.styles' not found", fixed = TRUE)
+
+    # the same crash is reachable without passing show.row.headers at all: a matrix with no
+    # rownames is coerced to show.row.headers = FALSE at createcustomtable.R:333-334, so an
+    # unnamed matrix plus row.spans is enough to hit it
+    noRowNames <- rowSpanMatrix
+    rownames(noRowNames) <- NULL
+    expect_error(CreateCustomTable(noRowNames, row.spans = spans),
+        "object 'corner.styles' not found", fixed = TRUE)
+
+    # the trigger is specifically the column-header block: with column headers also off that
+    # block is skipped entirely, so corner.styles is never read and the spans emit normally.
+    # This bounds the defect to the header path rather than to show.row.headers = FALSE at large.
+    expect_error(res <- CreateCustomTable(rowSpanMatrix, row.spans = spans,
+                    show.row.headers = FALSE, show.col.headers = FALSE), NA)
+    h <- tableHtml(res)
+    expect_true(grepl('<td rowspan="2" class="rowspandefault1">AA</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">BB</td>', h, fixed = TRUE))
+    expect_true(grepl('<td rowspan="1" class="rowspandefault1">CC</td>', h, fixed = TRUE))
 })
 
 test_that("Adding row.spans increases (does not reduce) the emitted sticky-position count",
