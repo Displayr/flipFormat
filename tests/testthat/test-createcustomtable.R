@@ -932,7 +932,7 @@ test_that("sig.change.fills inline style is emitted only on the flagged body cel
 test_that("A single col.widths value emits exactly one <col width> tag",
 {
     res <- CreateCustomTable(x2, col.widths = '200px')
-    h <- normWs(tableHtml(res))
+    h <- tableHtml(res)
     expect_equal(countOccurrences("<col ", h), 1)
     expect_true(grepl("<col width=' 200px '>", h, fixed = TRUE))
 })
@@ -940,7 +940,7 @@ test_that("A single col.widths value emits exactly one <col width> tag",
 test_that("A comma-separated col.widths string is split into one tag per width, in order",
 {
     res <- CreateCustomTable(x2, col.widths = "20%, 30%, 50%")
-    h <- normWs(tableHtml(res))
+    h <- tableHtml(res)
     tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
     expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>", "<col width=' 50% '>"))
 })
@@ -949,9 +949,10 @@ test_that("A character vector col.widths is accepted equivalently to the comma-s
 {
     resString <- CreateCustomTable(x2, col.widths = "20%, 30%, 50%")
     resVector <- CreateCustomTable(x2, col.widths = c("20%", "30%", "50%"))
-    hString <- normWs(tableHtml(resString))
+    hString <- tableHtml(resString)
     tagsString <- regmatches(hString, gregexpr("<col[^>]*>", hString))[[1]]
-    tagsVector <- regmatches(normWs(tableHtml(resVector)), gregexpr("<col[^>]*>", normWs(tableHtml(resVector))))[[1]]
+    hVector <- tableHtml(resVector)
+    tagsVector <- regmatches(hVector, gregexpr("<col[^>]*>", hVector))[[1]]
     expect_equal(tagsVector, c("<col width=' 20% '>", "<col width=' 30% '>", "<col width=' 50% '>"))
     expect_equal(tagsString, tagsVector)
 })
@@ -959,7 +960,7 @@ test_that("A character vector col.widths is accepted equivalently to the comma-s
 test_that("The col.widths default is the row-header column's 25% width when rownames are present, and nothing when they are not",
 {
     resWithRownames <- CreateCustomTable(x2)
-    hWith <- normWs(tableHtml(resWithRownames))
+    hWith <- tableHtml(resWithRownames)
     tags <- regmatches(hWith, gregexpr("<col[^>]*>", hWith))[[1]]
     expect_equal(tags, "<col width=' 25% '>")
 
@@ -998,7 +999,7 @@ test_that("The existing smoke-tested col.widths call also emits its <col width> 
 {
     expect_error(res <- CreateCustomTable(x2, col.widths = '200px',
             col.header.border.width = NULL, border.color = "red"), NA)
-    h <- normWs(tableHtml(res))
+    h <- tableHtml(res)
     expect_true(grepl("<col width=' 200px '>", h, fixed = TRUE))
 })
 
@@ -1007,7 +1008,7 @@ test_that("Fewer col.widths entries than columns emits only the supplied tags, u
     # 2 widths for a 4-column render (row header + 3 data columns): confirmed current
     # behaviour is no padding/redistribution of the remaining columns
     res <- CreateCustomTable(x2, col.widths = c("20%", "30%"))
-    h <- normWs(tableHtml(res))
+    h <- tableHtml(res)
     tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
     expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>"))
 })
@@ -1018,7 +1019,7 @@ test_that("More col.widths entries than columns emits every supplied tag, untrun
     # genuinely more than the column count, exercising the surplus path
     x4 <- matrix(1:16, 4, 4, dimnames = list(letters[1:4], c("W", "X", "Y", "Z")))
     res <- CreateCustomTable(x4, col.widths = c("20%", "30%", "10%", "10%", "5%", "1%", "2%"))
-    h <- normWs(tableHtml(res))
+    h <- tableHtml(res)
     tags <- regmatches(h, gregexpr("<col[^>]*>", h))[[1]]
     expect_equal(tags, c("<col width=' 20% '>", "<col width=' 30% '>", "<col width=' 10% '>",
         "<col width=' 10% '>", "<col width=' 5% '>", "<col width=' 1% '>", "<col width=' 2% '>"))
