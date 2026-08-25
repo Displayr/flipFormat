@@ -807,6 +807,10 @@ test_that("banded.rows = TRUE emits the odd/even row rule with default fills, in
 
 test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
 {
+    # banded.rows and banded.cols are separate cata() calls (createcustomtable.R:626-631)
+    # that each interpolate banded.odd.fill/banded.even.fill independently. Both are
+    # exercised with non-default values: covering only the row branch would leave the
+    # column branch free to hard-code the defaults without any test failing.
     res <- CreateCustomTable(x2, banded.rows = TRUE,
                 banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
     h <- normWs(tableHtml(res))
@@ -814,6 +818,25 @@ test_that("Custom banded.odd.fill and banded.even.fill values are used instead o
                              " tr:nth-child(even){background-color: rgb(2,2,2) ;}"), h, fixed = TRUE))
     expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
     expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
+
+    resCols <- CreateCustomTable(x2, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hCols <- normWs(tableHtml(resCols))
+    expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(1,1,1) ;}",
+                             " td:nth-child(even){background-color: rgb(2,2,2) ;}"), hCols,
+                      fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hCols, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hCols, fixed = TRUE))
+
+    # both arguments at once: each branch takes the same pair, so a regression that
+    # forwarded them in only one of the two rules is caught here as well
+    resBoth <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hBoth <- normWs(tableHtml(resBoth))
+    expect_true(grepl("tr:nth-child(odd){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_true(grepl("td:nth-child(2n+3){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hBoth, fixed = TRUE))
 })
 
 test_that("banded.rows = TRUE drops the per-cell background from the celldefault CSS",
