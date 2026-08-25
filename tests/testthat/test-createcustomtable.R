@@ -798,7 +798,7 @@ test_that("banded.rows = TRUE emits the odd/even row rule with default fills, in
 
     # the string pinned above runs from the odd selector straight through to the even one,
     # so it already fails if anything - a container prefix included - is inserted between
-    # the two clauses; that is the confirmed selector-scoping gap. What it does not cover
+    # the two clauses; that is the confirmed selector-scoping gap - see RS-23594. What it does not cover
     # is the prefix on the odd clause itself, so assert that separately
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
@@ -838,7 +838,7 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
     # 4 (even), i.e. a correctly alternating band that excludes the header
     # column. This is not a defect; the row/col naming just doesn't match odd/even parity
     # once the header column is accounted for. The case where it does go wrong -
-    # show.row.headers = FALSE - is pinned by the test below.
+    # show.row.headers = FALSE - is pinned by the test below (RS-23595).
     res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
     h <- normWs(tableHtml(res))
     expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
@@ -846,8 +846,8 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
                        h, fixed = TRUE))
     expect_false(grepl("background: rgb(3,3,3) ;", h, fixed = TRUE))
 
-    # mirrors the row-banding scoping check above: the contiguous string pinned above
-    # covers the missing prefix on the even clause, this covers the prefix on the 2n+3 one
+    # mirrors the row-banding scoping check above (RS-23594): the contiguous string pinned
+    # above covers the missing prefix on the even clause, this covers the prefix on the 2n+3 one
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
     expect_true(grepl(paste0(containerSel, " tbody td:nth-child(2n+3)"), h, fixed = TRUE))
@@ -859,7 +859,7 @@ test_that("Column banding selectors do not adapt when row headers are hidden",
     # nth-child(1). With show.row.headers = FALSE the data columns are 1, 2, 3, and column
     # 1 matches neither selector, so the first column is left unbanded. The emitted rule is
     # byte-identical either way, i.e. the selectors are not adjusted for the missing header
-    # column - pinned so that a header-aware fix trips this test
+    # column - see RS-23595, pinned so that a header-aware fix trips this test
     rule <- paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
                    " td:nth-child(even){background-color: rgb(245,245,245) ;}")
     withHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE)))
