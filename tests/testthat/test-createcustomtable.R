@@ -160,6 +160,11 @@ test_that("circle.size drives the emitted circle geometry",
 
 # spacer.col --------------------------------------------------------------
 
+# the complete predefined .spacer declaration (createcustomtable.R:868), pinned as one
+# exact string so that dropping or altering any single declaration fails rather than
+# merely checking the selector exists
+spacerRule <- ".spacer {background: white;color: white;border: none;overflow:hidden;}"
+
 test_that("Default emits no spacer class",
 {
     res <- CreateCustomTable(x2)
@@ -271,7 +276,28 @@ test_that("use.predefined.css = FALSE leaves the spacer header cell with no matc
     expect_false(grepl('.spacer {', h, fixed = TRUE))
 
     # confirm the negative assertion actually flips: with the default use.predefined.css = TRUE
-    # the same call does emit the ".spacer {" rule
+    # the same call does emit the rule - asserted in full, so this cannot be satisfied by a
+    # ".spacer {" selector whose declarations have been emptied or changed
     resDefault <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
-    expect_true(grepl('.spacer {', tableHtml(resDefault), fixed = TRUE))
+    expect_true(grepl(spacerRule, normWs(tableHtml(resDefault)), fixed = TRUE))
+})
+
+test_that("The predefined spacer rule is emitted in full, once, scoped to the table container",
+{
+    m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
+    res <- CreateCustomTable(m4, show.row.headers = FALSE, spacer.col = 2)
+    h <- normWs(tableHtml(res))
+
+    # every declaration pinned, so removing or editing any one of background/color/border/
+    # overflow fails here rather than passing on selector presence alone
+    expect_true(grepl(spacerRule, h, fixed = TRUE))
+    expect_equal(countOccurrences(".spacer {", h), 1)
+
+    # the rule is namespaced under the generated container class rather than defined
+    # globally, which is what keeps it from leaking into the rest of the page. The
+    # container name is randomised per call, so match its shape rather than its value.
+    # Pairing this count with the total above proves the single ".spacer {" occurrence
+    # IS the container-scoped one, rather than a global rule sitting alongside it.
+    scoped <- regmatches(h, gregexpr("\\.custom-table-container-\\S+ \\.spacer \\{", h))[[1]]
+    expect_equal(length(scoped), 1)
 })
