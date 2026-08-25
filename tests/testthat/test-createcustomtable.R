@@ -1112,9 +1112,18 @@ test_that("row.classes applies to a whole data row",
     expect_false(grepl("redfill", row1Tds[1], fixed = TRUE))
     expect_true(all(grepl("redfill", row1Tds[2:4], fixed = TRUE)))
 
-    row2Tds <- regmatches(bodyRows[2], gregexpr('<td class="[^"]*">', bodyRows[2]))[[1]]
-    expect_false(grepl("redfill", row2Tds[1], fixed = TRUE))
-    expect_false(any(grepl("redfill", row2Tds[2:4], fixed = TRUE)))
+    # every OTHER body row, not just the second: checking one neighbour would let a
+    # regression that also stamped the class onto rows 3 and 4 pass, while the test
+    # claims a single whole-row assignment
+    for (i in 2:length(bodyRows))
+    {
+        tds <- regmatches(bodyRows[i], gregexpr('<td class="[^"]*">', bodyRows[i]))[[1]]
+        expect_false(any(grepl("redfill", tds, fixed = TRUE)), info = paste("body row", i))
+    }
+
+    # and the whole document carries the class exactly as many times as row 1 has data
+    # cells, so it cannot be leaking into the header or anywhere else either
+    expect_equal(countOccurrences("redfill", tableHtml(res)), ncol(x2))
 })
 
 test_that("col.classes and row.classes intersect on the shared cell",
@@ -1140,19 +1149,35 @@ test_that("col.classes and row.classes intersect on the shared cell",
     expect_true(grepl("bluefill", row2Tds[3], fixed = TRUE))
 })
 
-test_that("col.classes/row.classes read ix/class positionally, so the element names are cosmetic",
+test_that("col.classes and row.classes read ix/class positionally, so element names are ignored",
 {
-    resNamed <- CreateCustomTable(x2, col.classes = list(list(ix = 3, class = "bluefill")))
-    resUnnamed <- CreateCustomTable(x2, col.classes = list(list(foo = 3, bar = "bluefill")))
-
+    # createcustomtable.R:482-486 subscripts each entry with cc[[1]] and cc[[2]], so the
+    # names are never consulted. Three forms are compared: the documented ix/class names,
+    # DIFFERENT names, and a genuinely unnamed list. The unnamed form is the one that
+    # actually demonstrates positional access - a differently-named list only shows that
+    # these particular names are not special, not that names are optional at all.
     # the random per-call container name only appears before </thead>; the body markup
     # after </thead> is stem-free, so comparing the whole body block is strictly stronger
-    # than comparing just the column-3 cells, at the same cost
-    bodyNamed <- sub(".*</thead>", "", tableHtml(resNamed))
-    bodyUnnamed <- sub(".*</thead>", "", tableHtml(resUnnamed))
-    expect_identical(bodyNamed, bodyUnnamed)
-    # positive control: col.classes actually took effect in both forms
-    expect_true(grepl("bluefill", bodyNamed, fixed = TRUE))
+    # than comparing just the affected cells, at the same cost
+    body <- function(res) sub(".*</thead>", "", tableHtml(res))
+
+    colNamed <- body(CreateCustomTable(x2, col.classes = list(list(ix = 3, class = "bluefill"))))
+    colMisnamed <- body(CreateCustomTable(x2, col.classes = list(list(foo = 3, bar = "bluefill"))))
+    colUnnamed <- body(CreateCustomTable(x2, col.classes = list(list(3, "bluefill"))))
+    expect_identical(colMisnamed, colNamed)
+    expect_identical(colUnnamed, colNamed)
+    # positive control: col.classes actually took effect, so the comparisons above are not
+    # three identically-unstyled tables agreeing with each other
+    expect_true(grepl("bluefill", colUnnamed, fixed = TRUE))
+
+    # row.classes goes through the sibling loop and was not exercised here at all despite
+    # being named in this test; the same three forms are compared
+    rowNamed <- body(CreateCustomTable(x2, row.classes = list(list(ix = 1, class = "redfill"))))
+    rowMisnamed <- body(CreateCustomTable(x2, row.classes = list(list(foo = 1, bar = "redfill"))))
+    rowUnnamed <- body(CreateCustomTable(x2, row.classes = list(list(1, "redfill"))))
+    expect_identical(rowMisnamed, rowNamed)
+    expect_identical(rowUnnamed, rowNamed)
+    expect_true(grepl("redfill", rowUnnamed, fixed = TRUE))
 })
 
 test_that("sig.change.fills inline style is emitted only on the flagged body cell, never in <thead>",
