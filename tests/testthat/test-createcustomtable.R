@@ -284,6 +284,12 @@ test_that("show.col.headers = FALSE suppresses the whole header row and its CSS"
     # '<th class="' not a bare '<th': <thead> is always emitted, so a bare probe could never fail
     expect_false(grepl('<th class="', h, fixed = TRUE))
     expect_false(grepl('colheaderdefault', h, fixed = TRUE))
+
+    # positive control: both are present when column headers are shown, so the negatives
+    # above fail for the right reason rather than because the probes never match anything
+    hShown <- tableHtml(CreateCustomTable(x2))
+    expect_true(grepl('<th class="', hShown, fixed = TRUE))
+    expect_true(grepl("colheaderdefault", hShown, fixed = TRUE))
 })
 
 test_that("spacer.col is silently ignored when show.col.headers is FALSE",
@@ -940,21 +946,10 @@ test_that("transpose changes the cell order to that of the original first column
         '<tr><td class="rowheaderdefault1">c1</td><td class="celldefault1">1</td><td class="celldefault4">2</td></tr>')
 })
 
-test_that("show.col.headers = FALSE emits no column-header <th> cell and no colheaderdefault CSS rule",
-{
-    # anchored on 'class="' so the surrounding <thead> tag (which also starts '<th')
-    # cannot produce a false positive
-    res <- CreateCustomTable(x2, show.col.headers = FALSE)
-    h <- tableHtml(res)
-    expect_false(grepl('<th class="', h, fixed = TRUE))
-    expect_false(grepl("colheaderdefault", h, fixed = TRUE))
-
-    # positive control: both are present when column headers are shown
-    resShown <- CreateCustomTable(x2)
-    hShown <- tableHtml(resShown)
-    expect_true(grepl('<th class="', hShown, fixed = TRUE))
-    expect_true(grepl("colheaderdefault", hShown, fixed = TRUE))
-})
+# NOTE: show.col.headers = FALSE is covered by "show.col.headers = FALSE suppresses the
+# whole header row and its CSS" earlier in this file, which now carries the positive
+# controls too. A second block asserting the same call is not repeated here - two copies
+# would have to be kept in step with each other on any future behaviour change.
 
 test_that("show.row.headers = FALSE drops the row-label column and the rowheaderdefault CSS rule",
 {
@@ -1044,7 +1039,10 @@ test_that("font.unit is honoured in the emitted font-size declaration",
 {
     res <- CreateCustomTable(x2, font.size = 2, font.unit = "em")
     h <- normWs(tableHtml(res))
-    expect_equal(countOccurrences("font-size: 2em", h), 15)
+    # addCSSclass() emits one celldefault rule per cell, plus the col-header, row-header and
+    # corner rules. Derived from the fixture rather than hardcoded as 15, so reshaping x2
+    # cannot turn this into a bare "15 != 16" with no indication of what moved.
+    expect_equal(countOccurrences("font-size: 2em", h), prod(dim(x2)) + 3)
     expect_false(grepl("font-size: 2px", h, fixed = TRUE))
 })
 
@@ -1057,9 +1055,17 @@ test_that("An explicit cell.font.size overrides font.size for cells only",
     expect_length(cellRule, 1)
     expect_true(grepl("font-size: 30px", cellRule, fixed = TRUE))
 
+    # BOTH header rules, not just the column one: the row-header rule is the sibling of the
+    # col-header rule (createcustomtable.R:496-503), so a regression leaking cell.font.size
+    # into it would otherwise pass while violating this test's stated "for cells only"
     colHdrRule <- regmatches(h, regexpr('\\.colheaderdefault1\\{[^}]*\\}', h))
     expect_length(colHdrRule, 1)
     expect_true(grepl("font-size: 17px", colHdrRule, fixed = TRUE))
+
+    rowHdrRule <- regmatches(h, regexpr('\\.rowheaderdefault1\\{[^}]*\\}', h))
+    expect_length(rowHdrRule, 1)
+    expect_true(grepl("font-size: 17px", rowHdrRule, fixed = TRUE))
+    expect_false(grepl("font-size: 30px", rowHdrRule, fixed = TRUE))
 })
 
 test_that("col.header.classes is appended to the generated colheaderdefault class",
@@ -1108,14 +1114,19 @@ test_that("row.classes applies to a whole data row",
     bodyRows <- rows[-1]
     expect_equal(length(bodyRows), nrow(x2))
 
+    # [-1] rather than [2:4]: the row-header cell is index 1 and everything after it is a
+    # data cell, so this stays correct if x2 is reshaped - the row count two lines above is
+    # already derived from nrow(x2), and these should not disagree
     row1Tds <- regmatches(bodyRows[1], gregexpr('<td class="[^"]*">', bodyRows[1]))[[1]]
     expect_false(grepl("redfill", row1Tds[1], fixed = TRUE))
-    expect_true(all(grepl("redfill", row1Tds[2:4], fixed = TRUE)))
+    expect_true(all(grepl("redfill", row1Tds[-1], fixed = TRUE)))
 
     # every OTHER body row, not just the second: checking one neighbour would let a
     # regression that also stamped the class onto rows 3 and 4 pass, while the test
-    # claims a single whole-row assignment
-    for (i in 2:length(bodyRows))
+    # claims a single whole-row assignment. seq_along()[-1] not 2:length() - the latter
+    # counts DOWN to c(2, 1) on a single-row fixture and would then assert that the target
+    # row carries no class, failing as if the product had regressed
+    for (i in seq_along(bodyRows)[-1])
     {
         tds <- regmatches(bodyRows[i], gregexpr('<td class="[^"]*">', bodyRows[i]))[[1]]
         expect_false(any(grepl("redfill", tds, fixed = TRUE)), info = paste("body row", i))
@@ -1185,10 +1196,13 @@ test_that("sig.change.fills inline style is emitted only on the flagged body cel
     # createcustomtable.R assigns 'cell.inline.styl <- rbind("", cell.inline.style)' (missing
     # the letter 'e'). This is a dead store: 'cell.inline.styl' is never read again anywhere
     # under R/, so the assignment has no effect on the emitted HTML. Renaming it to the
-    # apparently-intended 'cell.inline.style' does NOT fix anything - it makes the call error,
-    # because 'cell.styles' never gains a matching header row (arguments cannot be recycled
-    # to the same length). So the correct disposition for the
-    # line is deletion, not renaming, and the current emitted output below is correct as-is.
+    # apparently-intended 'cell.inline.style' does NOT fix anything, because 'cell.styles'
+    # never gains a matching header row. Verified with the rename applied: any table with
+    # more than one row errors ("arguments cannot be recycled to the same length"), and a
+    # ONE-row table does not error at all - the rbind'd matrix is then exactly twice the
+    # length of cell.styles, so sprintf recycles cleanly and silently duplicates that row's
+    # cells. Either way the rename is worse than the dead store, so the correct disposition
+    # for the line is deletion, and the current emitted output below is correct as-is.
     sig <- matrix(0, nrow(x2), ncol(x2))
     sig[1, 1] <- 1
     res <- CreateCustomTable(x2, sig.change.fills = sig, show.col.headers = TRUE)
