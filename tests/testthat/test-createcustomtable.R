@@ -8,6 +8,19 @@ countOccurrences <- function(pattern, s)
     if (m[1] == -1L) 0L else length(m)
 }
 
+# Any assertion that matches on the TEXT of a base-R condition must run under this.
+# Base R localises its messages, so e.g. "arguments cannot be recycled to the same length"
+# becomes "les arguments ne peuvent etre recycles a la meme taille" when LANGUAGE=fr, and a
+# fixed-string expect_error() then fails on any machine or CI runner with a non-English
+# LANGUAGE. Done by hand rather than with withr::with_envvar so no dependency is added.
+withEnglishMessages <- function(code)
+{
+    old <- Sys.getenv("LANGUAGE", unset = NA)
+    Sys.setenv(LANGUAGE = "en")
+    on.exit(if (is.na(old)) Sys.unsetenv("LANGUAGE") else Sys.setenv(LANGUAGE = old))
+    force(code)
+}
+
 xx <- structure(1:5, .Names = c("a", "b", "c", "d", "e"), statistic = "%")
 x2 <- matrix(1:12, 4, 3, dimnames = list(letters[1:4], c("X", "Y", "Z")))
 test_that("Percentage data",
@@ -314,8 +327,10 @@ test_that("Out-of-range spacer.col is pinned to its current (defective) behaviou
     # The off-by-one a caller would actually make - ncols + 1 - is a hard error from
     # sprintf, whose message never mentions spacer.col. Pinned alongside the case above so
     # that both consequences of the missing bounds check are covered, not just the benign one.
+    # matched under withEnglishMessages() because the sprintf message is localised by base R
     for (k in c(4, 5, 7))
-        expect_error(CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = k),
+        expect_error(withEnglishMessages(
+                CreateCustomTable(x2local, show.row.headers = FALSE, spacer.col = k)),
             "arguments cannot be recycled to the same length", fixed = TRUE, info = k)
 
     # in-range indices are unaffected, so the errors above are attributable to the
