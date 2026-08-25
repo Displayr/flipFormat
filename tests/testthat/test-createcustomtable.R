@@ -810,3 +810,137 @@ test_that("All-height-1 row.spans with sticky positioning errors on invalid unar
         NA
     )
 })
+
+# banded.rows / banded.cols ------------------------------------------------
+
+test_that("Default emits no banding CSS",
+{
+    res <- CreateCustomTable(x2)
+    expect_false(grepl("nth-child", tableHtml(res), fixed = TRUE))
+})
+
+test_that("banded.rows = TRUE emits the odd/even row rule with default fills, including the unscoped even clause",
+{
+    # cata() joins its arguments with a space (its default cat() sep), so the emitted
+    # declaration has spaces around the fill value even though the source concatenates
+    # 'background-color:' and the fill value as adjacent cata() arguments; normWs
+    # collapses runs of whitespace to a single space rather than removing it, so those
+    # spaces remain in the string pinned below
+    res <- CreateCustomTable(x2, banded.rows = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}",
+                             " tr:nth-child(even){background-color: rgb(245,245,245) ;}"), h, fixed = TRUE))
+
+    # the string pinned above runs from the odd selector straight through to the even one,
+    # so it already fails if anything - a container prefix included - is inserted between
+    # the two clauses; that is the confirmed selector-scoping gap - see RS-23594. What it does not cover
+    # is the prefix on the odd clause itself, so assert that separately
+    containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
+    expect_length(containerSel, 1)
+    expect_true(grepl(paste0(containerSel, " tbody tr:nth-child(odd)"), h, fixed = TRUE))
+})
+
+test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
+{
+    # banded.rows and banded.cols are separate cata() calls (createcustomtable.R:626-631)
+    # that each interpolate banded.odd.fill/banded.even.fill independently. Both are
+    # exercised with non-default values: covering only the row branch would leave the
+    # column branch free to hard-code the defaults without any test failing.
+    res <- CreateCustomTable(x2, banded.rows = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    h <- normWs(tableHtml(res))
+    expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(1,1,1) ;}",
+                             " tr:nth-child(even){background-color: rgb(2,2,2) ;}"), h, fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", h, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", h, fixed = TRUE))
+
+    resCols <- CreateCustomTable(x2, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hCols <- normWs(tableHtml(resCols))
+    expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(1,1,1) ;}",
+                             " td:nth-child(even){background-color: rgb(2,2,2) ;}"), hCols,
+                      fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hCols, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hCols, fixed = TRUE))
+
+    # both arguments at once: each branch takes the same pair, so a regression that
+    # forwarded them in only one of the two rules is caught here as well
+    resBoth <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE,
+                banded.odd.fill = "rgb(1,1,1)", banded.even.fill = "rgb(2,2,2)")
+    hBoth <- normWs(tableHtml(resBoth))
+    expect_true(grepl("tr:nth-child(odd){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_true(grepl("td:nth-child(2n+3){background-color: rgb(1,1,1) ;}", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(250,250,250)", hBoth, fixed = TRUE))
+    expect_false(grepl("rgb(245,245,245)", hBoth, fixed = TRUE))
+})
+
+test_that("banded.rows = TRUE drops the per-cell background from the celldefault CSS",
+{
+    resBanded <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = TRUE)
+    hBanded <- normWs(tableHtml(resBanded))
+    expect_false(grepl("background: rgb(3,3,3) ;", hBanded, fixed = TRUE))
+
+    # contrast: with banded.rows = FALSE (the only argument that differs), the same
+    # cell.fill value does reach the celldefault declaration
+    resFlat <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.rows = FALSE)
+    hFlat <- normWs(tableHtml(resFlat))
+    expect_true(grepl("background: rgb(3,3,3) ;", hFlat, fixed = TRUE))
+})
+
+test_that("banded.cols = TRUE also suppresses the cell fill and emits the full column rule verbatim",
+{
+    # pinning the whole emitted column rule, both the 2n+3 clause and its even-selector
+    # continuation with its own fill value (see plan resolved question 1). 2n+3 yields
+    # {3,5,7,...} (odd) and even yields {2,4,6,...} - these are disjoint, and with the
+    # row-header cell occupying nth-child(1), the data columns land on 2 (even), 3 (2n+3),
+    # 4 (even), i.e. a correctly alternating band that excludes the header
+    # column. This is not a defect; the row/col naming just doesn't match odd/even parity
+    # once the header column is accounted for. The case where it does go wrong -
+    # show.row.headers = FALSE - is pinned by the test below (RS-23595).
+    res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
+                             " td:nth-child(even){background-color: rgb(245,245,245) ;}"),
+                       h, fixed = TRUE))
+    expect_false(grepl("background: rgb(3,3,3) ;", h, fixed = TRUE))
+
+    # mirrors the row-banding scoping check above (RS-23594): the contiguous string pinned
+    # above covers the missing prefix on the even clause, this covers the prefix on the 2n+3 one
+    containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
+    expect_length(containerSel, 1)
+    expect_true(grepl(paste0(containerSel, " tbody td:nth-child(2n+3)"), h, fixed = TRUE))
+})
+
+test_that("Column banding selectors do not adapt when row headers are hidden",
+{
+    # the 2n+3/even pair only alternates correctly because the row-header cell occupies
+    # nth-child(1). With show.row.headers = FALSE the data columns are 1, 2, 3, and column
+    # 1 matches neither selector, so the first column is left unbanded. The emitted rule is
+    # byte-identical either way, i.e. the selectors are not adjusted for the missing header
+    # column - see RS-23595, pinned so that a header-aware fix trips this test
+    rule <- paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
+                   " td:nth-child(even){background-color: rgb(245,245,245) ;}")
+    withHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE)))
+    noHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE,
+                                                    show.row.headers = FALSE)))
+    expect_true(grepl(rule, withHeaders, fixed = TRUE))
+    expect_true(grepl(rule, noHeaders, fixed = TRUE))
+})
+
+test_that("banded.rows and banded.cols together emit both the row and column banding rules",
+{
+    res <- CreateCustomTable(x2, banded.rows = TRUE, banded.cols = TRUE)
+    h <- normWs(tableHtml(res))
+    expect_true(grepl("tr:nth-child(odd)", h, fixed = TRUE))
+    expect_true(grepl("td:nth-child(2n+3)", h, fixed = TRUE))
+})
+
+test_that("Row count does not change how many times the banding rule is emitted",
+{
+    m2 <- matrix(1:2, 2, 1, dimnames = list(c("a", "b"), "X"))
+    m7 <- matrix(1:7, 7, 1, dimnames = list(letters[1:7], "X"))
+    res2 <- CreateCustomTable(m2, banded.rows = TRUE)
+    res7 <- CreateCustomTable(m7, banded.rows = TRUE)
+    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res2)), 1)
+    expect_equal(countOccurrences("nth-child(odd)", tableHtml(res7)), 1)
+})
