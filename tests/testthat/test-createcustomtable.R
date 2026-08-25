@@ -275,8 +275,8 @@ test_that("show.col.headers = FALSE suppresses the whole header row and its CSS"
 
 test_that("spacer.col is silently ignored when show.col.headers is FALSE",
 {
-    # the whole spacer.col application lives inside the `if (show.col.headers)` block
-    # (createcustomtable.R:592-593), so with the header row off the argument is dropped
+    # See RS-23589. The whole spacer.col application lives inside the `if (show.col.headers)`
+    # block (createcustomtable.R:592-593), so with the header row off the argument is dropped
     # without warning or error. Pinned so that adding validation - or extending spacer.col
     # to the body - becomes an explicit decision rather than a silent behaviour change.
     m4 <- matrix(1:12, 3, 4, dimnames = list(c("a", "b", "c"), c("W", "X", "Y", "Z")))
@@ -297,6 +297,7 @@ test_that("spacer.col is silently ignored when show.col.headers is FALSE",
 
 test_that("Out-of-range spacer.col is pinned to its current (defective) behaviour",
 {
+    # See RS-23589, which carries both failure modes and the suggested bounds check.
     # col.header.styles[spacer.col] <- "spacer" silently extends the header-style vector
     # with NA for the skipped positions when spacer.col exceeds its length, and the
     # subsequent sprintf() emits a literal class="NA" <th> rather than erroring or being
