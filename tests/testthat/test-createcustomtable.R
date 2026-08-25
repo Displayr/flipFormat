@@ -581,14 +581,13 @@ test_that("banded.rows = TRUE emits the odd/even row rule with default fills, in
     expect_true(grepl(paste0("tbody tr:nth-child(odd){background-color: rgb(250,250,250) ;}",
                              " tr:nth-child(even){background-color: rgb(245,245,245) ;}"), h, fixed = TRUE))
 
-    # the odd rule is scoped to the container selector, but the even clause that follows
-    # it is not re-prefixed - pinning the confirmed selector-scoping gap
+    # the string pinned above runs from the odd selector straight through to the even one,
+    # so it already fails if anything - a container prefix included - is inserted between
+    # the two clauses; that is the confirmed selector-scoping gap. What it does not cover
+    # is the prefix on the odd clause itself, so assert that separately
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
     expect_true(grepl(paste0(containerSel, " tbody tr:nth-child(odd)"), h, fixed = TRUE))
-    beforeEven <- substr(h, 1, regexpr("tr:nth-child(even)", h, fixed = TRUE) - 1)
-    afterOddRule <- sub(".*tr:nth-child\\(odd\\)\\{[^}]*\\}", "", beforeEven)
-    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
 })
 
 test_that("Custom banded.odd.fill and banded.even.fill values are used instead of the defaults",
@@ -623,9 +622,8 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
     # row-header cell occupying nth-child(1), the data columns land on 2 (even), 3 (2n+3),
     # 4 (even), i.e. a correctly alternating band that excludes the header
     # column. This is not a defect; the row/col naming just doesn't match odd/even parity
-    # once the header column is accounted for. (One genuine gap this leaves untested: with
-    # show.row.headers = FALSE, column 1 falls into neither selector and is left unbanded -
-    # not asserted here.)
+    # once the header column is accounted for. The case where it does go wrong -
+    # show.row.headers = FALSE - is pinned by the test below.
     res <- CreateCustomTable(x2, cell.fill = "rgb(3,3,3)", banded.cols = TRUE)
     h <- normWs(tableHtml(res))
     expect_true(grepl(paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
@@ -633,14 +631,27 @@ test_that("banded.cols = TRUE also suppresses the cell fill and emits the full c
                        h, fixed = TRUE))
     expect_false(grepl("background: rgb(3,3,3) ;", h, fixed = TRUE))
 
-    # mirrors the row-banding scoping check above: the 2n+3 clause is scoped to the
-    # container selector, but the even clause that follows it is not re-prefixed
+    # mirrors the row-banding scoping check above: the contiguous string pinned above
+    # covers the missing prefix on the even clause, this covers the prefix on the 2n+3 one
     containerSel <- regmatches(h, regexpr("[.]custom-table-container-[A-Za-z0-9_-]+", h, perl = TRUE))
     expect_length(containerSel, 1)
     expect_true(grepl(paste0(containerSel, " tbody td:nth-child(2n+3)"), h, fixed = TRUE))
-    beforeEven <- substr(h, 1, regexpr("td:nth-child(even)", h, fixed = TRUE) - 1)
-    afterOddRule <- sub(".*td:nth-child\\(2n[+]3\\)\\{[^}]*\\}", "", beforeEven)
-    expect_false(grepl(containerSel, afterOddRule, fixed = TRUE))
+})
+
+test_that("Column banding selectors do not adapt when row headers are hidden",
+{
+    # the 2n+3/even pair only alternates correctly because the row-header cell occupies
+    # nth-child(1). With show.row.headers = FALSE the data columns are 1, 2, 3, and column
+    # 1 matches neither selector, so the first column is left unbanded. The emitted rule is
+    # byte-identical either way, i.e. the selectors are not adjusted for the missing header
+    # column - pinned so that a header-aware fix trips this test
+    rule <- paste0("tbody td:nth-child(2n+3){background-color: rgb(250,250,250) ;}",
+                   " td:nth-child(even){background-color: rgb(245,245,245) ;}")
+    withHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE)))
+    noHeaders <- normWs(tableHtml(CreateCustomTable(x2, banded.cols = TRUE,
+                                                    show.row.headers = FALSE)))
+    expect_true(grepl(rule, withHeaders, fixed = TRUE))
+    expect_true(grepl(rule, noHeaders, fixed = TRUE))
 })
 
 test_that("banded.rows and banded.cols together emit both the row and column banding rules",
