@@ -4,6 +4,10 @@ tableHtml <- function(res) res$x$text  # rhtmlMetro::Box stores the emitted HTML
 normWs <- function(s) trimws(gsub("\\s+", " ", s))
 countOccurrences <- function(pattern, s)
 {
+    # guard the [[1]]: if the emitted HTML ever arrives as more than one element the
+    # counts below would silently only cover the first, and a zero-length s would
+    # throw "subscript out of bounds" instead of failing as an expectation
+    stopifnot(length(s) == 1L)
     m <- gregexpr(pattern, s, fixed = TRUE)[[1]]
     if (m[1] == -1L) 0L else length(m)
 }
@@ -56,7 +60,7 @@ test_that("Base circle classes are emitted when sig.leader.circles is supplied",
     # circle CSS is value-independent (driven only by non-NULL-ness of sig.leader.circles,
     # circle.size and sig.fills.*); a plain fixture is used so the codes don't misleadingly
     # appear to drive the CSS
-    circles <- matrix(0, 4, 3)
+    circles <- matrix(0, nrow(x2), ncol(x2))
     res <- CreateCustomTable(x2, sig.leader.circles = circles)
     h <- normWs(tableHtml(res))
     fmt <- "display: inline-block; line-height:35px; border-radius:35px; height: 35px; width:35px;"
@@ -78,7 +82,7 @@ test_that("All nine filled circle variants are emitted with the correct fill col
 {
     # circle CSS is value-independent (see "Base circle classes..." above); a plain fixture
     # is used so the codes don't misleadingly appear to drive the CSS
-    circles <- matrix(0, 4, 3)
+    circles <- matrix(0, nrow(x2), ncol(x2))
     up <- "rgb(1,2,3)"
     nothing <- "rgb(4,5,6)"
     down <- "rgb(7,8,9)"
@@ -120,36 +124,67 @@ test_that("Every data cell is wrapped in a circle div carrying its own code",
     expect_true(grepl('<div class="circle2">4</div>', h, fixed = TRUE))
 })
 
-test_that("Rendered cell text is preserved inside the circle div wrapping",
+test_that("Cell content passes through the circle div wrapping unescaped",
 {
-    txt <- "X & Y"
-    x22 <- matrix(c(txt, "b", "c", "d"), 2, 2, dimnames = list(c("a", "b"), c("X", "Y")))
+    # the contract pinned here is that cell content reaches the HTML verbatim: HTML
+    # entities are handed to the browser intact rather than being double-escaped, and
+    # a raw "&" is *not* escaped on the way through. If escaping or sanitisation of
+    # cell content is ever added this test breaks by design, not as a regression.
+    entity <- "50%&nbsp;&#8593;"
+    raw.amp <- "X & Y"
+    x22 <- matrix(c(entity, raw.amp, "c", "d"), 2, 2, dimnames = list(c("a", "b"), c("X", "Y")))
     circles <- matrix(c(2, 1, 0, 2), 2, 2)
     res <- CreateCustomTable(x22, sig.leader.circles = circles)
     h <- tableHtml(res)
-    expect_true(grepl(paste0('<div class="circle2">', txt, '</div>'), h, fixed = TRUE))
+    expect_true(grepl(paste0('<div class="circle2">', entity, '</div>'), h, fixed = TRUE))
+    expect_true(grepl(paste0('<div class="circle1">', raw.amp, '</div>'), h, fixed = TRUE))
 })
 
-test_that("Out-of-range codes pin the current (buggy) normalisation behaviour",
+test_that("sig.leader.circles is recycled against x without warning when the dims disagree",
 {
-    # sig.leader.circles[!which(...)] <- 0 negates integer indices rather than
-    # inverting a logical mask, so out-of-range codes are not reset to 0 as documented.
-    # No defect ticket has been filed for this yet; this test pins that behaviour
-    # deliberately, pending a fix.
+    # index alignment is the whole job of this branch, but nothing validates that
+    # sig.leader.circles has the same dim as x (as documented at createcustomtable.R:9).
+    # sprintf() silently recycles a shorter codes matrix down the column-major cell
+    # order, so the circles land on the wrong cells with no warning. Pinned so that
+    # adding validation later is an explicit decision rather than a silent change.
     x22 <- matrix(1:4, 2, 2, dimnames = list(c("a", "b"), c("X", "Y")))
-    circles <- matrix(c(5, 1, -3, 2), 2, 2)
+    circles <- matrix(c(2, 1), 2, 1)
+    expect_warning(res <- CreateCustomTable(x22, sig.leader.circles = circles), NA)
+    h <- tableHtml(res)
+    expect_true(grepl('<div class="circle2">1</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circle1">2</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circle2">3</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circle1">4</div>', h, fixed = TRUE))
+
+    # a length that cannot be recycled dies inside sprintf, with a message that does
+    # not mention sig.leader.circles at all
+    expect_error(CreateCustomTable(x22, sig.leader.circles = matrix(c(2, 1, 0), 3, 1)),
+        "arguments cannot be recycled to the same length")
+})
+
+test_that("Out-of-range and NA codes pin the current (buggy) normalisation behaviour",
+{
+    # See RS-23584. sig.leader.circles[!which(...)] <- 0 negates integer indices
+    # rather than inverting a logical mask, so the assignment is a no-op and neither
+    # out-of-range codes nor NA are reset to 0 as documented. NA is covered here as well
+    # as numerics because a partial fix that clamps out-of-range numbers but leaves NA
+    # alone still emits class "circleNA", which matches no CSS rule and so renders no
+    # circle at all. This test pins the current behaviour deliberately, pending a fix.
+    x22 <- matrix(1:4, 2, 2, dimnames = list(c("a", "b"), c("X", "Y")))
+    circles <- matrix(c(5, 1, -3, NA), 2, 2)
     res <- CreateCustomTable(x22, sig.leader.circles = circles)
     h <- tableHtml(res)
     expect_true(grepl('<div class="circle5">1</div>', h, fixed = TRUE))
-    expect_true(grepl('<div class="circle-3">3</div>', h, fixed = TRUE))
     expect_true(grepl('<div class="circle1">2</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circle-3">3</div>', h, fixed = TRUE))
+    expect_true(grepl('<div class="circleNA">4</div>', h, fixed = TRUE))
 })
 
 test_that("circle.size drives the emitted circle geometry",
 {
     # circle CSS is value-independent (see "Base circle classes..." above); a plain fixture
     # is used so the codes don't misleadingly appear to drive the CSS
-    circles <- matrix(0, 4, 3)
+    circles <- matrix(0, nrow(x2), ncol(x2))
     res <- CreateCustomTable(x2, sig.leader.circles = circles, circle.size = 50)
     h <- normWs(tableHtml(res))
     expect_true(grepl(paste0(".circle2 { border: 2px solid rgb(120,120,120);display: inline-block; ",
