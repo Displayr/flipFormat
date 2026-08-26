@@ -989,7 +989,9 @@ test_that("col.widths.fill.container = FALSE omits the calc() table width",
     h <- normWs(tableHtml(res))
     table <- regmatches(h, regexpr("<table[^>]*>", h))
     expect_length(table, 1)
-    expect_false(grepl("width:calc(100% - 5px)", table, fixed = TRUE))
+    # no width:calc() of any value, not merely a different one from the TRUE case,
+    # so an incorrectly emitted width still fails this
+    expect_false(grepl("width:calc(", table, fixed = TRUE))
     # positive control: the height-side calc() (which is not gated by this argument)
     # remains, so the negative assertion above isn't vacuously true from mangled output
     expect_true(grepl("height:calc(100% - 5px)", table, fixed = TRUE))
@@ -1064,6 +1066,18 @@ test_that("override.borders suppresses the border declaration only when both 'bo
     cellRuleBorderOnly <- regmatches(hBorderOnly, regexpr("\\.celldefault1\\{[^}]*\\}", hBorderOnly))
     expect_length(cellRuleBorderOnly, 1)
     expect_true(grepl("border: 4px solid red", cellRuleBorderOnly, fixed = TRUE))
+
+    # the reciprocal control: "nth-child" with the literal substring "border" absent
+    # anywhere in custom.css does not trip the heuristic either. Together with the
+    # border-only case above this pins that BOTH tokens are required - keying on
+    # either one alone would still satisfy one of the two cases, but not both
+    cssNthChildOnly <- "table.mycustom:nth-child(2) { color:red; }"
+    expect_false(grepl("border", cssNthChildOnly, fixed = TRUE))
+    resNthChildOnly <- CreateCustomTable(x2, custom.css = cssNthChildOnly, cell.border.width = 4, cell.border.color = "red")
+    hNthChildOnly <- normWs(tableHtml(resNthChildOnly))
+    cellRuleNthChildOnly <- regmatches(hNthChildOnly, regexpr("\\.celldefault1\\{[^}]*\\}", hNthChildOnly))
+    expect_length(cellRuleNthChildOnly, 1)
+    expect_true(grepl("border: 4px solid red", cellRuleNthChildOnly, fixed = TRUE))
 
     # "border-top" together with an unrelated selector's "nth-child" DOES trip the
     # heuristic (it is a plain unanchored substring match on both tokens anywhere in
