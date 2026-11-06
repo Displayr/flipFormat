@@ -3,3 +3,5 @@
 .*~
 ^\.circleci/config\.yml$
 package.nix
+^AGENTS\.md$
+^CLAUDE\.md$
