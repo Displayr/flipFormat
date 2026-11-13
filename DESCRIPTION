@@ -30,7 +30,8 @@ Suggests:
     testthat,
     flipSnapshotTestUtils,
     flipExampleData,
-    png
+    png,
+    webfakes
 Remotes:
     Displayr/flipSnapshotTestUtils,
     Displayr/flipExampleData,

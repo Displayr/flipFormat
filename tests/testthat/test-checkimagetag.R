@@ -1,50 +1,21 @@
 context("CreateCustomTable")
 
-# NOTE: every success-path assertion in this file fetches a real image over the
-# network - kImageLink for all but the first block, which also fetches kDropboxLink.
-# Without access to the host GET() errors, checkImageTag() warns and strips the tag,
-# and those assertions would fail rather than skip, so every block that needs a link
-# guards itself with skipIfOffline(). The two blocks that reach no network at all -
-# the syntax-error branches, and the decoy whose link is deliberately unresolvable -
-# run unguarded. The empty-link assertions also need no network, but they live in the
-# first block and skip with it.
-#
-# The probe fetches the exact links the blocks depend on (once per link per file run,
-# cached), rather than using skip_if_offline(): that helper calls skip_on_cran(),
-# which would skip these blocks in any run where NOT_CRAN is unset, network or no.
-kImageLink <- "https://wiki.q-researchsoftware.com/images/c/cb/CokeZero.png"
-kDropboxLink <- "https://www.dropbox.com/s/ukinuuzg0tbojqj/ING%20Logo.png?dl=1"
-
-linkIsReachable <- local(
-{
-    cached <- list()
-    function(link)
-    {
-        if (is.null(cached[[link]]))
-        {
-            response <- try(httr::GET(link), silent = TRUE)
-            cached[[link]] <<- !inherits(response, "try-error") && response$status_code == 200
-        }
-        cached[[link]]
-    }
-})
-
-skipIfOffline <- function(links = kImageLink)
-{
-    for (link in links)
-        skip_if_not(linkIsReachable(link), paste(link, "is not reachable"))
-}
+# The success-path assertions fetch an image, served from tests/testthat/images by a
+# local test web server so they don't depend on the network or on hosted images.
+# checkImageTag() only checks that GET() returns status 200, so any image will do.
+imageServer <- localImageServer(testthat::teardown_env())
+kImageLink <- imageServer$url("/red-square.png")
+kLinkWithQuery <- imageServer$url("/red-square.png?dl=1")
 
 kTxtStyle <- paste0("<img style='margin:0 auto;' width='50' src='", kImageLink, "'>")
 
 test_that("checkImageTag",
 {
-    skipIfOffline(c(kImageLink, kDropboxLink))
-    txt.sq <- paste0("<img src='", kDropboxLink, "'>")
+    txt.sq <- paste0("<img src='", kLinkWithQuery, "'>")
     expect_warning(res <- checkImageTag(txt.sq), NA)
     expect_equal(res, paste0("<div>", txt.sq, "</div>"))
 
-    txt.dq <- paste0("<img src=\"", kDropboxLink, "\">")
+    txt.dq <- paste0("<img src=\"", kLinkWithQuery, "\">")
     expect_warning(res <- checkImageTag(txt.dq), NA)
     expect_equal(res, paste0("<div>", txt.dq, "</div>"))
 
@@ -74,7 +45,6 @@ test_that("checkImageTag",
 
 test_that("checkImageTag: style and width attributes preceding src are preserved, not stripped",
 {
-    skipIfOffline()
     expect_warning(res <- checkImageTag(kTxtStyle), NA)
     expect_equal(res, paste0("<div>", kTxtStyle, "</div>"))
 })
@@ -83,7 +53,6 @@ test_that("checkImageTag: src is found when it is the first attribute",
 {
     # not "independent of attribute order" - the decoy block below shows an earlier
     # attribute whose value contains "src=" is matched in preference to the real one
-    skipIfOffline()
     txt.order <- paste0("<img src='", kImageLink, "' style='margin:0 auto;' width='50'>")
     expect_warning(res <- checkImageTag(txt.order), NA)
     expect_equal(res, paste0("<div>", txt.order, "</div>"))
@@ -91,7 +60,6 @@ test_that("checkImageTag: src is found when it is the first attribute",
 
 test_that("checkImageTag: a double-quoted src is cleaned identically to a single-quoted src",
 {
-    skipIfOffline()
     txt.dq2 <- paste0("<img style='margin:0 auto;' width='50' src=\"", kImageLink, "\">")
     expect_warning(res <- checkImageTag(txt.dq2), NA)
     expect_equal(res, paste0("<div>", txt.dq2, "</div>"))
@@ -99,7 +67,6 @@ test_that("checkImageTag: a double-quoted src is cleaned identically to a single
 
 test_that("checkImageTag: an unquoted bare src is cleaned identically",
 {
-    skipIfOffline()
     txt.unquoted <- paste0("<img style='margin:0 auto;' width='50' src=", kImageLink, ">")
     expect_warning(res <- checkImageTag(txt.unquoted), NA)
     expect_equal(res, paste0("<div>", txt.unquoted, "</div>"))
@@ -124,7 +91,6 @@ test_that("checkImageTag: both syntax-error branches warn and return an empty st
 
 test_that("checkImageTag: surrounding text is preserved, not just the image tag, on the success path",
 {
-    skipIfOffline()
     txt.label <- paste0("Label ", kTxtStyle)
     expect_warning(res <- checkImageTag(txt.label), NA)
     expect_equal(res, paste0("<div>", txt.label, "</div>"))
@@ -138,8 +104,8 @@ test_that("checkImageTag: an attribute value containing the substring 'src=' bef
     # Defect RS-23603 - when that is fixed this block should assert the image is kept.
     # The decoy link uses the RFC 2606 reserved .invalid TLD so the GET fails whatever
     # the network does with an unqualified host, and the warning is anchored on the
-    # extracted link so a regression in the quote stripping cannot satisfy it. No
-    # skipIfOffline() here: the decoy is matched first, so kImageLink is never fetched
+    # extracted link so a regression in the quote stripping cannot satisfy it.
+    # The decoy is matched first, so kImageLink is never fetched
     txt.decoy <- paste0("<img alt='mysrc=http://x.invalid/' src='", kImageLink, "'>")
     expect_warning(res <- checkImageTag(txt.decoy),
                    "invalid link which has been removed: http://x\\.invalid/$")
